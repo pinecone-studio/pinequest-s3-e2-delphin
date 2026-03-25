@@ -45,9 +45,6 @@ export default function StudentLayout({
             <span className="text-sm text-muted-foreground">
               {studentName} <span className="text-foreground">({studentClass})</span>
             </span>
-            <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
-              Logout
-            </Link>
           </div>
         </div>
       </header>

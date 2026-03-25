@@ -46,9 +46,6 @@ export default function TeacherLayout({
             <span className="text-sm text-muted-foreground">
               Logged in as: <span className="text-foreground">{teacherName}</span> ({teacherSubject})
             </span>
-            <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
-              Logout
-            </Link>
           </div>
         </div>
       </header>

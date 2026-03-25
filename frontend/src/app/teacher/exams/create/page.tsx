@@ -47,9 +47,7 @@ export default function CreateExamPage() {
     updateQuestion,
     updateScheduleEntry,
   } = useExamBuilder()
-
   const handleSubmit = () => {
-    // In a real app, this would save to the database
     console.log({
       title: examTitle,
       questions,
@@ -60,33 +58,27 @@ export default function CreateExamPage() {
     alert('Exam created successfully! Students will be notified.')
     router.push('/teacher/exams')
   }
-
   const handleAiSourceDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     setIsAiSourceDragging(true)
   }
-
   const handleAiSourceDragLeave = (e: React.DragEvent) => {
     e.preventDefault()
     setIsAiSourceDragging(false)
   }
-
   const handleAiSourceDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setIsAiSourceDragging(false)
     addAiSourceFiles(e.dataTransfer.files)
   }
-
   const handleAiSourceSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files) {
       return
     }
-
     addAiSourceFiles(files)
     e.target.value = ""
   }
-
   const totalPoints = questions.reduce((sum, q) => sum + q.points, 0)
   const questionCounts = {
     'multiple-choice': questions.filter(q => q.type === 'multiple-choice').length,
@@ -94,7 +86,6 @@ export default function CreateExamPage() {
     'short-answer': questions.filter(q => q.type === 'short-answer').length,
     'essay': questions.filter(q => q.type === 'essay').length,
   }
-
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
@@ -108,8 +99,6 @@ export default function CreateExamPage() {
           Prepare Questions with AI
         </Button>
       </div>
-
-      {/* Exam Title */}
       <Card>
         <CardContent className="pt-6">
           <Input
@@ -120,7 +109,6 @@ export default function CreateExamPage() {
           />
         </CardContent>
       </Card>
-
       <ExamBuilderQuestionList
         onAddQuestion={addQuestion}
         onRemoveQuestion={removeQuestion}
@@ -128,7 +116,6 @@ export default function CreateExamPage() {
         onUpdateQuestion={updateQuestion}
         questions={questions}
       />
-
       <ExamBuilderSummaryCard
         duration={duration}
         onAddScheduleEntry={addScheduleEntry}
@@ -142,8 +129,6 @@ export default function CreateExamPage() {
         scheduleEntries={scheduleEntries}
         totalPoints={totalPoints}
       />
-
-      {/* Submit */}
       <div className="flex justify-end gap-3">
         <Button variant="outline" onClick={() => router.push('/teacher/exams')}>
           Save as Draft
@@ -155,7 +140,6 @@ export default function CreateExamPage() {
           Create & Notify Students
         </Button>
       </div>
-
       <AIQuestionGeneratorDialog
         aiMCCount={aiMCCount}
         aiShortCount={aiShortCount}

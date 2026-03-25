@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Exam } from '@/lib/mock-data'
 import type { NewQuestion, QuestionType, ScheduleEntry } from '@/components/teacher/exam-builder-types'
+import { useAiSourceFiles } from '@/hooks/use-ai-source-files'
 
 function createQuestion(type: QuestionType, id: string): NewQuestion {
   return {
@@ -56,6 +57,7 @@ export function useExamBuilder() {
   const [examTitle, setExamTitle] = useState('')
   const [questions, setQuestions] = useState<NewQuestion[]>([])
   const [duration, setDuration] = useState(60)
+  const aiSourceFiles = useAiSourceFiles()
   const [reportReleaseMode, setReportReleaseMode] =
     useState<Exam['reportReleaseMode']>('after-all-classes-complete')
   const [showAIDialog, setShowAIDialog] = useState(false)
@@ -63,8 +65,6 @@ export function useExamBuilder() {
   const [aiTFCount, setAiTFCount] = useState(3)
   const [aiShortCount, setAiShortCount] = useState(2)
   const [selectedMockTests, setSelectedMockTests] = useState<string[]>([])
-  const [selectedAiSourceFiles, setSelectedAiSourceFiles] = useState<File[]>([])
-  const [isAiSourceDragging, setIsAiSourceDragging] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [scheduleEntries, setScheduleEntries] = useState<ScheduleEntry[]>([])
 
@@ -104,29 +104,6 @@ export function useExamBuilder() {
     setShowAIDialog(false)
   }
 
-  const addAiSourceFiles = (files: FileList | File[]) => {
-    const nextFiles = Array.from(files).filter(
-      (file) =>
-        file.type === 'application/pdf' ||
-        file.name.endsWith('.doc') ||
-        file.name.endsWith('.docx'),
-    )
-
-    if (nextFiles.length === 0) {
-      return
-    }
-
-    setSelectedAiSourceFiles((current) => {
-      const seen = new Set(current.map((file) => `${file.name}-${file.size}`))
-      const uniqueFiles = nextFiles.filter((file) => !seen.has(`${file.name}-${file.size}`))
-      return [...current, ...uniqueFiles]
-    })
-  }
-
-  const removeAiSourceFile = (fileName: string) => {
-    setSelectedAiSourceFiles((current) => current.filter((file) => file.name !== fileName))
-  }
-
   const addScheduleEntry = () => {
     setScheduleEntries((current) => [...current, { classId: '', date: '', time: '' }])
   }
@@ -148,6 +125,7 @@ export function useExamBuilder() {
   }
 
   return {
+    ...aiSourceFiles,
     addQuestion,
     addScheduleEntry,
     aiMCCount,
@@ -156,23 +134,18 @@ export function useExamBuilder() {
     duration,
     examTitle,
     generateAIQuestions,
-    addAiSourceFiles,
     isGenerating,
-    isAiSourceDragging,
     questions,
     reportReleaseMode,
     removeQuestion,
-    removeAiSourceFile,
     removeScheduleEntry,
     scheduleEntries,
-    selectedAiSourceFiles,
     selectedMockTests,
     setAiMCCount,
     setAiShortCount,
     setAiTFCount,
     setDuration,
     setExamTitle,
-    setIsAiSourceDragging,
     setReportReleaseMode,
     setSelectedMockTests,
     setShowAIDialog,

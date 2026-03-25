@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
 import { BookOpen, ChevronLeft, ChevronRight, ClipboardList, LayoutDashboard } from "lucide-react"
 import { BrandLogo } from "@/components/brand-logo"
+import { ThemeToggleButton } from "@/components/theme-toggle-button"
 import { useStudentSession } from "@/hooks/use-student-session"
 import { cn } from "@/lib/utils"
 
@@ -42,14 +43,15 @@ export default function StudentLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       {/* Header */}
-      <header className="border-b bg-background">
+      <header className="border-b bg-background dark:border-[#101820] dark:bg-[#000000]">
         <div className="container mx-auto px-4 h-14 flex items-center justify-between">
           <Link href="/student/dashboard" className="font-semibold">
             <BrandLogo className="gap-2" textClassName="text-sm font-semibold text-foreground sm:text-base" />
           </Link>
           <div className="flex items-center gap-4">
+            <ThemeToggleButton />
             <span className="text-sm text-muted-foreground">
               {studentName} <span className="text-foreground">({studentClass})</span>
             </span>
@@ -67,7 +69,7 @@ export default function StudentLayout({
         {/* Sidebar */}
         <aside
           className={cn(
-            "border-r bg-muted/30 p-4 transition-all duration-200",
+            "border-r bg-muted/30 p-4 transition-all duration-200 dark:border-[#101820] dark:bg-[#000000]",
             isSidebarCollapsed ? "w-20" : "w-56",
           )}
         >
@@ -75,7 +77,7 @@ export default function StudentLayout({
             <button
               type="button"
               onClick={() => setIsSidebarCollapsed((current) => !current)}
-              className="rounded-md border p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="rounded-md border p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground dark:border-[#1B2A36] dark:bg-[#000000] dark:hover:bg-[#081018]"
               aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
               {isSidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -93,8 +95,8 @@ export default function StudentLayout({
                   "flex items-center rounded-md px-3 py-2 text-sm transition-colors",
                   isSidebarCollapsed ? "justify-center" : "gap-3",
                   pathname === item.href || pathname.startsWith(item.href + "/")
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-muted"
+                    ? "bg-primary text-primary-foreground dark:border dark:border-[rgba(56,189,248,0.55)] dark:bg-[#022638] dark:shadow-[0_0_0_1px_rgba(56,189,248,0.08),0_0_16px_rgba(34,211,238,0.10)]"
+                    : "hover:bg-muted dark:hover:bg-[#081018]"
                 )}
               >
                 <Icon className="h-4 w-4 shrink-0" />
@@ -106,7 +108,7 @@ export default function StudentLayout({
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="content-surface flex-1 overflow-auto p-6">
           {children}
         </main>
       </div>

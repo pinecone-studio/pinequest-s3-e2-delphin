@@ -41,37 +41,37 @@ export function StudentScheduleCalendar({
   const weekDates = getWeekDates()
 
   return (
-    <Card>
+    <Card className="panel-surface rounded-[1.5rem]">
       <CardHeader>
         <CardTitle>Exam Schedule</CardTitle>
-        <CardDescription>Your upcoming exams this week</CardDescription>
+        <CardDescription className="secondary-text">Your upcoming exams this week</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
           <div className="min-w-[800px]">
-            <div className="grid grid-cols-6 border-b">
-              <div className="p-2 font-medium text-muted-foreground">Time</div>
+            <div className="strong-divider grid grid-cols-6 border-b">
+              <div className="secondary-text p-2 font-medium">Time</div>
               {weekDates.map(({ day, displayDate }) => (
-                <div key={day} className="p-2 text-center border-l">
+                <div key={day} className="soft-divider p-2 text-center border-l">
                   <div className="font-medium">{day}</div>
-                  <div className="text-sm text-muted-foreground">{displayDate}</div>
+                  <div className="secondary-text text-sm">{displayDate}</div>
                 </div>
               ))}
             </div>
 
             {timeSlots.map((time) => (
-              <div key={time} className="grid grid-cols-6 border-b min-h-[60px]">
-                <div className="p-2 text-sm text-muted-foreground">{time}</div>
+              <div key={time} className="strong-divider grid min-h-[60px] grid-cols-6 border-b">
+                <div className="muted-text p-2 text-sm">{time}</div>
                 {weekDates.map(({ day, date }) => {
                   const examItem = findExamItem(myExams, studentClass, date, time)
                   return (
-                    <div key={`${day}-${time}`} className="p-1 border-l min-h-[60px]">
+                    <div key={`${day}-${time}`} className="soft-divider min-h-[60px] border-l p-1">
                       {examItem ? (
-                        <div className={examItem.exam.status === 'completed' ? 'p-1 rounded text-xs bg-muted' : 'p-1 rounded text-xs bg-destructive/10 border border-destructive/20'}>
+                        <div className={examItem.exam.status === 'completed' ? 'elevated-surface soft-divider rounded-md border p-1 text-xs' : 'rounded-md border border-destructive/20 bg-destructive/10 p-1 text-xs dark:border-[#315A79] dark:bg-[#1B3C57]'}>
                           <div className={examItem.exam.status === 'scheduled' ? 'font-medium text-destructive' : 'font-medium'}>
                             {examItem.exam.title}
                           </div>
-                          <div className="text-muted-foreground">{examItem.exam.duration} min</div>
+                          <div className="secondary-text">{examItem.exam.duration} min</div>
                         </div>
                       ) : null}
                     </div>

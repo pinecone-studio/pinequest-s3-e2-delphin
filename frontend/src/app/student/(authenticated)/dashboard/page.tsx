@@ -29,7 +29,7 @@ export default function StudentDashboard() {
 
       {/* Notifications / Upcoming Exams Alert */}
       {upcomingExams.length > 0 && (
-        <Card className="border-primary">
+        <Card className="panel-surface border-primary rounded-[1.5rem]">
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
               Upcoming Exams
@@ -41,10 +41,10 @@ export default function StudentDashboard() {
               {upcomingExams.map(exam => {
                 const schedule = exam.scheduledClasses.find(sc => sc.classId === studentClass)
                 return (
-                  <div key={exam.id} className="flex items-center justify-between p-2 bg-muted rounded">
+                  <div key={exam.id} className="elevated-surface flex items-center justify-between rounded-xl border p-3 soft-divider">
                     <div>
                       <div className="font-medium">{exam.title}</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="secondary-text text-sm">
                         {schedule?.date} at {schedule?.time} ({exam.duration} min)
                       </div>
                     </div>
@@ -61,27 +61,27 @@ export default function StudentDashboard() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription>Your Class</CardDescription>
+            <CardDescription className="secondary-text">Your Class</CardDescription>
             <CardTitle className="text-3xl">{studentClass}</CardTitle>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription>Upcoming Exams</CardDescription>
+            <CardDescription className="secondary-text">Upcoming Exams</CardDescription>
             <CardTitle className="text-3xl">{upcomingExams.length}</CardTitle>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription>Completed Exams</CardDescription>
+            <CardDescription className="secondary-text">Completed Exams</CardDescription>
             <CardTitle className="text-3xl">{myResults.length}</CardTitle>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription>Average Score</CardDescription>
+            <CardDescription className="secondary-text">Average Score</CardDescription>
             <CardTitle className="text-3xl">{avgScore}%</CardTitle>
           </CardHeader>
         </Card>

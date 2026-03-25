@@ -39,56 +39,56 @@ export default function TeacherDashboard() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription>Total Classes</CardDescription>
+            <CardDescription className="secondary-text">Total Classes</CardDescription>
             <CardTitle className="text-3xl">{classes.length}</CardTitle>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription>Total Students</CardDescription>
+            <CardDescription className="secondary-text">Total Students</CardDescription>
             <CardTitle className="text-3xl">{classes.reduce((sum, c) => sum + c.students.length, 0)}</CardTitle>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription>Upcoming Exams</CardDescription>
+            <CardDescription className="secondary-text">Upcoming Exams</CardDescription>
             <CardTitle className="text-3xl">{upcomingExams.length}</CardTitle>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription>Completed Exams</CardDescription>
+            <CardDescription className="secondary-text">Completed Exams</CardDescription>
             <CardTitle className="text-3xl">{completedExams.length}</CardTitle>
           </CardHeader>
         </Card>
       </div>
 
       {/* Weekly Calendar */}
-      <Card>
+      <Card className="panel-surface rounded-[1.5rem]">
         <CardHeader>
           <CardTitle>Weekly Schedule</CardTitle>
-          <CardDescription>Classes and exams for this week</CardDescription>
+          <CardDescription className="secondary-text">Classes and exams for this week</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <div className="min-w-[800px]">
               {/* Calendar Header */}
-              <div className="grid grid-cols-6 border-b">
-                <div className="p-2 font-medium text-muted-foreground">Time</div>
+              <div className="strong-divider grid grid-cols-6 border-b">
+                <div className="secondary-text p-2 font-medium">Time</div>
                 {weekDates.map(({ day, displayDate }) => (
-                  <div key={day} className="p-2 text-center border-l">
+                  <div key={day} className="soft-divider p-2 text-center border-l">
                     <div className="font-medium">{day}</div>
-                    <div className="text-sm text-muted-foreground">{displayDate}</div>
+                    <div className="secondary-text text-sm">{displayDate}</div>
                   </div>
                 ))}
               </div>
 
               {/* Time Slots */}
               {timeSlots.map((time) => (
-                <div key={time} className="grid grid-cols-6 border-b min-h-[60px]">
-                  <div className="p-2 text-sm text-muted-foreground">{time}</div>
+                <div key={time} className="strong-divider grid min-h-[60px] grid-cols-6 border-b">
+                  <div className="muted-text p-2 text-sm">{time}</div>
                   {weekDates.map(({ day, date }) => {
                     // Check for class
                     const classItem = classSchedule.find(
@@ -102,17 +102,17 @@ export default function TeacherDashboard() {
                     )[0]
 
                     return (
-                      <div key={`${day}-${time}`} className="p-1 border-l min-h-[60px]">
+                      <div key={`${day}-${time}`} className="soft-divider min-h-[60px] border-l p-1">
                         {classItem && (
-                          <div className="p-1 bg-muted rounded text-xs">
+                          <div className="elevated-surface rounded-md border p-1 text-xs soft-divider">
                             <div className="font-medium">{classItem.classId}</div>
-                            <div className="text-muted-foreground">{classItem.subject}</div>
+                            <div className="secondary-text">{classItem.subject}</div>
                           </div>
                         )}
                         {examItem && (
-                          <div className="p-1 bg-destructive/10 border border-destructive/20 rounded text-xs mt-1">
+                          <div className="mt-1 rounded-md border border-destructive/20 bg-destructive/10 p-1 text-xs dark:border-[#315A79] dark:bg-[#1B3C57]">
                             <div className="font-medium text-destructive">{examItem.exam.title}</div>
-                            <div className="text-muted-foreground">{examItem.schedule.classId}</div>
+                            <div className="secondary-text">{examItem.schedule.classId}</div>
                           </div>
                         )}
                       </div>
@@ -126,21 +126,21 @@ export default function TeacherDashboard() {
       </Card>
 
       {/* Upcoming Exams List */}
-      <Card>
+      <Card className="panel-surface rounded-[1.5rem]">
         <CardHeader>
           <CardTitle>Upcoming Exams</CardTitle>
-          <CardDescription>Scheduled exams for your classes</CardDescription>
+          <CardDescription className="secondary-text">Scheduled exams for your classes</CardDescription>
         </CardHeader>
         <CardContent>
           {upcomingExams.length === 0 ? (
-            <p className="text-muted-foreground text-sm">No upcoming exams scheduled</p>
+            <p className="muted-text text-sm">No upcoming exams scheduled</p>
           ) : (
             <div className="space-y-3">
               {upcomingExams.map(exam => (
-                <div key={exam.id} className="flex items-center justify-between p-3 border rounded-lg">
+                <div key={exam.id} className="elevated-surface soft-divider flex items-center justify-between rounded-xl border p-3">
                   <div>
                     <div className="font-medium">{exam.title}</div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="secondary-text text-sm">
                       {exam.questions.length} questions, {exam.duration} min
                     </div>
                   </div>

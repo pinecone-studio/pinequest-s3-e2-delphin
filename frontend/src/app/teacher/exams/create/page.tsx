@@ -1,18 +1,20 @@
 "use client"
 
 import * as React from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { CircleAlert } from "lucide-react"
 import { AIQuestionGeneratorDialog } from "@/components/teacher/ai-question-generator-dialog"
 import { ExamBuilderQuestionList } from "@/components/teacher/exam-builder-question-list"
 import { ExamBuilderSummaryCard } from "@/components/teacher/exam-builder-summary-card"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
+import { useExamCreation } from "@/hooks/use-exam-creation"
 import { useExamBuilder } from "@/hooks/use-exam-builder"
 
 export default function CreateExamPage() {
-  const router = useRouter()
   const {
     addQuestion,
     addScheduleEntry,
@@ -47,17 +49,15 @@ export default function CreateExamPage() {
     updateQuestion,
     updateScheduleEntry,
   } = useExamBuilder()
-  const handleSubmit = () => {
-    console.log({
-      title: examTitle,
-      questions,
-      duration,
-      reportReleaseMode,
-      scheduleEntries,
-    })
-    alert('Exam created successfully! Students will be notified.')
-    router.push('/teacher/exams')
-  }
+
+  const { canSaveDraft, canScheduleExam, submissionError, submitExam, submitMode } = useExamCreation({
+    duration,
+    examTitle,
+    questions,
+    reportReleaseMode,
+    scheduleEntries,
+  })
+
   const handleAiSourceDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     setIsAiSourceDragging(true)
@@ -109,6 +109,7 @@ export default function CreateExamPage() {
           />
         </CardContent>
       </Card>
+      {submissionError ? <Alert variant="destructive"><CircleAlert /><AlertTitle>Save failed</AlertTitle><AlertDescription>{submissionError}</AlertDescription></Alert> : null}
       <ExamBuilderQuestionList
         onAddQuestion={addQuestion}
         onRemoveQuestion={removeQuestion}
@@ -130,16 +131,19 @@ export default function CreateExamPage() {
         totalPoints={totalPoints}
       />
       <div className="flex justify-end gap-3">
-        <Button variant="outline" onClick={() => router.push('/teacher/exams')}>
+        <Button variant="outline" onClick={() => void submitExam("draft")} disabled={!canSaveDraft}>
+          {submitMode === "draft" ? <Spinner className="mr-2" /> : null}
           Save as Draft
         </Button>
-        <Button 
-          onClick={handleSubmit}
-          disabled={!examTitle || questions.length === 0 || scheduleEntries.length === 0}
-        >
+        <Button onClick={() => void submitExam("scheduled")} disabled={!canScheduleExam}>
+          {submitMode === "scheduled" ? <Spinner className="mr-2" /> : null}
           Create & Notify Students
         </Button>
       </div>
+      <p className="text-sm text-muted-foreground">
+        Student notification is still a placeholder in this demo. This action saves the exam to
+        the backend, but it does not send a real message yet.
+      </p>
       <AIQuestionGeneratorDialog
         aiMCCount={aiMCCount}
         aiShortCount={aiShortCount}

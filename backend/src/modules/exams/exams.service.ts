@@ -252,12 +252,16 @@ export class ExamsService {
       throw new BadRequestException('Duration must be a positive integer');
     }
 
-    if (payload.questions.length === 0) {
-      throw new BadRequestException('At least one question is required');
+    if (payload.status === 'scheduled' && payload.questions.length === 0) {
+      throw new BadRequestException(
+        'At least one question is required before scheduling an exam',
+      );
     }
 
-    if (payload.schedules.length === 0) {
-      throw new BadRequestException('At least one schedule entry is required');
+    if (payload.status === 'scheduled' && payload.schedules.length === 0) {
+      throw new BadRequestException(
+        'At least one schedule entry is required before scheduling an exam',
+      );
     }
 
     payload.questions.forEach((question, index) => {

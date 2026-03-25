@@ -16,10 +16,10 @@ export function StudentRecentResultsCard({
   }
 
   return (
-    <Card>
+    <Card className="panel-surface rounded-[1.5rem]">
       <CardHeader>
         <CardTitle>Recent Results</CardTitle>
-        <CardDescription>Your exam scores</CardDescription>
+        <CardDescription className="secondary-text">Your exam scores</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
@@ -31,16 +31,16 @@ export function StudentRecentResultsCard({
             const isReportAvailable = isExamReportAvailable(result.examId)
 
             return (
-              <div key={`${result.examId}-${result.studentId}`} className="flex items-center justify-between p-3 border rounded-lg">
+              <div key={`${result.examId}-${result.studentId}`} className="elevated-surface soft-divider flex items-center justify-between rounded-xl border p-3">
                 <div>
                   <div className="font-medium">{exam?.title}</div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="secondary-text text-sm">
                     Submitted: {new Date(result.submittedAt).toLocaleDateString()}
                   </div>
                 </div>
                 <div className="text-right">
                   <Badge variant={badgeVariant}>{percentage}%</Badge>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="secondary-text text-sm">
                     {result.score}/{result.totalPoints}
                   </div>
                   <div className="mt-2">

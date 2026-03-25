@@ -21,10 +21,10 @@ export default function LandingPage() {
       <div className="relative flex min-h-[calc(100vh-2rem)] items-center justify-center">
         <div className="w-full max-w-2xl">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#16324F] md:text-4xl">
+            <h1 className="text-3xl font-bold text-foreground md:text-4xl">
               ExamFlow LMS
             </h1>
-            <p className="mt-2 text-[#35516E]">
+            <p className="mt-2 text-muted-foreground">
               Learning Management System - Exam Module
             </p>
           </div>
@@ -34,8 +34,8 @@ export default function LandingPage() {
             <Link href="/teacher/dashboard">
               <Card className="role-card h-full cursor-pointer rounded-[1.75rem] transition-all duration-200">
                 <CardHeader>
-                  <CardTitle className="text-[#16324F]">I am a Teacher</CardTitle>
-                  <CardDescription className="text-[#35516E]">
+                  <CardTitle className="text-foreground">I am a Teacher</CardTitle>
+                  <CardDescription className="text-muted-foreground">
                     Create and manage exams, view student results, and organize
                     your question bank
                   </CardDescription>
@@ -51,8 +51,8 @@ export default function LandingPage() {
             <Link href="/student/login">
               <Card className="role-card h-full cursor-pointer rounded-[1.75rem] transition-all duration-200">
                 <CardHeader>
-                  <CardTitle className="text-[#16324F]">I am a Student</CardTitle>
-                  <CardDescription className="text-[#35516E]">
+                  <CardTitle className="text-foreground">I am a Student</CardTitle>
+                  <CardDescription className="text-muted-foreground">
                     Take exams, view mock tests, and check your exam schedule
                   </CardDescription>
                 </CardHeader>
@@ -68,7 +68,7 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          <p className="mt-8 text-center text-sm text-[#35516E]">
+          <p className="mt-8 text-center text-sm text-muted-foreground">
             Hackathon Demo - No real authentication required
           </p>
         </div>

@@ -36,26 +36,25 @@ export default function StudentLoginPage() {
   return (
     <main className="skywash-background relative min-h-screen overflow-hidden p-4">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-[34%] h-[32rem] w-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/65 blur-3xl" />
-        <div className="absolute left-1/2 top-[76%] h-64 w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-200/30 blur-3xl" />
+        <div className="absolute left-1/2 top-[25%] h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/30 blur-3xl dark:bg-cyan-300/8" />
+        <div className="absolute left-1/2 top-[78%] h-44 w-[24rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-200/18 blur-3xl dark:bg-sky-400/6" />
       </div>
 
       <div className="relative flex min-h-[calc(100vh-2rem)] items-center justify-center">
-        <div className="w-full max-w-md">
+        <div className="content-surface w-full max-w-md rounded-[2rem] p-4 md:p-5">
           <div className="text-center mb-6">
-            <Link href="/" className="text-sm text-[#1E3A5F]/70 hover:underline">
+            <Link href="/" className="muted-text text-sm hover:underline">
               &larr; Back to Home
             </Link>
-            <h1 className="mt-4 text-2xl font-bold text-[#1E3A5F]">Student Login</h1>
-            <p className="text-[#1E3A5F]/72">Sign in to access your exams</p>
+            <h1 className="mt-4 text-2xl font-bold text-foreground">Student Login</h1>
+            <p className="secondary-text">Sign in to access your exams</p>
           </div>
 
           <div className="relative">
-            <div className="ocean-wave pointer-events-none absolute inset-x-4 -top-8 h-24 opacity-75" />
-            <Card className="relative border-white/70 bg-white/80 shadow-xl shadow-sky-200/25 backdrop-blur-md">
+            <Card className="panel-surface relative rounded-[1.5rem] border-white/70 bg-white/80 shadow-xl shadow-sky-200/25 backdrop-blur-md">
             <CardHeader>
-              <CardTitle className="text-[#1E3A5F]">Login</CardTitle>
-              <CardDescription>Enter your credentials to continue</CardDescription>
+              <CardTitle className="text-foreground">Login</CardTitle>
+              <CardDescription className="secondary-text">Enter your credentials to continue</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleLogin} className="space-y-4">
@@ -68,6 +67,7 @@ export default function StudentLoginPage() {
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
+                    className="input-surface"
                     id="email"
                     type="email"
                     placeholder="your@email.com"
@@ -80,6 +80,7 @@ export default function StudentLoginPage() {
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <Input
+                    className="input-surface"
                     id="password"
                     type="password"
                     placeholder="Enter your password"
@@ -97,17 +98,17 @@ export default function StudentLoginPage() {
             </Card>
           </div>
 
-          <Card className="mt-4 border-white/65 bg-white/72 shadow-lg shadow-sky-200/20 backdrop-blur-md">
+          <Card className="panel-surface mt-4 rounded-[1.5rem] border-white/65 bg-white/72 shadow-lg shadow-sky-200/20 backdrop-blur-md">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-[#1E3A5F]">Demo Credentials</CardTitle>
-              <CardDescription className="text-xs">Use any of these to login</CardDescription>
+              <CardTitle className="text-sm text-foreground">Demo Credentials</CardTitle>
+              <CardDescription className="secondary-text text-xs">Use any of these to login</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-xs space-y-1 font-mono">
                 {students.slice(0, 5).map(s => (
                   <div key={s.id} className="flex justify-between">
                     <span>{s.email}</span>
-                    <span className="text-muted-foreground">{s.password}</span>
+                    <span className="muted-text">{s.password}</span>
                   </div>
                 ))}
               </div>

@@ -38,6 +38,10 @@ jobs:
         )
       )
     runs-on: ubuntu-latest
+    outputs:
+      configured: ${{ steps.vercel.outputs.configured }}
+      vercel_env: ${{ env.VERCEL_ENV }}
+      deployment_url: ${{ steps.deploy_production.outputs.deployment_url || steps.deploy_preview.outputs.deployment_url }}
     permissions:
       contents: read
       issues: write
@@ -133,5 +137,27 @@ jobs:
         run: npx vercel build --prod --token="$VERCEL_TOKEN"
 
       - name: Deploy production
+        id: deploy_production
         if: steps.vercel.outputs.configured == 'true' && env.VERCEL_ENV == 'production'
-        run: npx vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+        run: |
+          deployment_url=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" | tail -n 1)
+          echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
+          echo "Production URL: $deployment_url"
+
+  record-production-deployment:
+    name: Record production deployment in GitHub
+    needs: deploy-frontend
+    if: >
+      needs.deploy-frontend.outputs.configured == 'true' &&
+      needs.deploy-frontend.outputs.vercel_env == 'production' &&
+      needs.deploy-frontend.outputs.deployment_url != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    environment:
+      name: production
+      url: ${{ needs.deploy-frontend.outputs.deployment_url }}
+    steps:
+      - name: Publish deployment metadata
+        run: echo "Production deployment recorded at ${{ needs.deploy-frontend.outputs.deployment_url }}"

@@ -47,7 +47,7 @@ export type CreatedExam = {
   }>
 }
 
-function getApiBaseUrl() {
+export function getApiBaseUrl() {
   return process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/+$/g, '') ?? 'http://localhost:3001/api'
 }
 

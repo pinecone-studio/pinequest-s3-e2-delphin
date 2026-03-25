@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import type { NewQuestion, ScheduleEntry } from '@/components/teacher/exam-builder-types'
 import { toast } from '@/hooks/use-toast'
 import { buildCreateExamPayload, createExam } from '@/lib/exams-api'
+import { validateExamPayloadInput } from '@/lib/exam-validation'
 
 type SubmitMode = 'draft' | 'scheduled'
 
@@ -39,6 +40,17 @@ export function useExamCreation({
       setSubmitMode(status)
 
       try {
+        const validationErrors = validateExamPayloadInput({
+          duration,
+          questions,
+          scheduleEntries,
+          status,
+        })
+
+        if (validationErrors.length > 0) {
+          throw new Error(validationErrors[0])
+        }
+
         const payload = buildCreateExamPayload({
           duration,
           examTitle,

@@ -1,15 +1,55 @@
 "use client"
 
+import * as React from "react"
 import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { CircleAlert } from "lucide-react"
+import { TeacherExamsSection } from "@/components/teacher/teacher-exams-section"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { exams } from "@/lib/mock-data"
+import { Spinner } from "@/components/ui/spinner"
+import { getLegacyTeacherExams, getTeacherExams, type TeacherExam } from "@/lib/teacher-exams"
 
 export default function ExamsPage() {
-  const draftExams = exams.filter(e => e.status === 'draft')
-  const scheduledExams = exams.filter(e => e.status === 'scheduled')
-  const completedExams = exams.filter(e => e.status === 'completed')
+  const [backendExams, setBackendExams] = React.useState<TeacherExam[]>([])
+  const [isLoading, setIsLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
+
+  React.useEffect(() => {
+    let isMounted = true
+
+    const loadExams = async () => {
+      try {
+        const exams = await getTeacherExams()
+        if (!isMounted) return
+        setBackendExams(exams)
+        setError(null)
+      } catch (loadError) {
+        if (!isMounted) return
+        setError(loadError instanceof Error ? loadError.message : "Failed to load exams.")
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void loadExams()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  const exams = React.useMemo(() => {
+    const merged = [...getLegacyTeacherExams(), ...backendExams]
+    return merged.filter(
+      (exam, index, collection) => collection.findIndex((entry) => entry.id === exam.id) === index,
+    )
+  }, [backendExams])
+
+  const draftExams = exams.filter((exam) => exam.status === "draft")
+  const scheduledExams = exams.filter((exam) => exam.status === "scheduled")
+  const completedExams = exams.filter((exam) => exam.status === "completed")
 
   return (
     <div className="space-y-6">
@@ -23,116 +63,29 @@ export default function ExamsPage() {
         </Link>
       </div>
 
-      {/* Scheduled Exams */}
-      <div>
-        <h2 className="text-lg font-semibold mb-3">Scheduled Exams</h2>
-        {scheduledExams.length === 0 ? (
-          <Card>
-            <CardContent className="py-6 text-center text-muted-foreground">
-              No scheduled exams
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {scheduledExams.map(exam => (
-              <Card key={exam.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-base">{exam.title}</CardTitle>
-                      <CardDescription>
-                        {exam.questions.length} questions, {exam.duration} min
-                      </CardDescription>
-                    </div>
-                    <Badge>Scheduled</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {exam.scheduledClasses.map(sc => (
-                      <div key={`${exam.id}-${sc.classId}`} className="text-sm flex justify-between">
-                        <span className="font-medium">{sc.classId}</span>
-                        <span className="text-muted-foreground">{sc.date} at {sc.time}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
+      {error ? (
+        <Alert variant="destructive">
+          <CircleAlert />
+          <AlertTitle>Could not refresh backend exams</AlertTitle>
+          <AlertDescription>
+            {error} Legacy mock exams are still shown below while the exam flow is being migrated.
+          </AlertDescription>
+        </Alert>
+      ) : null}
 
-      {/* Completed Exams */}
-      <div>
-        <h2 className="text-lg font-semibold mb-3">Completed Exams</h2>
-        {completedExams.length === 0 ? (
-          <Card>
-            <CardContent className="py-6 text-center text-muted-foreground">
-              No completed exams
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {completedExams.map(exam => (
-              <Card key={exam.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-base">{exam.title}</CardTitle>
-                      <CardDescription>
-                        {exam.questions.length} questions, {exam.duration} min
-                      </CardDescription>
-                    </div>
-                    <Badge variant="secondary">Completed</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {exam.scheduledClasses.map(sc => (
-                      <div key={`${exam.id}-${sc.classId}`} className="text-sm">
-                        <Link 
-                          href={`/teacher/classes/${sc.classId}/exam/${exam.id}`}
-                          className="hover:underline"
-                        >
-                          {sc.classId} - {sc.date} - View Results
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Drafts */}
-      {draftExams.length > 0 && (
-        <div>
-          <h2 className="text-lg font-semibold mb-3">Drafts</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {draftExams.map(exam => (
-              <Card key={exam.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-base">{exam.title}</CardTitle>
-                      <CardDescription>
-                        {exam.questions.length} questions
-                      </CardDescription>
-                    </div>
-                    <Badge variant="outline">Draft</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <Button variant="outline" size="sm">Continue Editing</Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+      {isLoading ? (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Spinner />
+          Loading exams...
         </div>
-      )}
+      ) : null}
+
+      <TeacherExamsSection emptyLabel="No scheduled exams" exams={scheduledExams} title="Scheduled Exams" />
+      <TeacherExamsSection emptyLabel="No completed exams" exams={completedExams} title="Completed Exams" />
+
+      {draftExams.length > 0 ? (
+        <TeacherExamsSection emptyLabel="No drafts" exams={draftExams} title="Drafts" />
+      ) : null}
     </div>
   )
 }

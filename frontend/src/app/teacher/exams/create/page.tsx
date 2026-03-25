@@ -140,6 +140,10 @@ export default function CreateExamPage() {
           Create & Notify Students
         </Button>
       </div>
+      <p className="text-sm text-muted-foreground">
+        Student notification is still a placeholder in this demo. This action saves the exam to
+        the backend, but it does not send a real message yet.
+      </p>
       <AIQuestionGeneratorDialog
         aiMCCount={aiMCCount}
         aiShortCount={aiShortCount}

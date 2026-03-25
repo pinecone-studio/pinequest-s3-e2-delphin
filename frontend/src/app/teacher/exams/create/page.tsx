@@ -3,16 +3,23 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { CircleAlert } from "lucide-react"
 import { AIQuestionGeneratorDialog } from "@/components/teacher/ai-question-generator-dialog"
 import { ExamBuilderQuestionList } from "@/components/teacher/exam-builder-question-list"
 import { ExamBuilderSummaryCard } from "@/components/teacher/exam-builder-summary-card"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
 import { useExamBuilder } from "@/hooks/use-exam-builder"
+import { toast } from "@/hooks/use-toast"
+import { buildCreateExamPayload, createExam } from "@/lib/exams-api"
 
 export default function CreateExamPage() {
   const router = useRouter()
+  const [submissionError, setSubmissionError] = React.useState<string | null>(null)
+  const [submitMode, setSubmitMode] = React.useState<"draft" | "scheduled" | null>(null)
   const {
     addQuestion,
     addScheduleEntry,
@@ -47,17 +54,53 @@ export default function CreateExamPage() {
     updateQuestion,
     updateScheduleEntry,
   } = useExamBuilder()
-  const handleSubmit = () => {
-    console.log({
-      title: examTitle,
-      questions,
-      duration,
-      reportReleaseMode,
-      scheduleEntries,
-    })
-    alert('Exam created successfully! Students will be notified.')
-    router.push('/teacher/exams')
+
+  const isSubmitting = submitMode !== null
+  const canSaveDraft = examTitle.trim().length > 0 && !isSubmitting
+  const canScheduleExam =
+    examTitle.trim().length > 0 &&
+    questions.length > 0 &&
+    scheduleEntries.length > 0 &&
+    !isSubmitting
+
+  const handleSubmit = async (status: "draft" | "scheduled") => {
+    setSubmissionError(null)
+    setSubmitMode(status)
+
+    try {
+      const payload = buildCreateExamPayload({
+        duration,
+        examTitle,
+        questions,
+        reportReleaseMode,
+        scheduleEntries,
+        status,
+      })
+
+      await createExam(payload)
+
+      toast({
+        title: status === "draft" ? "Draft saved" : "Exam created",
+        description:
+          status === "draft"
+            ? "Your exam draft was saved to the backend."
+            : "Your scheduled exam was created successfully.",
+      })
+      router.push("/teacher/exams")
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong while saving the exam."
+      setSubmissionError(message)
+      toast({
+        title: "Could not save exam",
+        description: message,
+        variant: "destructive",
+      })
+    } finally {
+      setSubmitMode(null)
+    }
   }
+
   const handleAiSourceDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     setIsAiSourceDragging(true)
@@ -109,6 +152,13 @@ export default function CreateExamPage() {
           />
         </CardContent>
       </Card>
+      {submissionError ? (
+        <Alert variant="destructive">
+          <CircleAlert />
+          <AlertTitle>Save failed</AlertTitle>
+          <AlertDescription>{submissionError}</AlertDescription>
+        </Alert>
+      ) : null}
       <ExamBuilderQuestionList
         onAddQuestion={addQuestion}
         onRemoveQuestion={removeQuestion}
@@ -130,13 +180,19 @@ export default function CreateExamPage() {
         totalPoints={totalPoints}
       />
       <div className="flex justify-end gap-3">
-        <Button variant="outline" onClick={() => router.push('/teacher/exams')}>
+        <Button
+          variant="outline"
+          onClick={() => void handleSubmit("draft")}
+          disabled={!canSaveDraft}
+        >
+          {submitMode === "draft" ? <Spinner className="mr-2" /> : null}
           Save as Draft
         </Button>
         <Button 
-          onClick={handleSubmit}
-          disabled={!examTitle || questions.length === 0 || scheduleEntries.length === 0}
+          onClick={() => void handleSubmit("scheduled")}
+          disabled={!canScheduleExam}
         >
+          {submitMode === "scheduled" ? <Spinner className="mr-2" /> : null}
           Create & Notify Students
         </Button>
       </div>

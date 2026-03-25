@@ -39,9 +39,9 @@ jobs:
       )
     runs-on: ubuntu-latest
     outputs:
-      configured: ${{ steps.vercel.outputs.configured }}
-      vercel_env: ${{ env.VERCEL_ENV }}
-      deployment_url: ${{ steps.deploy_production.outputs.deployment_url || steps.deploy_preview.outputs.deployment_url }}
+      configured: ${{ steps.finalize.outputs.configured }}
+      vercel_env: ${{ steps.finalize.outputs.vercel_env }}
+      deployment_url: ${{ steps.finalize.outputs.deployment_url }}
     permissions:
       contents: read
       issues: write
@@ -50,6 +50,8 @@ jobs:
       run:
         working-directory: frontend
     env:
+      # This workflow is designed to deploy via the Vercel CLI and secrets.
+      # It does not require Git integration in the Vercel project.
       VERCEL_ENV: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' && 'production' || 'preview' }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -94,7 +96,7 @@ jobs:
         id: deploy_preview
         if: steps.vercel.outputs.configured == 'true' && env.VERCEL_ENV == 'preview'
         run: |
-          deployment_url=$(npx vercel deploy --prebuilt --token="$VERCEL_TOKEN" | tail -n 1)
+          deployment_url=$(npx vercel deploy --prebuilt --archive=tgz --token="$VERCEL_TOKEN" | tail -n 1)
           echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
           echo "Preview URL: $deployment_url"
 
@@ -140,9 +142,18 @@ jobs:
         id: deploy_production
         if: steps.vercel.outputs.configured == 'true' && env.VERCEL_ENV == 'production'
         run: |
-          deployment_url=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" | tail -n 1)
+          deployment_url=$(npx vercel deploy --prebuilt --archive=tgz --prod --token="$VERCEL_TOKEN" | tail -n 1)
           echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
           echo "Production URL: $deployment_url"
+
+      - name: Finalize deployment outputs
+        id: finalize
+        run: |
+          deployment_url="${{ steps.deploy_production.outputs.deployment_url || steps.deploy_preview.outputs.deployment_url }}"
+          echo "configured=${{ steps.vercel.outputs.configured }}" >> "$GITHUB_OUTPUT"
+          echo "vercel_env=$VERCEL_ENV" >> "$GITHUB_OUTPUT"
+          echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
+          echo "Resolved deployment URL: $deployment_url"
 
   record-production-deployment:
     name: Record production deployment in GitHub

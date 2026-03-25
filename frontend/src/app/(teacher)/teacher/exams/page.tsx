@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { exams } from "@/lib/mock-data";
+import { exams } from "@/lib/high-school-data";
 
 export default function ExamsPage() {
   const draftExams = exams.filter(e => e.status === "draft");
@@ -16,7 +16,7 @@ export default function ExamsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Exams</h1>
-          <p className="text-muted-foreground">Create and manage your exams</p>
+          <p className="text-muted-foreground">Create and manage high school assessments</p>
         </div>
         <Link href="/teacher/exams/create">
           <Button>Create New Exam</Button>

@@ -20,7 +20,7 @@ export default function StudentTestViewerPage({ params }: { params: Promise<{ te
       <div className="text-center py-12">
         <h1 className="text-2xl font-bold">Test not found</h1>
         <Link href="/student/question-bank">
-          <Button className="mt-4">Back to Question Bank</Button>
+          <Button className="mt-4">Back to Practice Materials</Button>
         </Link>
       </div>
     );

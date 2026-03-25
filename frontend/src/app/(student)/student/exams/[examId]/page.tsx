@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useStudentSession } from "@/hooks/use-student-session";
-import { exams } from "@/lib/mock-data";
+import { exams } from "@/lib/high-school-data";
 
 function formatCountdown(seconds: number) {
   const hours = Math.floor(seconds / 3600);

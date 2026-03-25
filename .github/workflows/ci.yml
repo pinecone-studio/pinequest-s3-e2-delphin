@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Enforce 180-line source limit
+        run: npm run check:lines
+
       - name: Lint
         run: npm run lint
 

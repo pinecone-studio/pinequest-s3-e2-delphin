@@ -21,15 +21,14 @@ export default function StudentQuestionBankPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Question Bank</h1>
-        <p className="text-muted-foreground">Access mock tests uploaded by your teachers</p>
+        <h1 className="text-2xl font-bold">Practice Materials</h1>
+        <p className="text-muted-foreground">Browse study packs, revision sets, and practice papers from your teachers</p>
       </div>
 
-      {/* Teacher Selection */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Select Teacher</CardTitle>
-          <CardDescription>Choose a teacher to view their mock tests</CardDescription>
+          <CardDescription>Choose a teacher to view their practice materials</CardDescription>
         </CardHeader>
         <CardContent>
           <Select value={selectedTeacher} onValueChange={setSelectedTeacher}>
@@ -47,11 +46,10 @@ export default function StudentQuestionBankPage() {
         </CardContent>
       </Card>
 
-      {/* Mock Tests */}
       {filteredTests.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            No mock tests available from this teacher yet
+            No practice materials available from this teacher yet
           </CardContent>
         </Card>
       ) : (

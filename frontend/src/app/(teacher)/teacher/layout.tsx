@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { href: "/teacher/dashboard", label: "Dashboard" },
   { href: "/teacher/classes", label: "Classes" },
-  { href: "/teacher/question-bank", label: "Question Bank" },
+  { href: "/teacher/question-bank", label: "Practice Materials" },
   { href: "/teacher/exams", label: "Exams" },
 ];
 

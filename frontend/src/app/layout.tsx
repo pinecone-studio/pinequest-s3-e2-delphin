@@ -15,7 +15,7 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: "PineQuest LMS",
-  description: "Hackathon-ready LMS scaffold for reviewer and candidate flows.",
+  description: "Teacher and student exam demo flows for PineQuest LMS.",
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
       lang="en"
       className={`${manrope.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full font-sans antialiased">{children}</body>
     </html>
   );
 }

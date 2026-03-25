@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useStudentSession } from "@/hooks/use-student-session";
 import { getCurrentUtcWeekDates } from "@/lib/date-utils";
-import { exams, examResults } from "@/lib/mock-data";
+import { exams, examResults } from "@/lib/high-school-data";
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const timeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];

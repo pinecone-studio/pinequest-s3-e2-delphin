@@ -7,7 +7,8 @@ import { TeacherQuestionAnalysisCard } from "@/components/teacher/teacher-questi
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getDisplayStudentName } from "@/lib/demo-personas";
-import { exams, getClassById, getExamResults, getQuestionStats, getStudentById } from "@/lib/mock-data";
+import { getClassById, getStudentById } from "@/lib/mock-data";
+import { exams, getExamResults, getQuestionStats } from "@/lib/high-school-data";
 
 export default function ExamStatsPage({ 
   params 

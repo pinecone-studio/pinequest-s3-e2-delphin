@@ -7,7 +7,7 @@ import {
 } from "@/components/student/student-exams-sections";
 import { StudentCompletedExamsSection } from "@/components/student/student-completed-exams-section";
 import { useStudentSession } from "@/hooks/use-student-session";
-import { exams, examResults } from "@/lib/mock-data";
+import { exams, examResults } from "@/lib/high-school-data";
 
 function formatCountdown(seconds: number) {
   const hours = Math.floor(seconds / 3600);

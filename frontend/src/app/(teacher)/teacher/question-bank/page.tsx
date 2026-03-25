@@ -60,24 +60,24 @@ export default function QuestionBankPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Question Bank</h1>
-          <p className="text-muted-foreground">Upload and manage mock tests for {teacherName || "your"} students</p>
+          <h1 className="text-2xl font-bold">Practice Materials</h1>
+          <p className="text-muted-foreground">Upload and manage study packs for {teacherName || "your"} students</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button>Upload New Test</Button>
+            <Button>Upload Material</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Upload Mock Test</DialogTitle>
-              <DialogDescription>Add a new mock test file for your students to practice</DialogDescription>
+              <DialogTitle>Upload Practice Material</DialogTitle>
+              <DialogDescription>Add a new revision set, worksheet, or practice paper for your students</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="testName">Test Name</Label>
+                <Label htmlFor="testName">Material Title</Label>
                 <Input
                   id="testName"
-                  placeholder="e.g., HTML Basics Test, Semester 1 Mock"
+                  placeholder="e.g., Algebra Review Set, Reading Skills Pack"
                   value={newTestName}
                   onChange={(e) => setNewTestName(e.target.value)}
                 />
@@ -131,8 +131,8 @@ export default function QuestionBankPage() {
       {tests.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">No mock tests uploaded yet</p>
-            <Button className="mt-4" onClick={() => setIsDialogOpen(true)}>Upload Your First Test</Button>
+            <p className="text-muted-foreground">No practice materials uploaded yet</p>
+            <Button className="mt-4" onClick={() => setIsDialogOpen(true)}>Upload Your First Material</Button>
           </CardContent>
         </Card>
       ) : (

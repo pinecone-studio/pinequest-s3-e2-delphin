@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getDisplayStudentEmail, getDisplayStudentName } from "@/lib/demo-personas";
-import { getClassById, getExamsForClass, getExamResults } from "@/lib/mock-data";
+import { getClassById } from "@/lib/mock-data";
+import { getExamsForClass, getExamResults } from "@/lib/high-school-data";
 
 export default function ClassDetailPage({ params }: { params: Promise<{ classId: string }> }) {
   const { classId } = use(params);

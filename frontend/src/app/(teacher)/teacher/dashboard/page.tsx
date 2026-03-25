@@ -4,13 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useTeacherSession } from "@/hooks/use-teacher-session";
 import { getCurrentUtcWeekDates } from "@/lib/date-utils";
-import { classes, exams, classSchedule } from "@/lib/mock-data";
+import { classes } from "@/lib/mock-data";
+import { exams, classSchedule } from "@/lib/high-school-data";
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const timeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];
 
 export default function TeacherDashboard() {
-  const { teacherName, teacherSubject } = useTeacherSession();
+  const { teacherName } = useTeacherSession();
   const weekDates = getCurrentUtcWeekDates(daysOfWeek);
   const upcomingExams = exams.filter(e => e.status === "scheduled");
   const completedExams = exams.filter(e => e.status === "completed");
@@ -91,9 +92,7 @@ export default function TeacherDashboard() {
                         {classItem && (
                           <div className="p-1 bg-muted rounded text-xs">
                             <div className="font-medium">{classItem.classId}</div>
-                            <div className="text-muted-foreground">
-                              {teacherSubject || classItem.subject}
-                            </div>
+                            <div className="text-muted-foreground">{classItem.subject}</div>
                           </div>
                         )}
                         {examItem && (

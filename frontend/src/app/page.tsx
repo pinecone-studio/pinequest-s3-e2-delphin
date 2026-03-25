@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/brand-logo";
 import {
   Card,
   CardContent,
@@ -21,9 +22,9 @@ export default function LandingPage() {
       <div className="relative flex min-h-[calc(100vh-2rem)] items-center justify-center">
         <div className="w-full max-w-2xl">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#16324F] md:text-4xl">
-              ExamFlow LMS
-            </h1>
+            <div className="flex justify-center">
+              <BrandLogo />
+            </div>
             <p className="mt-2 text-[#35516E]">
               Learning Management System - Exam Module
             </p>

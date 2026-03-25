@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { BookOpen, ChevronLeft, ChevronRight, ClipboardList, LayoutDashboard, Users } from "lucide-react"
+import { BrandLogo } from "@/components/brand-logo"
 import { cn } from "@/lib/utils"
 import { teacher } from "@/lib/mock-data"
 
@@ -28,7 +29,7 @@ export default function TeacherLayout({
       <header className="border-b bg-background">
         <div className="container mx-auto px-4 h-14 flex items-center justify-between">
           <Link href="/teacher/dashboard" className="font-semibold">
-            ExamFlow LMS
+            <BrandLogo className="gap-2" textClassName="text-sm font-semibold text-foreground sm:text-base" />
           </Link>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">

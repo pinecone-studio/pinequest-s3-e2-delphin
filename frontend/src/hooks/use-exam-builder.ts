@@ -105,7 +105,13 @@ export function useExamBuilder() {
   }
 
   const addScheduleEntry = () => {
-    setScheduleEntries((current) => [...current, { classId: '', date: '', time: '' }])
+    setScheduleEntries((current) => {
+      if (current.some((entry) => !entry.classId && !entry.date && !entry.time)) {
+        return current
+      }
+
+      return [...current, { classId: '', date: '', time: '' }]
+    })
   }
 
   const updateScheduleEntry = (

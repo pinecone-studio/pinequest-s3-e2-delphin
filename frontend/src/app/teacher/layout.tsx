@@ -2,14 +2,16 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useState } from "react"
+import { BookOpen, ChevronLeft, ChevronRight, ClipboardList, LayoutDashboard, Users } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { teacher } from "@/lib/mock-data"
 
 const navItems = [
-  { href: "/teacher/dashboard", label: "Dashboard" },
-  { href: "/teacher/classes", label: "Classes" },
-  { href: "/teacher/question-bank", label: "Question Bank" },
-  { href: "/teacher/exams", label: "Exams" },
+  { href: "/teacher/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/teacher/classes", label: "Classes", icon: Users },
+  { href: "/teacher/question-bank", label: "Question Bank", icon: BookOpen },
+  { href: "/teacher/exams", label: "Exams", icon: ClipboardList },
 ]
 
 export default function TeacherLayout({
@@ -18,6 +20,7 @@ export default function TeacherLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -40,22 +43,43 @@ export default function TeacherLayout({
 
       <div className="flex flex-1">
         {/* Sidebar */}
-        <aside className="w-56 border-r bg-muted/30 p-4">
+        <aside
+          className={cn(
+            "border-r bg-muted/30 p-4 transition-all duration-200",
+            isSidebarCollapsed ? "w-20" : "w-56",
+          )}
+        >
+          <div className={cn("mb-4 flex", isSidebarCollapsed ? "justify-center" : "justify-end")}>
+            <button
+              type="button"
+              onClick={() => setIsSidebarCollapsed((current) => !current)}
+              className="rounded-md border p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {isSidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            </button>
+          </div>
           <nav className="flex flex-col gap-1">
-            {navItems.map((item) => (
+            {navItems.map((item) => {
+              const Icon = item.icon
+              return (
               <Link
                 key={item.href}
                 href={item.href}
+                title={isSidebarCollapsed ? item.label : undefined}
                 className={cn(
-                  "px-3 py-2 rounded-md text-sm transition-colors",
+                  "flex items-center rounded-md px-3 py-2 text-sm transition-colors",
+                  isSidebarCollapsed ? "justify-center" : "gap-3",
                   pathname === item.href || pathname.startsWith(item.href + "/")
                     ? "bg-primary text-primary-foreground"
                     : "hover:bg-muted"
                 )}
               >
-                {item.label}
+                <Icon className="h-4 w-4 shrink-0" />
+                {!isSidebarCollapsed ? <span>{item.label}</span> : null}
               </Link>
-            ))}
+              )
+            })}
           </nav>
         </aside>
 

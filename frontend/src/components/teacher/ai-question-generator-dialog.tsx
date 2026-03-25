@@ -12,11 +12,18 @@ export function AIQuestionGeneratorDialog({
   aiShortCount,
   aiTFCount,
   isGenerating,
+  isDragging,
   onGenerate,
+  onDragLeave,
+  onDragOver,
+  onDrop,
+  onFileSelect,
   onOpenChange,
+  onRemoveSourceFile,
   onToggleTest,
   open,
   selectedMockTests,
+  selectedSourceFiles,
   setAiMCCount,
   setAiShortCount,
   setAiTFCount,
@@ -25,21 +32,33 @@ export function AIQuestionGeneratorDialog({
   aiShortCount: number
   aiTFCount: number
   isGenerating: boolean
+  isDragging: boolean
   onGenerate: () => void
+  onDragLeave: (e: React.DragEvent) => void
+  onDragOver: (e: React.DragEvent) => void
+  onDrop: (e: React.DragEvent) => void
+  onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
   onOpenChange: (open: boolean) => void
+  onRemoveSourceFile: (fileName: string) => void
   onToggleTest: (testId: string, checked: boolean) => void
   open: boolean
   selectedMockTests: string[]
+  selectedSourceFiles: File[]
   setAiMCCount: (value: number) => void
   setAiShortCount: (value: number) => void
   setAiTFCount: (value: number) => void
 }) {
+  const hasSource =
+    selectedMockTests.length > 0 || selectedSourceFiles.length > 0
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Generate Questions with AI</DialogTitle>
-          <DialogDescription>Configure how many questions of each type to generate</DialogDescription>
+          <DialogDescription>
+            Use question bank items, freshly uploaded files, or both as source material.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
@@ -52,6 +71,58 @@ export function AIQuestionGeneratorDialog({
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Add another file as AI source</Label>
+            <div
+              className={
+                isDragging
+                  ? 'border-2 border-dashed rounded-lg p-6 text-center transition-colors border-primary bg-primary/5'
+                  : 'border-2 border-dashed rounded-lg p-6 text-center transition-colors border-muted-foreground/25'
+              }
+              onDragLeave={onDragLeave}
+              onDragOver={onDragOver}
+              onDrop={onDrop}
+            >
+              <p className="text-sm text-muted-foreground mb-2">
+                Drag and drop PDF or Word files here, or choose files manually
+              </p>
+              <label htmlFor="ai-source-files">
+                <Button variant="outline" asChild>
+                  <span>Add Source Files</span>
+                </Button>
+              </label>
+              <input
+                id="ai-source-files"
+                type="file"
+                accept=".pdf,.doc,.docx"
+                className="hidden"
+                multiple
+                onChange={onFileSelect}
+              />
+            </div>
+            {selectedSourceFiles.length > 0 ? (
+              <div className="space-y-2 rounded-lg border p-3">
+                {selectedSourceFiles.map((file) => (
+                  <div key={`${file.name}-${file.size}`} className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-sm font-medium">{file.name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {(file.size / 1024).toFixed(1)} KB
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onRemoveSourceFile(file.name)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -68,7 +139,7 @@ export function AIQuestionGeneratorDialog({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={onGenerate} disabled={isGenerating}>
+          <Button onClick={onGenerate} disabled={isGenerating || !hasSource}>
             {isGenerating ? 'Generating...' : 'Generate Questions'}
           </Button>
         </DialogFooter>

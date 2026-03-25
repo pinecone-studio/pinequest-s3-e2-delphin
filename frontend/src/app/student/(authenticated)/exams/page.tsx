@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   StudentCompletedExamsSection,
   StudentTodayExamsSection,
@@ -16,19 +16,30 @@ function getSecondsUntil(date: string, time: string) {
   return diff > 0 ? diff : 0
 }
 
+function getLocalDateString() {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, "0")
+  const day = String(now.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
+}
+
 export default function StudentExamsPage() {
   const { studentClass, studentId } = useStudentSession()
   const [countdowns, setCountdowns] = useState<Record<string, number>>({})
 
-  const myExams = exams.filter(e => 
+  const myExams = useMemo(() => exams.filter(e =>
     e.scheduledClasses.some(sc => sc.classId === studentClass)
+  ), [studentClass])
+
+  const scheduledExams = useMemo(
+    () => myExams.filter(e => e.status === 'scheduled'),
+    [myExams],
   )
-  
-  const scheduledExams = myExams.filter(e => e.status === 'scheduled')
-  const today = new Date().toISOString().split('T')[0]
-  const todaysExams = scheduledExams.filter(e => 
+  const today = getLocalDateString()
+  const todaysExams = useMemo(() => scheduledExams.filter(e =>
     e.scheduledClasses.some(sc => sc.classId === studentClass && sc.date === today)
-  )
+  ), [scheduledExams, studentClass, today])
 
   useEffect(() => {
     const updateCountdowns = () => {
@@ -39,7 +50,19 @@ export default function StudentExamsPage() {
           newCountdowns[exam.id] = getSecondsUntil(schedule.date, schedule.time)
         }
       })
-      setCountdowns(newCountdowns)
+      setCountdowns(current => {
+        const currentKeys = Object.keys(current)
+        const nextKeys = Object.keys(newCountdowns)
+
+        if (
+          currentKeys.length === nextKeys.length &&
+          nextKeys.every(key => current[key] === newCountdowns[key])
+        ) {
+          return current
+        }
+
+        return newCountdowns
+      })
     }
 
     updateCountdowns()

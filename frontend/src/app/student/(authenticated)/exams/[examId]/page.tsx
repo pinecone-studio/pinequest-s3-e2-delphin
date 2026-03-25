@@ -5,7 +5,6 @@ import Link from "next/link"
 import { ExamCountdownDisplay } from "@/components/student/exam-countdown-display"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { exams } from "@/lib/mock-data"
 import { useStudentSession } from "@/hooks/use-student-session"
 
@@ -124,17 +123,6 @@ export default function ExamDetailPage({ params }: { params: Promise<{ examId: s
             <div>
               <div className="text-sm text-muted-foreground">Questions</div>
               <div className="font-medium">{exam.questions.length}</div>
-            </div>
-          </div>
-
-          <div>
-            <div className="text-sm text-muted-foreground mb-2">Question Types</div>
-            <div className="flex flex-wrap gap-2">
-              {Array.from(new Set(exam.questions.map(q => q.type))).map(type => (
-                <Badge key={type} variant="outline">
-                  {type}: {exam.questions.filter(q => q.type === type).length}
-                </Badge>
-              ))}
             </div>
           </div>
         </CardContent>

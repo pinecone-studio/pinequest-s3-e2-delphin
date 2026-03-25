@@ -1,8 +1,10 @@
 'use client'
 
+import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { exams, type ExamResult } from '@/lib/mock-data'
+import { exams, isExamReportAvailable, type ExamResult } from '@/lib/mock-data'
 
 export function StudentRecentResultsCard({
   results,
@@ -26,6 +28,7 @@ export function StudentRecentResultsCard({
             const percentage = Math.round((result.score / result.totalPoints) * 100)
             const badgeVariant =
               percentage >= 70 ? 'default' : percentage >= 50 ? 'secondary' : 'destructive'
+            const isReportAvailable = isExamReportAvailable(result.examId)
 
             return (
               <div key={`${result.examId}-${result.studentId}`} className="flex items-center justify-between p-3 border rounded-lg">
@@ -39,6 +42,13 @@ export function StudentRecentResultsCard({
                   <Badge variant={badgeVariant}>{percentage}%</Badge>
                   <div className="text-sm text-muted-foreground">
                     {result.score}/{result.totalPoints}
+                  </div>
+                  <div className="mt-2">
+                    <Link href={`/student/reports/${result.examId}`}>
+                      <Button size="sm" variant="outline">
+                        {isReportAvailable ? 'View Report' : 'Report Locked'}
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>

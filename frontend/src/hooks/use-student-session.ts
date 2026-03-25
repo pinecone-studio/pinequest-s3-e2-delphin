@@ -14,16 +14,29 @@ const EMPTY_SESSION: StudentSession = {
   studentName: '',
 }
 
+let cachedSession: StudentSession = EMPTY_SESSION
+
 function readStudentSession(): StudentSession {
   if (typeof window === 'undefined') {
     return EMPTY_SESSION
   }
 
-  return {
+  const nextSession = {
     studentId: localStorage.getItem('studentId') || '',
     studentClass: localStorage.getItem('studentClass') || '',
     studentName: localStorage.getItem('studentName') || '',
   }
+
+  if (
+    cachedSession.studentId === nextSession.studentId &&
+    cachedSession.studentClass === nextSession.studentClass &&
+    cachedSession.studentName === nextSession.studentName
+  ) {
+    return cachedSession
+  }
+
+  cachedSession = nextSession
+  return cachedSession
 }
 
 export function useStudentSession() {

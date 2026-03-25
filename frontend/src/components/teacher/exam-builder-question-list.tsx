@@ -28,7 +28,15 @@ export function ExamBuilderQuestionList({
         <Card key={question.id}>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <Badge variant="outline">{question.type}</Badge>
+              <div className="flex items-center gap-3">
+                <div>
+                  <div className="text-sm font-semibold">Question {index + 1}</div>
+                  <div className="text-xs text-muted-foreground capitalize">
+                    {question.type.replace('-', ' ')}
+                  </div>
+                </div>
+                <Badge variant="outline">{question.type}</Badge>
+              </div>
               <div className="flex items-center gap-2">
                 <Input type="number" value={question.points} onChange={(e) => onUpdateQuestion(question.id, { points: parseInt(e.target.value) || 0 })} className="w-20 h-8" />
                 <span className="text-sm text-muted-foreground">points</span>
@@ -37,7 +45,7 @@ export function ExamBuilderQuestionList({
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Textarea placeholder={`Question ${index + 1}`} value={question.question} onChange={(e) => onUpdateQuestion(question.id, { question: e.target.value })} className="resize-none" />
+            <Textarea placeholder={`Write question ${index + 1}`} value={question.question} onChange={(e) => onUpdateQuestion(question.id, { question: e.target.value })} className="resize-none" />
             {question.type === 'multiple-choice' && question.options ? (
               <div className="space-y-2">
                 {question.options.map((option, optionIndex) => (

@@ -37,6 +37,7 @@ export interface Exam {
   title: string
   questions: ExamQuestion[]
   duration: number // in minutes
+  reportReleaseMode: 'after-all-classes-complete' | 'immediately'
   scheduledClasses: {
     classId: string
     date: string
@@ -109,6 +110,7 @@ export const exams: Exam[] = [
       { id: 'q5', type: 'essay', question: 'Explain the difference between block and inline elements.', points: 15 },
     ],
     duration: 45,
+    reportReleaseMode: 'after-all-classes-complete',
     scheduledClasses: [
       { classId: '10A', date: '2026-03-20', time: '09:00' },
       { classId: '10B', date: '2026-03-20', time: '14:00' },
@@ -125,6 +127,7 @@ export const exams: Exam[] = [
       { id: 'q8', type: 'short-answer', question: 'What property is used to change text color?', correctAnswer: 'color', points: 10 },
     ],
     duration: 30,
+    reportReleaseMode: 'after-all-classes-complete',
     scheduledClasses: [
       { classId: '10A', date: '2026-03-25', time: '10:00' },
     ],
@@ -139,6 +142,7 @@ export const exams: Exam[] = [
       { id: 'q10', type: 'true-false', question: 'JavaScript is case-sensitive.', correctAnswer: 'True', points: 5 },
     ],
     duration: 60,
+    reportReleaseMode: 'after-all-classes-complete',
     scheduledClasses: [
       { classId: '10A', date: '2026-03-24', time: '11:00' },
       { classId: '10B', date: '2026-03-24', time: '13:00' },
@@ -221,4 +225,41 @@ export function getQuestionStats(examId: string) {
       failRate: totalCount > 0 ? ((totalCount - correctCount) / totalCount) * 100 : 0,
     }
   }).sort((a, b) => b.failRate - a.failRate)
+}
+
+function getScheduleEndTime(date: string, time: string, duration: number) {
+  const start = new Date(`${date}T${time}:00`)
+  return new Date(start.getTime() + duration * 60 * 1000)
+}
+
+export function getExamReportReleaseDate(exam: Exam) {
+  if (exam.reportReleaseMode === 'immediately') {
+    return null
+  }
+
+  return exam.scheduledClasses.reduce<Date | null>((latest, schedule) => {
+    const endTime = getScheduleEndTime(schedule.date, schedule.time, exam.duration)
+    if (!latest || endTime > latest) {
+      return endTime
+    }
+    return latest
+  }, null)
+}
+
+export function isExamReportAvailable(examId: string) {
+  const exam = exams.find((entry) => entry.id === examId)
+  if (!exam) {
+    return false
+  }
+
+  if (exam.reportReleaseMode === 'immediately') {
+    return true
+  }
+
+  const releaseDate = getExamReportReleaseDate(exam)
+  if (!releaseDate) {
+    return false
+  }
+
+  return new Date() >= releaseDate
 }

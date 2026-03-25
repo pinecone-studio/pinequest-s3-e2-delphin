@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { AIQuestionGeneratorDialog } from "@/components/teacher/ai-question-generator-dialog"
@@ -18,20 +19,27 @@ export default function CreateExamPage() {
     aiMCCount,
     aiShortCount,
     aiTFCount,
+    addAiSourceFiles,
     duration,
     examTitle,
     generateAIQuestions,
     isGenerating,
+    isAiSourceDragging,
     questions,
+    reportReleaseMode,
     removeQuestion,
+    removeAiSourceFile,
     removeScheduleEntry,
     scheduleEntries,
+    selectedAiSourceFiles,
     selectedMockTests,
     setAiMCCount,
     setAiShortCount,
     setAiTFCount,
     setDuration,
     setExamTitle,
+    setIsAiSourceDragging,
+    setReportReleaseMode,
     setSelectedMockTests,
     setShowAIDialog,
     showAIDialog,
@@ -46,10 +54,37 @@ export default function CreateExamPage() {
       title: examTitle,
       questions,
       duration,
+      reportReleaseMode,
       scheduleEntries,
     })
     alert('Exam created successfully! Students will be notified.')
     router.push('/teacher/exams')
+  }
+
+  const handleAiSourceDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsAiSourceDragging(true)
+  }
+
+  const handleAiSourceDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsAiSourceDragging(false)
+  }
+
+  const handleAiSourceDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsAiSourceDragging(false)
+    addAiSourceFiles(e.dataTransfer.files)
+  }
+
+  const handleAiSourceSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files) {
+      return
+    }
+
+    addAiSourceFiles(files)
+    e.target.value = ""
   }
 
   const totalPoints = questions.reduce((sum, q) => sum + q.points, 0)
@@ -99,9 +134,11 @@ export default function CreateExamPage() {
         onAddScheduleEntry={addScheduleEntry}
         onDurationChange={setDuration}
         onRemoveScheduleEntry={removeScheduleEntry}
+        onReportReleaseModeChange={setReportReleaseMode}
         onScheduleEntryChange={updateScheduleEntry}
         questionCounts={questionCounts}
         questionTotal={questions.length}
+        reportReleaseMode={reportReleaseMode}
         scheduleEntries={scheduleEntries}
         totalPoints={totalPoints}
       />
@@ -125,7 +162,13 @@ export default function CreateExamPage() {
         aiTFCount={aiTFCount}
         isGenerating={isGenerating}
         onGenerate={generateAIQuestions}
+        isDragging={isAiSourceDragging}
         onOpenChange={setShowAIDialog}
+        onDragLeave={handleAiSourceDragLeave}
+        onDragOver={handleAiSourceDragOver}
+        onDrop={handleAiSourceDrop}
+        onFileSelect={handleAiSourceSelect}
+        onRemoveSourceFile={removeAiSourceFile}
         onToggleTest={(testId, checked) =>
           setSelectedMockTests((current) =>
             checked
@@ -134,6 +177,7 @@ export default function CreateExamPage() {
           )
         }
         open={showAIDialog}
+        selectedSourceFiles={selectedAiSourceFiles}
         selectedMockTests={selectedMockTests}
         setAiMCCount={setAiMCCount}
         setAiShortCount={setAiShortCount}

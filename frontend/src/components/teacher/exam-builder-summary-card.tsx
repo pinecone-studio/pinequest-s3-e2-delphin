@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { classes } from '@/lib/mock-data'
+import { classes, type Exam } from '@/lib/mock-data'
 import type { ScheduleEntry } from '@/components/teacher/exam-builder-types'
 
 type QuestionCounts = Record<'multiple-choice' | 'true-false' | 'short-answer' | 'essay', number>
@@ -15,9 +15,11 @@ export function ExamBuilderSummaryCard({
   onAddScheduleEntry,
   onDurationChange,
   onRemoveScheduleEntry,
+  onReportReleaseModeChange,
   onScheduleEntryChange,
   questionCounts,
   questionTotal,
+  reportReleaseMode,
   scheduleEntries,
   totalPoints,
 }: {
@@ -25,9 +27,11 @@ export function ExamBuilderSummaryCard({
   onAddScheduleEntry: () => void
   onDurationChange: (value: number) => void
   onRemoveScheduleEntry: (index: number) => void
+  onReportReleaseModeChange: (value: Exam['reportReleaseMode']) => void
   onScheduleEntryChange: (index: number, field: keyof ScheduleEntry, value: string) => void
   questionCounts: QuestionCounts
   questionTotal: number
+  reportReleaseMode: Exam['reportReleaseMode']
   scheduleEntries: ScheduleEntry[]
   totalPoints: number
 }) {
@@ -47,6 +51,32 @@ export function ExamBuilderSummaryCard({
         <div className="flex items-center gap-4">
           <Label>Duration (minutes)</Label>
           <Input type="number" value={duration} onChange={(e) => onDurationChange(parseInt(e.target.value) || 60)} className="w-24" />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Student Exam Report Availability</Label>
+          <Select
+            value={reportReleaseMode}
+            onValueChange={(value) =>
+              onReportReleaseModeChange(value as Exam['reportReleaseMode'])
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Choose report release timing" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="after-all-classes-complete">
+                After all scheduled classes finish
+              </SelectItem>
+              <SelectItem value="immediately">
+                Immediately after each student submits
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-sm text-muted-foreground">
+            Students will still see their score right away. This controls when they can review
+            correct and incorrect answers.
+          </p>
         </div>
 
         <div className="pt-4 border-t">

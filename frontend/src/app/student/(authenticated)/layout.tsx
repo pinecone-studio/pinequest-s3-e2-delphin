@@ -10,9 +10,9 @@ import { notifyStudentSessionChange, useStudentSession } from "@/hooks/use-stude
 import { cn } from "@/lib/utils"
 
 const navItems = [
-  { href: "/student/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/student/question-bank", label: "Question Bank", icon: BookOpen },
-  { href: "/student/exams", label: "Exams", icon: ClipboardList },
+  { href: "/student/dashboard", label: "Хянах Самбар", icon: LayoutDashboard },
+  { href: "/student/question-bank", label: "Асуултын Сан", icon: BookOpen },
+  { href: "/student/exams", label: "Шалгалтууд", icon: ClipboardList },
 ]
 
 export default function StudentLayout({

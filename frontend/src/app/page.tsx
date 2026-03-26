@@ -56,7 +56,7 @@ export default function LandingPage() {
                     I am a Student
                   </CardTitle>
                   <CardDescription className="text-muted-foreground">
-                    Take exams, view mock tests, and check your exam schedule
+                    Шалгалт өгч, demo шалгалтууд үзэж, хуваариа шалгана
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

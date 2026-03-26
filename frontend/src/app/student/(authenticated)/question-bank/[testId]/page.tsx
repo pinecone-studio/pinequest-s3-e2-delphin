@@ -15,9 +15,9 @@ export default function StudentTestViewerPage({ params }: { params: Promise<{ te
   if (!test) {
     return (
       <div className="text-center py-12">
-        <h1 className="text-2xl font-bold">Test not found</h1>
+        <h1 className="text-2xl font-bold">Шалгалт олдсонгүй</h1>
         <Link href="/student/question-bank">
-          <Button className="mt-4">Back to Question Bank</Button>
+          <Button className="mt-4">Асуултын Сан руу Буцах</Button>
         </Link>
       </div>
     )
@@ -25,7 +25,7 @@ export default function StudentTestViewerPage({ params }: { params: Promise<{ te
 
   const handleDownload = () => {
     // In real app, this would download the actual file
-    alert(`Downloading ${test.fileName}...`)
+    alert(`${test.fileName} файлыг татаж байна...`)
   }
 
   const handlePrint = () => {
@@ -36,7 +36,7 @@ export default function StudentTestViewerPage({ params }: { params: Promise<{ te
     <div>
       <div className="mb-3">
         <Link href="/student/question-bank" className="text-sm text-muted-foreground hover:underline">
-          &larr; Back
+          &larr; Буцах
         </Link>
       </div>
       <StudentTestViewer

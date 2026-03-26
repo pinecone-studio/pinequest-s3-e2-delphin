@@ -35,31 +35,31 @@ export function QuestionBankUploadDialog({
 }) {
   return (
     <Dialog open={isDialogOpen} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild><Button>Upload New Test</Button></DialogTrigger>
+      <DialogTrigger asChild><Button>Шинэ Шалгалт Оруулах</Button></DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Upload Mock Test</DialogTitle>
-          <DialogDescription>Add a new mock test file for your students to practice</DialogDescription>
+          <DialogTitle>Demo Шалгалт Оруулах</DialogTitle>
+          <DialogDescription>Сурагчдад дасгал болгох demo шалгалтын файл нэмнэ</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="testName">Test Name</Label>
-            <Input id="testName" placeholder="e.g., HTML Basics Test, Semester 1 Mock" value={newTestName} onChange={(e) => setNewTestName(e.target.value)} />
+            <Label htmlFor="testName">Шалгалтын Нэр</Label>
+            <Input id="testName" placeholder="ж: HTML Суурь Ойлголтын Тест" value={newTestName} onChange={(e) => setNewTestName(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label>Test File (PDF or Word)</Label>
+            <Label>Шалгалтын Файл (PDF эсвэл Word)</Label>
             <div className={isDragging ? 'border-2 border-dashed rounded-lg p-8 text-center transition-colors border-primary bg-primary/5' : 'border-2 border-dashed rounded-lg p-8 text-center transition-colors border-muted-foreground/25'} onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
               {selectedFile ? (
                 <div>
                   <p className="font-medium">{selectedFile.name}</p>
                   <p className="text-sm text-muted-foreground">{(selectedFile.size / 1024).toFixed(1)} KB</p>
-                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => setSelectedFile(null)}>Remove</Button>
+                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => setSelectedFile(null)}>Устгах</Button>
                 </div>
               ) : (
                 <div>
-                  <p className="text-muted-foreground mb-2">Drag and drop your file here, or</p>
+                  <p className="text-muted-foreground mb-2">Файлаа энд чирж оруулах эсвэл</p>
                   <label htmlFor="fileInput">
-                    <Button variant="outline" asChild><span>Choose File</span></Button>
+                    <Button variant="outline" asChild><span>Файл Сонгох</span></Button>
                   </label>
                   <input id="fileInput" type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={onFileSelect} />
                 </div>
@@ -68,8 +68,8 @@ export function QuestionBankUploadDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={onSubmit} disabled={!newTestName || !selectedFile}>Upload</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Болих</Button>
+          <Button onClick={onSubmit} disabled={!newTestName || !selectedFile}>Оруулах</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

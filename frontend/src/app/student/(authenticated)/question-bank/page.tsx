@@ -26,20 +26,20 @@ export default function StudentQuestionBankPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Question Bank</h1>
-        <p className="text-muted-foreground">Access mock tests uploaded by your teachers</p>
+        <h1 className="text-2xl font-bold">Асуултын Сан</h1>
+        <p className="text-muted-foreground">Багшийн байршуулсан demo шалгалтуудыг эндээс үзнэ</p>
       </div>
 
       {/* Teacher Selection */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Select Teacher</CardTitle>
-          <CardDescription>Choose a teacher to view their mock tests</CardDescription>
+          <CardTitle className="text-base">Багш Сонгох</CardTitle>
+          <CardDescription>Demo шалгалтуудыг харах багшаа сонгоно уу</CardDescription>
         </CardHeader>
         <CardContent>
           <Select value={selectedTeacher} onValueChange={setSelectedTeacher}>
             <SelectTrigger className="w-full max-w-xs">
-              <SelectValue placeholder="Select a teacher" />
+              <SelectValue placeholder="Багш сонгох" />
             </SelectTrigger>
             <SelectContent>
               {teachers.map(t => (
@@ -57,7 +57,7 @@ export default function StudentQuestionBankPage() {
         filteredTests.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center text-muted-foreground">
-              No mock tests available from this teacher
+              Энэ багшид хараахан demo шалгалт алга
             </CardContent>
           </Card>
         ) : (
@@ -67,7 +67,7 @@ export default function StudentQuestionBankPage() {
                 <Card className="h-full cursor-pointer hover:border-foreground transition-colors">
                   <CardHeader>
                     <CardTitle className="text-base">{test.name}</CardTitle>
-                    <CardDescription>Uploaded on {test.uploadedAt}</CardDescription>
+                    <CardDescription>Оруулсан огноо: {test.uploadedAt}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center gap-2">
@@ -83,7 +83,7 @@ export default function StudentQuestionBankPage() {
       ) : (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            Select a teacher to view available mock tests
+            Demo шалгалтуудыг харахын тулд багшаа сонгоно уу
           </CardContent>
         </Card>
       )}

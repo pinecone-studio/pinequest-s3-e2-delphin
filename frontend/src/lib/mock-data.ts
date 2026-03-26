@@ -93,23 +93,23 @@ export const classes: Class[] = [
 
 // Mock Tests (Question Bank)
 export const mockTests: MockTest[] = [
-  { id: 'mt1', name: 'HTML Basics Test', fileName: 'html-basics.pdf', fileType: 'pdf', uploadedAt: '2026-03-10', teacherId: 'teacher1' },
-  { id: 'mt2', name: 'CSS Fundamentals', fileName: 'css-fundamentals.pdf', fileType: 'pdf', uploadedAt: '2026-03-12', teacherId: 'teacher1' },
-  { id: 'mt3', name: 'JavaScript Quiz', fileName: 'js-quiz.pdf', fileType: 'pdf', uploadedAt: '2026-03-15', teacherId: 'teacher1' },
-  { id: 'mt4', name: 'Semester 1 Mock Exam', fileName: 'semester1-mock.pdf', fileType: 'pdf', uploadedAt: '2026-03-18', teacherId: 'teacher1' },
+  { id: 'mt1', name: 'Математикийн дасгал', fileName: 'mathematics-test.pdf', fileType: 'pdf', uploadedAt: '2026-03-10', teacherId: 'teacher1' },
+  { id: 'mt2', name: 'Нийгмийн ухааны шалгалт', fileName: 'social-studies-test.pdf', fileType: 'pdf', uploadedAt: '2026-03-12', teacherId: 'teacher1' },
+  { id: 'mt3', name: 'Физикийн сорил', fileName: 'physics-quiz.pdf', fileType: 'pdf', uploadedAt: '2026-03-15', teacherId: 'teacher1' },
+  { id: 'mt4', name: 'Нэгдсэн жишиг шалгалт', fileName: 'combined-mock-exam.pdf', fileType: 'pdf', uploadedAt: '2026-03-18', teacherId: 'teacher1' },
 ]
 
 // Mock Exams
 export const exams: Exam[] = [
   {
     id: 'e1',
-    title: 'HTML Midterm Exam',
+    title: 'Математикийн дунд шалгалт',
     questions: [
-      { id: 'q1', type: 'multiple-choice', question: 'What does HTML stand for?', options: ['Hyper Text Markup Language', 'High Tech Modern Language', 'Home Tool Markup Language', 'Hyperlinks Text Mark Language'], correctAnswer: 'Hyper Text Markup Language', points: 10 },
-      { id: 'q2', type: 'true-false', question: 'HTML is a programming language.', correctAnswer: 'False', points: 5 },
-      { id: 'q3', type: 'short-answer', question: 'What tag is used to create a hyperlink?', correctAnswer: '<a>', points: 10 },
-      { id: 'q4', type: 'multiple-choice', question: 'Which tag is used for the largest heading?', options: ['<h6>', '<h1>', '<heading>', '<head>'], correctAnswer: '<h1>', points: 10 },
-      { id: 'q5', type: 'essay', question: 'Explain the difference between block and inline elements.', points: 15 },
+      { id: 'q1', type: 'multiple-choice', question: '2 + 3 × 4 = ?', options: ['20', '14', '24', '10'], correctAnswer: '14', points: 10 },
+      { id: 'q2', type: 'true-false', question: '√16 = 5.', correctAnswer: 'Худал', points: 5 },
+      { id: 'q3', type: 'short-answer', question: 'x + 5 = 12 бол x = ?', correctAnswer: '7', points: 10 },
+      { id: 'q4', type: 'multiple-choice', question: 'Тэгш өнцөгт гурвалжинд гипотенуз аль нь вэ?', options: ['Хамгийн урт тал', 'Хамгийн богино тал', 'Өндөр', 'Суурь'], correctAnswer: 'Хамгийн урт тал', points: 10 },
+      { id: 'q5', type: 'essay', question: 'Квадрат тэгшитгэлийг бодох аргуудыг тайлбарлана уу.', points: 15 },
     ],
     duration: 45,
     reportReleaseMode: 'after-all-classes-complete',
@@ -122,11 +122,11 @@ export const exams: Exam[] = [
   },
   {
     id: 'e2',
-    title: 'CSS Styling Quiz',
+    title: 'Нийгмийн ухааны сорил',
     questions: [
-      { id: 'q6', type: 'multiple-choice', question: 'What does CSS stand for?', options: ['Cascading Style Sheets', 'Creative Style System', 'Computer Style Sheets', 'Colorful Style Sheets'], correctAnswer: 'Cascading Style Sheets', points: 10 },
-      { id: 'q7', type: 'true-false', question: 'CSS can change the content of HTML elements.', correctAnswer: 'False', points: 5 },
-      { id: 'q8', type: 'short-answer', question: 'What property is used to change text color?', correctAnswer: 'color', points: 10 },
+      { id: 'q6', type: 'multiple-choice', question: 'Ардчилал гэж юу вэ?', options: ['Нэг хүний засаглал', 'Ард түмний оролцоотой засаглал', 'Цэргийн засаглал', 'Хаант засаглал'], correctAnswer: 'Ард түмний оролцоотой засаглал', points: 10 },
+      { id: 'q7', type: 'true-false', question: 'Монгол улс хаант засаглалтай.', correctAnswer: 'Худал', points: 5 },
+      { id: 'q8', type: 'short-answer', question: 'Монгол Улсын нийслэл аль хот вэ?', correctAnswer: 'Улаанбаатар', points: 10 },
     ],
     duration: 30,
     reportReleaseMode: 'after-all-classes-complete',
@@ -138,10 +138,10 @@ export const exams: Exam[] = [
   },
   {
     id: 'e3',
-    title: 'JavaScript Fundamentals',
+    title: 'Физикийн шалгалт',
     questions: [
-      { id: 'q9', type: 'multiple-choice', question: 'Which keyword declares a constant?', options: ['var', 'let', 'const', 'constant'], correctAnswer: 'const', points: 10 },
-      { id: 'q10', type: 'true-false', question: 'JavaScript is case-sensitive.', correctAnswer: 'True', points: 5 },
+      { id: 'q9', type: 'multiple-choice', question: 'Хурд = ?', options: ['Зам / хугацаа', 'Хугацаа / зам', 'Масс × хурдатгал', 'Хүч / талбай'], correctAnswer: 'Зам / хугацаа', points: 10 },
+      { id: 'q10', type: 'true-false', question: 'Хүчний нэгж нь Ньютон.', correctAnswer: 'Үнэн', points: 5 },
     ],
     duration: 60,
     reportReleaseMode: 'after-all-classes-complete',
@@ -154,7 +154,6 @@ export const exams: Exam[] = [
     status: 'scheduled',
   },
 ]
-
 // Mock Exam Results (for completed exams)
 export const examResults: ExamResult[] = [
   // 10A results for HTML Midterm

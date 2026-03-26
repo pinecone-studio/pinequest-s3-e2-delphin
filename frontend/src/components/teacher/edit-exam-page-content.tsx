@@ -1,21 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { CircleAlert, Trash2 } from "lucide-react";
+import { EditExamAlerts } from "@/components/teacher/edit-exam-alerts";
 import { EditExamAiDialog } from "@/components/teacher/edit-exam-ai-dialog";
+import { EditExamDeleteDialog } from "@/components/teacher/edit-exam-delete-dialog";
+import { EditExamHeader } from "@/components/teacher/edit-exam-header";
 import { ExamBuilderQuestionList } from "@/components/teacher/exam-builder-question-list";
 import { ExamBuilderSummaryCard } from "@/components/teacher/exam-builder-summary-card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -98,72 +88,19 @@ export function EditExamPageContent({
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <Link
-            href="/teacher/exams"
-            className="text-sm text-muted-foreground hover:underline"
-          >
-            &larr; Back to Exams
-          </Link>
-          <h1 className="text-2xl font-bold mt-2">Edit Scheduled Exam</h1>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setShowAIDialog(true)}>
-            Prepare Questions with AI
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={() => onDeleteDialogOpenChange(true)}
-            disabled={isDeleting || isLoading}
-          >
-            {isDeleting ? (
-              <Spinner className="mr-2" />
-            ) : (
-              <Trash2 className="mr-2 h-4 w-4" />
-            )}
-            Delete Exam
-          </Button>
-        </div>
-      </div>
-      <AlertDialog
-        open={isDeleteDialogOpen}
+      <EditExamHeader
+        isDeleting={isDeleting}
+        isLoading={isLoading}
+        onDeleteClick={() => onDeleteDialogOpenChange(true)}
+        onOpenAIDialog={() => setShowAIDialog(true)}
+      />
+      <EditExamDeleteDialog
+        isDeleting={isDeleting}
+        onConfirm={onDelete}
         onOpenChange={onDeleteDialogOpenChange}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>🗑️ Шалгалтыг устгах уу?</AlertDialogTitle>
-            <AlertDialogDescription>
-              ⚠️ Та энэ шалгалтыг устгахдаа итгэлтэй байна уу? Энэ үйлдлийг
-              буцаах боломжгүй.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Үгүй</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-white hover:bg-destructive/90"
-              onClick={onDelete}
-              disabled={isDeleting}
-            >
-              Тийм
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      {loadError ? (
-        <Alert variant="destructive">
-          <CircleAlert />
-          <AlertTitle>Could not load exam</AlertTitle>
-          <AlertDescription>{loadError}</AlertDescription>
-        </Alert>
-      ) : null}
-      {submissionError ? (
-        <Alert variant="destructive">
-          <CircleAlert />
-          <AlertTitle>Save failed</AlertTitle>
-          <AlertDescription>{submissionError}</AlertDescription>
-        </Alert>
-      ) : null}
+        open={isDeleteDialogOpen}
+      />
+      <EditExamAlerts loadError={loadError} submissionError={submissionError} />
       <Card>
         <CardContent className="pt-6">
           <Input

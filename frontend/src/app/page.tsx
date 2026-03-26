@@ -34,7 +34,9 @@ export default function LandingPage() {
             <Link href="/teacher/dashboard">
               <Card className="role-card h-full cursor-pointer rounded-[1.75rem] transition-all duration-200">
                 <CardHeader>
-                  <CardTitle className="text-foreground">I am a Teacher</CardTitle>
+                  <CardTitle className="text-foreground">
+                    I am a Teacher
+                  </CardTitle>
                   <CardDescription className="text-muted-foreground">
                     Create and manage exams, view student results, and organize
                     your question bank
@@ -51,7 +53,9 @@ export default function LandingPage() {
             <Link href="/student/login">
               <Card className="role-card h-full cursor-pointer rounded-[1.75rem] transition-all duration-200">
                 <CardHeader>
-                  <CardTitle className="text-foreground">I am a Student</CardTitle>
+                  <CardTitle className="text-foreground">
+                    I am a Student
+                  </CardTitle>
                   <CardDescription className="text-muted-foreground">
                     Take exams, view mock tests, and check your exam schedule
                   </CardDescription>
@@ -67,10 +71,6 @@ export default function LandingPage() {
               </Card>
             </Link>
           </div>
-
-          <p className="mt-8 text-center text-sm text-muted-foreground">
-            Hackathon Demo - No real authentication required
-          </p>
         </div>
       </div>
     </main>

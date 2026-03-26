@@ -43,7 +43,7 @@ export default function StudentDashboard() {
   const myExams = useMemo(() => allExams.filter(e =>
     e.scheduledClasses.some(sc => sc.classId === studentClass)
   ), [allExams, studentClass])
-  const upcomingExams = myExams.filter(e => e.status === 'scheduled')
+  const upcomingExams = useMemo(() => myExams.filter((exam) => exam.status === "scheduled"), [myExams])
   const today = getLocalDateString()
   const todaysExams = useMemo(() => upcomingExams.filter((exam) =>
     exam.scheduledClasses.some((schedule) => schedule.classId === studentClass && schedule.date === today)

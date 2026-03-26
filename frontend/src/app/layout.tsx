@@ -12,25 +12,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ExamFlow LMS",
+  title: "Delphin LMS",
   description: "Learning Management System - Exam Module",
   generator: "v0.app",
   icons: {
-    icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
-    ],
-    apple: "/apple-icon.png",
+    icon: "/dolphin-favicon-32x32.png",
+    shortcut: "/dolphin-favicon-32x32.png",
+    apple: "/dolphin-apple-icon.png",
   },
 };
 

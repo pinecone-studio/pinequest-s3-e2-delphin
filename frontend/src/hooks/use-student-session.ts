@@ -8,6 +8,8 @@ type StudentSession = {
   studentName: string
 }
 
+const STUDENT_SESSION_EVENT = 'student-session-change'
+
 const EMPTY_SESSION: StudentSession = {
   studentId: '',
   studentClass: '',
@@ -15,6 +17,14 @@ const EMPTY_SESSION: StudentSession = {
 }
 
 let cachedSession: StudentSession = EMPTY_SESSION
+
+function notifyStudentSessionChange() {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  window.dispatchEvent(new Event(STUDENT_SESSION_EVENT))
+}
 
 function readStudentSession(): StudentSession {
   if (typeof window === 'undefined') {
@@ -41,8 +51,22 @@ function readStudentSession(): StudentSession {
 
 export function useStudentSession() {
   return React.useSyncExternalStore(
-    () => () => undefined,
+    (onStoreChange) => {
+      if (typeof window === 'undefined') {
+        return () => undefined
+      }
+
+      window.addEventListener('storage', onStoreChange)
+      window.addEventListener(STUDENT_SESSION_EVENT, onStoreChange)
+
+      return () => {
+        window.removeEventListener('storage', onStoreChange)
+        window.removeEventListener(STUDENT_SESSION_EVENT, onStoreChange)
+      }
+    },
     readStudentSession,
     () => EMPTY_SESSION,
   )
 }
+
+export { notifyStudentSessionChange }

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ThemeToggleButton } from "@/components/theme-toggle-button"
+import { notifyStudentSessionChange } from "@/hooks/use-student-session"
 import { students } from "@/lib/mock-data"
 
 export default function StudentLoginPage() {
@@ -29,6 +30,7 @@ export default function StudentLoginPage() {
       localStorage.setItem('studentId', student.id)
       localStorage.setItem('studentName', student.name)
       localStorage.setItem('studentClass', student.classId)
+      notifyStudentSessionChange()
       router.push('/student/dashboard')
     } else {
       setError("Invalid email or password")

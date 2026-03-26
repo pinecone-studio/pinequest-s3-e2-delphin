@@ -74,6 +74,8 @@ export default function StudentExamsPage() {
         )
 
         if (hasNewExam) {
+          knownScheduledExamIdsRef.current = nextScheduledExamIds
+          setAllExams(nextExams)
           setShowNewExamAlert(true)
         }
       } catch {

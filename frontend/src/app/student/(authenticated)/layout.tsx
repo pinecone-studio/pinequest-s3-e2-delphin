@@ -6,7 +6,7 @@ import Link from "next/link"
 import { BookOpen, ChevronLeft, ChevronRight, ClipboardList, LayoutDashboard } from "lucide-react"
 import { BrandLogo } from "@/components/brand-logo"
 import { ThemeToggleButton } from "@/components/theme-toggle-button"
-import { useStudentSession } from "@/hooks/use-student-session"
+import { notifyStudentSessionChange, useStudentSession } from "@/hooks/use-student-session"
 import { cn } from "@/lib/utils"
 
 const navItems = [
@@ -35,6 +35,7 @@ export default function StudentLayout({
     localStorage.removeItem('studentId')
     localStorage.removeItem('studentName')
     localStorage.removeItem('studentClass')
+    notifyStudentSessionChange()
     router.push('/')
   }
 

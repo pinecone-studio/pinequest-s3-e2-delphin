@@ -160,7 +160,12 @@ function CountField({
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
-      <Input type="number" value={value} onChange={(e) => onChange(parseInt(e.target.value) || 0)} />
+      <Input
+        min={0}
+        type="number"
+        value={value}
+        onChange={(e) => onChange(Math.max(0, parseInt(e.target.value, 10) || 0))}
+      />
     </div>
   )
 }

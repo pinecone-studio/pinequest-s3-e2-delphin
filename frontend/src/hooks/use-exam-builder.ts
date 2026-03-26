@@ -61,9 +61,9 @@ export function useExamBuilder() {
   const [reportReleaseMode, setReportReleaseMode] =
     useState<Exam['reportReleaseMode']>('after-all-classes-complete')
   const [showAIDialog, setShowAIDialog] = useState(false)
-  const [aiMCCount, setAiMCCount] = useState(5)
-  const [aiTFCount, setAiTFCount] = useState(3)
-  const [aiShortCount, setAiShortCount] = useState(2)
+  const [aiMCCount, setAiMCCount] = useState(0)
+  const [aiTFCount, setAiTFCount] = useState(0)
+  const [aiShortCount, setAiShortCount] = useState(0)
   const [selectedMockTests, setSelectedMockTests] = useState<string[]>([])
   const [isGenerating, setIsGenerating] = useState(false)
   const [scheduleEntries, setScheduleEntries] = useState<ScheduleEntry[]>([])

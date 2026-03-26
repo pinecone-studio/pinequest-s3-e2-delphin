@@ -3,29 +3,15 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { CircleAlert } from "lucide-react"
 import {
-  StudentCompletedExamsSection,
   StudentTodayExamsSection,
   StudentUpcomingExamsSection,
 } from "@/components/student/student-exams-sections"
+import { StudentCompletedExamsSection } from "@/components/student/student-completed-exams-section"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { useStudentSession } from "@/hooks/use-student-session"
 import { examResults, exams as legacyExams, type Exam } from "@/lib/mock-data"
+import { getLocalDateString, getSecondsUntil } from "@/lib/student-exam-time"
 import { getStudentExams } from "@/lib/student-exams"
-
-function getSecondsUntil(date: string, time: string) {
-  const examDate = new Date(`${date}T${time}:00`)
-  const now = new Date()
-  const diff = Math.floor((examDate.getTime() - now.getTime()) / 1000)
-  return diff > 0 ? diff : 0
-}
-
-function getLocalDateString() {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, "0")
-  const day = String(now.getDate()).padStart(2, "0")
-  return `${year}-${month}-${day}`
-}
 
 export default function StudentExamsPage() {
   const { studentClass, studentId } = useStudentSession()

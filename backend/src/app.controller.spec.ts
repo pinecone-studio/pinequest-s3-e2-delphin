@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseService } from './database/database.service';
+import { UploadsService } from './modules/uploads/uploads.service';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -15,6 +16,17 @@ describe('AppController', () => {
           provide: DatabaseService,
           useValue: {
             isConfigured: jest.fn().mockReturnValue(false),
+          },
+        },
+        {
+          provide: UploadsService,
+          useValue: {
+            checkStorageHealth: jest.fn().mockResolvedValue({
+              configured: false,
+              ok: true,
+              latencyMs: null,
+              mode: 'local-fallback',
+            }),
           },
         },
       ],

@@ -1,70 +1,88 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { QuestionBankUploadDialog } from "@/components/teacher/question-bank-upload-dialog"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { mockTests, type MockTest } from "@/lib/mock-data"
+import { useState } from "react";
+import Link from "next/link";
+import { QuestionBankUploadDialog } from "@/components/teacher/question-bank-upload-dialog";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "@/hooks/use-toast";
+import { mockTests, type MockTest } from "@/lib/mock-data";
 
 export default function QuestionBankPage() {
-  const [tests, setTests] = useState<MockTest[]>(mockTests)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [newTestName, setNewTestName] = useState("")
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [isDragging, setIsDragging] = useState(false)
+  const [tests, setTests] = useState<MockTest[]>(mockTests);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newTestName, setNewTestName] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }
+    e.preventDefault();
+    setIsDragging(true);
+  };
 
   const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-  }
+    e.preventDefault();
+    setIsDragging(false);
+  };
 
   const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-    const file = e.dataTransfer.files[0]
-    if (file && (file.type === 'application/pdf' || file.name.endsWith('.doc') || file.name.endsWith('.docx'))) {
-      setSelectedFile(file)
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (
+      file &&
+      (file.type === "application/pdf" ||
+        file.name.endsWith(".doc") ||
+        file.name.endsWith(".docx"))
+    ) {
+      setSelectedFile(file);
     }
-  }
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      setSelectedFile(file)
+      setSelectedFile(file);
     }
-  }
+  };
 
   const handleSubmit = () => {
-    if (!newTestName || !selectedFile) return
+    if (!newTestName || !selectedFile) return;
 
     const newTest: MockTest = {
       id: `mt${tests.length + 1}`,
       name: newTestName,
       fileName: selectedFile.name,
-      fileType: selectedFile.name.split('.').pop() || 'pdf',
-      uploadedAt: new Date().toISOString().split('T')[0],
-      teacherId: 'teacher1',
-    }
+      fileType: selectedFile.name.split(".").pop() || "pdf",
+      uploadedAt: new Date().toISOString().split("T")[0],
+      teacherId: "teacher1",
+    };
 
-    setTests([...tests, newTest])
-    setNewTestName("")
-    setSelectedFile(null)
-    setIsDialogOpen(false)
-  }
+    setTests([...tests, newTest]);
+    setNewTestName("");
+    setSelectedFile(null);
+    setIsDialogOpen(false);
+    toast({
+      title: "🎉 Амжилттай хадгалагдлаа,",
+      description: "✨ Тухайн мэдээлэл мэдлэгийн санд амжилттай нэмэгдлээ.",
+    });
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Асуултын Сан</h1>
-          <p className="text-muted-foreground">Сурагчдад зориулсан demo шалгалтуудаа энд байршуулж удирдана</p>
+          <h1 className="text-2xl font-bold">Question Bank</h1>
+          <p className="text-muted-foreground">
+            Upload and manage mock tests for your students
+          </p>
         </div>
         <QuestionBankUploadDialog
           isDialogOpen={isDialogOpen}
@@ -98,12 +116,18 @@ export default function QuestionBankPage() {
               <Card className="h-full cursor-pointer hover:border-foreground transition-colors">
                 <CardHeader>
                   <CardTitle className="text-base">{test.name}</CardTitle>
-                  <CardDescription>Оруулсан огноо: {test.uploadedAt}</CardDescription>
+                  <CardDescription>
+                    Uploaded on {test.uploadedAt}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
-                    <Badge variant="secondary">{test.fileType.toUpperCase()}</Badge>
-                    <span className="text-sm text-muted-foreground">{test.fileName}</span>
+                    <Badge variant="secondary">
+                      {test.fileType.toUpperCase()}
+                    </Badge>
+                    <span className="text-sm text-muted-foreground">
+                      {test.fileName}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -112,5 +136,5 @@ export default function QuestionBankPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

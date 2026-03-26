@@ -70,7 +70,6 @@ export function TeacherExamsSection({
                         <Link href={`/teacher/exams/${exam.id}/edit`}>
                           <Button variant="outline" size="sm">Edit</Button>
                         </Link>
-                        <Badge variant="outline">Editable</Badge>
                       </div>
                     ) : null}
                   </div>

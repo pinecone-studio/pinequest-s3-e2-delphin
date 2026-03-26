@@ -1,4 +1,4 @@
-name: CD
+name: Deploy
 
 on:
   pull_request:
@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   deploy-frontend:
-    name: Deploy frontend to Vercel
+    name: Frontend deploy
     if: >
       (
         (
@@ -46,9 +46,6 @@ jobs:
       contents: read
       issues: write
       pull-requests: write
-    defaults:
-      run:
-        working-directory: frontend
     env:
       # This workflow is designed to deploy via the Vercel CLI and secrets.
       # It does not require Git integration in the Vercel project.
@@ -82,15 +79,40 @@ jobs:
 
       - name: Install dependencies
         if: steps.vercel.outputs.configured == 'true'
+        working-directory: frontend
         run: npm ci
 
       - name: Pull Vercel environment
         if: steps.vercel.outputs.configured == 'true'
         run: npx vercel pull --yes --environment="$VERCEL_ENV" --token="$VERCEL_TOKEN"
 
+      - name: Show linked Vercel project
+        if: steps.vercel.outputs.configured == 'true'
+        run: |
+          if [ -f .vercel/project.json ]; then
+            echo "Linked Vercel project:"
+            cat .vercel/project.json
+          else
+            echo "Missing .vercel/project.json after vercel pull"
+            exit 1
+          fi
+
       - name: Build preview deployment
         if: steps.vercel.outputs.configured == 'true' && env.VERCEL_ENV == 'preview'
         run: npx vercel build --token="$VERCEL_TOKEN"
+
+      - name: Inspect prebuilt output
+        if: steps.vercel.outputs.configured == 'true'
+        run: |
+          if [ ! -f .vercel/output/config.json ]; then
+            echo "Missing .vercel/output/config.json"
+            exit 1
+          fi
+          echo "Prebuilt output config:"
+          cat .vercel/output/config.json
+          echo
+          echo "Top-level output entries:"
+          find .vercel/output -maxdepth 2 -type f | sort | head -n 200
 
       - name: Deploy preview
         id: deploy_preview
@@ -107,7 +129,7 @@ jobs:
           steps.deploy_preview.outputs.deployment_url != ''
         uses: actions/github-script@v7
         env:
-          DEPLOYMENT_URL: ${{ steps.deploy_preview.outputs.deployment_url }}
+          DEPLOYMENT_URL: ${{ startsWith(steps.deploy_preview.outputs.deployment_url, 'http') && steps.deploy_preview.outputs.deployment_url || format('https://{0}', steps.deploy_preview.outputs.deployment_url) }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -150,13 +172,42 @@ jobs:
         id: finalize
         run: |
           deployment_url="${{ steps.deploy_production.outputs.deployment_url || steps.deploy_preview.outputs.deployment_url }}"
+          if [ -n "$deployment_url" ] && [[ "$deployment_url" != http* ]]; then
+            deployment_url="https://$deployment_url"
+          fi
           echo "configured=${{ steps.vercel.outputs.configured }}" >> "$GITHUB_OUTPUT"
           echo "vercel_env=$VERCEL_ENV" >> "$GITHUB_OUTPUT"
           echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
           echo "Resolved deployment URL: $deployment_url"
 
-  record-production-deployment:
-    name: Record production deployment in GitHub
+      - name: Smoke test deployment
+        if: steps.vercel.outputs.configured == 'true' && steps.finalize.outputs.deployment_url != ''
+        env:
+          DEPLOYMENT_URL: ${{ steps.finalize.outputs.deployment_url }}
+          IS_PREVIEW: ${{ env.VERCEL_ENV == 'preview' && 'true' || 'false' }}
+        run: |
+          echo "Checking $DEPLOYMENT_URL"
+          for attempt in 1 2 3 4 5; do
+            status=$(curl -L -s -o /tmp/deploy-response.html -w "%{http_code}" "$DEPLOYMENT_URL" || true)
+            echo "Attempt $attempt returned HTTP $status"
+            if [ "$status" = "200" ]; then
+              echo "Deployment is reachable."
+              exit 0
+            fi
+            if [ "$status" = "401" ] && [ "$IS_PREVIEW" = "true" ]; then
+              echo "Preview is protected by Vercel authentication."
+              echo "The deployment exists, but anonymous requests are blocked."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Deployment stayed unhealthy after retries."
+          echo "First 200 bytes of response:"
+          head -c 200 /tmp/deploy-response.html || true
+          exit 1
+
+  publish-production-url:
+    name: Publish production URL
     needs: deploy-frontend
     if: >
       needs.deploy-frontend.outputs.configured == 'true' &&

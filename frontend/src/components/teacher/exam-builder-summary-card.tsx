@@ -14,11 +14,7 @@ import {
 import { ALL_CLASSES_OPTION } from "@/lib/exams-api";
 import { classes, type Exam } from "@/lib/mock-data";
 import type { ScheduleEntry } from "@/components/teacher/exam-builder-types";
-
-type QuestionCounts = Record<
-  "multiple-choice" | "true-false" | "short-answer" | "essay",
-  number
->;
+type QuestionCounts = Record<"multiple-choice" | "true-false" | "short-answer" | "essay", number>;
 
 export function ExamBuilderSummaryCard({
   duration,
@@ -58,16 +54,9 @@ export function ExamBuilderSummaryCard({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
           <SummaryStat label="Questions" value={questionTotal} />
           <SummaryStat label="Total Points" value={totalPoints} />
-          <SummaryStat
-            label="Multiple Choice"
-            value={questionCounts["multiple-choice"]}
-          />
-          <SummaryStat
-            label="True/False"
-            value={questionCounts["true-false"]}
-          />
+          <SummaryStat label="Multiple Choice" value={questionCounts["multiple-choice"]} />
+          <SummaryStat label="True/False" value={questionCounts["true-false"]} />
         </div>
-
         <div className="flex items-center gap-4">
           <Label>Duration (minutes)</Label>
           <Input

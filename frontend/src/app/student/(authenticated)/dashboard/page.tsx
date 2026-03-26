@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { CircleAlert } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { StudentRecentResultsCard } from "@/components/student/student-recent-results-card"
 import { StudentScheduleCalendar } from "@/components/student/student-schedule-calendar"
 import { StudentUpcomingExamsCard } from "@/components/student/student-upcoming-exams-card"

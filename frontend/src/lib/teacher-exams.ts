@@ -1,5 +1,5 @@
 import { exams as legacyExams } from '@/lib/mock-data'
-import { getServerApiBaseUrl } from '@/lib/api-base-url'
+import { fetchBackendJson } from '@/lib/backend-fetch'
 import type { CreatedExam } from '@/lib/exams-api'
 
 export type TeacherExam = {
@@ -53,15 +53,10 @@ function mapLegacyExamToTeacherExam(exam: (typeof legacyExams)[number]): Teacher
 }
 
 export async function getTeacherExams(): Promise<TeacherExam[]> {
-  const response = await fetch(`${getServerApiBaseUrl()}/exams`, {
-    cache: 'no-store',
-  })
-
-  if (!response.ok) {
-    throw new Error('Failed to load exams from the backend.')
-  }
-
-  const exams = (await response.json()) as CreatedExam[]
+  const exams = await fetchBackendJson<CreatedExam[]>(
+    '/exams',
+    'Failed to load exams from the backend.',
+  )
   return exams.map(mapCreatedExamToTeacherExam)
 }
 

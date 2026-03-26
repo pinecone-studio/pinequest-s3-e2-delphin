@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { TeacherExam } from '@/lib/teacher-exams'
+import { classes } from '@/lib/mock-data'
 
 export function TeacherExamsSection({
   emptyLabel,
@@ -39,12 +40,14 @@ export function TeacherExamsSection({
               </CardHeader>
               <CardContent>
                 {exam.status === 'draft' ? (
-                  <Button variant="outline" size="sm">Continue Editing</Button>
+                  <Link href={`/teacher/exams/${exam.id}/edit`}>
+                    <Button variant="outline" size="sm">Continue Editing</Button>
+                  </Link>
                 ) : (
-                  <div className="space-y-2">
-                    {exam.scheduledClasses.map((schedule) =>
+                  <div className="space-y-3">
+                    {getDisplaySchedules(exam).map((schedule) =>
                       exam.status === 'completed' ? (
-                        <div key={`${exam.id}-${schedule.classId}`} className="text-sm">
+                        <div key={`${exam.id}-${schedule.classId}-${schedule.date}-${schedule.time}`} className="text-sm">
                           <Link
                             href={`/teacher/classes/${schedule.classId}/exam/${exam.id}`}
                             className="hover:underline"
@@ -62,6 +65,14 @@ export function TeacherExamsSection({
                         </div>
                       ),
                     )}
+                    {exam.status === 'scheduled' ? (
+                      <div className="flex gap-2 pt-2">
+                        <Link href={`/teacher/exams/${exam.id}/edit`}>
+                          <Button variant="outline" size="sm">Edit</Button>
+                        </Link>
+                        <Badge variant="outline">Editable</Badge>
+                      </div>
+                    ) : null}
                   </div>
                 )}
               </CardContent>
@@ -71,6 +82,44 @@ export function TeacherExamsSection({
       )}
     </div>
   )
+}
+
+const ALL_CLASSES_LABEL = 'All Classes'
+
+function getDisplaySchedules(exam: TeacherExam) {
+  if (exam.status === 'completed') {
+    return exam.scheduledClasses
+  }
+
+  const allClassIds = new Set(classes.map((classEntry) => classEntry.id))
+  const groups = new Map<string, typeof exam.scheduledClasses>()
+
+  exam.scheduledClasses.forEach((schedule) => {
+    const key = `${schedule.date}::${schedule.time}`
+    const current = groups.get(key) ?? []
+    current.push(schedule)
+    groups.set(key, current)
+  })
+
+  return Array.from(groups.entries()).flatMap(([key, schedules]) => {
+    const scheduledClassIds = new Set(schedules.map((schedule) => schedule.classId))
+    const matchesAllClasses =
+      scheduledClassIds.size === allClassIds.size &&
+      Array.from(allClassIds).every((classId) => scheduledClassIds.has(classId))
+
+    if (!matchesAllClasses) {
+      return schedules
+    }
+
+    const [date, time] = key.split('::')
+    return [
+      {
+        classId: ALL_CLASSES_LABEL,
+        date,
+        time,
+      },
+    ]
+  })
 }
 
 function formatStatus(status: TeacherExam['status']) {

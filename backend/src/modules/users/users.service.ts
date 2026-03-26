@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { executeOrRethrow, rethrowAsInternal } from '../../common/error-handling';
+import {
+  executeOrRethrowAsync,
+  rethrowAsInternal,
+} from '../../common/error-handling';
+import { DatabaseService } from '../../database/database.service';
 
 export type User = {
   id: string;
@@ -17,15 +21,33 @@ export class UsersService {
     { id: 'u-candidate-1', username: 'BBBB', role: 'candidate' },
   ];
 
-  findAll(): User[] {
-    return executeOrRethrow(
-      () => this.users,
-      'Failed to list users from the in-memory store',
-    );
+  constructor(private readonly databaseService: DatabaseService) {}
+
+  async findAll(): Promise<User[]> {
+    return executeOrRethrowAsync(async () => {
+      if (this.databaseService.isConfigured()) {
+        return await this.databaseService.query<User>(
+          'SELECT id, username, role FROM users ORDER BY id',
+        );
+      }
+
+      return this.users;
+    }, 'Failed to list users from the store');
   }
 
-  findOne(id: string): User {
+  async findOne(id: string): Promise<User> {
     try {
+      if (this.databaseService.isConfigured()) {
+        const user = await this.databaseService.queryFirst<User>(
+          'SELECT id, username, role FROM users WHERE id = ? LIMIT 1',
+          [id],
+        );
+        if (!user) {
+          throw new NotFoundException(`User ${id} not found`);
+        }
+        return user;
+      }
+
       const user = this.users.find((item) => item.id === id);
       if (!user) {
         throw new NotFoundException(`User ${id} not found`);
@@ -36,8 +58,16 @@ export class UsersService {
     }
   }
 
-  create(payload: CreateUserDto): User {
+  async create(payload: CreateUserDto): Promise<User> {
     try {
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute(
+          'INSERT INTO users (id, username, role) VALUES (?, ?, ?)',
+          [payload.id, payload.username, payload.role],
+        );
+        return payload;
+      }
+
       this.users.push(payload);
       return payload;
     } catch (error) {
@@ -45,9 +75,19 @@ export class UsersService {
     }
   }
 
-  update(id: string, payload: UpdateUserDto): User {
+  async update(id: string, payload: UpdateUserDto): Promise<User> {
     try {
-      const user = this.findOne(id);
+      const user = await this.findOne(id);
+      const updated = { ...user, ...payload };
+
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute(
+          'UPDATE users SET username = ?, role = ? WHERE id = ?',
+          [updated.username, updated.role, id],
+        );
+        return updated;
+      }
+
       Object.assign(user, payload);
       return user;
     } catch (error) {
@@ -55,8 +95,15 @@ export class UsersService {
     }
   }
 
-  remove(id: string): User {
+  async remove(id: string): Promise<User> {
     try {
+      const user = await this.findOne(id);
+
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute('DELETE FROM users WHERE id = ?', [id]);
+        return user;
+      }
+
       const index = this.users.findIndex((item) => item.id === id);
       if (index === -1) {
         throw new NotFoundException(`User ${id} not found`);

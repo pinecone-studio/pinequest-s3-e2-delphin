@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { executeOrRethrow } from '../../common/error-handling';
+import { executeOrRethrowAsync } from '../../common/error-handling';
 import {
   type CreateSubmissionDto,
   type Submission,
@@ -20,24 +20,24 @@ export class SubmissionsController {
   constructor(private readonly submissionsService: SubmissionsService) {}
 
   @Get()
-  findAll(): Submission[] {
-    return executeOrRethrow(
+  async findAll(): Promise<Submission[]> {
+    return executeOrRethrowAsync(
       () => this.submissionsService.findAll(),
       'Failed to handle GET /submissions',
     );
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Submission {
-    return executeOrRethrow(
+  async findOne(@Param('id') id: string): Promise<Submission> {
+    return executeOrRethrowAsync(
       () => this.submissionsService.findOne(id),
       `Failed to handle GET /submissions/${id}`,
     );
   }
 
   @Post()
-  create(@Body() payload: CreateSubmissionDto): Submission {
-    return executeOrRethrow(
+  async create(@Body() payload: CreateSubmissionDto): Promise<Submission> {
+    return executeOrRethrowAsync(
       () => this.submissionsService.create(payload),
       `Failed to handle POST /submissions for payload id ${payload.id}`,
     );
@@ -47,16 +47,16 @@ export class SubmissionsController {
   update(
     @Param('id') id: string,
     @Body() payload: UpdateSubmissionDto,
-  ): Submission {
-    return executeOrRethrow(
+  ): Promise<Submission> {
+    return executeOrRethrowAsync(
       () => this.submissionsService.update(id, payload),
       `Failed to handle PATCH /submissions/${id}`,
     );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Submission {
-    return executeOrRethrow(
+  async remove(@Param('id') id: string): Promise<Submission> {
+    return executeOrRethrowAsync(
       () => this.submissionsService.remove(id),
       `Failed to handle DELETE /submissions/${id}`,
     );

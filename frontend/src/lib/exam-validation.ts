@@ -1,4 +1,5 @@
 import type { NewQuestion, ScheduleEntry } from '@/components/teacher/exam-builder-types'
+import { ALL_CLASSES_OPTION } from '@/lib/exams-api'
 
 export function validateExamPayloadInput({
   duration,
@@ -57,6 +58,27 @@ export function validateExamPayloadInput({
     }
 
     seenSchedules.add(scheduleKey)
+  })
+
+  const allClassesEntries = scheduleEntries.filter(
+    (entry) => entry.classId.trim() === ALL_CLASSES_OPTION && entry.date.trim() && entry.time.trim(),
+  )
+  const explicitEntries = scheduleEntries.filter(
+    (entry) => entry.classId.trim() !== ALL_CLASSES_OPTION && entry.classId.trim() && entry.date.trim() && entry.time.trim(),
+  )
+
+  allClassesEntries.forEach((entry, index) => {
+    const overlapsExplicit = explicitEntries.some(
+      (explicitEntry) =>
+        explicitEntry.date.trim() === entry.date.trim() &&
+        explicitEntry.time.trim() === entry.time.trim(),
+    )
+
+    if (overlapsExplicit) {
+      errors.push(
+        `All Classes schedule ${index + 1} overlaps with another class scheduled at the same date and time.`,
+      )
+    }
   })
 
   if (status === 'scheduled' && questions.length === 0) {

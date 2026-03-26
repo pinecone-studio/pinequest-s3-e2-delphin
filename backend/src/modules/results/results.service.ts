@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { executeOrRethrow, rethrowAsInternal } from '../../common/error-handling';
+import {
+  executeOrRethrowAsync,
+  rethrowAsInternal,
+} from '../../common/error-handling';
+import { DatabaseService } from '../../database/database.service';
 
 export type Result = {
   id: string;
@@ -22,15 +26,55 @@ export class ResultsService {
     },
   ];
 
-  findAll(): Result[] {
-    return executeOrRethrow(
-      () => this.results,
-      'Failed to list results from the in-memory store',
-    );
+  constructor(private readonly databaseService: DatabaseService) {}
+
+  async findAll(): Promise<Result[]> {
+    return executeOrRethrowAsync(async () => {
+      if (this.databaseService.isConfigured()) {
+        const rows = await this.databaseService.query<{
+          id: string;
+          submissionId: string;
+          score: number;
+          passed: number;
+        }>(
+          `SELECT id, submission_id as submissionId, score, passed
+           FROM results ORDER BY id`,
+        );
+
+        return rows.map((row) => ({
+          ...row,
+          passed: Boolean(row.passed),
+        }));
+      }
+
+      return this.results;
+    }, 'Failed to list results from the store');
   }
 
-  findOne(id: string): Result {
+  async findOne(id: string): Promise<Result> {
     try {
+      if (this.databaseService.isConfigured()) {
+        const row = await this.databaseService.queryFirst<{
+          id: string;
+          submissionId: string;
+          score: number;
+          passed: number;
+        }>(
+          `SELECT id, submission_id as submissionId, score, passed
+           FROM results WHERE id = ? LIMIT 1`,
+          [id],
+        );
+
+        if (!row) {
+          throw new NotFoundException(`Result ${id} not found`);
+        }
+
+        return {
+          ...row,
+          passed: Boolean(row.passed),
+        };
+      }
+
       const result = this.results.find((item) => item.id === id);
       if (!result) {
         throw new NotFoundException(`Result ${id} not found`);
@@ -41,8 +85,17 @@ export class ResultsService {
     }
   }
 
-  create(payload: CreateResultDto): Result {
+  async create(payload: CreateResultDto): Promise<Result> {
     try {
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute(
+          `INSERT INTO results (id, submission_id, score, passed)
+           VALUES (?, ?, ?, ?)`,
+          [payload.id, payload.submissionId, payload.score, payload.passed ? 1 : 0],
+        );
+        return payload;
+      }
+
       this.results.push(payload);
       return payload;
     } catch (error) {
@@ -50,9 +103,19 @@ export class ResultsService {
     }
   }
 
-  update(id: string, payload: UpdateResultDto): Result {
+  async update(id: string, payload: UpdateResultDto): Promise<Result> {
     try {
-      const result = this.findOne(id);
+      const result = await this.findOne(id);
+      const updated = { ...result, ...payload };
+
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute(
+          `UPDATE results SET submission_id = ?, score = ?, passed = ? WHERE id = ?`,
+          [updated.submissionId, updated.score, updated.passed ? 1 : 0, id],
+        );
+        return updated;
+      }
+
       Object.assign(result, payload);
       return result;
     } catch (error) {
@@ -60,8 +123,15 @@ export class ResultsService {
     }
   }
 
-  remove(id: string): Result {
+  async remove(id: string): Promise<Result> {
     try {
+      const result = await this.findOne(id);
+
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute('DELETE FROM results WHERE id = ?', [id]);
+        return result;
+      }
+
       const index = this.results.findIndex((item) => item.id === id);
       if (index === -1) {
         throw new NotFoundException(`Result ${id} not found`);

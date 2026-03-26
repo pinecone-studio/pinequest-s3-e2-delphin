@@ -4,20 +4,24 @@ import * as React from 'react'
 import { useRouter } from 'next/navigation'
 import type { NewQuestion, ScheduleEntry } from '@/components/teacher/exam-builder-types'
 import { toast } from '@/hooks/use-toast'
-import { buildCreateExamPayload, createExam } from '@/lib/exams-api'
+import { buildCreateExamPayload, createExam, updateExam } from '@/lib/exams-api'
 import { validateExamPayloadInput } from '@/lib/exam-validation'
 
 type SubmitMode = 'draft' | 'scheduled'
 
 export function useExamCreation({
   duration,
+  examId,
   examTitle,
+  mode = 'create',
   questions,
   reportReleaseMode,
   scheduleEntries,
 }: {
   duration: number
+  examId?: string
   examTitle: string
+  mode?: 'create' | 'edit'
   questions: NewQuestion[]
   reportReleaseMode: 'after-all-classes-complete' | 'immediately'
   scheduleEntries: ScheduleEntry[]
@@ -60,14 +64,29 @@ export function useExamCreation({
           status,
         })
 
-        await createExam(payload)
+        if (mode === 'edit' && examId) {
+          await updateExam(examId, payload)
+        } else {
+          await createExam(payload)
+        }
 
         toast({
-          title: status === 'draft' ? 'Draft saved' : 'Exam created',
+          title:
+            mode === 'edit'
+              ? status === 'draft'
+                ? 'Draft updated'
+                : 'Exam updated'
+              : status === 'draft'
+                ? 'Draft saved'
+                : 'Exam created',
           description:
-            status === 'draft'
-              ? 'Your exam draft was saved to the backend.'
-              : 'Your scheduled exam was created successfully.',
+            mode === 'edit'
+              ? status === 'draft'
+                ? 'Your exam draft was updated successfully.'
+                : 'Your scheduled exam was updated successfully.'
+              : status === 'draft'
+                ? 'Your exam draft was saved to the backend.'
+                : 'Your scheduled exam was created successfully.',
         })
         router.push('/teacher/exams')
       } catch (error) {
@@ -86,7 +105,7 @@ export function useExamCreation({
         setSubmitMode(null)
       }
     },
-    [duration, examTitle, questions, reportReleaseMode, router, scheduleEntries],
+    [duration, examId, examTitle, mode, questions, reportReleaseMode, router, scheduleEntries],
   )
 
   return {

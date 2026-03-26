@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { executeOrRethrow } from '../../common/error-handling';
+import { executeOrRethrowAsync } from '../../common/error-handling';
 import {
   type CreateResultDto,
   type Result,
@@ -20,40 +20,40 @@ export class ResultsController {
   constructor(private readonly resultsService: ResultsService) {}
 
   @Get()
-  findAll(): Result[] {
-    return executeOrRethrow(
+  async findAll(): Promise<Result[]> {
+    return executeOrRethrowAsync(
       () => this.resultsService.findAll(),
       'Failed to handle GET /results',
     );
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Result {
-    return executeOrRethrow(
+  async findOne(@Param('id') id: string): Promise<Result> {
+    return executeOrRethrowAsync(
       () => this.resultsService.findOne(id),
       `Failed to handle GET /results/${id}`,
     );
   }
 
   @Post()
-  create(@Body() payload: CreateResultDto): Result {
-    return executeOrRethrow(
+  async create(@Body() payload: CreateResultDto): Promise<Result> {
+    return executeOrRethrowAsync(
       () => this.resultsService.create(payload),
       `Failed to handle POST /results for payload id ${payload.id}`,
     );
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() payload: UpdateResultDto): Result {
-    return executeOrRethrow(
+  async update(@Param('id') id: string, @Body() payload: UpdateResultDto): Promise<Result> {
+    return executeOrRethrowAsync(
       () => this.resultsService.update(id, payload),
       `Failed to handle PATCH /results/${id}`,
     );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Result {
-    return executeOrRethrow(
+  async remove(@Param('id') id: string): Promise<Result> {
+    return executeOrRethrowAsync(
       () => this.resultsService.remove(id),
       `Failed to handle DELETE /results/${id}`,
     );

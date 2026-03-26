@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { executeOrRethrow } from '../../common/error-handling';
+import { executeOrRethrowAsync } from '../../common/error-handling';
 import {
   type CreateUserDto,
   type UpdateUserDto,
@@ -20,40 +20,40 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  findAll(): User[] {
-    return executeOrRethrow(
+  async findAll(): Promise<User[]> {
+    return executeOrRethrowAsync(
       () => this.usersService.findAll(),
       'Failed to handle GET /users',
     );
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): User {
-    return executeOrRethrow(
+  async findOne(@Param('id') id: string): Promise<User> {
+    return executeOrRethrowAsync(
       () => this.usersService.findOne(id),
       `Failed to handle GET /users/${id}`,
     );
   }
 
   @Post()
-  create(@Body() payload: CreateUserDto): User {
-    return executeOrRethrow(
+  async create(@Body() payload: CreateUserDto): Promise<User> {
+    return executeOrRethrowAsync(
       () => this.usersService.create(payload),
       `Failed to handle POST /users for payload id ${payload.id}`,
     );
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() payload: UpdateUserDto): User {
-    return executeOrRethrow(
+  async update(@Param('id') id: string, @Body() payload: UpdateUserDto): Promise<User> {
+    return executeOrRethrowAsync(
       () => this.usersService.update(id, payload),
       `Failed to handle PATCH /users/${id}`,
     );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): User {
-    return executeOrRethrow(
+  async remove(@Param('id') id: string): Promise<User> {
+    return executeOrRethrowAsync(
       () => this.usersService.remove(id),
       `Failed to handle DELETE /users/${id}`,
     );

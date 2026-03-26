@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { executeOrRethrow, rethrowAsInternal } from '../../common/error-handling';
+import {
+  executeOrRethrowAsync,
+  rethrowAsInternal,
+} from '../../common/error-handling';
+import { DatabaseService } from '../../database/database.service';
 
 export type Submission = {
   id: string;
@@ -22,15 +26,35 @@ export class SubmissionsService {
     },
   ];
 
-  findAll(): Submission[] {
-    return executeOrRethrow(
-      () => this.submissions,
-      'Failed to list submissions from the in-memory store',
-    );
+  constructor(private readonly databaseService: DatabaseService) {}
+
+  async findAll(): Promise<Submission[]> {
+    return executeOrRethrowAsync(async () => {
+      if (this.databaseService.isConfigured()) {
+        return await this.databaseService.query<Submission>(
+          `SELECT id, assignment_id as assignmentId, status, submitted_at as submittedAt
+           FROM submissions ORDER BY submitted_at DESC`,
+        );
+      }
+
+      return this.submissions;
+    }, 'Failed to list submissions from the store');
   }
 
-  findOne(id: string): Submission {
+  async findOne(id: string): Promise<Submission> {
     try {
+      if (this.databaseService.isConfigured()) {
+        const submission = await this.databaseService.queryFirst<Submission>(
+          `SELECT id, assignment_id as assignmentId, status, submitted_at as submittedAt
+           FROM submissions WHERE id = ? LIMIT 1`,
+          [id],
+        );
+        if (!submission) {
+          throw new NotFoundException(`Submission ${id} not found`);
+        }
+        return submission;
+      }
+
       const submission = this.submissions.find((item) => item.id === id);
       if (!submission) {
         throw new NotFoundException(`Submission ${id} not found`);
@@ -41,8 +65,17 @@ export class SubmissionsService {
     }
   }
 
-  create(payload: CreateSubmissionDto): Submission {
+  async create(payload: CreateSubmissionDto): Promise<Submission> {
     try {
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute(
+          `INSERT INTO submissions (id, assignment_id, status, submitted_at)
+           VALUES (?, ?, ?, ?)`,
+          [payload.id, payload.assignmentId, payload.status, payload.submittedAt],
+        );
+        return payload;
+      }
+
       this.submissions.push(payload);
       return payload;
     } catch (error) {
@@ -50,9 +83,20 @@ export class SubmissionsService {
     }
   }
 
-  update(id: string, payload: UpdateSubmissionDto): Submission {
+  async update(id: string, payload: UpdateSubmissionDto): Promise<Submission> {
     try {
-      const submission = this.findOne(id);
+      const submission = await this.findOne(id);
+      const updated = { ...submission, ...payload };
+
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute(
+          `UPDATE submissions SET assignment_id = ?, status = ?, submitted_at = ?
+           WHERE id = ?`,
+          [updated.assignmentId, updated.status, updated.submittedAt, id],
+        );
+        return updated;
+      }
+
       Object.assign(submission, payload);
       return submission;
     } catch (error) {
@@ -60,8 +104,15 @@ export class SubmissionsService {
     }
   }
 
-  remove(id: string): Submission {
+  async remove(id: string): Promise<Submission> {
     try {
+      const submission = await this.findOne(id);
+
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute('DELETE FROM submissions WHERE id = ?', [id]);
+        return submission;
+      }
+
       const index = this.submissions.findIndex((item) => item.id === id);
       if (index === -1) {
         throw new NotFoundException(`Submission ${id} not found`);

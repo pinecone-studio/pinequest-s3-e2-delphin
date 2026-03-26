@@ -1,17 +1,23 @@
 "use client"
 
-import { use } from "react"
+import { use, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import { CircleAlert } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
-  exams,
   examResults,
-  getExamReportReleaseDate,
-  isExamReportAvailable,
+  exams as legacyExams,
+  type Exam,
 } from "@/lib/mock-data"
 import { useStudentSession } from "@/hooks/use-student-session"
+import {
+  getStudentExamReportReleaseDate,
+  getStudentExams,
+  isStudentExamReportAvailable,
+} from "@/lib/student-exams"
 
 export default function StudentExamReportPage({
   params,
@@ -20,7 +26,35 @@ export default function StudentExamReportPage({
 }) {
   const { examId } = use(params)
   const { studentId } = useStudentSession()
-  const exam = exams.find((entry) => entry.id === examId)
+  const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadExams = async () => {
+      try {
+        const nextExams = await getStudentExams()
+        if (!isMounted) return
+        setAllExams(nextExams)
+        setError(null)
+      } catch (loadError) {
+        if (!isMounted) return
+        setError(loadError instanceof Error ? loadError.message : "Failed to load exam report.")
+      }
+    }
+
+    void loadExams()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  const exam = useMemo(
+    () => allExams.find((entry) => entry.id === examId),
+    [allExams, examId],
+  )
   const result = examResults.find(
     (entry) => entry.examId === examId && entry.studentId === studentId,
   )
@@ -37,11 +71,21 @@ export default function StudentExamReportPage({
   }
 
   const percentage = Math.round((result.score / result.totalPoints) * 100)
-  const isReportAvailable = isExamReportAvailable(examId)
-  const releaseDate = getExamReportReleaseDate(exam)
+  const isReportAvailable = isStudentExamReportAvailable(exam)
+  const releaseDate = getStudentExamReportReleaseDate(exam)
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {error ? (
+        <Alert variant="destructive">
+          <CircleAlert />
+          <AlertTitle>Could not refresh report data</AlertTitle>
+          <AlertDescription>
+            {error} Showing the best available exam data for now.
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
       <div>
         <Link href="/student/exams" className="text-sm text-muted-foreground hover:underline">
           &larr; Back to Exams

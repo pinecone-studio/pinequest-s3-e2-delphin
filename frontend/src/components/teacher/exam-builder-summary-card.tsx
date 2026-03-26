@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ALL_CLASSES_OPTION } from '@/lib/exams-api'
 import { classes, type Exam } from '@/lib/mock-data'
 import type { ScheduleEntry } from '@/components/teacher/exam-builder-types'
 
@@ -94,8 +95,9 @@ export function ExamBuilderSummaryCard({
               {scheduleEntries.map((entry, index) => (
                 <div key={index} className="flex items-center gap-3 p-3 border rounded-lg">
                   <Select value={entry.classId} onValueChange={(value) => onScheduleEntryChange(index, 'classId', value)}>
-                    <SelectTrigger className="w-32"><SelectValue placeholder="Class" /></SelectTrigger>
+                    <SelectTrigger className="w-40"><SelectValue placeholder="Class" /></SelectTrigger>
                     <SelectContent>
+                      <SelectItem value={ALL_CLASSES_OPTION}>All Classes</SelectItem>
                       {classes.map((classEntry) => (
                         <SelectItem key={classEntry.id} value={classEntry.id}>{classEntry.name}</SelectItem>
                       ))}

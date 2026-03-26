@@ -1,9 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { DatabaseService } from './database/database.service';
+import { UploadsService } from './modules/uploads/uploads.service';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly uploadsService: UploadsService,
+  ) {}
 
   getOverview() {
     return {
@@ -26,14 +30,12 @@ export class AppService {
   }
 
   getHealth() {
-    const databaseConfigured = this.databaseService.isConfigured();
-
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
       service: 'pinequest-backend',
-      databaseConfigured,
-      uploadMetadataPersistence: databaseConfigured ? 'd1' : 'local-file',
+      databaseConfigured: this.databaseService.isConfigured(),
+      uploadMetadataPersistence: this.databaseService.isConfigured() ? 'd1' : 'local-file',
       storageConfigured: Boolean(
         process.env.CLOUDFLARE_R2_BUCKET_NAME &&
           process.env.CLOUDFLARE_R2_ENDPOINT &&
@@ -41,5 +43,30 @@ export class AppService {
           process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY,
       ),
     };
+  }
+
+  async getReady() {
+    const [database, storage] = await Promise.all([
+      this.databaseService.checkHealth(),
+      this.uploadsService.checkStorageHealth(),
+    ]);
+
+    const ready = database.ok && storage.ok;
+
+    const payload = {
+      status: ready ? 'ready' : 'not-ready',
+      timestamp: new Date().toISOString(),
+      service: 'pinequest-backend',
+      checks: {
+        database,
+        storage,
+      },
+    };
+
+    if (!ready) {
+      throw new ServiceUnavailableException(payload);
+    }
+
+    return payload;
   }
 }

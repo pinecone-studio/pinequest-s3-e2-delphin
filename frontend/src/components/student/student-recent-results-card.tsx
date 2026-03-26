@@ -4,11 +4,14 @@ import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { exams, isExamReportAvailable, type ExamResult } from '@/lib/mock-data'
+import type { Exam, ExamResult } from '@/lib/mock-data'
+import { isStudentExamReportAvailable } from '@/lib/student-exams'
 
 export function StudentRecentResultsCard({
+  exams,
   results,
 }: {
+  exams: Exam[]
   results: ExamResult[]
 }) {
   if (results.length === 0) {
@@ -28,7 +31,7 @@ export function StudentRecentResultsCard({
             const percentage = Math.round((result.score / result.totalPoints) * 100)
             const badgeVariant =
               percentage >= 70 ? 'default' : percentage >= 50 ? 'secondary' : 'destructive'
-            const isReportAvailable = isExamReportAvailable(result.examId)
+            const isReportAvailable = exam ? isStudentExamReportAvailable(exam) : false
 
             return (
               <div key={`${result.examId}-${result.studentId}`} className="elevated-surface soft-divider flex items-center justify-between rounded-xl border p-3">

@@ -8,9 +8,15 @@ export function rethrowAsInternal(
     throw error;
   }
 
-  throw new InternalServerErrorException(fallbackMessage, {
-    cause: error,
-  });
+  throw new InternalServerErrorException(
+    {
+      message: fallbackMessage,
+      error: 'Internal Server Error',
+    },
+    {
+      cause: error,
+    },
+  );
 }
 
 export function executeOrRethrow<T>(

@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { executeOrRethrow, rethrowAsInternal } from '../../common/error-handling';
+import {
+  executeOrRethrowAsync,
+  rethrowAsInternal,
+} from '../../common/error-handling';
+import { DatabaseService } from '../../database/database.service';
 
 export type Course = {
   id: string;
@@ -20,15 +24,33 @@ export class CoursesService {
     },
   ];
 
-  findAll(): Course[] {
-    return executeOrRethrow(
-      () => this.courses,
-      'Failed to list courses from the in-memory store',
-    );
+  constructor(private readonly databaseService: DatabaseService) {}
+
+  async findAll(): Promise<Course[]> {
+    return executeOrRethrowAsync(async () => {
+      if (this.databaseService.isConfigured()) {
+        return await this.databaseService.query<Course>(
+          'SELECT id, title, type FROM courses ORDER BY id',
+        );
+      }
+
+      return this.courses;
+    }, 'Failed to list courses from the store');
   }
 
-  findOne(id: string): Course {
+  async findOne(id: string): Promise<Course> {
     try {
+      if (this.databaseService.isConfigured()) {
+        const course = await this.databaseService.queryFirst<Course>(
+          'SELECT id, title, type FROM courses WHERE id = ? LIMIT 1',
+          [id],
+        );
+        if (!course) {
+          throw new NotFoundException(`Course ${id} not found`);
+        }
+        return course;
+      }
+
       const course = this.courses.find((item) => item.id === id);
       if (!course) {
         throw new NotFoundException(`Course ${id} not found`);
@@ -39,8 +61,16 @@ export class CoursesService {
     }
   }
 
-  create(payload: CreateCourseDto): Course {
+  async create(payload: CreateCourseDto): Promise<Course> {
     try {
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute(
+          'INSERT INTO courses (id, title, type) VALUES (?, ?, ?)',
+          [payload.id, payload.title, payload.type],
+        );
+        return payload;
+      }
+
       this.courses.push(payload);
       return payload;
     } catch (error) {
@@ -48,9 +78,19 @@ export class CoursesService {
     }
   }
 
-  update(id: string, payload: UpdateCourseDto): Course {
+  async update(id: string, payload: UpdateCourseDto): Promise<Course> {
     try {
-      const course = this.findOne(id);
+      const course = await this.findOne(id);
+      const updated = { ...course, ...payload };
+
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute(
+          'UPDATE courses SET title = ?, type = ? WHERE id = ?',
+          [updated.title, updated.type, id],
+        );
+        return updated;
+      }
+
       Object.assign(course, payload);
       return course;
     } catch (error) {
@@ -58,8 +98,15 @@ export class CoursesService {
     }
   }
 
-  remove(id: string): Course {
+  async remove(id: string): Promise<Course> {
     try {
+      const course = await this.findOne(id);
+
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute('DELETE FROM courses WHERE id = ?', [id]);
+        return course;
+      }
+
       const index = this.courses.findIndex((item) => item.id === id);
       if (index === -1) {
         throw new NotFoundException(`Course ${id} not found`);

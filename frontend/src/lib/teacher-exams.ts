@@ -1,5 +1,6 @@
 import { exams as legacyExams } from '@/lib/mock-data'
-import { getApiBaseUrl, type CreatedExam } from '@/lib/exams-api'
+import { getServerApiBaseUrl } from '@/lib/api-base-url'
+import type { CreatedExam } from '@/lib/exams-api'
 
 export type TeacherExam = {
   id: string
@@ -52,7 +53,7 @@ function mapLegacyExamToTeacherExam(exam: (typeof legacyExams)[number]): Teacher
 }
 
 export async function getTeacherExams(): Promise<TeacherExam[]> {
-  const response = await fetch(`${getApiBaseUrl()}/exams`, {
+  const response = await fetch(`${getServerApiBaseUrl()}/exams`, {
     cache: 'no-store',
   })
 

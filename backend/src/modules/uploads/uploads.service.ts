@@ -1,19 +1,24 @@
 import {
   BadRequestException,
+  GatewayTimeoutException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
-import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { eq } from 'drizzle-orm';
+import {
+  GetObjectCommand,
+  HeadBucketCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import {
   executeOrRethrowAsync,
   rethrowAsInternal,
 } from '../../common/error-handling';
 import { DatabaseService } from '../../database/database.service';
-import { uploadedFiles } from '../../database/schema';
 
 export type UploadedFilePayload = {
   originalname: string;
@@ -44,6 +49,8 @@ export type PaginatedUploadRecords = {
 
 @Injectable()
 export class UploadsService {
+  private static readonly STORAGE_TIMEOUT_MS = 8000;
+  private static readonly STORAGE_MAX_RETRIES = 2;
   private s3Client: S3Client | null = null;
   private readonly uploadRecords = new Map<string, UploadRecord>();
   private readonly localMetadataPath = resolve(
@@ -165,27 +172,103 @@ export class UploadsService {
     return `${publicBase.replace(/\/+$/g, '')}/${key}`;
   }
 
+  private isRetryableStorageError(error: unknown) {
+    if (!error || typeof error !== 'object') {
+      return false;
+    }
+
+    const candidate = error as {
+      name?: string;
+      message?: string;
+      $metadata?: { httpStatusCode?: number };
+    };
+
+    if (candidate.name === 'AbortError' || candidate.name === 'TimeoutError') {
+      return true;
+    }
+
+    if (candidate.$metadata?.httpStatusCode && candidate.$metadata.httpStatusCode >= 500) {
+      return true;
+    }
+
+    const message = candidate.message?.toLowerCase() ?? '';
+    return (
+      message.includes('timeout') ||
+      message.includes('timed out') ||
+      message.includes('socket') ||
+      message.includes('econnreset') ||
+      message.includes('service unavailable')
+    );
+  }
+
+  private async sendStorageCommand<T>(
+    command: GetObjectCommand | HeadBucketCommand | PutObjectCommand,
+    operationName: string,
+  ): Promise<T> {
+    let lastError: unknown;
+
+    for (let attempt = 0; attempt <= UploadsService.STORAGE_MAX_RETRIES; attempt += 1) {
+      const controller = new AbortController();
+      const timeout = setTimeout(
+        () => controller.abort(),
+        UploadsService.STORAGE_TIMEOUT_MS,
+      );
+
+      try {
+        return (await this.getClient().send(command, {
+          abortSignal: controller.signal,
+        })) as T;
+      } catch (error) {
+        lastError = error;
+
+        if (!this.isRetryableStorageError(error) || attempt === UploadsService.STORAGE_MAX_RETRIES) {
+          break;
+        }
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+
+    const message =
+      lastError instanceof Error ? lastError.message : `Unknown ${operationName} failure`;
+
+    if (
+      lastError &&
+      typeof lastError === 'object' &&
+      'name' in lastError &&
+      lastError.name === 'AbortError'
+    ) {
+      throw new GatewayTimeoutException(`${operationName} timed out`);
+    }
+
+    throw new ServiceUnavailableException(`${operationName} failed: ${message}`);
+  }
+
   private async saveUploadRecord(record: UploadRecord): Promise<void> {
     try {
       await this.ensureLocalRecordsLoaded();
       this.uploadRecords.set(record.id, record);
 
-      const db = this.databaseService.getDb();
-      if (!db) {
+      if (!this.databaseService.isConfigured()) {
         await this.persistLocalRecords();
         return;
       }
 
-      await db.insert(uploadedFiles).values({
-        id: record.id,
-        bucket: record.bucket,
-        key: record.key,
-        folder: record.folder,
-        originalName: record.originalName,
-        contentType: record.contentType,
-        size: record.size,
-        uploadedAt: record.uploadedAt,
-      });
+      await this.databaseService.execute(
+        `INSERT INTO uploaded_files (
+          id, bucket, key, folder, original_name, content_type, size, uploaded_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          record.id,
+          record.bucket,
+          record.key,
+          record.folder,
+          record.originalName,
+          record.contentType,
+          record.size,
+          record.uploadedAt,
+        ],
+      );
     } catch (error) {
       rethrowAsInternal(
         error,
@@ -204,16 +287,27 @@ export class UploadsService {
         return cachedRecord;
       }
 
-      const db = this.databaseService.getDb();
-      if (!db) {
+      if (!this.databaseService.isConfigured()) {
         return null;
       }
 
-      const [record] = await db
-        .select()
-        .from(uploadedFiles)
-        .where(eq(uploadedFiles.id, id))
-        .limit(1);
+      const record = await this.databaseService.queryFirst<{
+        id: string;
+        bucket: string;
+        key: string;
+        folder: string;
+        originalName: string;
+        contentType: string;
+        size: number;
+        uploadedAt: string;
+      }>(
+        `SELECT id, bucket, key, folder, original_name as originalName,
+         content_type as contentType, size, uploaded_at as uploadedAt
+         FROM uploaded_files
+         WHERE id = ?
+         LIMIT 1`,
+        [id],
+      );
 
       if (!record) {
         return null;
@@ -242,6 +336,53 @@ export class UploadsService {
     return folder?.trim().replace(/^\/+|\/+$/g, '') || 'uploads';
   }
 
+  async checkStorageHealth(): Promise<{
+    configured: boolean;
+    ok: boolean;
+    latencyMs: number | null;
+    error?: string;
+  }> {
+    const bucketConfigured = Boolean(process.env.CLOUDFLARE_R2_BUCKET_NAME);
+    const credentialConfigured = Boolean(
+      process.env.CLOUDFLARE_R2_ENDPOINT &&
+        process.env.CLOUDFLARE_R2_ACCESS_KEY_ID &&
+        process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+    );
+
+    if (!bucketConfigured || !credentialConfigured) {
+      return {
+        configured: false,
+        ok: false,
+        latencyMs: null,
+        error: 'Cloudflare R2 credentials are not fully configured',
+      };
+    }
+
+    const startedAt = Date.now();
+
+    try {
+      await this.sendStorageCommand(
+        new HeadBucketCommand({
+          Bucket: this.getBucketName(),
+        }),
+        'R2 health check',
+      );
+
+      return {
+        configured: true,
+        ok: true,
+        latencyMs: Date.now() - startedAt,
+      };
+    } catch (error) {
+      return {
+        configured: true,
+        ok: false,
+        latencyMs: Date.now() - startedAt,
+        error: error instanceof Error ? error.message : 'Unknown R2 health check failure',
+      };
+    }
+  }
+
   async uploadFile(
     file: UploadedFilePayload | undefined,
     folder?: string,
@@ -259,13 +400,14 @@ export class UploadsService {
       const normalizedFolder = this.normalizeFolder(folder);
       const key = this.buildObjectKey(file.originalname, normalizedFolder);
 
-      await this.getClient().send(
+      await this.sendStorageCommand(
         new PutObjectCommand({
           Bucket: bucket,
           Key: key,
           Body: file.buffer,
           ContentType: file.mimetype || 'application/octet-stream',
         }),
+        'R2 upload',
       );
 
       const uploadRecord: UploadRecord = {
@@ -292,8 +434,7 @@ export class UploadsService {
   ): Promise<PaginatedUploadRecords> {
     try {
       await this.ensureLocalRecordsLoaded();
-      const db = this.databaseService.getDb();
-      if (!db) {
+      if (!this.databaseService.isConfigured()) {
         const items = [...this.uploadRecords.values()].sort((left, right) =>
           right.uploadedAt.localeCompare(left.uploadedAt),
         );
@@ -309,7 +450,20 @@ export class UploadsService {
         };
       }
 
-      const records = await db.select().from(uploadedFiles);
+      const records = await this.databaseService.query<{
+        id: string;
+        bucket: string;
+        key: string;
+        folder: string;
+        originalName: string;
+        contentType: string;
+        size: number;
+        uploadedAt: string;
+      }>(
+        `SELECT id, bucket, key, folder, original_name as originalName,
+         content_type as contentType, size, uploaded_at as uploadedAt
+         FROM uploaded_files`,
+      );
 
       const items = records
         .map((record) => ({
@@ -359,11 +513,14 @@ export class UploadsService {
   }> {
     try {
       const record = await this.findUploadById(id);
-      const response = await this.getClient().send(
+      const response = await this.sendStorageCommand<{
+        Body?: { transformToByteArray: () => Promise<Uint8Array> };
+      }>(
         new GetObjectCommand({
           Bucket: record.bucket,
           Key: record.key,
         }),
+        'R2 download',
       );
 
       if (!response.Body) {

@@ -11,6 +11,15 @@ type RequestWithId = Request & {
   requestId?: string;
 };
 
+type ErrorResponseBody = {
+  statusCode: number;
+  error: string;
+  message: string | string[];
+  path: string;
+  requestId: string | null;
+  timestamp: string;
+};
+
 @Catch()
 export class HttpExceptionLoggingFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
@@ -23,23 +32,12 @@ export class HttpExceptionLoggingFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const responseBody =
-      exception instanceof HttpException
-        ? exception.getResponse()
-        : {
-            message: 'Unexpected internal server error',
-            error: 'Internal Server Error',
-            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          };
+    const responseBody = this.buildResponseBody(exception, request, status);
 
     const message =
-      typeof responseBody === 'string'
-        ? responseBody
-        : responseBody &&
-            typeof responseBody === 'object' &&
-            'message' in responseBody
-          ? responseBody.message
-          : 'Unexpected internal server error';
+      Array.isArray(responseBody.message)
+        ? responseBody.message.join(' ')
+        : responseBody.message;
 
     const errorLog = {
       level: status >= 500 ? 'error' : 'warn',
@@ -58,5 +56,61 @@ export class HttpExceptionLoggingFilter implements ExceptionFilter {
     }
 
     response.status(status).json(responseBody);
+  }
+
+  private buildResponseBody(
+    exception: unknown,
+    request: RequestWithId,
+    status: number,
+  ): ErrorResponseBody {
+    const basePayload = {
+      path: request?.originalUrl ?? 'UNKNOWN',
+      requestId: request?.requestId ?? null,
+      timestamp: new Date().toISOString(),
+    };
+
+    if (!(exception instanceof HttpException)) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 'Internal Server Error',
+        message: 'The server hit an unexpected error while processing the request.',
+        ...basePayload,
+      };
+    }
+
+    const rawResponse = exception.getResponse();
+
+    if (typeof rawResponse === 'string') {
+      return {
+        statusCode: status,
+        error: exception.name,
+        message: rawResponse,
+        ...basePayload,
+      };
+    }
+
+    if (rawResponse && typeof rawResponse === 'object') {
+      const body = rawResponse as {
+        error?: string;
+        message?: string | string[];
+        statusCode?: number;
+      };
+
+      return {
+        statusCode: body.statusCode ?? status,
+        error: body.error ?? exception.name,
+        message:
+          body.message ??
+          'The request could not be completed because the server returned an empty error response.',
+        ...basePayload,
+      };
+    }
+
+    return {
+      statusCode: status,
+      error: exception.name,
+      message: 'The request failed, but the server did not provide a readable error message.',
+      ...basePayload,
+    };
   }
 }

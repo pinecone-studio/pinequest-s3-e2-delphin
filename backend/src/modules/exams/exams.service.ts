@@ -6,17 +6,11 @@ import {
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { mkdir } from 'node:fs/promises';
-import { eq } from 'drizzle-orm';
 import {
   executeOrRethrowAsync,
   rethrowAsInternal,
 } from '../../common/error-handling';
 import { DatabaseService } from '../../database/database.service';
-import {
-  examQuestions,
-  examSchedules,
-  exams,
-} from '../../database/schema';
 import type {
   CreateExamDto,
   Exam,
@@ -25,6 +19,7 @@ import type {
   ExamSchedule,
   ExamStatus,
   ReportReleaseMode,
+  UpdateExamDto,
 } from './exams.types';
 
 type ExamRecord = {
@@ -98,26 +93,34 @@ export class ExamsService {
 
   async findOne(id: string): Promise<Exam> {
     return executeOrRethrowAsync(async () => {
-      const db = this.databaseService.getDb();
-      if (db) {
-        const [examRecord] = await db
-          .select()
-          .from(exams)
-          .where(eq(exams.id, id))
-          .limit(1);
+      if (this.databaseService.isConfigured()) {
+        const examRecord = await this.databaseService.queryFirst<ExamRecord>(
+          `SELECT id, title, duration_minutes as durationMinutes, report_release_mode as reportReleaseMode,
+           status, created_at as createdAt, updated_at as updatedAt
+           FROM exams
+           WHERE id = ?
+           LIMIT 1`,
+          [id],
+        );
 
         if (!examRecord) {
           throw new NotFoundException(`Exam ${id} not found`);
         }
 
-        const questionRecords = await db
-          .select()
-          .from(examQuestions)
-          .where(eq(examQuestions.examId, id));
-        const scheduleRecords = await db
-          .select()
-          .from(examSchedules)
-          .where(eq(examSchedules.examId, id));
+        const questionRecords = await this.databaseService.query<ExamQuestionRecord>(
+          `SELECT id, exam_id as examId, type, prompt, options_json as optionsJson,
+           correct_answer as correctAnswer, points, display_order as displayOrder
+           FROM exam_questions
+           WHERE exam_id = ?`,
+          [id],
+        );
+        const scheduleRecords = await this.databaseService.query<ExamScheduleRecord>(
+          `SELECT id, exam_id as examId, class_id as classId, scheduled_date as scheduledDate,
+           scheduled_time as scheduledTime
+           FROM exam_schedules
+           WHERE exam_id = ?`,
+          [id],
+        );
 
         return this.mapExamRecord(examRecord, questionRecords, scheduleRecords);
       }
@@ -142,20 +145,57 @@ export class ExamsService {
 
       const examId = crypto.randomUUID();
       const timestamp = new Date().toISOString();
-      const examInsert = this.buildExamInsert(payload, examId, timestamp);
+      const examInsert = this.buildExamInsert(payload, examId, timestamp, timestamp);
       const questionInserts = this.buildQuestionInserts(payload, examId);
       const scheduleInserts = this.buildScheduleInserts(payload, examId);
 
-      const db = this.databaseService.getDb();
-      if (db) {
-        await db.insert(exams).values(examInsert);
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute(
+          `INSERT INTO exams (
+            id, title, duration_minutes, report_release_mode, status, created_at, updated_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [
+            examInsert.id,
+            examInsert.title,
+            examInsert.durationMinutes,
+            examInsert.reportReleaseMode,
+            examInsert.status,
+            examInsert.createdAt,
+            examInsert.updatedAt,
+          ],
+        );
 
-        if (questionInserts.length > 0) {
-          await db.insert(examQuestions).values(questionInserts);
+        for (const question of questionInserts) {
+          await this.databaseService.execute(
+            `INSERT INTO exam_questions (
+              id, exam_id, type, prompt, options_json, correct_answer, points, display_order
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              question.id,
+              question.examId,
+              question.type,
+              question.prompt,
+              question.optionsJson,
+              question.correctAnswer,
+              question.points,
+              question.displayOrder,
+            ],
+          );
         }
 
-        if (scheduleInserts.length > 0) {
-          await db.insert(examSchedules).values(scheduleInserts);
+        for (const schedule of scheduleInserts) {
+          await this.databaseService.execute(
+            `INSERT INTO exam_schedules (
+              id, exam_id, class_id, scheduled_date, scheduled_time
+            ) VALUES (?, ?, ?, ?, ?)`,
+            [
+              schedule.id,
+              schedule.examId,
+              schedule.classId,
+              schedule.scheduledDate,
+              schedule.scheduledTime,
+            ],
+          );
         }
       } else {
         await this.ensureLocalStoreLoaded();
@@ -169,17 +209,146 @@ export class ExamsService {
     }, `Failed to create exam ${payload.title}`);
   }
 
+  async update(id: string, payload: UpdateExamDto): Promise<Exam> {
+    return executeOrRethrowAsync(async () => {
+      const existingExam = await this.findOne(id);
+      const nextPayload: CreateExamDto = {
+        title: payload.title?.trim() || existingExam.title,
+        durationMinutes: payload.durationMinutes ?? existingExam.durationMinutes,
+        reportReleaseMode: payload.reportReleaseMode ?? existingExam.reportReleaseMode,
+        status: (payload.status ?? existingExam.status) as CreateExamDto['status'],
+        questions:
+          payload.questions ??
+          existingExam.questions.map((question) => ({
+            type: question.type,
+            question: question.question,
+            options: question.options,
+            correctAnswer: question.correctAnswer,
+            points: question.points,
+            order: question.order,
+          })),
+        schedules:
+          payload.schedules ??
+          existingExam.schedules.map((schedule) => ({
+            classId: schedule.classId,
+            date: schedule.date,
+            time: schedule.time,
+          })),
+      };
+
+      this.validateCreateExamDto(nextPayload);
+      const timestamp = new Date().toISOString();
+      const examInsert = this.buildExamInsert(nextPayload, id, existingExam.createdAt, timestamp);
+      const questionInserts = this.buildQuestionInserts(nextPayload, id);
+      const scheduleInserts = this.buildScheduleInserts(nextPayload, id);
+
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute(
+          `UPDATE exams
+           SET title = ?, duration_minutes = ?, report_release_mode = ?, status = ?, updated_at = ?
+           WHERE id = ?`,
+          [
+            examInsert.title,
+            examInsert.durationMinutes,
+            examInsert.reportReleaseMode,
+            examInsert.status,
+            examInsert.updatedAt,
+            id,
+          ],
+        );
+        await this.databaseService.execute('DELETE FROM exam_questions WHERE exam_id = ?', [id]);
+        await this.databaseService.execute('DELETE FROM exam_schedules WHERE exam_id = ?', [id]);
+
+        for (const question of questionInserts) {
+          await this.databaseService.execute(
+            `INSERT INTO exam_questions (
+              id, exam_id, type, prompt, options_json, correct_answer, points, display_order
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              question.id,
+              question.examId,
+              question.type,
+              question.prompt,
+              question.optionsJson,
+              question.correctAnswer,
+              question.points,
+              question.displayOrder,
+            ],
+          );
+        }
+
+        for (const schedule of scheduleInserts) {
+          await this.databaseService.execute(
+            `INSERT INTO exam_schedules (
+              id, exam_id, class_id, scheduled_date, scheduled_time
+            ) VALUES (?, ?, ?, ?, ?)`,
+            [
+              schedule.id,
+              schedule.examId,
+              schedule.classId,
+              schedule.scheduledDate,
+              schedule.scheduledTime,
+            ],
+          );
+        }
+      } else {
+        await this.ensureLocalStoreLoaded();
+        this.localStore.exams = this.localStore.exams.map((entry) =>
+          entry.id === id ? examInsert : entry,
+        );
+        this.localStore.questions = this.localStore.questions.filter((entry) => entry.examId !== id);
+        this.localStore.schedules = this.localStore.schedules.filter((entry) => entry.examId !== id);
+        this.localStore.questions.push(...questionInserts);
+        this.localStore.schedules.push(...scheduleInserts);
+        await this.persistLocalStore();
+      }
+
+      return this.mapExamRecord(examInsert, questionInserts, scheduleInserts);
+    }, `Failed to update exam ${id}`);
+  }
+
+  async remove(id: string): Promise<Exam> {
+    return executeOrRethrowAsync(async () => {
+      const existingExam = await this.findOne(id);
+
+      if (this.databaseService.isConfigured()) {
+        await this.databaseService.execute('DELETE FROM exam_questions WHERE exam_id = ?', [id]);
+        await this.databaseService.execute('DELETE FROM exam_schedules WHERE exam_id = ?', [id]);
+        await this.databaseService.execute('DELETE FROM exams WHERE id = ?', [id]);
+      } else {
+        await this.ensureLocalStoreLoaded();
+        this.localStore.exams = this.localStore.exams.filter((entry) => entry.id !== id);
+        this.localStore.questions = this.localStore.questions.filter((entry) => entry.examId !== id);
+        this.localStore.schedules = this.localStore.schedules.filter((entry) => entry.examId !== id);
+        await this.persistLocalStore();
+      }
+
+      return existingExam;
+    }, `Failed to delete exam ${id}`);
+  }
+
   private async loadAllRecords(): Promise<{
     examRecords: ExamRecord[];
     questionRecords: ExamQuestionRecord[];
     scheduleRecords: ExamScheduleRecord[];
   }> {
-    const db = this.databaseService.getDb();
-    if (db) {
+    if (this.databaseService.isConfigured()) {
       const [examRecords, questionRecords, scheduleRecords] = await Promise.all([
-        db.select().from(exams),
-        db.select().from(examQuestions),
-        db.select().from(examSchedules),
+        this.databaseService.query<ExamRecord>(
+          `SELECT id, title, duration_minutes as durationMinutes, report_release_mode as reportReleaseMode,
+           status, created_at as createdAt, updated_at as updatedAt
+           FROM exams`,
+        ),
+        this.databaseService.query<ExamQuestionRecord>(
+          `SELECT id, exam_id as examId, type, prompt, options_json as optionsJson,
+           correct_answer as correctAnswer, points, display_order as displayOrder
+           FROM exam_questions`,
+        ),
+        this.databaseService.query<ExamScheduleRecord>(
+          `SELECT id, exam_id as examId, class_id as classId, scheduled_date as scheduledDate,
+           scheduled_time as scheduledTime
+           FROM exam_schedules`,
+        ),
       ]);
 
       return { examRecords, questionRecords, scheduleRecords };
@@ -332,15 +501,20 @@ export class ExamsService {
     };
   }
 
-  private buildExamInsert(dto: CreateExamDto, examId: string, timestamp: string) {
+  private buildExamInsert(
+    dto: CreateExamDto,
+    examId: string,
+    createdAt: string,
+    updatedAt: string,
+  ) {
     return {
       id: examId,
       title: dto.title.trim(),
       durationMinutes: dto.durationMinutes,
       reportReleaseMode: dto.reportReleaseMode,
       status: dto.status,
-      createdAt: timestamp,
-      updatedAt: timestamp,
+      createdAt,
+      updatedAt,
     };
   }
 

@@ -97,9 +97,14 @@ jobs:
             exit 1
           fi
 
-      - name: Build preview deployment
-        if: steps.vercel.outputs.configured == 'true' && env.VERCEL_ENV == 'preview'
-        run: npx vercel build --token="$VERCEL_TOKEN"
+      - name: Build Vercel deployment
+        if: steps.vercel.outputs.configured == 'true'
+        run: |
+          if [ "$VERCEL_ENV" = "production" ]; then
+            npx vercel build --prod --token="$VERCEL_TOKEN"
+          else
+            npx vercel build --token="$VERCEL_TOKEN"
+          fi
 
       - name: Inspect prebuilt output
         if: steps.vercel.outputs.configured == 'true'
@@ -155,10 +160,6 @@ jobs:
                 body,
               });
             }
-
-      - name: Build production deployment
-        if: steps.vercel.outputs.configured == 'true' && env.VERCEL_ENV == 'production'
-        run: npx vercel build --prod --token="$VERCEL_TOKEN"
 
       - name: Deploy production
         id: deploy_production

@@ -12,6 +12,7 @@ import { students } from "@/lib/mock-data"
 
 export default function StudentLoginPage() {
   const router = useRouter()
+  const demoStudent = students[0]
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
@@ -31,6 +32,12 @@ export default function StudentLoginPage() {
     } else {
       setError("Invalid email or password")
     }
+  }
+
+  const handleDemoFill = () => {
+    setEmail(demoStudent.email)
+    setPassword(demoStudent.password)
+    setError("")
   }
 
   return (
@@ -92,6 +99,9 @@ export default function StudentLoginPage() {
 
                 <Button type="submit" className="ocean-cta w-full border-0 font-semibold">
                   Login
+                </Button>
+                <Button type="button" variant="outline" className="w-full" onClick={handleDemoFill}>
+                  Use Demo Account
                 </Button>
               </form>
             </CardContent>

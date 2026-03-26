@@ -46,7 +46,7 @@ export default function StudentLayout({
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       {/* Header */}
       <header className="border-b bg-background dark:border-[#101820] dark:bg-[#000000]">
-        <div className="container mx-auto px-4 h-14 flex items-center justify-between">
+        <div className="flex h-14 w-full items-center justify-between px-4 sm:px-6">
           <Link href="/student/dashboard" className="font-semibold">
             <BrandLogo className="gap-2" textClassName="text-sm font-semibold text-foreground sm:text-base" />
           </Link>

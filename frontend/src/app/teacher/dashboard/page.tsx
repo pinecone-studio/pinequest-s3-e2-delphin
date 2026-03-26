@@ -2,7 +2,8 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { classes, exams, classSchedule, teacher } from "@/lib/mock-data"
+import { classes, exams } from "@/lib/mock-data"
+import { classSchedule, teacher } from "@/lib/mock-data-helpers"
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 const timeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"]

@@ -6,7 +6,7 @@ const ROOT = process.cwd();
 const SOURCE_ROOT = path.join(ROOT, "src");
 const VALID_EXTENSIONS = new Set([".js", ".jsx", ".ts", ".tsx"]);
 const IGNORED_PREFIXES = ["src/components/ui/"];
-const IGNORED_FILES = new Set(["src/lib/mock-data.ts"]);
+const IGNORED_FILES = new Set([]);
 
 async function collectFiles(directory) {
   const entries = await fs.readdir(directory, { withFileTypes: true });

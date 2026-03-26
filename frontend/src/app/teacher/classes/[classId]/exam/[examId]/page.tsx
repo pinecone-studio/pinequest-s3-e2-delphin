@@ -6,7 +6,13 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { Button } from "@/components/ui/button"
 import { TeacherExamResultsTable } from "@/components/teacher/teacher-exam-results-table"
 import { TeacherQuestionAnalysisCard } from "@/components/teacher/teacher-question-analysis-card"
-import { exams, getClassById, getExamResults, getQuestionStats, getStudentById } from "@/lib/mock-data"
+import { exams } from "@/lib/mock-data"
+import {
+  getClassById,
+  getExamResults,
+  getQuestionStats,
+  getStudentById,
+} from "@/lib/mock-data-helpers"
 
 export default function ExamStatsPage({ 
   params 

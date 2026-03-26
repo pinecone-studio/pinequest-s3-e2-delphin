@@ -7,7 +7,7 @@ import { BookOpen, ChevronLeft, ChevronRight, ClipboardList, LayoutDashboard, Us
 import { BrandLogo } from "@/components/brand-logo"
 import { ThemeToggleButton } from "@/components/theme-toggle-button"
 import { cn } from "@/lib/utils"
-import { teacher } from "@/lib/mock-data"
+import { teacher } from "@/lib/mock-data-helpers"
 
 const navItems = [
   { href: "/teacher/dashboard", label: "Хянах Самбар", icon: LayoutDashboard },

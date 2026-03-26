@@ -11,7 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { mockTests, teacher } from "@/lib/mock-data"
+import { mockTests } from "@/lib/mock-data"
+import { teacher } from "@/lib/mock-data-helpers"
 
 // In a real app, this would be a list of teachers
 const teachers = [teacher]

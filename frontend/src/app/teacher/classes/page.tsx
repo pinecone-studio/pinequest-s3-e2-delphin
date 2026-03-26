@@ -3,7 +3,8 @@
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { classes, getExamsForClass } from "@/lib/mock-data"
+import { classes } from "@/lib/mock-data"
+import { getExamsForClass } from "@/lib/mock-data-helpers"
 
 export default function ClassesPage() {
   return (

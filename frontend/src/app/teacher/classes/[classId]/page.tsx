@@ -7,7 +7,11 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { getClassById, getExamsForClass, getExamResults } from "@/lib/mock-data"
+import {
+  getClassById,
+  getExamResults,
+  getExamsForClass,
+} from "@/lib/mock-data-helpers"
 
 function getSemesterLabel(date: string) {
   const [yearString, monthString] = date.split("-")

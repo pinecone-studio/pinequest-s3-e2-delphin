@@ -3,8 +3,9 @@
 import { useSyncExternalStore } from "react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
-export function ThemeToggleButton() {
+export function ThemeToggleButton({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme()
   const mounted = useSyncExternalStore(
     () => () => undefined,
@@ -18,10 +19,16 @@ export function ThemeToggleButton() {
     <Button
       type="button"
       variant="outline"
-      className="secondary-ocean-button rounded-full px-4 font-semibold"
+      size="icon"
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      className={cn(
+        "secondary-ocean-button rounded-full text-base font-semibold",
+        className,
+      )}
       onClick={() => setTheme(isDark ? "light" : "dark")}
     >
-      {isDark ? "Light Mode" : "Dark Mode"}
+      {isDark ? "☀︎" : "⏾"}
     </Button>
   )
 }

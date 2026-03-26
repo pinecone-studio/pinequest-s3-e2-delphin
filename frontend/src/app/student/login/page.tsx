@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { ThemeToggleButton } from "@/components/theme-toggle-button"
 import { students } from "@/lib/mock-data"
 
 export default function StudentLoginPage() {
@@ -42,9 +43,13 @@ export default function StudentLoginPage() {
 
   return (
     <main className="skywash-background relative min-h-screen overflow-hidden p-4">
-      <div className="pointer-events-none absolute inset-0">
+      <div className="pointer-events-none absolute inset-0 dark:hidden">
         <div className="absolute left-1/2 top-[25%] h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/30 blur-3xl dark:bg-cyan-300/8" />
         <div className="absolute left-1/2 top-[78%] h-44 w-[24rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-200/18 blur-3xl dark:bg-sky-400/6" />
+      </div>
+
+      <div className="absolute right-4 top-4 z-10 md:right-6 md:top-6">
+        <ThemeToggleButton />
       </div>
 
       <div className="relative flex min-h-[calc(100vh-2rem)] items-center justify-center">

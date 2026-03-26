@@ -2,10 +2,8 @@
 
 import { use, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { CircleAlert } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   examResults,
@@ -27,7 +25,6 @@ export default function StudentExamReportPage({
   const { examId } = use(params)
   const { studentId } = useStudentSession()
   const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     let isMounted = true
@@ -37,10 +34,9 @@ export default function StudentExamReportPage({
         const nextExams = await getStudentExams()
         if (!isMounted) return
         setAllExams(nextExams)
-        setError(null)
       } catch (loadError) {
         if (!isMounted) return
-        setError(loadError instanceof Error ? loadError.message : "Failed to load exam report.")
+        console.warn("Failed to refresh exam report data from the backend.", loadError)
       }
     }
 
@@ -61,7 +57,7 @@ export default function StudentExamReportPage({
 
   if (!exam || !result) {
     return (
-      <div className="text-center py-12">
+      <div className="py-12 text-center">
         <h1 className="text-2xl font-bold">Report not found</h1>
         <Link href="/student/exams">
           <Button className="mt-4">Back to Exams</Button>
@@ -76,16 +72,6 @@ export default function StudentExamReportPage({
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {error ? (
-        <Alert variant="destructive">
-          <CircleAlert />
-          <AlertTitle>Could not refresh report data</AlertTitle>
-          <AlertDescription>
-            {error} Showing the best available exam data for now.
-          </AlertDescription>
-        </Alert>
-      ) : null}
-
       <div>
         <Link href="/student/exams" className="text-sm text-muted-foreground hover:underline">
           &larr; Back to Exams

@@ -1,6 +1,16 @@
 name: Deploy
 
 on:
+  workflow_dispatch:
+    inputs:
+      vercel_env:
+        description: Deployment target environment
+        required: true
+        default: preview
+        type: choice
+        options:
+          - preview
+          - production
   pull_request:
     branches:
       - main
@@ -24,6 +34,9 @@ jobs:
   deploy-frontend:
     name: Frontend deploy
     if: >
+      (
+        github.event_name == 'workflow_dispatch'
+      ) ||
       (
         (
           github.event_name == 'pull_request' &&
@@ -49,7 +62,7 @@ jobs:
     env:
       # This workflow is designed to deploy via the Vercel CLI and secrets.
       # It does not require Git integration in the Vercel project.
-      VERCEL_ENV: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' && 'production' || 'preview' }}
+      VERCEL_ENV: ${{ github.event_name == 'workflow_dispatch' && inputs.vercel_env || github.event_name == 'workflow_run' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' && 'production' || 'preview' }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -57,7 +70,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event.workflow_run.head_sha }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
 
       - name: Check Vercel secrets
         id: vercel

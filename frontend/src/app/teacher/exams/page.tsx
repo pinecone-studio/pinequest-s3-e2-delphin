@@ -2,9 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { CircleAlert } from "lucide-react";
 import { TeacherExamsSection } from "@/components/teacher/teacher-exams-section";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -16,7 +14,6 @@ import {
 export default function ExamsPage() {
   const [backendExams, setBackendExams] = React.useState<TeacherExam[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -26,14 +23,9 @@ export default function ExamsPage() {
         const exams = await getTeacherExams();
         if (!isMounted) return;
         setBackendExams(exams);
-        setError(null);
       } catch (loadError) {
         if (!isMounted) return;
-        setError(
-          loadError instanceof Error
-            ? loadError.message
-            : "Failed to load exams.",
-        );
+        console.warn("Failed to refresh teacher exams from the backend.", loadError);
       } finally {
         if (isMounted) {
           setIsLoading(false);
@@ -74,21 +66,10 @@ export default function ExamsPage() {
         </Link>
       </div>
 
-      {error ? (
-        <Alert variant="destructive">
-          <CircleAlert />
-          <AlertTitle>Backend шалгалтуудыг шинэчилж чадсангүй</AlertTitle>
-          <AlertDescription>
-            {error} Шалгалтын хэсэг шинэ систем рүү шилжиж байгаа тул доор
-            хуучин demo шалгалтуудыг харуулж байна.
-          </AlertDescription>
-        </Alert>
-      ) : null}
-
       {isLoading ? (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Spinner />
-          Шалгалтуудыг ачаалж байна...
+          Шалгалтуудыг ачааллаж байна...
         </div>
       ) : null}
 

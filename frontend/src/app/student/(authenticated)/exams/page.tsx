@@ -17,7 +17,6 @@ export default function StudentExamsPage() {
   const { studentClass, studentId } = useStudentSession()
   const [countdowns, setCountdowns] = useState<Record<string, number>>({})
   const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
-  const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [showNewExamAlert, setShowNewExamAlert] = useState(false)
   const knownScheduledExamIdsRef = useRef<string[]>([])
@@ -30,7 +29,6 @@ export default function StudentExamsPage() {
         const nextExams = await getStudentExams()
         if (!isMounted) return
         setAllExams(nextExams)
-        setError(null)
         knownScheduledExamIdsRef.current = nextExams
           .filter((exam) =>
             exam.status === "scheduled" &&
@@ -39,7 +37,7 @@ export default function StudentExamsPage() {
           .map((exam) => exam.id)
       } catch (loadError) {
         if (!isMounted) return
-        setError(loadError instanceof Error ? loadError.message : "Failed to load exams.")
+        console.warn("Failed to refresh student exams from the backend.", loadError)
       } finally {
         if (isMounted) {
           setIsLoading(false)
@@ -86,35 +84,35 @@ export default function StudentExamsPage() {
     return () => clearInterval(interval)
   }, [studentClass])
 
-  const myExams = useMemo(() => allExams.filter(e =>
-    e.scheduledClasses.some(sc => sc.classId === studentClass)
+  const myExams = useMemo(() => allExams.filter((exam) =>
+    exam.scheduledClasses.some((schedule) => schedule.classId === studentClass)
   ), [allExams, studentClass])
 
   const scheduledExams = useMemo(
-    () => myExams.filter(e => e.status === 'scheduled'),
+    () => myExams.filter((exam) => exam.status === "scheduled"),
     [myExams],
   )
   const today = getLocalDateString()
-  const todaysExams = useMemo(() => scheduledExams.filter(e =>
-    e.scheduledClasses.some(sc => sc.classId === studentClass && sc.date === today)
+  const todaysExams = useMemo(() => scheduledExams.filter((exam) =>
+    exam.scheduledClasses.some((schedule) => schedule.classId === studentClass && schedule.date === today)
   ), [scheduledExams, studentClass, today])
 
   useEffect(() => {
     const updateCountdowns = () => {
       const newCountdowns: Record<string, number> = {}
-      todaysExams.forEach(exam => {
-        const schedule = exam.scheduledClasses.find(sc => sc.classId === studentClass)
+      todaysExams.forEach((exam) => {
+        const schedule = exam.scheduledClasses.find((entry) => entry.classId === studentClass)
         if (schedule) {
           newCountdowns[exam.id] = getSecondsUntil(schedule.date, schedule.time)
         }
       })
-      setCountdowns(current => {
+      setCountdowns((current) => {
         const currentKeys = Object.keys(current)
         const nextKeys = Object.keys(newCountdowns)
 
         if (
           currentKeys.length === nextKeys.length &&
-          nextKeys.every(key => current[key] === newCountdowns[key])
+          nextKeys.every((key) => current[key] === newCountdowns[key])
         ) {
           return current
         }
@@ -128,7 +126,7 @@ export default function StudentExamsPage() {
     return () => clearInterval(interval)
   }, [todaysExams, studentClass])
 
-  const myResults = examResults.filter(r => r.studentId === studentId)
+  const myResults = examResults.filter((result) => result.studentId === studentId)
 
   return (
     <div className="space-y-6">
@@ -136,16 +134,6 @@ export default function StudentExamsPage() {
         <h1 className="text-2xl font-bold">Exams</h1>
         <p className="text-muted-foreground">View your upcoming and completed exams</p>
       </div>
-
-      {error ? (
-        <Alert variant="destructive">
-          <CircleAlert />
-          <AlertTitle>Could not refresh exams</AlertTitle>
-          <AlertDescription>
-            {error} Existing mock exam data is still shown while the backend list is unavailable.
-          </AlertDescription>
-        </Alert>
-      ) : null}
 
       {showNewExamAlert ? (
         <Alert>

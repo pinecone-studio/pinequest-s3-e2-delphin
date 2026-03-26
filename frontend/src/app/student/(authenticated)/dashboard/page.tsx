@@ -1,12 +1,10 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { CircleAlert } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { StudentRecentResultsCard } from "@/components/student/student-recent-results-card"
 import { StudentScheduleCalendar } from "@/components/student/student-schedule-calendar"
 import { StudentUpcomingExamsCard } from "@/components/student/student-upcoming-exams-card"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { examResults, exams as legacyExams, type Exam } from "@/lib/mock-data"
 import { getLocalDateString, getSecondsUntil } from "@/lib/student-exam-time"
 import { useStudentSession } from "@/hooks/use-student-session"
@@ -15,7 +13,6 @@ import { getStudentExams } from "@/lib/student-exams"
 export default function StudentDashboard() {
   const { studentClass, studentId, studentName } = useStudentSession()
   const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
-  const [error, setError] = useState<string | null>(null)
   const [todayCountdowns, setTodayCountdowns] = useState<Record<string, number>>({})
 
   useEffect(() => {
@@ -26,10 +23,9 @@ export default function StudentDashboard() {
         const nextExams = await getStudentExams()
         if (!isMounted) return
         setAllExams(nextExams)
-        setError(null)
       } catch (loadError) {
         if (!isMounted) return
-        setError(loadError instanceof Error ? loadError.message : "Failed to load exams.")
+        console.warn("Failed to refresh dashboard exams from the backend.", loadError)
       }
     }
 
@@ -40,17 +36,20 @@ export default function StudentDashboard() {
     }
   }, [])
 
-  const myExams = useMemo(() => allExams.filter(e =>
-    e.scheduledClasses.some(sc => sc.classId === studentClass)
+  const myExams = useMemo(() => allExams.filter((exam) =>
+    exam.scheduledClasses.some((schedule) => schedule.classId === studentClass)
   ), [allExams, studentClass])
-  const upcomingExams = useMemo(() => myExams.filter((exam) => exam.status === "scheduled"), [myExams])
+  const upcomingExams = useMemo(
+    () => myExams.filter((exam) => exam.status === "scheduled"),
+    [myExams],
+  )
   const today = getLocalDateString()
   const todaysExams = useMemo(() => upcomingExams.filter((exam) =>
     exam.scheduledClasses.some((schedule) => schedule.classId === studentClass && schedule.date === today)
   ), [studentClass, today, upcomingExams])
-  const myResults = examResults.filter(r => r.studentId === studentId)
+  const myResults = examResults.filter((result) => result.studentId === studentId)
   const avgScore = myResults.length > 0
-    ? Math.round(myResults.reduce((sum, r) => sum + (r.score / r.totalPoints) * 100, 0) / myResults.length)
+    ? Math.round(myResults.reduce((sum, result) => sum + (result.score / result.totalPoints) * 100, 0) / myResults.length)
     : 0
 
   useEffect(() => {
@@ -77,16 +76,6 @@ export default function StudentDashboard() {
         <p className="text-muted-foreground">Welcome back, {studentName}</p>
       </div>
 
-      {error ? (
-        <Alert variant="destructive">
-          <CircleAlert />
-          <AlertTitle>Could not refresh exams</AlertTitle>
-          <AlertDescription>
-            {error} Showing legacy exam data where available.
-          </AlertDescription>
-        </Alert>
-      ) : null}
-
       <StudentUpcomingExamsCard
         exams={upcomingExams}
         studentClass={studentClass}
@@ -94,8 +83,7 @@ export default function StudentDashboard() {
         todayCountdowns={todayCountdowns}
       />
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
             <CardDescription className="secondary-text">Your Class</CardDescription>

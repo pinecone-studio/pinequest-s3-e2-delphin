@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { cn } from "@/lib/utils"
+import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 type BrandLogoProps = {
-  className?: string
-  imageClassName?: string
-  textClassName?: string
-}
+  className?: string;
+  imageClassName?: string;
+  textClassName?: string;
+};
 
 export function BrandLogo({
   className,
@@ -26,9 +26,14 @@ export function BrandLogo({
           priority
         />
       </span>
-      <span className={cn("text-base font-semibold tracking-tight text-[#16324F]", textClassName)}>
-        ExamFlow LMS
+      <span
+        className={cn(
+          "text-base font-semibold tracking-tight text-[#16324F]",
+          textClassName,
+        )}
+      >
+        Дэльфин LMS
       </span>
     </span>
-  )
+  );
 }

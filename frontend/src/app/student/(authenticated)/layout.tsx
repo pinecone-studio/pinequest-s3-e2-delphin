@@ -102,7 +102,7 @@ export default function StudentLayout({
             })}
           </nav>
           {!isSidebarCollapsed ? (
-            <div className="mt-auto rounded-[18px] bg-[#fff4d7] px-4 py-5 text-[#df8620]">
+            <div className="sticky bottom-4 mt-auto rounded-[18px] bg-[#fff4d7] px-4 py-5 text-[#df8620]">
               <div className="flex items-start gap-2">
                 <Lightbulb className="mt-0.5 h-4 w-4 shrink-0" />
                 <p className="text-xs font-semibold leading-6">

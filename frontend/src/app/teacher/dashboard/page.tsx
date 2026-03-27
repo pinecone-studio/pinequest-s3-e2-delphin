@@ -2,8 +2,8 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { classes, exams } from "@/lib/mock-data"
-import { classSchedule, teacher } from "@/lib/mock-data-helpers"
+import { classes } from "@/lib/mock-data"
+import { classSchedule, teacher, teacherDashboardExams } from "@/lib/mock-data-helpers"
 
 const daysOfWeek = ["Даваа", "Мягмар", "Лхагва", "Пүрэв", "Баасан"]
 const timeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"]
@@ -28,8 +28,8 @@ function getWeekDates() {
 
 export default function TeacherDashboard() {
   const weekDates = getWeekDates()
-  const upcomingExams = exams.filter(e => e.status === 'scheduled')
-  const completedExams = exams.filter(e => e.status === 'completed')
+  const upcomingExams = teacherDashboardExams.filter(e => e.status === 'scheduled')
+  const completedExams = teacherDashboardExams.filter(e => e.status === 'completed')
 
   return (
     <div className="space-y-6">
@@ -96,7 +96,7 @@ export default function TeacherDashboard() {
                       cs => cs.day === day && cs.time.startsWith(time)
                     )
                     // Check for exam
-                    const examItem = exams.flatMap(e => 
+                    const examItem = teacherDashboardExams.flatMap(e => 
                       e.scheduledClasses
                         .filter(sc => sc.date === date && sc.time === time)
                         .map(sc => ({ exam: e, schedule: sc }))

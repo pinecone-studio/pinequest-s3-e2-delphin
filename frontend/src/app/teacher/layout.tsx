@@ -22,7 +22,7 @@ export default function TeacherLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true)
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">

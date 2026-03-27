@@ -5,6 +5,7 @@ import {
   students,
   type Exam,
 } from "@/lib/mock-data";
+export { teacherDashboardExams } from "@/lib/teacher-dashboard-mock-data";
 
 export const classSchedule = [
   {

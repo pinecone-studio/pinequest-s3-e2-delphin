@@ -20,6 +20,18 @@ export default function EditExamPage({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const builder = useExamBuilder();
+  const {
+    duration,
+    examTitle,
+    questions,
+    reportReleaseMode,
+    scheduleEntries,
+    setDuration,
+    setExamTitle,
+    setQuestions,
+    setReportReleaseMode,
+    setScheduleEntries,
+  } = builder;
 
   useEffect(() => {
     let isMounted = true;
@@ -29,10 +41,10 @@ export default function EditExamPage({
         const exam = await getExam(examId);
         if (!isMounted) return;
 
-        builder.setExamTitle(exam.title);
-        builder.setDuration(exam.durationMinutes);
-        builder.setReportReleaseMode(exam.reportReleaseMode);
-        builder.setQuestions(
+        setExamTitle(exam.title);
+        setDuration(exam.durationMinutes);
+        setReportReleaseMode(exam.reportReleaseMode);
+        setQuestions(
           exam.questions.map((question) => ({
             id: question.id,
             type: question.type,
@@ -42,7 +54,7 @@ export default function EditExamPage({
             points: question.points,
           })),
         );
-        builder.setScheduleEntries(
+        setScheduleEntries(
           exam.schedules.map((schedule) => ({
             classId: schedule.classId,
             date: schedule.date,
@@ -68,22 +80,22 @@ export default function EditExamPage({
       isMounted = false;
     };
   }, [
-    builder.setDuration,
-    builder.setExamTitle,
-    builder.setQuestions,
-    builder.setReportReleaseMode,
-    builder.setScheduleEntries,
     examId,
+    setDuration,
+    setExamTitle,
+    setQuestions,
+    setReportReleaseMode,
+    setScheduleEntries,
   ]);
 
   const creation = useExamCreation({
-    duration: builder.duration,
+    duration,
     examId,
-    examTitle: builder.examTitle,
+    examTitle,
     mode: "edit",
-    questions: builder.questions,
-    reportReleaseMode: builder.reportReleaseMode,
-    scheduleEntries: builder.scheduleEntries,
+    questions,
+    reportReleaseMode,
+    scheduleEntries,
   });
 
   const handleDelete = async () => {

@@ -18,43 +18,65 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { notifyStudentSessionChange } from "@/hooks/use-student-session"
 
+const STORAGE_KEYS = {
+  bio: "studentProfileBio",
+  image: "studentProfileImage",
+} as const
+
 const defaultBio = "Би ирээдүйд Дизайнер болно."
-const storageKeys = { bio: "studentProfileBio", image: "studentProfileImage" } as const
 
-type Props = { studentName: string }
-type Profile = { name: string; bio: string; image: string }
-
-function getInitials(name: string) {
-  return name.split(" ").filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("")
+type StudentDashboardProfileCardProps = {
+  studentName: string
 }
 
-function getStoredProfile(studentName: string): Profile {
-  if (typeof window === "undefined") return { name: studentName, bio: defaultBio, image: "" }
+type ProfileState = {
+  name: string
+  bio: string
+  image: string
+}
+
+function getStoredProfile(studentName: string): ProfileState {
+  if (typeof window === "undefined") {
+    return { name: studentName, bio: defaultBio, image: "" }
+  }
 
   return {
     name: localStorage.getItem("studentName") || studentName,
-    bio: localStorage.getItem(storageKeys.bio) || defaultBio,
-    image: localStorage.getItem(storageKeys.image) || "",
+    bio: localStorage.getItem(STORAGE_KEYS.bio) || defaultBio,
+    image: localStorage.getItem(STORAGE_KEYS.image) || "",
   }
 }
 
-export function StudentDashboardProfileCard({ studentName }: Props) {
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("")
+}
+
+export function StudentDashboardProfileCard({
+  studentName,
+}: StudentDashboardProfileCardProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [profile, setProfile] = useState<Profile>(() => getStoredProfile(studentName))
-  const [draft, setDraft] = useState<Profile>(() => getStoredProfile(studentName))
+  const [profile, setProfile] = useState<ProfileState>(() => getStoredProfile(studentName))
+  const [draft, setDraft] = useState<ProfileState>(() => getStoredProfile(studentName))
+
+  const handleOpenChange = (open: boolean) => {
+    if (open) setDraft(profile)
+    setIsOpen(open)
+  }
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
 
     const reader = new FileReader()
-    reader.onload = () => setDraft((current) => ({ ...current, image: String(reader.result || "") }))
+    reader.onload = () => {
+      setDraft((current) => ({ ...current, image: String(reader.result || "") }))
+    }
     reader.readAsDataURL(file)
-  }
-
-  const handleOpenChange = (open: boolean) => {
-    if (open) setDraft(profile)
-    setIsOpen(open)
   }
 
   const handleSave = () => {
@@ -65,9 +87,9 @@ export function StudentDashboardProfileCard({ studentName }: Props) {
     }
 
     localStorage.setItem("studentName", nextProfile.name)
-    localStorage.setItem(storageKeys.bio, nextProfile.bio)
-    if (nextProfile.image) localStorage.setItem(storageKeys.image, nextProfile.image)
-    else localStorage.removeItem(storageKeys.image)
+    localStorage.setItem(STORAGE_KEYS.bio, nextProfile.bio)
+    if (nextProfile.image) localStorage.setItem(STORAGE_KEYS.image, nextProfile.image)
+    else localStorage.removeItem(STORAGE_KEYS.image)
 
     notifyStudentSessionChange()
     setProfile(nextProfile)
@@ -86,13 +108,21 @@ export function StudentDashboardProfileCard({ studentName }: Props) {
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0">
-              <p className="truncate font-sans text-[18px] font-semibold text-[#1f2937]">{profile.name}</p>
-              <p className="mt-1 truncate font-sans text-[14px] italic text-[#5B646F]">&quot;{profile.bio}&quot;</p>
+              <p className="truncate font-sans text-[18px] font-semibold text-[#1f2937]">
+                {profile.name}
+              </p>
+              <p className="mt-1 truncate font-sans text-[14px] italic text-[#5B646F]">
+                &quot;{profile.bio}&quot;
+              </p>
             </div>
           </div>
 
           <DialogTrigger asChild>
-            <button type="button" className="rounded-full p-2 text-slate-700 transition hover:bg-[#edf5ff]" aria-label="Профайл засах">
+            <button
+              type="button"
+              className="rounded-full p-2 text-slate-700 transition hover:bg-[#edf5ff]"
+              aria-label="Профайл засах"
+            >
               <Pencil className="h-5 w-5" />
             </button>
           </DialogTrigger>
@@ -112,17 +142,29 @@ export function StudentDashboardProfileCard({ studentName }: Props) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="student-profile-name">Нэр</Label>
-            <Input id="student-profile-name" value={draft.name} onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))} />
+            <Input
+              id="student-profile-name"
+              value={draft.name}
+              onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="student-profile-bio">Bio</Label>
-            <Textarea id="student-profile-bio" value={draft.bio} onChange={(event) => setDraft((current) => ({ ...current, bio: event.target.value }))} />
+            <Textarea
+              id="student-profile-bio"
+              value={draft.bio}
+              onChange={(event) => setDraft((current) => ({ ...current, bio: event.target.value }))}
+            />
           </div>
         </div>
 
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Болих</Button>
-          <Button type="button" onClick={handleSave}>Хадгалах</Button>
+          <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
+            Болих
+          </Button>
+          <Button type="button" onClick={handleSave}>
+            Хадгалах
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

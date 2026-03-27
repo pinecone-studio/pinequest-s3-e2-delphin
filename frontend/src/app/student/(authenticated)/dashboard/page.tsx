@@ -1,41 +1,11 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
 import { Bell } from "lucide-react"
 import { StudentDashboardProfileCard } from "@/components/student/student-dashboard-profile-card"
-import { StudentDashboardScheduleCard } from "@/components/student/student-dashboard-schedule-card"
 import { useStudentSession } from "@/hooks/use-student-session"
-import { exams as legacyExams, type Exam } from "@/lib/mock-data"
-import { getStudentExams } from "@/lib/student-exams"
 
 export default function StudentDashboard() {
-  const { studentClass, studentName } = useStudentSession()
-  const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
-
-  useEffect(() => {
-    let isMounted = true
-
-    const loadExams = async () => {
-      try {
-        const nextExams = await getStudentExams()
-        if (isMounted) setAllExams(nextExams)
-      } catch (error) {
-        if (isMounted) console.warn("Failed to refresh dashboard exams from the backend.", error)
-      }
-    }
-
-    void loadExams()
-    return () => {
-      isMounted = false
-    }
-  }, [])
-
-  const myExams = useMemo(
-    () => allExams.filter((exam) =>
-      exam.scheduledClasses.some((schedule) => schedule.classId === studentClass),
-    ),
-    [allExams, studentClass],
-  )
+  const { studentName } = useStudentSession()
 
   return (
     <div className="space-y-6 px-[20px] pb-[20px] pt-[30px]">
@@ -59,9 +29,7 @@ export default function StudentDashboard() {
           </span>
         </button>
       </div>
-
       <StudentDashboardProfileCard studentName={studentName} />
-      <StudentDashboardScheduleCard exams={myExams} studentClass={studentClass} />
     </div>
   )
 }

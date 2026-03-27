@@ -8,9 +8,14 @@ on:
       - "backend/**"
       - ".github/workflows/backend-deploy.yml"
   workflow_dispatch:
+    inputs:
+      ref:
+        description: "Deploy хийх branch эсвэл ref"
+        required: false
+        default: ""
 
 concurrency:
-  group: backend-deploy-${{ github.ref }}
+  group: backend-deploy-${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref != '' && github.event.inputs.ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -55,9 +60,15 @@ jobs:
             APP_DIR="$(printf '%s' "$APP_DIR_RAW" | tr -d '\r' | xargs)"
             DEFAULT_APP_DIR="/home/${{ secrets.ORACLE_VM_USER }}/pinequest-s3-e2-team-10-fork"
             REPO_URL="https://github.com/${{ github.repository }}.git"
+            TARGET_REF_RAW='${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}'
+            TARGET_REF="$(printf '%s' "$TARGET_REF_RAW" | tr -d '\r' | xargs)"
 
             if [ -z "$APP_DIR" ]; then
               APP_DIR="$DEFAULT_APP_DIR"
+            fi
+
+            if [ -z "$TARGET_REF" ]; then
+              TARGET_REF="main"
             fi
 
             if [ ! -d "$APP_DIR/.git" ]; then
@@ -73,10 +84,10 @@ jobs:
 
             cd "$APP_DIR"
 
-            git fetch "$REPO_URL" main
+            git fetch "$REPO_URL" "$TARGET_REF"
             git reset --hard FETCH_HEAD
             git clean -fd
-            git checkout -B main FETCH_HEAD
+            git checkout -B "$TARGET_REF" FETCH_HEAD
 
             cd backend
 

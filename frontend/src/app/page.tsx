@@ -14,18 +14,28 @@ import {
 export default function LandingPage() {
   return (
     <main className="skywash-background relative min-h-screen overflow-hidden p-4">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-28 opacity-90 md:h-40 dark:opacity-60"
+      >
+        <div
+          className="h-full w-full bg-bottom bg-repeat-x bg-contain"
+          style={{ backgroundImage: "url('/watercolor-waves.png')" }}
+        />
+      </div>
+
       <div className="absolute right-4 top-4 z-10 md:right-6 md:top-6">
         <ThemeToggleButton />
       </div>
 
-      <div className="relative flex min-h-[calc(100vh-2rem)] items-center justify-center">
+      <div className="relative z-10 flex min-h-[calc(100vh-2rem)] items-center justify-center pb-24 md:pb-32">
         <div className="w-full max-w-2xl">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-foreground md:text-4xl">
-              ExamFlow LMS
+              Дэльфин LMS
             </h1>
             <p className="mt-2 text-muted-foreground">
-              Learning Management System - Exam Module
+              Сургалтын удирдлагын систем - Шалгалтын модуль
             </p>
           </div>
 
@@ -33,13 +43,10 @@ export default function LandingPage() {
             <Link href="/teacher/dashboard">
               <Card className="role-card h-full cursor-pointer rounded-[1.75rem] transition-all duration-200">
                 <CardHeader>
-                  <CardTitle className="text-foreground">
-                    Багш
-                  </CardTitle>
+                  <CardTitle className="text-foreground">Багш</CardTitle>
                   <CardDescription className="text-muted-foreground">
-                    Шалгалт үүсгэх, хянах, сурагчдын дүнг харах, асуултын санд
-                    хичээл оруулна
-
+                    Шалгалт үүсгэх, удирдах, сурагчын үр дүнг харах, зохион
+                    байгуулах таны мэдлэгийн сан
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -53,11 +60,10 @@ export default function LandingPage() {
             <Link href="/student/login">
               <Card className="role-card h-full cursor-pointer rounded-[1.75rem] transition-all duration-200">
                 <CardHeader>
-                  <CardTitle className="text-foreground">
-                    Cурагч
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground">
-                    Шалгалт өгч, шалгалтууд үзэж, хуваариа шалгана
+                  <CardTitle className="text-foreground">Сурагч</CardTitle>
+                  <CardDescription className="text-muted-foreground pb-4.5">
+                    Шалгалт өгч, шалгалтын хариу задаргаагаа харж, хуваариа
+                    шалгана
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

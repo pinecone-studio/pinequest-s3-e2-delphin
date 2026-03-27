@@ -1,47 +1,55 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ThemeToggleButton } from "@/components/theme-toggle-button"
-import { notifyStudentSessionChange } from "@/hooks/use-student-session"
-import { students } from "@/lib/mock-data"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ThemeToggleButton } from "@/components/theme-toggle-button";
+import { notifyStudentSessionChange } from "@/hooks/use-student-session";
+import { students } from "@/lib/mock-data";
 
 export default function StudentLoginPage() {
-  const router = useRouter()
-  const demoStudent = students[0]
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
+  const router = useRouter();
+  const demoStudent = students[0];
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    
-    const student = students.find(s => s.email === email && s.password === password)
-    
+    e.preventDefault();
+    setError("");
+
+    const student = students.find(
+      (s) => s.email === email && s.password === password,
+    );
+
     if (student) {
       // Store student info in localStorage for demo purposes
-      localStorage.setItem('studentId', student.id)
-      localStorage.setItem('studentName', student.name)
-      localStorage.setItem('studentClass', student.classId)
-      notifyStudentSessionChange()
-      router.push('/student/dashboard')
+      localStorage.setItem("studentId", student.id);
+      localStorage.setItem("studentName", student.name);
+      localStorage.setItem("studentClass", student.classId);
+      notifyStudentSessionChange();
+      router.push("/student/dashboard");
     } else {
-      setError("Имэйл эсвэл нууц үг буруу байна")
+      setError("Имэйл эсвэл нууц үг буруу байна");
     }
-  }
+  };
 
   const handleDemoFill = () => {
-    setEmail(demoStudent.email)
-    setPassword(demoStudent.password)
-    setError("")
-  }
+    setEmail(demoStudent.email);
+    setPassword(demoStudent.password);
+    setError("");
+  };
 
   return (
     <main className="skywash-background relative min-h-screen overflow-hidden p-4">
@@ -60,79 +68,76 @@ export default function StudentLoginPage() {
             <Link href="/" className="muted-text text-sm hover:underline">
               &larr; Нүүр хуудас руу буцах
             </Link>
-            <h1 className="mt-4 text-2xl font-bold text-foreground">Сурагчийн нэвтрэх хэсэг</h1>
-            <p className="secondary-text">Шалгалтуудаа үзэхийн тулд нэвтэрнэ үү</p>
+            <h1 className="mt-4 text-2xl font-bold text-foreground">
+              Сурагчийн нэвтрэх хэсэг
+            </h1>
+            <p className="secondary-text">
+              Шалгалтуудаа үзэхийн тулд нэвтэрнэ үү
+            </p>
           </div>
 
           <div className="relative">
             <Card className="panel-surface relative rounded-[1.5rem] border-white/70 bg-white/80 shadow-xl shadow-sky-200/25 backdrop-blur-md">
-            <CardHeader>
-              <CardTitle className="text-foreground">Нэвтрэх</CardTitle>
-              <CardDescription className="secondary-text">Үргэлжлүүлэхийн тулд мэдээллээ оруулна уу</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleLogin} className="space-y-4">
-                {error && (
-                  <Alert variant="destructive">
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
-              
-                <div className="space-y-2">
-                  <Label htmlFor="email">Имэйл</Label>
-                  <Input
-                    className="input-surface"
-                    id="email"
-                    type="email"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-              
-                <div className="space-y-2">
-                  <Label htmlFor="password">Нууц үг</Label>
-                  <Input
-                    className="input-surface"
-                    id="password"
-                    type="password"
-                    placeholder="Нууц үгээ оруулна уу"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
+              <CardHeader>
+                <CardTitle className="text-foreground">Нэвтрэх</CardTitle>
+                <CardDescription className="secondary-text">
+                  Үргэлжлүүлэхийн тулд мэдээллээ оруулна уу
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleLogin} className="space-y-4">
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
 
-                <Button type="submit" className="ocean-cta w-full border-0 font-semibold">
-                  Нэвтрэх
-                </Button>
-                <Button type="button" variant="outline" className="w-full" onClick={handleDemoFill}>
-                  Жишиг эрх ашиглах
-                </Button>
-              </form>
-            </CardContent>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Имэйл</Label>
+                    <Input
+                      className="input-surface"
+                      id="email"
+                      type="email"
+                      placeholder="your@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Нууц үг</Label>
+                    <Input
+                      className="input-surface"
+                      id="password"
+                      type="password"
+                      placeholder="Нууц үгээ оруулна уу"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="ocean-cta w-full border-0 font-semibold"
+                  >
+                    Нэвтрэх
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleDemoFill}
+                  >
+                    Дэмо хэрэглэгч
+                  </Button>
+                </form>
+              </CardContent>
             </Card>
           </div>
-
-          <Card className="panel-surface mt-4 rounded-[1.5rem] border-white/65 bg-white/72 shadow-lg shadow-sky-200/20 backdrop-blur-md">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-foreground">Жишиг эрхүүд</CardTitle>
-              <CardDescription className="secondary-text text-xs">Эдгээрээс аль нэгээр нь нэвтэрч болно</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xs space-y-1 font-mono">
-                {students.slice(0, 5).map(s => (
-                  <div key={s.id} className="flex justify-between">
-                    <span>{s.email}</span>
-                    <span className="muted-text">{s.password}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </main>
-  )
+  );
 }

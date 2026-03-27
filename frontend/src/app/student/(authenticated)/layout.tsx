@@ -22,7 +22,7 @@ export default function StudentLayout({
   const router = useRouter()
   const pathname = usePathname()
   const { studentName } = useStudentSession()
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true)
 
   useEffect(() => {
     if (!studentName) {

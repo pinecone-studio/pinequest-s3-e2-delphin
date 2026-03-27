@@ -20,7 +20,9 @@ import { students } from "@/lib/mock-data";
 
 export default function StudentLoginPage() {
   const router = useRouter();
-  const demoStudent = students[0];
+  const demoStudent =
+    students.find((student) => student.email === "nandin@school.com") ??
+    students[0];
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

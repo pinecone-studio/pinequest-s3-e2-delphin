@@ -152,7 +152,7 @@ async function requestExam(url: string, init: RequestInit): Promise<CreatedExam>
   })
 
   if (!response.ok) {
-    let message = 'Failed to create exam.'
+    let message = 'Шалгалтын хүсэлтийг backend дээр боловсруулах үед алдаа гарлаа.'
 
     try {
       const data = (await response.json()) as { message?: string | string[] }

@@ -25,13 +25,13 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
 const toastVariants = cva(
-  'group pointer-events-auto relative flex w-full max-w-sm items-center justify-between space-x-4 overflow-hidden rounded-2xl border px-5 py-4 pr-8 text-center shadow-2xl transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0',
+  'group pointer-events-auto relative flex w-full max-w-sm items-start justify-between space-x-4 overflow-hidden rounded-2xl border px-5 py-4 pr-8 text-left shadow-2xl transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0',
   {
     variants: {
       variant: {
         default: 'border-slate-200 bg-white/96 text-slate-950 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/96 dark:text-slate-50',
         destructive:
-          'destructive group border-destructive bg-destructive text-destructive-foreground',
+          'destructive group border-[#f2b8af] bg-[linear-gradient(135deg,#d43d2f_0%,#b9281d_100%)] text-destructive-foreground shadow-[0_18px_45px_rgba(185,40,29,0.32)]',
       },
     },
     defaultVariants: {
@@ -106,7 +106,7 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Description
     ref={ref}
-    className={cn('text-sm opacity-80', className)}
+    className={cn('text-sm leading-6 opacity-95', className)}
     {...props}
   />
 ))

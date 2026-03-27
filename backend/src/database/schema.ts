@@ -97,6 +97,19 @@ export const studentExamResults = sqliteTable('student_exam_results', {
   updatedAt: text('updated_at').notNull(),
 });
 
+export const studentExamAttempts = sqliteTable('student_exam_attempts', {
+  id: text('id').primaryKey(),
+  examId: text('exam_id').notNull(),
+  studentId: text('student_id').notNull(),
+  studentName: text('student_name').notNull(),
+  classId: text('class_id').notNull(),
+  status: text('status').notNull(),
+  startedAt: text('started_at').notNull(),
+  submittedAt: text('submitted_at'),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
+
 export const uploadedFiles = sqliteTable('uploaded_files', {
   id: text('id').primaryKey(),
   bucket: text('bucket').notNull(),

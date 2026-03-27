@@ -1,19 +1,18 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { StudentRecentResultsCard } from "@/components/student/student-recent-results-card"
-import { StudentScheduleCalendar } from "@/components/student/student-schedule-calendar"
-import { StudentUpcomingExamsCard } from "@/components/student/student-upcoming-exams-card"
-import { examResults, exams as legacyExams, type Exam } from "@/lib/mock-data"
-import { getLocalDateString, getSecondsUntil } from "@/lib/student-exam-time"
+import { Bell } from "lucide-react"
+import { StudentDashboardProfileCard } from "@/components/student/student-dashboard-profile-card"
+import { StudentDashboardScheduleCard } from "@/components/student/student-dashboard-schedule-card"
+import { StudentExamsOverviewPanel } from "@/components/student/student-exams-overview-panel"
 import { useStudentSession } from "@/hooks/use-student-session"
+import { examResults, exams as legacyExams, type Exam } from "@/lib/mock-data"
+import { getLocalDateString } from "@/lib/student-exam-time"
 import { getStudentExams } from "@/lib/student-exams"
 
 export default function StudentDashboard() {
   const { studentClass, studentId, studentName } = useStudentSession()
   const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
-  const [todayCountdowns, setTodayCountdowns] = useState<Record<string, number>>({})
 
   useEffect(() => {
     let isMounted = true
@@ -21,97 +20,64 @@ export default function StudentDashboard() {
     const loadExams = async () => {
       try {
         const nextExams = await getStudentExams()
-        if (!isMounted) return
-        setAllExams(nextExams)
-      } catch (loadError) {
-        if (!isMounted) return
-        console.warn("Failed to refresh dashboard exams from the backend.", loadError)
+        if (isMounted) setAllExams(nextExams)
+      } catch (error) {
+        if (isMounted) console.warn("Failed to refresh dashboard exams from the backend.", error)
       }
     }
 
     void loadExams()
-
     return () => {
       isMounted = false
     }
   }, [])
 
-  const myExams = useMemo(() => allExams.filter((exam) =>
-    exam.scheduledClasses.some((schedule) => schedule.classId === studentClass)
-  ), [allExams, studentClass])
-  const upcomingExams = useMemo(
-    () => myExams.filter((exam) => exam.status === "scheduled"),
-    [myExams],
+  const myExams = useMemo(
+    () =>
+      allExams.filter((exam) =>
+        exam.scheduledClasses.some((schedule) => schedule.classId === studentClass),
+      ),
+    [allExams, studentClass],
   )
-  const today = getLocalDateString()
-  const todaysExams = useMemo(() => upcomingExams.filter((exam) =>
-    exam.scheduledClasses.some((schedule) => schedule.classId === studentClass && schedule.date === today)
-  ), [studentClass, today, upcomingExams])
-  const myResults = examResults.filter((result) => result.studentId === studentId)
-  const avgScore = myResults.length > 0
-    ? Math.round(myResults.reduce((sum, result) => sum + (result.score / result.totalPoints) * 100, 0) / myResults.length)
-    : 0
 
-  useEffect(() => {
-    const updateCountdowns = () => {
-      const nextCountdowns: Record<string, number> = {}
-      todaysExams.forEach((exam) => {
-        const schedule = exam.scheduledClasses.find((entry) => entry.classId === studentClass)
-        if (schedule) {
-          nextCountdowns[exam.id] = getSecondsUntil(schedule.date, schedule.time)
-        }
-      })
-      setTodayCountdowns(nextCountdowns)
-    }
-
-    updateCountdowns()
-    const interval = setInterval(updateCountdowns, 1000)
-    return () => clearInterval(interval)
-  }, [studentClass, todaysExams])
+  const myResults = useMemo(
+    () => examResults.filter((result) => result.studentId === studentId),
+    [studentId],
+  )
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Хянах самбар</h1>
-        <p className="text-muted-foreground">Тавтай морил, {studentName}</p>
+    <div className="grid gap-6 px-[20px] pb-[20px] pt-[30px] xl:grid-cols-[minmax(0,780px)_minmax(0,520px)]">
+      <div className="space-y-6">
+        <div className="flex w-full max-w-[780px] items-start gap-4">
+          <div className="min-w-0">
+            <h1 className="font-sans text-[24px] font-bold leading-[1.2] text-[#1f2937]">
+              Сайн уу, {studentName}!
+            </h1>
+            <p className="mt-1 font-sans text-[14px] font-normal text-[#5B646F]">
+              Өнөөдөр чиний гялалзах өдөр ✨
+            </p>
+          </div>
+          <button
+            type="button"
+            className="relative ml-auto mt-1 flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full bg-white text-black shadow-[0_4px_12px_rgba(86,127,168,0.18)]"
+            aria-label="Мэдэгдэл"
+          >
+            <Bell className="h-[18px] w-[18px] stroke-[2.2]" />
+            <span className="absolute -right-[7px] -top-[7px] flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[#4f9cf9] text-[12px] font-bold text-white">
+              1
+            </span>
+          </button>
+        </div>
+
+        <StudentDashboardProfileCard studentName={studentName} />
+        <StudentDashboardScheduleCard exams={myExams} studentClass={studentClass} />
       </div>
 
-      <StudentUpcomingExamsCard
-        exams={upcomingExams}
-        studentClass={studentClass}
-        today={today}
-        todayCountdowns={todayCountdowns}
+      <StudentExamsOverviewPanel
+        exams={myExams}
+        results={myResults}
+        today={getLocalDateString()}
       />
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <Card className="panel-surface rounded-[1.5rem]">
-          <CardHeader className="pb-2">
-            <CardDescription className="secondary-text">Таны анги</CardDescription>
-            <CardTitle className="text-3xl">{studentClass}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card className="panel-surface rounded-[1.5rem]">
-          <CardHeader className="pb-2">
-            <CardDescription className="secondary-text">Удахгүй болох шалгалт</CardDescription>
-            <CardTitle className="text-3xl">{upcomingExams.length}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card className="panel-surface rounded-[1.5rem]">
-          <CardHeader className="pb-2">
-            <CardDescription className="secondary-text">Дууссан шалгалт</CardDescription>
-            <CardTitle className="text-3xl">{myResults.length}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card className="panel-surface rounded-[1.5rem]">
-          <CardHeader className="pb-2">
-            <CardDescription className="secondary-text">Дундаж оноо</CardDescription>
-            <CardTitle className="text-3xl">{avgScore}%</CardTitle>
-          </CardHeader>
-        </Card>
-      </div>
-
-      <StudentScheduleCalendar myExams={myExams} studentClass={studentClass} />
-      <StudentRecentResultsCard exams={allExams} results={myResults} />
     </div>
   )
 }

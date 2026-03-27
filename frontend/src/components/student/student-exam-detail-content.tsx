@@ -31,10 +31,10 @@ export function StudentExamDetailContent({
 }) {
   if (isFullscreen) {
     return (
-      <div className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center">
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background">
         <button
           onClick={onExitFullscreen}
-          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
+          className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
         >
           Бүтэн дэлгэцээс гарах
         </button>
@@ -55,12 +55,12 @@ export function StudentExamDetailContent({
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="mx-auto max-w-2xl space-y-6">
       <div>
         <Link href="/student/exams" className="text-sm text-muted-foreground hover:underline">
           &larr; Шалгалтууд руу буцах
         </Link>
-        <h1 className="text-2xl font-bold mt-2">{exam.title}</h1>
+        <h1 className="mt-2 text-2xl font-bold">{exam.title}</h1>
       </div>
       <Card>
         <CardHeader>
@@ -95,8 +95,8 @@ export function StudentExamDetailContent({
           <CardDescription>
             {isTodayExam
               ? (isReady
-                ? 'Та одоо шалгалтаа эхлүүлэх боломжтой'
-                : 'Тоолуур тэг болоход шалгалт эхлүүлэх товч идэвхжинэ')
+                ? 'Та одоо шалгалтаа эхлүүлэх боломжтой.'
+                : 'Тоолуур тэг болоход шалгалт эхлүүлэх товч идэвхжинэ.')
               : 'Тоолуур зөвхөн товлосон өдөр харагдана.'}
           </CardDescription>
         </CardHeader>
@@ -124,12 +124,12 @@ export function StudentExamDetailContent({
           <CardTitle>Заавар</CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-2 text-sm text-muted-foreground list-disc list-inside">
-            <li>Интернэт холболт тогтвортой байгаа эсэхээ шалгана уу</li>
-            <li>Асуулт бүрийг хариулахаасаа өмнө анхааралтай уншина уу</li>
-            <li>Шалгалт эхэлсний дараа түр зогсоох боломжгүй</li>
-            <li>Хугацаа дуусахад шалгалт автоматаар илгээгдэнэ</li>
-            <li>Шалгалтын үеэр браузераа шинэчлэх эсвэл хааж болохгүй</li>
+          <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
+            <li>Интернэт холболт тогтвортой байгаа эсэхээ шалгана уу.</li>
+            <li>Асуулт бүрийг хариулахаасаа өмнө анхааралтай уншина уу.</li>
+            <li>Шалгалт эхэлсний дараа түр зогсоох боломжгүй.</li>
+            <li>Хугацаа дуусахад шалгалт автоматаар илгээгдэнэ.</li>
+            <li>Шалгалтын үеэр браузераа шинэчлэх эсвэл хааж болохгүй.</li>
           </ul>
         </CardContent>
       </Card>

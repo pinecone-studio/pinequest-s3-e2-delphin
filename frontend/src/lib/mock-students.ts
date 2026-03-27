@@ -1,7 +1,7 @@
-import type { Class, Student } from "@/lib/mock-data-types";
+import type { Class, Student } from "@/lib/mock-data-types"
 
 export const students: Student[] = [
-  { id: "s1", name: "Нандин Батхуяг", email: "nandinbathuyg@school.com", password: "nandin123", classId: "10A" },
+  { id: "s1", name: "Бат-Эрдэнэ", email: "baterdene@school.com", password: "baterdene123", classId: "10A" },
   { id: "s2", name: "Сарангэрэл", email: "sarangerel@school.com", password: "sarangerel123", classId: "10A" },
   { id: "s3", name: "Тэмүүлэн", email: "temuulen@school.com", password: "temuulen123", classId: "10A" },
   { id: "s4", name: "Номин", email: "nomin@school.com", password: "nomin123", classId: "10A" },
@@ -16,7 +16,8 @@ export const students: Student[] = [
   { id: "s13", name: "Отгонбаяр", email: "otgonbayar@school.com", password: "otgonbayar123", classId: "10C" },
   { id: "s14", name: "Баярмаа", email: "bayarmaa@school.com", password: "bayarmaa123", classId: "10C" },
   { id: "s15", name: "Сүхбат", email: "sukhbat@school.com", password: "sukhbat123", classId: "10C" },
-];
+  { id: "s16", name: "Нандин", email: "nandin@school.com", password: "nandin123", classId: "10A" },
+]
 
 export const classes: Class[] = [
   {
@@ -34,4 +35,4 @@ export const classes: Class[] = [
     name: "10C анги",
     students: students.filter((student) => student.classId === "10C"),
   },
-];
+]

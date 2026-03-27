@@ -27,33 +27,49 @@ export function TeacherQuestionAnalysisCard({
   questionStats: QuestionStat[]
 }) {
   return (
-    <Card>
+    <Card className="rounded-[1.5rem] border-slate-200 shadow-sm">
       <CardHeader>
         <CardTitle>Асуултын шинжилгээ</CardTitle>
-        <CardDescription>Алдааны хувиар өндөрөөс нам руу эрэмбэлсэн асуултууд</CardDescription>
+        <CardDescription>
+          Асуултуудыг багшийн үүсгэсэн дарааллаар нь харуулж, тус бүрийн гүйцэтгэлийг нэг
+          дороос харна.
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="grid gap-4 lg:grid-cols-2">
           {questionStats.map((stat, index) => (
-            <div key={stat.questionId} className="space-y-2">
+            <div
+              key={stat.questionId}
+              className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"
+            >
               <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">А{index + 1}.</span>
-                    <Badge variant="outline" className="text-xs">{getQuestionTypeLabel(stat.type)}</Badge>
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-semibold text-slate-900">
+                      Асуулт {index + 1}
+                    </span>
+                    <Badge variant="outline" className="text-xs">
+                      {getQuestionTypeLabel(stat.type)}
+                    </Badge>
                   </div>
-                  <p className="text-sm mt-1">{stat.question}</p>
+                  <p className="text-sm leading-6 text-slate-700">{stat.question}</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-medium text-destructive">
-                    {Math.round(stat.failRate)}% алдааны хувь
+                  <div className="text-lg font-bold text-slate-900">
+                    {Math.round(stat.failRate)}%
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {stat.correctCount}/{stat.totalCount} зөв
-                  </div>
+                  <div className="text-xs text-slate-500">алдааны хувь</div>
                 </div>
               </div>
-              <Progress value={100 - stat.failRate} className="h-2" />
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-between text-xs text-slate-500">
+                  <span>Зөв хариулсан</span>
+                  <span>
+                    {stat.correctCount}/{stat.totalCount}
+                  </span>
+                </div>
+                <Progress value={100 - stat.failRate} className="h-2" />
+              </div>
             </div>
           ))}
         </div>

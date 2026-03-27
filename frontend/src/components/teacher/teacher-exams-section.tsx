@@ -7,35 +7,45 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import type { TeacherExam } from '@/lib/teacher-exams'
 import { classes } from '@/lib/mock-data'
 
+type ReviewMode = 'completed' | 'live'
+
 export function TeacherExamsSection({
+  actionLabelOverride,
   emptyLabel,
   exams,
+  reviewMode,
+  statusLabelOverride,
   title,
 }: {
+  actionLabelOverride?: string
   emptyLabel: string
   exams: TeacherExam[]
+  reviewMode?: ReviewMode
+  statusLabelOverride?: string
   title: string
 }) {
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-3">{title}</h2>
+      <h2 className="mb-3 text-lg font-semibold">{title}</h2>
       {exams.length === 0 ? (
         <Card>
           <CardContent className="py-6 text-center text-muted-foreground">{emptyLabel}</CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {exams.map((exam) => (
             <Card key={exam.id}>
               <CardHeader>
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between gap-3">
                   <div>
                     <CardTitle className="text-base">{exam.title}</CardTitle>
                     <CardDescription>
                       {exam.questions.length} асуулт, {exam.duration} мин
                     </CardDescription>
                   </div>
-                  <Badge variant={getBadgeVariant(exam.status)}>{formatStatus(exam.status)}</Badge>
+                  <Badge variant={getBadgeVariant(exam.status, statusLabelOverride)}>
+                    {statusLabelOverride ?? formatStatus(exam.status)}
+                  </Badge>
                 </div>
               </CardHeader>
               <CardContent>
@@ -43,32 +53,46 @@ export function TeacherExamsSection({
                   <Link href={`/teacher/exams/${exam.id}/edit`}>
                     <Button variant="outline" size="sm">Засварыг үргэлжлүүлэх</Button>
                   </Link>
+                ) : reviewMode ? (
+                  <div className="space-y-3">
+                    {getDisplaySchedules(exam, reviewMode).map((schedule) => (
+                      <div
+                        key={`${exam.id}-${schedule.classId}-${schedule.date}-${schedule.time}`}
+                        className="rounded-xl border border-slate-200 bg-slate-50 p-3"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <p className="font-medium text-slate-900">{schedule.classId}</p>
+                            <p className="text-sm text-muted-foreground">{schedule.date} {schedule.time}</p>
+                          </div>
+                          <Button asChild size="sm">
+                            <Link href={`/teacher/classes/${schedule.classId}/exam/${exam.id}`}>
+                              {reviewMode === 'live'
+                                ? (actionLabelOverride ?? 'Явцыг харах')
+                                : (actionLabelOverride ?? 'Үр дүнг харах')}
+                            </Link>
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <div className="space-y-3">
-                    {getDisplaySchedules(exam).map((schedule) =>
-                      exam.status === 'completed' ? (
-                        <div key={`${exam.id}-${schedule.classId}-${schedule.date}-${schedule.time}`} className="text-sm">
-                          <Link
-                            href={`/teacher/classes/${schedule.classId}/exam/${exam.id}`}
-                            className="hover:underline"
-                          >
-                            {schedule.classId} - {schedule.date} - Үр дүнг харах
-                          </Link>
-                        </div>
-                      ) : (
-                        <div
-                          key={`${exam.id}-${schedule.classId}-${schedule.date}-${schedule.time}`}
-                          className="text-sm flex justify-between"
-                        >
-                          <span className="font-medium">{schedule.classId}</span>
-                          <span className="text-muted-foreground">{schedule.date} {schedule.time}</span>
-                        </div>
-                      ),
-                    )}
+                    {getDisplaySchedules(exam).map((schedule) => (
+                      <div
+                        key={`${exam.id}-${schedule.classId}-${schedule.date}-${schedule.time}`}
+                        className="flex justify-between text-sm"
+                      >
+                        <span className="font-medium">{schedule.classId}</span>
+                        <span className="text-muted-foreground">{schedule.date} {schedule.time}</span>
+                      </div>
+                    ))}
                     {exam.status === 'scheduled' ? (
                       <div className="flex gap-2 pt-2">
                         <Link href={`/teacher/exams/${exam.id}/edit`}>
-                          <Button variant="outline" size="sm">Засах</Button>
+                          <Button variant="outline" size="sm">
+                            {actionLabelOverride ?? 'Засах'}
+                          </Button>
                         </Link>
                       </div>
                     ) : null}
@@ -85,8 +109,8 @@ export function TeacherExamsSection({
 
 const ALL_CLASSES_LABEL = 'Бүх анги'
 
-function getDisplaySchedules(exam: TeacherExam) {
-  if (exam.status === 'completed') {
+function getDisplaySchedules(exam: TeacherExam, reviewMode?: ReviewMode) {
+  if (exam.status === 'completed' || reviewMode === 'live') {
     return exam.scheduledClasses
   }
 
@@ -127,7 +151,8 @@ function formatStatus(status: TeacherExam['status']) {
   return 'Товлогдсон'
 }
 
-function getBadgeVariant(status: TeacherExam['status']) {
+function getBadgeVariant(status: TeacherExam['status'], statusLabelOverride?: string) {
+  if (statusLabelOverride === 'Явагдаж байна') return 'default'
   if (status === 'completed') return 'secondary'
   if (status === 'draft') return 'outline'
   return 'default'

@@ -11,65 +11,53 @@ import {
 } from '../../common/error-handling';
 import { DatabaseService } from '../../database/database.service';
 
-export type StudentExamAnswer = {
-  questionId: string;
-  answer: string;
-  isCorrect: boolean | null;
-  awardedPoints?: number | null;
-  reviewStatus?: 'auto-correct' | 'auto-wrong' | 'pending' | 'graded';
-};
+export type StudentExamAttemptStatus = 'in_progress' | 'submitted';
 
-export type StudentExamResult = {
+export type StudentExamAttempt = {
   id: string;
   examId: string;
   studentId: string;
   studentName: string;
   classId: string;
-  answers: StudentExamAnswer[];
-  score: number;
-  totalPoints: number;
-  status: 'submitted';
-  submittedAt: string;
+  status: StudentExamAttemptStatus;
+  startedAt: string;
+  submittedAt?: string | null;
   createdAt: string;
   updatedAt: string;
 };
 
-export type CreateStudentExamResultDto = Omit<
-  StudentExamResult,
-  'id' | 'createdAt' | 'updatedAt' | 'status'
-> & {
-  status?: 'submitted';
-};
+export type UpsertStudentExamAttemptDto = Omit<
+  StudentExamAttempt,
+  'id' | 'createdAt' | 'updatedAt'
+>;
 
-type StudentExamResultRecord = {
+type StudentExamAttemptRecord = {
   id: string;
   examId: string;
   studentId: string;
   studentName: string;
   classId: string;
-  answersJson: string;
-  score: number;
-  totalPoints: number;
-  status: string;
-  submittedAt: string;
+  status: StudentExamAttemptStatus;
+  startedAt: string;
+  submittedAt?: string | null;
   createdAt: string;
   updatedAt: string;
 };
 
-type LocalStudentExamResultStore = {
-  results: StudentExamResultRecord[];
+type LocalStudentExamAttemptStore = {
+  attempts: StudentExamAttemptRecord[];
 };
 
 @Injectable()
-export class StudentExamResultsService {
+export class StudentExamAttemptsService {
   private readonly localStorePath = resolve(
     process.cwd(),
     '.data',
-    'student-exam-results.json',
+    'student-exam-attempts.json',
   );
   private localStoreLoaded = false;
-  private localStore: LocalStudentExamResultStore = {
-    results: [],
+  private localStore: LocalStudentExamAttemptStore = {
+    attempts: [],
   };
 
   constructor(private readonly databaseService: DatabaseService) {}
@@ -78,70 +66,72 @@ export class StudentExamResultsService {
     examId?: string;
     studentId?: string;
     classId?: string;
-  }): Promise<StudentExamResult[]> {
+    status?: StudentExamAttemptStatus;
+  }): Promise<StudentExamAttempt[]> {
     return executeOrRethrowAsync(async () => {
-      const normalizedFilters = {
+      const records = await this.readRecords({
         examId: filters?.examId?.trim(),
         studentId: filters?.studentId?.trim(),
         classId: filters?.classId?.trim(),
-      };
-
-      const records = await this.readRecords(normalizedFilters);
+        status: filters?.status,
+      });
       return records.map((record) => this.mapRecord(record));
-    }, 'Failed to list student exam results');
+    }, 'Failed to list student exam attempts');
   }
 
-  async findOne(id: string): Promise<StudentExamResult> {
+  async findOne(id: string): Promise<StudentExamAttempt> {
     return executeOrRethrowAsync(async () => {
       const records = await this.readRecords();
       const record = records.find((entry) => entry.id === id);
 
       if (!record) {
-        throw new NotFoundException(`Student exam result ${id} not found`);
+        throw new NotFoundException(`Student exam attempt ${id} not found`);
       }
 
       return this.mapRecord(record);
-    }, `Failed to load student exam result ${id}`);
+    }, `Failed to load student exam attempt ${id}`);
   }
 
-  async upsert(payload: CreateStudentExamResultDto): Promise<StudentExamResult> {
+  async upsert(
+    payload: UpsertStudentExamAttemptDto,
+  ): Promise<StudentExamAttempt> {
     return executeOrRethrowAsync(async () => {
       const timestamp = new Date().toISOString();
       const id = `${payload.examId.trim()}::${payload.studentId.trim()}`;
-      const nextRecord: StudentExamResultRecord = {
+      const existing = (
+        await this.readRecords({
+          examId: payload.examId.trim(),
+          studentId: payload.studentId.trim(),
+        })
+      )[0];
+
+      const nextRecord: StudentExamAttemptRecord = {
         id,
         examId: payload.examId.trim(),
         studentId: payload.studentId.trim(),
         studentName: payload.studentName.trim(),
         classId: payload.classId.trim(),
-        answersJson: JSON.stringify(payload.answers),
-        score: payload.score,
-        totalPoints: payload.totalPoints,
-        status: payload.status ?? 'submitted',
-        submittedAt: payload.submittedAt,
-        createdAt: timestamp,
+        status: payload.status,
+        startedAt: existing?.startedAt ?? payload.startedAt,
+        submittedAt:
+          payload.status === 'submitted'
+            ? payload.submittedAt ?? existing?.submittedAt ?? timestamp
+            : existing?.submittedAt ?? null,
+        createdAt: existing?.createdAt ?? timestamp,
         updatedAt: timestamp,
       };
 
-      const existing = (await this.readRecords({
-        examId: nextRecord.examId,
-        studentId: nextRecord.studentId,
-      }))[0];
-
-      if (existing) {
-        nextRecord.createdAt = existing.createdAt;
-      }
-
       await this.writeRecord(nextRecord);
       return this.mapRecord(nextRecord);
-    }, `Failed to save student exam result for ${payload.studentId}`);
+    }, `Failed to save student exam attempt for ${payload.studentId}`);
   }
 
   private async readRecords(filters?: {
     examId?: string;
     studentId?: string;
     classId?: string;
-  }): Promise<StudentExamResultRecord[]> {
+    status?: StudentExamAttemptStatus;
+  }): Promise<StudentExamAttemptRecord[]> {
     const readFromDatabase = async () => {
       const whereClauses: string[] = [];
       const params: Array<string> = [];
@@ -161,25 +151,29 @@ export class StudentExamResultsService {
         params.push(filters.classId);
       }
 
-      const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
+      if (filters?.status) {
+        whereClauses.push('status = ?');
+        params.push(filters.status);
+      }
 
-      return this.databaseService.query<StudentExamResultRecord>(
+      const whereSql =
+        whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
+
+      return this.databaseService.query<StudentExamAttemptRecord>(
         `SELECT
            id,
            exam_id as examId,
            student_id as studentId,
            student_name as studentName,
            class_id as classId,
-           answers_json as answersJson,
-           score,
-           total_points as totalPoints,
            status,
+           started_at as startedAt,
            submitted_at as submittedAt,
            created_at as createdAt,
            updated_at as updatedAt
-         FROM student_exam_results
+         FROM student_exam_attempts
          ${whereSql}
-         ORDER BY submitted_at DESC`,
+         ORDER BY started_at DESC`,
         params,
       );
     };
@@ -195,22 +189,27 @@ export class StudentExamResultsService {
     }
 
     await this.ensureLocalStoreLoaded();
-    return this.localStore.results
+    return this.localStore.attempts
       .filter((record) => {
         if (filters?.examId && record.examId !== filters.examId) return false;
-        if (filters?.studentId && record.studentId !== filters.studentId) return false;
+        if (filters?.studentId && record.studentId !== filters.studentId)
+          return false;
         if (filters?.classId && record.classId !== filters.classId) return false;
+        if (filters?.status && record.status !== filters.status) return false;
         return true;
       })
       .slice()
-      .sort((left, right) => right.submittedAt.localeCompare(left.submittedAt));
+      .sort((left, right) => right.startedAt.localeCompare(left.startedAt));
   }
 
-  private async writeRecord(record: StudentExamResultRecord): Promise<void> {
+  private async writeRecord(record: StudentExamAttemptRecord): Promise<void> {
     const upsertToDatabase = async () => {
-      const existing = await this.databaseService.queryFirst<{ id: string; createdAt: string }>(
+      const existing = await this.databaseService.queryFirst<{
+        id: string;
+        createdAt: string;
+      }>(
         `SELECT id, created_at as createdAt
-         FROM student_exam_results
+         FROM student_exam_attempts
          WHERE exam_id = ? AND student_id = ?
          LIMIT 1`,
         [record.examId, record.studentId],
@@ -218,18 +217,16 @@ export class StudentExamResultsService {
 
       if (existing) {
         await this.databaseService.execute(
-          `UPDATE student_exam_results
-           SET student_name = ?, class_id = ?, answers_json = ?, score = ?, total_points = ?,
-               status = ?, submitted_at = ?, updated_at = ?
+          `UPDATE student_exam_attempts
+           SET student_name = ?, class_id = ?, status = ?, started_at = ?,
+               submitted_at = ?, updated_at = ?
            WHERE id = ?`,
           [
             record.studentName,
             record.classId,
-            record.answersJson,
-            record.score,
-            record.totalPoints,
             record.status,
-            record.submittedAt,
+            record.startedAt,
+            record.submittedAt ?? null,
             record.updatedAt,
             existing.id,
           ],
@@ -240,21 +237,19 @@ export class StudentExamResultsService {
       }
 
       await this.databaseService.execute(
-        `INSERT INTO student_exam_results (
-          id, exam_id, student_id, student_name, class_id, answers_json, score,
-          total_points, status, submitted_at, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO student_exam_attempts (
+          id, exam_id, student_id, student_name, class_id, status,
+          started_at, submitted_at, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           record.id,
           record.examId,
           record.studentId,
           record.studentName,
           record.classId,
-          record.answersJson,
-          record.score,
-          record.totalPoints,
           record.status,
-          record.submittedAt,
+          record.startedAt,
+          record.submittedAt ?? null,
           record.createdAt,
           record.updatedAt,
         ],
@@ -273,18 +268,18 @@ export class StudentExamResultsService {
     }
 
     await this.ensureLocalStoreLoaded();
-    const existingIndex = this.localStore.results.findIndex(
+    const existingIndex = this.localStore.attempts.findIndex(
       (entry) => entry.examId === record.examId && entry.studentId === record.studentId,
     );
 
     if (existingIndex >= 0) {
-      this.localStore.results[existingIndex] = {
-        ...this.localStore.results[existingIndex],
+      this.localStore.attempts[existingIndex] = {
+        ...this.localStore.attempts[existingIndex],
         ...record,
-        createdAt: this.localStore.results[existingIndex].createdAt,
+        createdAt: this.localStore.attempts[existingIndex].createdAt,
       };
     } else {
-      this.localStore.results.push(record);
+      this.localStore.attempts.push(record);
     }
 
     await this.persistLocalStore();
@@ -297,9 +292,9 @@ export class StudentExamResultsService {
 
     try {
       const rawContent = await readFile(this.localStorePath, 'utf8');
-      const parsed = JSON.parse(rawContent) as Partial<LocalStudentExamResultStore>;
+      const parsed = JSON.parse(rawContent) as Partial<LocalStudentExamAttemptStore>;
       this.localStore = {
-        results: parsed.results ?? [],
+        attempts: parsed.attempts ?? [],
       };
       this.localStoreLoaded = true;
     } catch (error) {
@@ -312,7 +307,7 @@ export class StudentExamResultsService {
 
       rethrowAsInternal(
         error,
-        `Failed to load local student exam results from ${this.localStorePath}`,
+        `Failed to load local student exam attempts from ${this.localStorePath}`,
       );
     }
   }
@@ -328,23 +323,21 @@ export class StudentExamResultsService {
     } catch (error) {
       rethrowAsInternal(
         error,
-        `Failed to persist local student exam results to ${this.localStorePath}`,
+        `Failed to persist local student exam attempts to ${this.localStorePath}`,
       );
     }
   }
 
-  private mapRecord(record: StudentExamResultRecord): StudentExamResult {
+  private mapRecord(record: StudentExamAttemptRecord): StudentExamAttempt {
     return {
       id: record.id,
       examId: record.examId,
       studentId: record.studentId,
       studentName: record.studentName,
       classId: record.classId,
-      answers: JSON.parse(record.answersJson) as StudentExamAnswer[],
-      score: record.score,
-      totalPoints: record.totalPoints,
-      status: 'submitted',
-      submittedAt: record.submittedAt,
+      status: record.status,
+      startedAt: record.startedAt,
+      submittedAt: record.submittedAt ?? null,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
     };

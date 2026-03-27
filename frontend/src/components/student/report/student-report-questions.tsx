@@ -1,12 +1,47 @@
 "use client"
 
-import { CheckCircle2, CircleDashed, XCircle } from "lucide-react"
+import { CheckCircle2, CircleDashed, ClipboardCheck, XCircle } from "lucide-react"
 import type { Exam, ExamResult } from "@/lib/mock-data"
-import { questionTypeLabels } from "@/lib/student-report-view"
+import { getAnswerReviewState, isManualReviewQuestionType, questionTypeLabels } from "@/lib/student-report-view"
 
 type StudentReportQuestionsProps = {
   exam: Exam
   result: ExamResult
+}
+
+function getStatusPresentation(reviewState: ReturnType<typeof getAnswerReviewState>) {
+  switch (reviewState) {
+    case "correct":
+      return {
+        label: "Зөв",
+        icon: CheckCircle2,
+        className: "bg-[#e8fff3] text-[#35a66b]",
+      }
+    case "wrong":
+      return {
+        label: "Буруу",
+        icon: XCircle,
+        className: "bg-[#fff1ee] text-[#df6c5b]",
+      }
+    case "graded":
+      return {
+        label: "Үнэлсэн",
+        icon: ClipboardCheck,
+        className: "bg-[#eef7ff] text-[#3179c6]",
+      }
+    case "pending":
+      return {
+        label: "Шалгаж байна",
+        icon: CircleDashed,
+        className: "bg-[#fff8e8] text-[#c98a1a]",
+      }
+    default:
+      return {
+        label: "Илгээгээгүй",
+        icon: CircleDashed,
+        className: "bg-[#eef5ff] text-[#5c7ea5]",
+      }
+  }
 }
 
 export function StudentReportQuestions({ exam, result }: StudentReportQuestionsProps) {
@@ -14,15 +49,17 @@ export function StudentReportQuestions({ exam, result }: StudentReportQuestionsP
     <section className="rounded-[28px] border border-[#d8eaff] bg-white p-5 shadow-[0_16px_40px_rgba(102,157,214,0.09)]">
       <div className="mb-5">
         <h2 className="text-2xl font-bold text-slate-800">Хариултын задлан</h2>
-        <p className="mt-1 text-sm text-slate-500">Асуулт бүрийн хариулт, зөв эсэх, онооны мэдээлэл</p>
+        <p className="mt-1 text-sm text-slate-500">Асуулт бүрийн хариулт, шалгалтын төлөв болон үнэлгээний мэдээлэл</p>
       </div>
 
       <div className="space-y-4">
         {exam.questions.map((question, index) => {
           const answer = result.answers.find((entry) => entry.questionId === question.id)
-          const isCorrect = Boolean(answer?.isCorrect)
-          const statusLabel = answer ? (isCorrect ? "Зөв" : "Буруу") : "Илгээгээгүй"
-          const StatusIcon = answer ? (isCorrect ? CheckCircle2 : XCircle) : CircleDashed
+          const reviewState = getAnswerReviewState(question, answer)
+          const status = getStatusPresentation(reviewState)
+          const StatusIcon = status.icon
+          const isManualQuestion = isManualReviewQuestionType(question.type)
+          const awardedPoints = typeof answer?.awardedPoints === "number" ? answer.awardedPoints : null
 
           return (
             <article key={question.id} className="rounded-[22px] border border-[#dbeafc] bg-[#fbfdff] p-4">
@@ -39,17 +76,9 @@ export function StudentReportQuestions({ exam, result }: StudentReportQuestionsP
                   <h3 className="text-base font-semibold leading-7 text-slate-800">{question.question}</h3>
                 </div>
 
-                <div
-                  className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold ${
-                    isCorrect
-                      ? "bg-[#e8fff3] text-[#35a66b]"
-                      : answer
-                        ? "bg-[#fff1ee] text-[#df6c5b]"
-                        : "bg-[#eef5ff] text-[#5c7ea5]"
-                  }`}
-                >
+                <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold ${status.className}`}>
                   <StatusIcon className="h-4 w-4" />
-                  {statusLabel}
+                  {status.label}
                 </div>
               </div>
 
@@ -59,15 +88,21 @@ export function StudentReportQuestions({ exam, result }: StudentReportQuestionsP
                     Таны хариулт
                   </p>
                   <p className="mt-2 text-sm leading-6 text-slate-700">
-                    {answer?.answer || "Хариулт илгээгдээгүй"}
+                    {answer?.answer || "Хариулт илгээгээгүй"}
                   </p>
                 </div>
                 <div className="rounded-[18px] border border-[#dbeafc] bg-white p-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                    Зөв хариулт
+                    {isManualQuestion ? "Үнэлгээний төлөв" : "Зөв хариулт"}
                   </p>
                   <p className="mt-2 text-sm leading-6 text-slate-700">
-                    {question.correctAnswer || "Багш тайлбарын хамт дараа нэмж оруулна"}
+                    {isManualQuestion
+                      ? reviewState === "graded"
+                        ? `Багш ${awardedPoints ?? 0}/${question.points} оноо өгсөн.`
+                        : reviewState === "pending"
+                          ? "Энэ хариултыг багш гараар шалгаж, оноо өгсний дараа эцсийн дүн шинэчлэгдэнэ."
+                          : "Хариулт илгээгээгүй."
+                      : question.correctAnswer || "Багш тайлбарын хамт дараа нэмэж оруулна"}
                   </p>
                 </div>
               </div>

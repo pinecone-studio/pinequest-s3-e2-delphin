@@ -21,9 +21,9 @@ export function StudentUpcomingExamsCard({
   if (exams.length === 0) return null
 
   return (
-    <Card className="panel-surface border-primary rounded-[1.5rem]">
+    <Card className="panel-surface rounded-[1.5rem] border-primary">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-base">
           Удахгүй болох шалгалтууд
           <Badge>{exams.length}</Badge>
         </CardTitle>
@@ -38,7 +38,7 @@ export function StudentUpcomingExamsCard({
             return (
               <div
                 key={exam.id}
-                className={`elevated-surface flex items-center justify-between rounded-xl border p-3 soft-divider ${isTodayExam ? 'border-primary ring-1 ring-primary/40' : ''}`}
+                className={`elevated-surface soft-divider flex items-center justify-between rounded-xl border p-3 ${isTodayExam ? 'border-primary ring-1 ring-primary/40' : ''}`}
               >
                 <div>
                   <div className="font-medium">{exam.title}</div>

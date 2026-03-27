@@ -20,7 +20,7 @@ export function StudentReportHero({
       <div>
         <h1 className="text-[2rem] font-bold leading-tight text-slate-800">Сайн уу, {studentName}!</h1>
         <p className="mt-1 flex items-center gap-2 text-sm font-medium text-slate-500">
-          {examTitle} тайланг дэлгэрэнгүй харж байна
+          {examTitle} шалгалтын тайланг дэлгэрэнгүй харж байна
           <Sparkles className="h-4 w-4 text-amber-400" />
         </p>
       </div>

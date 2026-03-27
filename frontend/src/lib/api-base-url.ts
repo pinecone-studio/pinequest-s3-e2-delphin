@@ -21,6 +21,6 @@ export function getServerApiBaseUrl() {
   }
 
   throw new Error(
-    'Missing API_BASE_URL for server-side requests in production. Set it to your deployed backend URL, including /api.',
+    'Сервер талын хүсэлт хийхэд `API_BASE_URL` тохируулагдаагүй байна. Production орчинд backend-ийн бүрэн URL-ийг `/api` төгсгөлтэйгээр env дээр заавал тохируулна уу.',
   )
 }

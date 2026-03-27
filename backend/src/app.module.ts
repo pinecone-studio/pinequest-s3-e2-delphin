@@ -9,6 +9,7 @@ import { DatabaseModule } from './database/database.module';
 import { ExamsModule } from './modules/exams/exams.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { ResultsModule } from './modules/results/results.module';
+import { StudentExamAttemptsModule } from './modules/student-exam-attempts/student-exam-attempts.module';
 import { StudentExamResultsModule } from './modules/student-exam-results/student-exam-results.module';
 import { SubmissionsModule } from './modules/submissions/submissions.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
@@ -25,6 +26,7 @@ import { UsersModule } from './modules/users/users.module';
     AssignmentsModule,
     SubmissionsModule,
     ResultsModule,
+    StudentExamAttemptsModule,
     StudentExamResultsModule,
     ReportsModule,
     UploadsModule,

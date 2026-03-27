@@ -16,11 +16,11 @@ export function StudentCompletedExamsSection({
 }) {
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-3">Дууссан шалгалтууд</h2>
+      <h2 className="mb-3 text-lg font-semibold">Дууссан шалгалтууд</h2>
       {results.length === 0 ? (
         <Card>
           <CardContent className="py-6 text-center text-muted-foreground">
-            Одоогоор дууссан шалгалт алга
+            Одоогоор дууссан шалгалт алга байна.
           </CardContent>
         </Card>
       ) : (
@@ -41,7 +41,7 @@ export function StudentCompletedExamsSection({
                       <div className="text-sm text-muted-foreground">
                         Илгээсэн: {new Date(result.submittedAt).toLocaleString('mn-MN')}
                       </div>
-                      <div className="text-sm text-muted-foreground mt-1">
+                      <div className="mt-1 text-sm text-muted-foreground">
                         {isReportAvailable
                           ? 'Дэлгэрэнгүй тайланг үзэх боломжтой'
                           : 'Бүх анги шалгалтаа дууссаны дараа дэлгэрэнгүй тайлан нээгдэнэ'}
@@ -49,7 +49,7 @@ export function StudentCompletedExamsSection({
                     </div>
                     <div className="text-right">
                       <Badge variant={variant}>{percentage}%</Badge>
-                      <div className="text-sm text-muted-foreground mt-1">
+                      <div className="mt-1 text-sm text-muted-foreground">
                         {result.score}/{result.totalPoints} оноо
                       </div>
                       <div className="mt-3">

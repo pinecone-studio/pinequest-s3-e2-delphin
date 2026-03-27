@@ -1,67 +1,65 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { useRouter } from "next/navigation";
+import * as React from "react"
+import { useRouter } from "next/navigation"
 import type {
   NewQuestion,
   ScheduleEntry,
-} from "@/components/teacher/exam-builder-types";
-import { toast } from "@/hooks/use-toast";
+} from "@/components/teacher/exam-builder-types"
+import { toast } from "@/hooks/use-toast"
 import {
   buildCreateExamPayload,
   createExam,
   updateExam,
-} from "@/lib/exams-api";
-import { validateExamPayloadInput } from "@/lib/exam-validation";
+} from "@/lib/exams-api"
+import { validateExamPayloadInput, type ExamValidationSection } from "@/lib/exam-validation"
 
-type SubmitMode = "draft" | "scheduled";
+type SubmitMode = "draft" | "scheduled"
 
 export function useExamCreation({
   duration,
   examId,
   examTitle,
   mode = "create",
+  onValidationError,
   questions,
   reportReleaseMode,
   scheduleEntries,
 }: {
-  duration: number;
-  examId?: string;
-  examTitle: string;
-  mode?: "create" | "edit";
-  questions: NewQuestion[];
-  reportReleaseMode: "after-all-classes-complete" | "immediately";
-  scheduleEntries: ScheduleEntry[];
+  duration: number
+  examId?: string
+  examTitle: string
+  mode?: "create" | "edit"
+  onValidationError?: (section: ExamValidationSection) => void
+  questions: NewQuestion[]
+  reportReleaseMode: "after-all-classes-complete" | "immediately"
+  scheduleEntries: ScheduleEntry[]
 }) {
-  const router = useRouter();
-  const [submissionError, setSubmissionError] = React.useState<string | null>(
-    null,
-  );
-  const [submitMode, setSubmitMode] = React.useState<SubmitMode | null>(null);
+  const router = useRouter()
+  const [submissionError, setSubmissionError] = React.useState<string | null>(null)
+  const [submitMode, setSubmitMode] = React.useState<SubmitMode | null>(null)
 
-  const isSubmitting = submitMode !== null;
-  const canSaveDraft = examTitle.trim().length > 0 && !isSubmitting;
-  const canScheduleExam =
-    examTitle.trim().length > 0 &&
-    questions.length > 0 &&
-    scheduleEntries.length > 0 &&
-    !isSubmitting;
+  const isSubmitting = submitMode !== null
+  const canSaveDraft = !isSubmitting
+  const canScheduleExam = !isSubmitting
 
   const submitExam = React.useCallback(
     async (status: SubmitMode) => {
-      setSubmissionError(null);
-      setSubmitMode(status);
+      setSubmissionError(null)
+      setSubmitMode(status)
 
       try {
         const validationErrors = validateExamPayloadInput({
+          examTitle,
           duration,
           questions,
           scheduleEntries,
           status,
-        });
+        })
 
         if (validationErrors.length > 0) {
-          throw new Error(validationErrors[0]);
+          onValidationError?.(validationErrors[0].section)
+          throw new Error(validationErrors[0].message)
         }
 
         const payload = buildCreateExamPayload({
@@ -71,12 +69,12 @@ export function useExamCreation({
           reportReleaseMode,
           scheduleEntries,
           status,
-        });
+        })
 
         if (mode === "edit" && examId) {
-          await updateExam(examId, payload);
+          await updateExam(examId, payload)
         } else {
-          await createExam(payload);
+          await createExam(payload)
         }
 
         toast({
@@ -87,7 +85,7 @@ export function useExamCreation({
                 : "Шалгалт амжилттай шинэчлэгдлээ"
               : status === "draft"
                 ? "Ноорог амжилттай хадгалагдлаа"
-                : "Шалгалт амжилттай нэмэгдлээ",
+                : "Шалгалт амжилттай үүслээ",
           description:
             mode === "edit"
               ? status === "draft"
@@ -95,24 +93,25 @@ export function useExamCreation({
                 : "Товлогдсон шалгалт амжилттай шинэчлэгдлээ."
               : status === "draft"
                 ? "Шалгалтын ноорог амжилттай хадгалагдлаа."
-                : "Товлогдсон шалгалт амжилттай нэмэгдлээ.",
-        });
-        await new Promise((resolve) => setTimeout(resolve, 150));
-        router.push("/teacher/exams");
+                : "Шалгалт амжилттай үүсэж, товлогдлоо.",
+        })
+
+        await new Promise((resolve) => setTimeout(resolve, 150))
+        router.push("/teacher/exams")
       } catch (error) {
         const message =
           error instanceof Error
             ? error.message
-            : "Шалгалтыг хадгалах үед алдаа гарлаа.";
+            : "Шалгалтыг хадгалах үед алдаа гарлаа."
 
-        setSubmissionError(message);
+        setSubmissionError(message)
         toast({
           title: "Шалгалтыг хадгалж чадсангүй",
           description: message,
           variant: "destructive",
-        });
+        })
       } finally {
-        setSubmitMode(null);
+        setSubmitMode(null)
       }
     },
     [
@@ -120,12 +119,13 @@ export function useExamCreation({
       examId,
       examTitle,
       mode,
+      onValidationError,
       questions,
       reportReleaseMode,
       router,
       scheduleEntries,
     ],
-  );
+  )
 
   return {
     canSaveDraft,
@@ -134,5 +134,5 @@ export function useExamCreation({
     submissionError,
     submitExam,
     submitMode,
-  };
+  }
 }

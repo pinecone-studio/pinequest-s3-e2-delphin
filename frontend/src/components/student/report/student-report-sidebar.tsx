@@ -13,12 +13,14 @@ type StudentReportSidebarProps = {
   correctCount: number
   wrongCount: number
   unansweredCount: number
+  pendingReviewCount: number
   releaseMessage: string
 }
 
 const statItems = [
   { key: "correctCount", label: "Зөв" },
   { key: "wrongCount", label: "Алдаа" },
+  { key: "pendingReviewCount", label: "Хүлээгдэж буй" },
   { key: "unansweredCount", label: "Хоосон" },
 ] as const
 
@@ -26,6 +28,7 @@ export function StudentReportSidebar(props: StudentReportSidebarProps) {
   const statMap = {
     correctCount: props.correctCount,
     wrongCount: props.wrongCount,
+    pendingReviewCount: props.pendingReviewCount,
     unansweredCount: props.unansweredCount,
   }
 
@@ -101,8 +104,7 @@ export function StudentReportSidebar(props: StudentReportSidebarProps) {
         <div className="flex items-start gap-3">
           <Clock3 className="mt-0.5 h-5 w-5 text-[#ff9f2f]" />
           <p className="text-sm font-medium leading-6 text-[#d37b12]">
-            Дараагийн удаа алдаатай асуултуудаа эхэлж нягтлаад, дараа нь зөв хариултаа харьцуулж
-            давтаарай.
+            Хэрэв задгай асуулт дээр хүлээгдэж буй төлөв харагдаж байвал багш гараар үнэлсний дараа таны эцсийн оноо шинэчлэгдэнэ.
           </p>
         </div>
       </div>

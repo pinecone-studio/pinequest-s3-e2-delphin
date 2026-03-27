@@ -15,15 +15,71 @@ export function getResultPercentage(result: ExamResult) {
   return Math.round((result.score / result.totalPoints) * 100)
 }
 
+export function isManualReviewQuestionType(type: Exam["questions"][number]["type"]) {
+  return type === "short-answer" || type === "essay"
+}
+
+export function getAnswerReviewState(
+  question: Exam["questions"][number],
+  answer: ExamResult["answers"][number] | undefined,
+) {
+  const hasAnswer = Boolean(answer?.answer?.trim())
+
+  if (!hasAnswer) {
+    return "unanswered" as const
+  }
+
+  if (isManualReviewQuestionType(question.type)) {
+    return answer?.reviewStatus === "graded" ||
+      typeof answer?.awardedPoints === "number" ||
+      typeof answer?.isCorrect === "boolean"
+      ? "graded"
+      : "pending"
+  }
+
+  return answer?.isCorrect ? "correct" : "wrong"
+}
+
 export function getReportMetrics(exam: Exam, result: ExamResult) {
-  const correctCount = result.answers.filter((entry) => entry.isCorrect).length
-  const wrongCount = result.answers.length - correctCount
+  const answerMap = new Map(result.answers.map((entry) => [entry.questionId, entry]))
+  let correctCount = 0
+  let wrongCount = 0
+  let unansweredCount = 0
+  let pendingReviewCount = 0
+
+  exam.questions.forEach((question) => {
+    const answer = answerMap.get(question.id)
+
+    const reviewState = getAnswerReviewState(question, answer)
+
+    if (reviewState === "unanswered") {
+      unansweredCount += 1
+      return
+    }
+
+    if (reviewState === "pending") {
+      pendingReviewCount += 1
+      return
+    }
+
+    if (reviewState === "graded") {
+      return
+    }
+
+    if (reviewState === "correct") {
+      correctCount += 1
+      return
+    }
+
+    wrongCount += 1
+  })
 
   return {
     totalQuestions: exam.questions.length,
     correctCount,
     wrongCount,
-    unansweredCount: Math.max(exam.questions.length - result.answers.length, 0),
+    unansweredCount,
+    pendingReviewCount,
     percentage: getResultPercentage(result),
   }
 }

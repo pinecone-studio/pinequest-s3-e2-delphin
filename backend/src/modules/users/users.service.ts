@@ -83,6 +83,14 @@ export class UsersService {
       password: 'enkhjin123',
       classId: '10A',
     },
+    {
+      id: 's16',
+      username: 'Нандин',
+      role: 'student',
+      email: 'nandin@school.com',
+      password: 'nandin123',
+      classId: '10A',
+    },
   ];
 
   constructor(private readonly databaseService: DatabaseService) {}

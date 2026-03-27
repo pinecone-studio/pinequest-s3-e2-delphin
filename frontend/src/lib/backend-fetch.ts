@@ -35,6 +35,20 @@ function wait(delayMs: number) {
 }
 
 export async function fetchBackendJson<T>(path: string, fallbackMessage: string): Promise<T> {
+  return requestBackendJson<T>(path, {
+    method: 'GET',
+    fallbackMessage,
+  })
+}
+
+export async function requestBackendJson<T>(
+  path: string,
+  options: {
+    method?: 'GET' | 'POST' | 'PATCH' | 'DELETE'
+    body?: unknown
+    fallbackMessage: string
+  },
+): Promise<T> {
   let lastError: Error | null = null
 
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt += 1) {
@@ -43,15 +57,22 @@ export async function fetchBackendJson<T>(path: string, fallbackMessage: string)
 
     try {
       const response = await fetch(buildApiUrl(path), {
+        method: options.method ?? 'GET',
         cache: 'no-store',
         signal: controller.signal,
+        headers: options.body ? { 'Content-Type': 'application/json' } : undefined,
+        body: options.body ? JSON.stringify(options.body) : undefined,
       })
 
       if (response.ok) {
+        if (response.status === 204) {
+          return undefined as T
+        }
+
         return (await response.json()) as T
       }
 
-      const message = await readErrorMessage(response, fallbackMessage)
+      const message = await readErrorMessage(response, options.fallbackMessage)
       lastError = new Error(message)
 
       if (!TRANSIENT_STATUSES.has(response.status) || attempt === RETRY_DELAYS_MS.length) {
@@ -59,11 +80,11 @@ export async function fetchBackendJson<T>(path: string, fallbackMessage: string)
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
-        lastError = new Error('The backend took too long to respond. Please try again.')
+        lastError = new Error('Backend хугацаандаа хариу өгсөнгүй. Сервер эсвэл Cloudflare холболт одоогоор саатсан байж магадгүй. Дахин оролдоно уу.')
       } else if (error instanceof Error) {
         lastError = error
       } else {
-        lastError = new Error(fallbackMessage)
+        lastError = new Error(options.fallbackMessage)
       }
 
       if (attempt === RETRY_DELAYS_MS.length) {
@@ -76,5 +97,5 @@ export async function fetchBackendJson<T>(path: string, fallbackMessage: string)
     await wait(RETRY_DELAYS_MS[attempt])
   }
 
-  throw lastError ?? new Error(fallbackMessage)
+  throw lastError ?? new Error(options.fallbackMessage)
 }

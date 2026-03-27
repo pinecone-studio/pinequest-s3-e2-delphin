@@ -10,13 +10,15 @@ import { StudentCompletedExamsSection } from "@/components/student/student-compl
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { useStudentSession } from "@/hooks/use-student-session"
 import { examResults, exams as legacyExams, type Exam } from "@/lib/mock-data"
-import { getLocalDateString, getSecondsUntil } from "@/lib/student-exam-time"
+import { loadStudentExamResults } from "@/lib/student-exam-results"
+import { getLocalDateString, getSecondsUntil, isScheduleVisible } from "@/lib/student-exam-time"
 import { getStudentExams } from "@/lib/student-exams"
 
 export default function StudentExamsPage() {
   const { studentClass, studentId } = useStudentSession()
   const [countdowns, setCountdowns] = useState<Record<string, number>>({})
   const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
+  const [allResults, setAllResults] = useState(examResults)
   const [isLoading, setIsLoading] = useState(true)
   const [showNewExamAlert, setShowNewExamAlert] = useState(false)
   const knownScheduledExamIdsRef = useRef<string[]>([])
@@ -29,15 +31,18 @@ export default function StudentExamsPage() {
         const nextExams = await getStudentExams()
         if (!isMounted) return
         setAllExams(nextExams)
+        setAllResults(await loadStudentExamResults({ studentId }))
         knownScheduledExamIdsRef.current = nextExams
           .filter((exam) =>
             exam.status === "scheduled" &&
-            exam.scheduledClasses.some((schedule) => schedule.classId === studentClass),
+            exam.scheduledClasses.some((schedule) =>
+              schedule.classId === studentClass && isScheduleVisible(schedule.date, schedule.time, exam.duration),
+            ),
           )
           .map((exam) => exam.id)
       } catch (loadError) {
         if (!isMounted) return
-        console.warn("Failed to refresh student exams from the backend.", loadError)
+        console.warn("Шалгалтын жагсаалтыг backend-ээс сэргээж чадсангүй.", loadError)
       } finally {
         if (isMounted) {
           setIsLoading(false)
@@ -50,7 +55,7 @@ export default function StudentExamsPage() {
     return () => {
       isMounted = false
     }
-  }, [studentClass])
+  }, [studentClass, studentId])
 
   useEffect(() => {
     if (!studentClass) {
@@ -63,7 +68,9 @@ export default function StudentExamsPage() {
         const nextScheduledExamIds = nextExams
           .filter((exam) =>
             exam.status === "scheduled" &&
-            exam.scheduledClasses.some((schedule) => schedule.classId === studentClass),
+            exam.scheduledClasses.some((schedule) =>
+              schedule.classId === studentClass && isScheduleVisible(schedule.date, schedule.time, exam.duration),
+            ),
           )
           .map((exam) => exam.id)
 
@@ -74,6 +81,7 @@ export default function StudentExamsPage() {
         if (hasNewExam) {
           knownScheduledExamIdsRef.current = nextScheduledExamIds
           setAllExams(nextExams)
+          setAllResults(await loadStudentExamResults({ studentId }))
           setShowNewExamAlert(true)
         }
       } catch {
@@ -82,15 +90,25 @@ export default function StudentExamsPage() {
     }, 30000)
 
     return () => clearInterval(interval)
-  }, [studentClass])
+  }, [studentClass, studentId])
 
   const myExams = useMemo(() => allExams.filter((exam) =>
     exam.scheduledClasses.some((schedule) => schedule.classId === studentClass)
   ), [allExams, studentClass])
+  const completedExamIds = useMemo(
+    () => new Set(allResults.filter((result) => result.studentId === studentId).map((result) => result.examId)),
+    [allResults, studentId],
+  )
 
   const scheduledExams = useMemo(
-    () => myExams.filter((exam) => exam.status === "scheduled"),
-    [myExams],
+    () => myExams.filter((exam) =>
+      exam.status === "scheduled" &&
+      !completedExamIds.has(exam.id) &&
+      exam.scheduledClasses.some((schedule) =>
+        schedule.classId === studentClass && isScheduleVisible(schedule.date, schedule.time, exam.duration),
+      )
+    ),
+    [completedExamIds, myExams, studentClass],
   )
   const today = getLocalDateString()
   const todaysExams = useMemo(() => scheduledExams.filter((exam) =>
@@ -126,7 +144,7 @@ export default function StudentExamsPage() {
     return () => clearInterval(interval)
   }, [todaysExams, studentClass])
 
-  const myResults = examResults.filter((result) => result.studentId === studentId)
+  const myResults = allResults.filter((result) => result.studentId === studentId)
 
   return (
     <div className="space-y-6">

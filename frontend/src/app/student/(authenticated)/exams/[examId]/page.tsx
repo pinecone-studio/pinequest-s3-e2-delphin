@@ -2,15 +2,23 @@
 
 import { use, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { StudentExamDetailContent } from "@/components/student/student-exam-detail-content"
 import { Button } from "@/components/ui/button"
 import { useStudentSession } from "@/hooks/use-student-session"
 import { exams as legacyExams, type Exam } from "@/lib/mock-data"
-import { formatCountdownParts, getLocalDateString, getSecondsUntil } from "@/lib/student-exam-time"
+import {
+  formatCountdownParts,
+  getLocalDateString,
+  getSecondsUntil,
+  isScheduleOpenNow,
+  isScheduleVisible,
+} from "@/lib/student-exam-time"
 import { getStudentExams } from "@/lib/student-exams"
 
 export default function ExamDetailPage({ params }: { params: Promise<{ examId: string }> }) {
   const { examId } = use(params)
+  const router = useRouter()
   const { studentClass } = useStudentSession()
   const [countdown, setCountdown] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -40,6 +48,9 @@ export default function ExamDetailPage({ params }: { params: Promise<{ examId: s
   const exam = useMemo(() => allExams.find((entry) => entry.id === examId), [allExams, examId])
   const schedule = exam?.scheduledClasses.find((entry) => entry.classId === studentClass)
   const isTodayExam = schedule?.date === getLocalDateString()
+  const isScheduleStillVisible = schedule && exam
+    ? isScheduleVisible(schedule.date, schedule.time, exam.duration)
+    : false
 
   useEffect(() => {
     if (!schedule || !isTodayExam) return
@@ -64,11 +75,25 @@ export default function ExamDetailPage({ params }: { params: Promise<{ examId: s
     )
   }
 
-  const isReady = isTodayExam && countdown === 0
+  if (!isScheduleStillVisible) {
+    return (
+      <div className="py-12 text-center">
+        <h1 className="text-2xl font-bold">Шалгалтын хугацаа дууссан байна</h1>
+        <p className="mt-2 text-muted-foreground">Энэ шалгалт одоо идэвхтэй жагсаалтад харагдахгүй.</p>
+        <Link href="/student/exams">
+          <Button className="mt-4">Шалгалтууд руу буцах</Button>
+        </Link>
+      </div>
+    )
+  }
+
+  const isReady = schedule && exam
+    ? isScheduleOpenNow(schedule.date, schedule.time, exam.duration)
+    : false
   const countdownParts = formatCountdownParts(countdown)
 
   const handleTakeExam = () => {
-    alert("Шалгалтыг эхлүүлж байна... (Жинхэнэ хувилбарт шалгалтын интерфэйс рүү шилжинэ)")
+    router.push(`/student/exams/${examId}/take`)
   }
 
   return (

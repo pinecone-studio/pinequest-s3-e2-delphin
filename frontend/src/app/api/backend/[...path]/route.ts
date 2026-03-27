@@ -60,7 +60,7 @@ async function proxyRequest(
         return Response.json(
           {
             message:
-              'The backend is temporarily unavailable. Please try again in a moment.',
+              'Backend сервертэй холбогдож чадсангүй. Cloudflare эсвэл backend үйлчилгээ одоогоор түр саатсан байж магадгүй. Хэрэв асуудал үргэлжилбэл `API_BASE_URL` тохиргоо болон серверийн төлөвийг шалгана уу.',
           },
           { status: 503 },
         )
@@ -74,7 +74,8 @@ async function proxyRequest(
 
   return Response.json(
     {
-      message: 'The backend is temporarily unavailable. Please try again in a moment.',
+      message:
+        'Backend сервер одоогоор ажиллахгүй байна. Cloudflare чиглүүлэлт, backend service, эсвэл env тохиргоог шалгана уу.',
     },
     { status: 503 },
   )

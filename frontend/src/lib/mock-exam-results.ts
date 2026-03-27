@@ -99,4 +99,18 @@ export const examResults: ExamResult[] = [
     ],
     submittedAt: "2026-03-20T14:38:00",
   },
+  {
+    examId: "e1",
+    studentId: "s16",
+    score: 44,
+    totalPoints: 50,
+    answers: [
+      { questionId: "q1", answer: "14", isCorrect: true },
+      { questionId: "q2", answer: "Худал", isCorrect: true },
+      { questionId: "q3", answer: "7", isCorrect: null, reviewStatus: "graded", awardedPoints: 9 },
+      { questionId: "q4", answer: "Хамгийн урт тал", isCorrect: true },
+      { questionId: "q5", answer: "Томьёо задлаад бодож болно.", isCorrect: null, reviewStatus: "graded", awardedPoints: 15 },
+    ],
+    submittedAt: "2026-03-20T09:41:00",
+  },
 ];

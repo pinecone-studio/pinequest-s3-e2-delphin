@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Exam } from '@/lib/mock-data'
 import { formatCountdown } from '@/lib/student-exam-time'
+
 export function StudentTodayExamsSection({
   examsToday,
   studentClass,
@@ -19,8 +20,8 @@ export function StudentTodayExamsSection({
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-3">Өнөөдрийн шалгалтууд</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <h2 className="mb-3 text-lg font-semibold">Өнөөдрийн шалгалтууд</h2>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {examsToday.map((exam) => {
           const schedule = exam.scheduledClasses.find((entry) => entry.classId === studentClass)
           const countdown = countdowns[exam.id] || 0
@@ -41,12 +42,12 @@ export function StudentTodayExamsSection({
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="text-center p-4 bg-muted rounded-lg">
+                  <div className="rounded-lg bg-muted p-4 text-center">
                     {isReady ? (
                       <div className="text-2xl font-bold text-primary">Шалгалт эхлэхэд бэлэн!</div>
                     ) : (
                       <>
-                        <div className="text-sm text-muted-foreground mb-1">Эхлэх хүртэл</div>
+                        <div className="mb-1 text-sm text-muted-foreground">Эхлэх хүртэл</div>
                         <div className="text-3xl font-mono font-bold">
                           {formatCountdown(countdown)}
                         </div>
@@ -67,6 +68,7 @@ export function StudentTodayExamsSection({
     </div>
   )
 }
+
 export function StudentUpcomingExamsSection({
   upcomingExams,
   todaysExams,
@@ -81,7 +83,7 @@ export function StudentUpcomingExamsSection({
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-3">Удахгүй болох шалгалтууд</h2>
+      <h2 className="mb-3 text-lg font-semibold">Удахгүй болох шалгалтууд</h2>
       <div className="space-y-3">
         {futureExams.map((exam) => {
           const schedule = exam.scheduledClasses.find((entry) => entry.classId === studentClass)

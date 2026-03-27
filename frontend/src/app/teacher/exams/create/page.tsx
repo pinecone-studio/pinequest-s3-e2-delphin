@@ -7,14 +7,37 @@ import { AIQuestionGeneratorDialog } from "@/components/teacher/ai-question-gene
 import { ExamBuilderQuestionList } from "@/components/teacher/exam-builder-question-list"
 import { ExamBuilderSummaryCard } from "@/components/teacher/exam-builder-summary-card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
-import { useExamCreation } from "@/hooks/use-exam-creation"
 import { useExamBuilder } from "@/hooks/use-exam-builder"
+import { useExamCreation } from "@/hooks/use-exam-creation"
 
 export default function CreateExamPage() {
+  const titleSectionRef = React.useRef<HTMLDivElement | null>(null)
+  const questionsSectionRef = React.useRef<HTMLDivElement | null>(null)
+  const settingsSectionRef = React.useRef<HTMLDivElement | null>(null)
+  const scheduleSectionRef = React.useRef<HTMLDivElement | null>(null)
+
+  const scrollToSection = React.useCallback((section: "title" | "questions" | "settings" | "schedule") => {
+    const sectionMap = {
+      title: titleSectionRef,
+      questions: questionsSectionRef,
+      settings: settingsSectionRef,
+      schedule: scheduleSectionRef,
+    } as const
+
+    const target = sectionMap[section].current
+    if (!target) {
+      return
+    }
+
+    target.scrollIntoView({ behavior: "smooth", block: "start" })
+    const focusTarget = target.querySelector<HTMLElement>("input, textarea, button, [role='combobox']")
+    focusTarget?.focus({ preventScroll: true })
+  }, [])
+
   const {
     addQuestion,
     addScheduleEntry,
@@ -53,6 +76,7 @@ export default function CreateExamPage() {
   const { canSaveDraft, canScheduleExam, submissionError, submitExam, submitMode } = useExamCreation({
     duration,
     examTitle,
+    onValidationError: scrollToSection,
     questions,
     reportReleaseMode,
     scheduleEntries,
@@ -62,74 +86,99 @@ export default function CreateExamPage() {
     e.preventDefault()
     setIsAiSourceDragging(true)
   }
+
   const handleAiSourceDragLeave = (e: React.DragEvent) => {
     e.preventDefault()
     setIsAiSourceDragging(false)
   }
+
   const handleAiSourceDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setIsAiSourceDragging(false)
     addAiSourceFiles(e.dataTransfer.files)
   }
+
   const handleAiSourceSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files) {
       return
     }
+
     addAiSourceFiles(files)
     e.target.value = ""
   }
-  const totalPoints = questions.reduce((sum, q) => sum + q.points, 0)
+
+  const totalPoints = questions.reduce((sum, question) => sum + question.points, 0)
   const questionCounts = {
-    'multiple-choice': questions.filter(q => q.type === 'multiple-choice').length,
-    'true-false': questions.filter(q => q.type === 'true-false').length,
-    'short-answer': questions.filter(q => q.type === 'short-answer').length,
-    'essay': questions.filter(q => q.type === 'essay').length,
+    "multiple-choice": questions.filter((question) => question.type === "multiple-choice").length,
+    "true-false": questions.filter((question) => question.type === "true-false").length,
+    "short-answer": questions.filter((question) => question.type === "short-answer").length,
+    essay: questions.filter((question) => question.type === "essay").length,
   }
+
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="mx-auto max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <Link href="/teacher/exams" className="text-sm text-muted-foreground hover:underline">
             &larr; Шалгалтууд руу буцах
           </Link>
-          <h1 className="text-2xl font-bold mt-2">Шинэ шалгалт үүсгэх</h1>
+          <h1 className="mt-2 text-2xl font-bold">Шинэ шалгалт үүсгэх</h1>
         </div>
         <Button onClick={() => setShowAIDialog(true)}>
           AI ашиглан асуулт бэлтгэх
         </Button>
       </div>
-      <Card>
-        <CardContent className="pt-6">
-          <Input
-            placeholder="Нэр өгөөгүй шалгалт"
-            value={examTitle}
-            onChange={(e) => setExamTitle(e.target.value)}
-            className="text-xl font-semibold border-0 border-b rounded-none focus-visible:ring-0 px-0"
+
+      <div ref={titleSectionRef}>
+        <Card>
+          <CardContent className="pt-6">
+            <Input
+              placeholder="Шалгалтын нэр оруулна уу"
+              value={examTitle}
+              onChange={(event) => setExamTitle(event.target.value)}
+              className="border-0 border-b px-0 text-xl font-semibold rounded-none focus-visible:ring-0"
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      {submissionError ? (
+        <Alert variant="destructive">
+          <CircleAlert />
+          <AlertTitle>Хадгалж чадсангүй</AlertTitle>
+          <AlertDescription>{submissionError}</AlertDescription>
+        </Alert>
+      ) : null}
+
+      <div ref={questionsSectionRef}>
+        <ExamBuilderQuestionList
+          onAddQuestion={addQuestion}
+          onRemoveQuestion={removeQuestion}
+          onUpdateOption={updateOption}
+          onUpdateQuestion={updateQuestion}
+          questions={questions}
+        />
+      </div>
+
+      <div ref={settingsSectionRef}>
+        <div ref={scheduleSectionRef}>
+          <ExamBuilderSummaryCard
+            duration={duration}
+            onAddScheduleEntry={addScheduleEntry}
+            onDurationChange={setDuration}
+            onRemoveScheduleEntry={removeScheduleEntry}
+            onReportReleaseModeChange={setReportReleaseMode}
+            onScheduleEntryChange={updateScheduleEntry}
+            questionCounts={questionCounts}
+            questionTotal={questions.length}
+            reportReleaseMode={reportReleaseMode}
+            scheduleEntries={scheduleEntries}
+            totalPoints={totalPoints}
           />
-        </CardContent>
-      </Card>
-      {submissionError ? <Alert variant="destructive"><CircleAlert /><AlertTitle>Хадгалж чадсангүй</AlertTitle><AlertDescription>{submissionError}</AlertDescription></Alert> : null}
-      <ExamBuilderQuestionList
-        onAddQuestion={addQuestion}
-        onRemoveQuestion={removeQuestion}
-        onUpdateOption={updateOption}
-        onUpdateQuestion={updateQuestion}
-        questions={questions}
-      />
-      <ExamBuilderSummaryCard
-        duration={duration}
-        onAddScheduleEntry={addScheduleEntry}
-        onDurationChange={setDuration}
-        onRemoveScheduleEntry={removeScheduleEntry}
-        onReportReleaseModeChange={setReportReleaseMode}
-        onScheduleEntryChange={updateScheduleEntry}
-        questionCounts={questionCounts}
-        questionTotal={questions.length}
-        reportReleaseMode={reportReleaseMode}
-        scheduleEntries={scheduleEntries}
-        totalPoints={totalPoints}
-      />
+        </div>
+      </div>
+
       <div className="flex justify-end gap-3">
         <Button variant="outline" onClick={() => void submitExam("draft")} disabled={!canSaveDraft}>
           {submitMode === "draft" ? <Spinner className="mr-2" /> : null}
@@ -140,6 +189,7 @@ export default function CreateExamPage() {
           Үүсгээд сурагчдад мэдэгдэх
         </Button>
       </div>
+
       <AIQuestionGeneratorDialog
         aiMCCount={aiMCCount}
         aiShortCount={aiShortCount}
@@ -155,9 +205,7 @@ export default function CreateExamPage() {
         onRemoveSourceFile={removeAiSourceFile}
         onToggleTest={(testId, checked) =>
           setSelectedMockTests((current) =>
-            checked
-              ? [...current, testId]
-              : current.filter((id) => id !== testId),
+            checked ? [...current, testId] : current.filter((id) => id !== testId),
           )
         }
         open={showAIDialog}

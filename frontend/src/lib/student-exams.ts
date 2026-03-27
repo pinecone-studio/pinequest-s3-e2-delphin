@@ -32,7 +32,7 @@ function mapCreatedExamToStudentExam(exam: CreatedExam): LegacyExam {
 export async function getStudentExams(): Promise<LegacyExam[]> {
   const backendExams = await fetchBackendJson<CreatedExam[]>(
     '/exams',
-    'Failed to load exams from the backend.',
+    'Шалгалтын мэдээллийг backend-ээс уншиж чадсангүй. Cloudflare D1 эсвэл backend үйлчилгээ одоогоор асуудалтай байж магадгүй.',
   )
   const mergedExams = [...legacyExams, ...backendExams.map(mapCreatedExamToStudentExam)]
 

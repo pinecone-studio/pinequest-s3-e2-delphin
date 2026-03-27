@@ -1,0 +1,80 @@
+name: Backend Auto Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-deploy.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: backend-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-backend:
+    name: Deploy backend to Oracle VM
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check required secrets
+        env:
+          ORACLE_VM_HOST: ${{ secrets.ORACLE_VM_HOST }}
+          ORACLE_VM_USER: ${{ secrets.ORACLE_VM_USER }}
+          ORACLE_VM_SSH_KEY: ${{ secrets.ORACLE_VM_SSH_KEY }}
+          ORACLE_APP_DIR: ${{ secrets.ORACLE_APP_DIR }}
+        run: |
+          missing=0
+
+          for name in ORACLE_VM_HOST ORACLE_VM_USER ORACLE_VM_SSH_KEY ORACLE_APP_DIR; do
+            if [ -z "${!name}" ]; then
+              echo "Missing required secret: $name"
+              missing=1
+            fi
+          done
+
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.ORACLE_VM_HOST }}
+          username: ${{ secrets.ORACLE_VM_USER }}
+          key: ${{ secrets.ORACLE_VM_SSH_KEY }}
+          port: ${{ secrets.ORACLE_VM_PORT || '22' }}
+          script_stop: true
+          script: |
+            set -e
+
+            APP_DIR="${{ secrets.ORACLE_APP_DIR }}"
+            REPO_URL="https://github.com/${{ github.repository }}.git"
+
+            if [ ! -d "$APP_DIR/.git" ]; then
+              echo "Missing git repo at $APP_DIR"
+              exit 1
+            fi
+
+            cd "$APP_DIR"
+
+            git fetch "$REPO_URL" main
+            git checkout -B main FETCH_HEAD
+
+            cd backend
+
+            sudo docker build -t pinequest-backend .
+            sudo docker rm -f pinequest-backend || true
+            sudo docker run -d \
+              --name pinequest-backend \
+              --restart unless-stopped \
+              -p 80:3001 \
+              --env-file .env \
+              pinequest-backend
+
+            sleep 5
+            curl --fail --silent http://127.0.0.1/api/health > /tmp/pinequest-health.json
+            cat /tmp/pinequest-health.json

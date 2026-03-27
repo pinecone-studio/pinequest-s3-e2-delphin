@@ -51,12 +51,24 @@ jobs:
           script: |
             set -e
 
-            APP_DIR="${{ secrets.ORACLE_APP_DIR }}"
+            APP_DIR_RAW='${{ secrets.ORACLE_APP_DIR }}'
+            APP_DIR="$(printf '%s' "$APP_DIR_RAW" | tr -d '\r' | xargs)"
+            DEFAULT_APP_DIR="/home/${{ secrets.ORACLE_VM_USER }}/pinequest-s3-e2-team-10-fork"
             REPO_URL="https://github.com/${{ github.repository }}.git"
 
+            if [ -z "$APP_DIR" ]; then
+              APP_DIR="$DEFAULT_APP_DIR"
+            fi
+
             if [ ! -d "$APP_DIR/.git" ]; then
-              echo "Missing git repo at $APP_DIR"
-              exit 1
+              echo "Configured app dir not found: $APP_DIR"
+              if [ -d "$DEFAULT_APP_DIR/.git" ]; then
+                APP_DIR="$DEFAULT_APP_DIR"
+                echo "Falling back to $APP_DIR"
+              else
+                echo "Missing git repo at both $APP_DIR and $DEFAULT_APP_DIR"
+                exit 1
+              fi
             fi
 
             cd "$APP_DIR"

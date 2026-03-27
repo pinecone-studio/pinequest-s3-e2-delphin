@@ -56,9 +56,9 @@ export default function ExamDetailPage({ params }: { params: Promise<{ examId: s
   if (!exam) {
     return (
       <div className="py-12 text-center">
-        <h1 className="text-2xl font-bold">Exam not found</h1>
+        <h1 className="text-2xl font-bold">Шалгалт олдсонгүй</h1>
         <Link href="/student/exams">
-          <Button className="mt-4">Back to Exams</Button>
+          <Button className="mt-4">Шалгалтууд руу буцах</Button>
         </Link>
       </div>
     )
@@ -68,7 +68,7 @@ export default function ExamDetailPage({ params }: { params: Promise<{ examId: s
   const countdownParts = formatCountdownParts(countdown)
 
   const handleTakeExam = () => {
-    alert("Starting exam... (This would redirect to the actual exam interface)")
+    alert("Шалгалтыг эхлүүлж байна... (Жинхэнэ хувилбарт шалгалтын интерфэйс рүү шилжинэ)")
   }
 
   return (

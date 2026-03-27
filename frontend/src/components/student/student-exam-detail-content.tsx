@@ -36,7 +36,7 @@ export function StudentExamDetailContent({
           onClick={onExitFullscreen}
           className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
         >
-          Exit Fullscreen
+          Бүтэн дэлгэцээс гарах
         </button>
         <ExamCountdownDisplay
           countdown={countdown}
@@ -44,11 +44,11 @@ export function StudentExamDetailContent({
           isFullscreen
           isReady={isReady}
           onPrimaryAction={onTakeExam}
-          scheduleLabel={`${scheduleDate} at ${scheduleTime}`}
+          scheduleLabel={`${scheduleDate} - ${scheduleTime}`}
           title={exam.title}
         />
         <div className="text-center text-muted-foreground">
-          <p>Questions: {exam.questions.length}</p>
+          <p>Асуултын тоо: {exam.questions.length}</p>
         </div>
       </div>
     )
@@ -58,30 +58,30 @@ export function StudentExamDetailContent({
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
         <Link href="/student/exams" className="text-sm text-muted-foreground hover:underline">
-          &larr; Back to Exams
+          &larr; Шалгалтууд руу буцах
         </Link>
         <h1 className="text-2xl font-bold mt-2">{exam.title}</h1>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Exam Details</CardTitle>
+          <CardTitle>Шалгалтын мэдээлэл</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <div className="text-sm text-muted-foreground">Date</div>
+              <div className="text-sm text-muted-foreground">Огноо</div>
               <div className="font-medium">{scheduleDate}</div>
             </div>
             <div>
-              <div className="text-sm text-muted-foreground">Time</div>
+              <div className="text-sm text-muted-foreground">Цаг</div>
               <div className="font-medium">{scheduleTime}</div>
             </div>
             <div>
-              <div className="text-sm text-muted-foreground">Duration</div>
-              <div className="font-medium">{exam.duration} minutes</div>
+              <div className="text-sm text-muted-foreground">Хугацаа</div>
+              <div className="font-medium">{exam.duration} минут</div>
             </div>
             <div>
-              <div className="text-sm text-muted-foreground">Questions</div>
+              <div className="text-sm text-muted-foreground">Асуулт</div>
               <div className="font-medium">{exam.questions.length}</div>
             </div>
           </div>
@@ -90,14 +90,14 @@ export function StudentExamDetailContent({
       <Card className={isReady ? 'border-primary' : ''}>
         <CardHeader>
           <CardTitle>
-            {isTodayExam ? (isReady ? 'Exam is Ready!' : 'Time Until Exam') : 'Scheduled Exam'}
+            {isTodayExam ? (isReady ? 'Шалгалт эхлэхэд бэлэн боллоо!' : 'Шалгалт эхлэх хүртэл') : 'Товлогдсон шалгалт'}
           </CardTitle>
           <CardDescription>
             {isTodayExam
               ? (isReady
-                ? 'You can now take the exam'
-                : 'The take exam button will be available when the countdown reaches zero')
-              : 'Countdown is only shown on the scheduled exam day.'}
+                ? 'Та одоо шалгалтаа эхлүүлэх боломжтой'
+                : 'Тоолуур тэг болоход шалгалт эхлүүлэх товч идэвхжинэ')
+              : 'Тоолуур зөвхөн товлосон өдөр харагдана.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -112,24 +112,24 @@ export function StudentExamDetailContent({
           ) : (
             <div className="space-y-4 text-sm">
               <p className="text-muted-foreground">
-                This exam is scheduled for {scheduleDate} at {scheduleTime}.
+                Энэ шалгалт {scheduleDate}-ны {scheduleTime}-д товлогдсон байна.
               </p>
-              <Button disabled>Take Exam (Locked)</Button>
+              <Button disabled>Шалгалт өгөх (түгжээтэй)</Button>
             </div>
           )}
         </CardContent>
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Instructions</CardTitle>
+          <CardTitle>Заавар</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2 text-sm text-muted-foreground list-disc list-inside">
-            <li>Make sure you have a stable internet connection</li>
-            <li>Read each question carefully before answering</li>
-            <li>You cannot pause once the exam starts</li>
-            <li>The exam will auto-submit when time runs out</li>
-            <li>Do not refresh or close the browser during the exam</li>
+            <li>Интернэт холболт тогтвортой байгаа эсэхээ шалгана уу</li>
+            <li>Асуулт бүрийг хариулахаасаа өмнө анхааралтай уншина уу</li>
+            <li>Шалгалт эхэлсний дараа түр зогсоох боломжгүй</li>
+            <li>Хугацаа дуусахад шалгалт автоматаар илгээгдэнэ</li>
+            <li>Шалгалтын үеэр браузераа шинэчлэх эсвэл хааж болохгүй</li>
           </ul>
         </CardContent>
       </Card>

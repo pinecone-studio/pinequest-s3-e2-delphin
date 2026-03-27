@@ -10,8 +10,8 @@ import { notifyStudentSessionChange, useStudentSession } from "@/hooks/use-stude
 import { cn } from "@/lib/utils"
 
 const navItems = [
-  { href: "/student/dashboard", label: "Хянах Самбар", icon: LayoutDashboard },
-  { href: "/student/question-bank", label: "Асуултын Сан", icon: BookOpen },
+  { href: "/student/dashboard", label: "Хянах самбар", icon: LayoutDashboard },
+  { href: "/student/question-bank", label: "Асуултын сан", icon: BookOpen },
   { href: "/student/exams", label: "Шалгалтууд", icon: ClipboardList },
 ]
 
@@ -60,7 +60,7 @@ export default function StudentLayout({
               onClick={handleLogout}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
-              Logout
+              Гарах
             </button>
           </div>
         </div>
@@ -79,7 +79,7 @@ export default function StudentLayout({
               type="button"
               onClick={() => setIsSidebarCollapsed((current) => !current)}
               className="rounded-md border p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground dark:border-[#1B2A36] dark:bg-[#000000] dark:hover:bg-[#081018]"
-              aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              aria-label={isSidebarCollapsed ? "Хажуу самбарыг дэлгэх" : "Хажуу самбарыг хумих"}
             >
               {isSidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </button>

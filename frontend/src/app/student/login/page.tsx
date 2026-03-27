@@ -33,7 +33,7 @@ export default function StudentLoginPage() {
       notifyStudentSessionChange()
       router.push('/student/dashboard')
     } else {
-      setError("Invalid email or password")
+      setError("Имэйл эсвэл нууц үг буруу байна")
     }
   }
 
@@ -58,17 +58,17 @@ export default function StudentLoginPage() {
         <div className="content-surface w-full max-w-md rounded-[2rem] p-4 md:p-5">
           <div className="text-center mb-6">
             <Link href="/" className="muted-text text-sm hover:underline">
-              &larr; Back to Home
+              &larr; Нүүр хуудас руу буцах
             </Link>
-            <h1 className="mt-4 text-2xl font-bold text-foreground">Student Login</h1>
-            <p className="secondary-text">Sign in to access your exams</p>
+            <h1 className="mt-4 text-2xl font-bold text-foreground">Сурагчийн нэвтрэх хэсэг</h1>
+            <p className="secondary-text">Шалгалтуудаа үзэхийн тулд нэвтэрнэ үү</p>
           </div>
 
           <div className="relative">
             <Card className="panel-surface relative rounded-[1.5rem] border-white/70 bg-white/80 shadow-xl shadow-sky-200/25 backdrop-blur-md">
             <CardHeader>
-              <CardTitle className="text-foreground">Login</CardTitle>
-              <CardDescription className="secondary-text">Enter your credentials to continue</CardDescription>
+              <CardTitle className="text-foreground">Нэвтрэх</CardTitle>
+              <CardDescription className="secondary-text">Үргэлжлүүлэхийн тулд мэдээллээ оруулна уу</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleLogin} className="space-y-4">
@@ -79,7 +79,7 @@ export default function StudentLoginPage() {
                 )}
               
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">Имэйл</Label>
                   <Input
                     className="input-surface"
                     id="email"
@@ -92,12 +92,12 @@ export default function StudentLoginPage() {
                 </div>
               
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">Нууц үг</Label>
                   <Input
                     className="input-surface"
                     id="password"
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder="Нууц үгээ оруулна уу"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -105,10 +105,10 @@ export default function StudentLoginPage() {
                 </div>
 
                 <Button type="submit" className="ocean-cta w-full border-0 font-semibold">
-                  Login
+                  Нэвтрэх
                 </Button>
                 <Button type="button" variant="outline" className="w-full" onClick={handleDemoFill}>
-                  Use Demo Account
+                  Жишиг эрх ашиглах
                 </Button>
               </form>
             </CardContent>
@@ -117,8 +117,8 @@ export default function StudentLoginPage() {
 
           <Card className="panel-surface mt-4 rounded-[1.5rem] border-white/65 bg-white/72 shadow-lg shadow-sky-200/20 backdrop-blur-md">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-foreground">Demo Credentials</CardTitle>
-              <CardDescription className="secondary-text text-xs">Use any of these to login</CardDescription>
+              <CardTitle className="text-sm text-foreground">Жишиг эрхүүд</CardTitle>
+              <CardDescription className="secondary-text text-xs">Эдгээрээс аль нэгээр нь нэвтэрч болно</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-xs space-y-1 font-mono">

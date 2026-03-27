@@ -72,8 +72,8 @@ export default function StudentDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back, {studentName}</p>
+        <h1 className="text-2xl font-bold">Хянах самбар</h1>
+        <p className="text-muted-foreground">Тавтай морил, {studentName}</p>
       </div>
 
       <StudentUpcomingExamsCard
@@ -86,25 +86,25 @@ export default function StudentDashboard() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription className="secondary-text">Your Class</CardDescription>
+            <CardDescription className="secondary-text">Таны анги</CardDescription>
             <CardTitle className="text-3xl">{studentClass}</CardTitle>
           </CardHeader>
         </Card>
         <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription className="secondary-text">Upcoming Exams</CardDescription>
+            <CardDescription className="secondary-text">Удахгүй болох шалгалт</CardDescription>
             <CardTitle className="text-3xl">{upcomingExams.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription className="secondary-text">Completed Exams</CardDescription>
+            <CardDescription className="secondary-text">Дууссан шалгалт</CardDescription>
             <CardTitle className="text-3xl">{myResults.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription className="secondary-text">Average Score</CardDescription>
+            <CardDescription className="secondary-text">Дундаж оноо</CardDescription>
             <CardTitle className="text-3xl">{avgScore}%</CardTitle>
           </CardHeader>
         </Card>

@@ -21,8 +21,8 @@ export function StudentRecentResultsCard({
   return (
     <Card className="panel-surface rounded-[1.5rem]">
       <CardHeader>
-        <CardTitle>Recent Results</CardTitle>
-        <CardDescription className="secondary-text">Your exam scores</CardDescription>
+        <CardTitle>Сүүлийн үр дүн</CardTitle>
+        <CardDescription className="secondary-text">Таны шалгалтын оноонууд</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
@@ -38,7 +38,7 @@ export function StudentRecentResultsCard({
                 <div>
                   <div className="font-medium">{exam?.title}</div>
                   <div className="secondary-text text-sm">
-                    Submitted: {new Date(result.submittedAt).toLocaleDateString()}
+                    Илгээсэн: {new Date(result.submittedAt).toLocaleDateString('mn-MN')}
                   </div>
                 </div>
                 <div className="text-right">
@@ -49,7 +49,7 @@ export function StudentRecentResultsCard({
                   <div className="mt-2">
                     <Link href={`/student/reports/${result.examId}`}>
                       <Button size="sm" variant="outline">
-                        {isReportAvailable ? 'View Report' : 'Report Locked'}
+                        {isReportAvailable ? 'Тайлан үзэх' : 'Тайлан түгжээтэй'}
                       </Button>
                     </Link>
                   </div>

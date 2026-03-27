@@ -131,22 +131,22 @@ export default function StudentExamsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Exams</h1>
-        <p className="text-muted-foreground">View your upcoming and completed exams</p>
+        <h1 className="text-2xl font-bold">Шалгалтууд</h1>
+        <p className="text-muted-foreground">Удахгүй болох болон дууссан шалгалтуудаа харах</p>
       </div>
 
       {showNewExamAlert ? (
         <Alert>
           <CircleAlert />
-          <AlertTitle>New exam available</AlertTitle>
+          <AlertTitle>Шинэ шалгалт нэмэгдлээ</AlertTitle>
           <AlertDescription>
-            A new test was created by the teacher. Please refresh the page.
+            Багш шинэ шалгалт үүсгэсэн байна. Хуудсаа шинэчилнэ үү.
           </AlertDescription>
         </Alert>
       ) : null}
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading exams...</p>
+        <p className="text-sm text-muted-foreground">Шалгалтуудыг ачаалж байна...</p>
       ) : null}
 
       <StudentTodayExamsSection examsToday={todaysExams} studentClass={studentClass} countdowns={countdowns} />

@@ -28,14 +28,14 @@ export default function StudentQuestionBankPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Асуултын Сан</h1>
-        <p className="text-muted-foreground">Багшийн байршуулсан demo шалгалтуудыг эндээс үзнэ</p>
+        <p className="text-muted-foreground">Багшийн байршуулсан жишиг шалгалтуудыг эндээс үзнэ</p>
       </div>
 
       {/* Teacher Selection */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Багш Сонгох</CardTitle>
-          <CardDescription>Demo шалгалтуудыг харах багшаа сонгоно уу</CardDescription>
+          <CardDescription>Жишиг шалгалтуудыг харах багшаа сонгоно уу</CardDescription>
         </CardHeader>
         <CardContent>
           <Select value={selectedTeacher} onValueChange={setSelectedTeacher}>
@@ -58,7 +58,7 @@ export default function StudentQuestionBankPage() {
         filteredTests.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center text-muted-foreground">
-              Энэ багшид хараахан demo шалгалт алга
+              Энэ багшид хараахан жишиг шалгалт алга
             </CardContent>
           </Card>
         ) : (
@@ -84,7 +84,7 @@ export default function StudentQuestionBankPage() {
       ) : (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            Demo шалгалтуудыг харахын тулд багшаа сонгоно уу
+            Жишиг шалгалтуудыг харахын тулд багшаа сонгоно уу
           </CardContent>
         </Card>
       )}

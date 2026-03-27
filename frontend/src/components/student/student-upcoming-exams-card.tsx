@@ -24,7 +24,7 @@ export function StudentUpcomingExamsCard({
     <Card className="panel-surface border-primary rounded-[1.5rem]">
       <CardHeader className="pb-2">
         <CardTitle className="text-base flex items-center gap-2">
-          Upcoming Exams
+          Удахгүй болох шалгалтууд
           <Badge>{exams.length}</Badge>
         </CardTitle>
       </CardHeader>
@@ -43,16 +43,16 @@ export function StudentUpcomingExamsCard({
                 <div>
                   <div className="font-medium">{exam.title}</div>
                   <div className="secondary-text text-sm">
-                    {schedule?.date} at {schedule?.time} ({exam.duration} min)
+                    {schedule?.date} - {schedule?.time} ({exam.duration} мин)
                   </div>
                   {isTodayExam ? (
                     <div className="mt-2 inline-flex items-center rounded-full bg-primary px-3 py-1 text-sm font-semibold text-primary-foreground">
-                      {countdown === 0 ? 'Ready to start now' : `Starts in ${formatCountdown(countdown)}`}
+                      {countdown === 0 ? 'Одоо эхлэхэд бэлэн' : `Эхлэх хүртэл ${formatCountdown(countdown)}`}
                     </div>
                   ) : null}
                 </div>
                 <Link href={`/student/exams/${exam.id}`}>
-                  <Button size="sm" variant="outline">View</Button>
+                  <Button size="sm" variant="outline">Үзэх</Button>
                 </Link>
               </div>
             )

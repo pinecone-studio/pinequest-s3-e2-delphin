@@ -16,11 +16,11 @@ export function StudentCompletedExamsSection({
 }) {
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-3">Completed Exams</h2>
+      <h2 className="text-lg font-semibold mb-3">Дууссан шалгалтууд</h2>
       {results.length === 0 ? (
         <Card>
           <CardContent className="py-6 text-center text-muted-foreground">
-            No completed exams yet
+            Одоогоор дууссан шалгалт алга
           </CardContent>
         </Card>
       ) : (
@@ -39,23 +39,23 @@ export function StudentCompletedExamsSection({
                     <div>
                       <div className="font-medium">{exam?.title}</div>
                       <div className="text-sm text-muted-foreground">
-                        Submitted: {new Date(result.submittedAt).toLocaleString()}
+                        Илгээсэн: {new Date(result.submittedAt).toLocaleString('mn-MN')}
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">
                         {isReportAvailable
-                          ? 'Detailed report is available'
-                          : 'Detailed report will unlock after every class finishes the exam'}
+                          ? 'Дэлгэрэнгүй тайланг үзэх боломжтой'
+                          : 'Бүх анги шалгалтаа дууссаны дараа дэлгэрэнгүй тайлан нээгдэнэ'}
                       </div>
                     </div>
                     <div className="text-right">
                       <Badge variant={variant}>{percentage}%</Badge>
                       <div className="text-sm text-muted-foreground mt-1">
-                        {result.score}/{result.totalPoints} points
+                        {result.score}/{result.totalPoints} оноо
                       </div>
                       <div className="mt-3">
                         <Link href={`/student/reports/${result.examId}`}>
                           <Button size="sm" variant="outline">
-                            {isReportAvailable ? 'View Report' : 'Report Locked'}
+                            {isReportAvailable ? 'Тайлан үзэх' : 'Тайлан түгжээтэй'}
                           </Button>
                         </Link>
                       </div>

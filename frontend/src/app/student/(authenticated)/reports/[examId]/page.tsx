@@ -17,6 +17,13 @@ import {
   isStudentExamReportAvailable,
 } from "@/lib/student-exams"
 
+const questionTypeLabels = {
+  "multiple-choice": "Сонгох",
+  "true-false": "Үнэн/худал",
+  "short-answer": "Богино хариулт",
+  essay: "Эсээ",
+} as const
+
 export default function StudentExamReportPage({
   params,
 }: {
@@ -58,9 +65,9 @@ export default function StudentExamReportPage({
   if (!exam || !result) {
     return (
       <div className="py-12 text-center">
-        <h1 className="text-2xl font-bold">Report not found</h1>
+        <h1 className="text-2xl font-bold">Тайлан олдсонгүй</h1>
         <Link href="/student/exams">
-          <Button className="mt-4">Back to Exams</Button>
+          <Button className="mt-4">Шалгалтууд руу буцах</Button>
         </Link>
       </div>
     )
@@ -74,28 +81,28 @@ export default function StudentExamReportPage({
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
         <Link href="/student/exams" className="text-sm text-muted-foreground hover:underline">
-          &larr; Back to Exams
+          &larr; Шалгалтууд руу буцах
         </Link>
-        <h1 className="text-2xl font-bold mt-2">{exam.title} Report</h1>
+        <h1 className="text-2xl font-bold mt-2">{exam.title} тайлан</h1>
         <p className="text-muted-foreground">
-          Your score is available immediately. Detailed answer review is released separately.
+          Таны оноо шууд харагдана. Дэлгэрэнгүй хариултын тайлан тусад нь нээгдэнэ.
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Score Summary</CardTitle>
-          <CardDescription>Visible as soon as you finish the exam</CardDescription>
+          <CardTitle>Онооны тойм</CardTitle>
+          <CardDescription>Шалгалтаа дуусмагц шууд харагдана</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-between gap-4">
           <div>
-            <div className="text-sm text-muted-foreground">Submitted</div>
-            <div className="font-medium">{new Date(result.submittedAt).toLocaleString()}</div>
+            <div className="text-sm text-muted-foreground">Илгээсэн</div>
+            <div className="font-medium">{new Date(result.submittedAt).toLocaleString('mn-MN')}</div>
           </div>
           <div className="text-right">
             <Badge>{percentage}%</Badge>
             <div className="text-sm text-muted-foreground mt-1">
-              {result.score}/{result.totalPoints} points
+              {result.score}/{result.totalPoints} оноо
             </div>
           </div>
         </CardContent>
@@ -104,17 +111,17 @@ export default function StudentExamReportPage({
       {!isReportAvailable ? (
         <Card>
           <CardHeader>
-            <CardTitle>Report Locked</CardTitle>
+            <CardTitle>Тайлан түгжээтэй</CardTitle>
             <CardDescription>
-              The teacher chose to release full reports only after all scheduled classes finish.
+              Багш бүх товлогдсон анги шалгалтаа дууссаны дараа бүтэн тайланг нээхээр тохируулсан байна.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>You can already see your score above.</p>
+            <p>Та дээрх хэсгээс оноогоо аль хэдийн харах боломжтой.</p>
             <p>
               {releaseDate
-                ? `This report is expected to unlock after ${releaseDate.toLocaleString()}.`
-                : "This report will unlock once the release condition is met."}
+                ? `Энэ тайлан ${releaseDate.toLocaleString('mn-MN')}-с хойш нээгдэх төлөвтэй байна.`
+                : "Нээх нөхцөл биелсний дараа энэ тайлан нээгдэнэ."}
             </p>
           </CardContent>
         </Card>
@@ -130,23 +137,23 @@ export default function StudentExamReportPage({
                     <div>
                       <CardTitle className="text-base">{question.question}</CardTitle>
                       <CardDescription>
-                        {question.type} • {question.points} points
+                        {questionTypeLabels[question.type]} • {question.points} оноо
                       </CardDescription>
                     </div>
                     <Badge variant={answer?.isCorrect ? "default" : "destructive"}>
-                      {answer?.isCorrect ? "Correct" : "Incorrect"}
+                      {answer?.isCorrect ? "Зөв" : "Буруу"}
                     </Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                   <div>
-                    <div className="text-muted-foreground">Your Answer</div>
-                    <div className="font-medium">{answer?.answer || "No answer submitted"}</div>
+                    <div className="text-muted-foreground">Таны хариулт</div>
+                    <div className="font-medium">{answer?.answer || "Хариулт илгээгдээгүй"}</div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">Expected Answer</div>
+                    <div className="text-muted-foreground">Зөв хариулт</div>
                     <div className="font-medium">
-                      {question.correctAnswer || "Review with your teacher"}
+                      {question.correctAnswer || "Багштайгаа хамт нягтална уу"}
                     </div>
                   </div>
                 </CardContent>

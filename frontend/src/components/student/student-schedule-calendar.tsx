@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Exam } from '@/lib/mock-data'
 
-const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+const daysOfWeek = ['Даваа', 'Мягмар', 'Лхагва', 'Пүрэв', 'Баасан']
 const timeSlots = Array.from({ length: 24 }, (_, hour) => `${String(hour).padStart(2, '0')}:00`)
 
 function getWeekDates() {
@@ -18,7 +18,7 @@ function getWeekDates() {
     return {
       day,
       date: date.toISOString().split('T')[0],
-      displayDate: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      displayDate: date.toLocaleDateString('mn-MN', { month: 'short', day: 'numeric' }),
     }
   })
 }
@@ -59,9 +59,9 @@ function formatCountdown(seconds: number) {
   const hours = Math.floor(seconds / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
   const secs = seconds % 60
-  if (hours > 0) return `${hours}h ${minutes}m`
-  if (minutes > 0) return `${minutes}m ${secs}s`
-  return `${secs}s`
+  if (hours > 0) return `${hours}ц ${minutes}м`
+  if (minutes > 0) return `${minutes}м ${secs}с`
+  return `${secs}с`
 }
 
 export function StudentScheduleCalendar({
@@ -77,14 +77,14 @@ export function StudentScheduleCalendar({
   return (
     <Card className="panel-surface rounded-[1.5rem]">
       <CardHeader>
-        <CardTitle>Exam Schedule</CardTitle>
-        <CardDescription className="secondary-text">Your upcoming exams this week</CardDescription>
+        <CardTitle>Шалгалтын хуваарь</CardTitle>
+        <CardDescription className="secondary-text">Энэ долоо хоногийн таны шалгалтууд</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
           <div className="min-w-[800px]">
             <div className="strong-divider grid grid-cols-6 border-b">
-              <div className="secondary-text p-2 font-medium">Time</div>
+              <div className="secondary-text p-2 font-medium">Цаг</div>
               {weekDates.map(({ day, displayDate }) => (
                 <div key={day} className="soft-divider p-2 text-center border-l">
                   <div className="font-medium">{day}</div>
@@ -106,11 +106,11 @@ export function StudentScheduleCalendar({
                             {examItem.exam.title}
                           </div>
                           <div className="secondary-text">{examItem.schedule.time}</div>
-                          <div className="secondary-text">{examItem.exam.duration} min</div>
+                          <div className="secondary-text">{examItem.exam.duration} мин</div>
                           {examItem.schedule.date === today && examItem.exam.status === 'scheduled' ? (
                             <div className="mt-1 font-semibold text-primary">
                               {getSecondsUntil(examItem.schedule.date, examItem.schedule.time) === 0
-                                ? 'Ready now'
+                                ? 'Одоо бэлэн'
                                 : formatCountdown(getSecondsUntil(examItem.schedule.date, examItem.schedule.time))}
                             </div>
                           ) : null}

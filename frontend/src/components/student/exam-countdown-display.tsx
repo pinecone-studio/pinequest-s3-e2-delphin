@@ -63,17 +63,17 @@ export function ExamCountdownDisplay({
           <p className="text-muted-foreground mb-8">{scheduleLabel}</p>
         ) : null}
         <div className={isFullscreen ? 'text-6xl font-bold text-primary mb-8' : 'text-4xl font-bold text-primary mb-4'}>
-          {isFullscreen ? 'Exam is Ready!' : 'Start Now!'}
+          {isFullscreen ? 'Шалгалт эхлэхэд бэлэн!' : 'Одоо эхэлнэ!'}
         </div>
         <Button
           size="lg"
           onClick={onPrimaryAction}
           className={isFullscreen ? 'text-xl px-8 py-6' : undefined}
         >
-          {isFullscreen ? 'Take Exam Now' : 'Take Exam'}
+          {isFullscreen ? 'Шалгалтаа одоо эхлүүлэх' : 'Шалгалт өгөх'}
         </Button>
         <div className="mt-12 text-center text-muted-foreground">
-          <p>Duration: {duration} minutes</p>
+          <p>Хугацаа: {duration} минут</p>
         </div>
       </div>
     )
@@ -87,30 +87,30 @@ export function ExamCountdownDisplay({
           {scheduleLabel ? (
             <p className="text-muted-foreground mb-8">{scheduleLabel}</p>
           ) : null}
-          <div className="text-muted-foreground mb-4">Exam starts in</div>
+          <div className="text-muted-foreground mb-4">Шалгалт эхлэх хүртэл</div>
         </>
       ) : (
         <div className="text-sm text-muted-foreground mb-1 text-center">
-          Starts in
+          Эхлэх хүртэл
         </div>
       )}
 
       <div className={`flex items-center justify-center ${gapClass}`}>
-        <CountdownUnit label="Hours" value={countdown.hours} large={isFullscreen} />
+        <CountdownUnit label="Цаг" value={countdown.hours} large={isFullscreen} />
         <div className={dividerClass}>:</div>
-        <CountdownUnit label="Minutes" value={countdown.minutes} large={isFullscreen} />
+        <CountdownUnit label="Минут" value={countdown.minutes} large={isFullscreen} />
         <div className={dividerClass}>:</div>
-        <CountdownUnit label="Seconds" value={countdown.seconds} large={isFullscreen} />
+        <CountdownUnit label="Секунд" value={countdown.seconds} large={isFullscreen} />
       </div>
 
       <div className="flex justify-center gap-4">
         {!isFullscreen && onFullscreen ? (
           <Button variant="outline" onClick={onFullscreen}>
-            View Fullscreen
+            Бүтэн дэлгэцээр харах
           </Button>
         ) : null}
         <Button size={isFullscreen ? 'lg' : 'default'} disabled>
-          {isFullscreen ? 'Waiting for exam to start...' : 'Take Exam (Locked)'}
+          {isFullscreen ? 'Шалгалт эхлэхийг хүлээж байна...' : 'Шалгалт өгөх (түгжээтэй)'}
         </Button>
       </div>
     </div>

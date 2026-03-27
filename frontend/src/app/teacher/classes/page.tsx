@@ -10,8 +10,8 @@ export default function ClassesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Classes</h1>
-        <p className="text-muted-foreground">Manage your classes and view student lists</p>
+        <h1 className="text-2xl font-bold">Ангиуд</h1>
+        <p className="text-muted-foreground">Ангиудаа удирдаж, сурагчдын жагсаалтыг харах</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -25,15 +25,15 @@ export default function ClassesPage() {
               <Card className="h-full cursor-pointer hover:border-foreground transition-colors">
                 <CardHeader>
                   <CardTitle>{cls.name}</CardTitle>
-                  <CardDescription>{cls.students.length} students</CardDescription>
+                  <CardDescription>{cls.students.length} сурагч</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {completedExams.length > 0 && (
-                      <Badge variant="secondary">{completedExams.length} completed exam(s)</Badge>
+                      <Badge variant="secondary">{completedExams.length} дууссан шалгалт</Badge>
                     )}
                     {upcomingExams.length > 0 && (
-                      <Badge variant="outline">{upcomingExams.length} upcoming</Badge>
+                      <Badge variant="outline">{upcomingExams.length} удахгүй</Badge>
                     )}
                   </div>
                 </CardContent>

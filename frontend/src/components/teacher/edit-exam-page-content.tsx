@@ -104,7 +104,7 @@ export function EditExamPageContent({
       <Card>
         <CardContent className="pt-6">
           <Input
-            placeholder="Untitled Exam"
+            placeholder="Нэр өгөөгүй шалгалт"
             value={examTitle}
             onChange={(e) => setExamTitle(e.target.value)}
             className="text-xl font-semibold border-0 border-b rounded-none focus-visible:ring-0 px-0"
@@ -139,14 +139,14 @@ export function EditExamPageContent({
           disabled={!canSaveDraft || isLoading}
         >
           {submitMode === "draft" ? <Spinner className="mr-2" /> : null}
-          Save as Draft
+          Ноорог болгон хадгалах
         </Button>
         <Button
           onClick={() => void submitExam("scheduled")}
           disabled={!canScheduleExam || isLoading}
         >
           {submitMode === "scheduled" ? <Spinner className="mr-2" /> : null}
-          Update Scheduled Exam
+          Товлогдсон шалгалтыг шинэчлэх
         </Button>
       </div>
       <EditExamAiDialog

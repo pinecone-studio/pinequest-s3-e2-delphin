@@ -16,7 +16,7 @@ export default function TestViewerPage({ params }: { params: Promise<{ testId: s
       <div className="text-center py-12">
         <h1 className="text-2xl font-bold">Шалгалт олдсонгүй</h1>
         <Link href="/teacher/question-bank">
-          <Button className="mt-4">Асуултын Сан руу Буцах</Button>
+          <Button className="mt-4">Асуултын сан руу буцах</Button>
         </Link>
       </div>
     )

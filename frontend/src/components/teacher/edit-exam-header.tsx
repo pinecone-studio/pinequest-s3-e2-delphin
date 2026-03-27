@@ -23,13 +23,13 @@ export function EditExamHeader({
           href="/teacher/exams"
           className="text-sm text-muted-foreground hover:underline"
         >
-          &larr; Back to Exams
+          &larr; Шалгалтууд руу буцах
         </Link>
-        <h1 className="mt-2 text-2xl font-bold">Edit Scheduled Exam</h1>
+        <h1 className="mt-2 text-2xl font-bold">Товлогдсон шалгалтыг засах</h1>
       </div>
       <div className="flex gap-2">
         <Button variant="outline" onClick={onOpenAIDialog}>
-          Prepare Questions with AI
+          AI ашиглан асуулт бэлтгэх
         </Button>
         <Button
           variant="destructive"
@@ -41,7 +41,7 @@ export function EditExamHeader({
           ) : (
             <Trash2 className="mr-2 h-4 w-4" />
           )}
-          Delete Exam
+          Шалгалт устгах
         </Button>
       </div>
     </div>

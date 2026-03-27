@@ -33,7 +33,7 @@ export function EditExamDeleteDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>Үгүй</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>Болих</AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-white hover:bg-destructive/90"
             disabled={isDeleting}

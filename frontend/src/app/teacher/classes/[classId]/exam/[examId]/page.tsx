@@ -28,9 +28,9 @@ export default function ExamStatsPage({
   if (!classData || !exam) {
     return (
       <div className="text-center py-12">
-        <h1 className="text-2xl font-bold">Exam not found</h1>
+        <h1 className="text-2xl font-bold">Шалгалт олдсонгүй</h1>
         <Link href={`/teacher/classes/${classId}`}>
-          <Button className="mt-4">Back to Class</Button>
+          <Button className="mt-4">Анги руу буцах</Button>
         </Link>
       </div>
     )
@@ -94,37 +94,37 @@ export default function ExamStatsPage({
             href={`/teacher/classes/${classId}`} 
             className="text-sm text-muted-foreground hover:underline"
           >
-            &larr; Back to {classData.name}
+            &larr; {classData.name} руу буцах
           </Link>
           <h1 className="text-2xl font-bold mt-2">{exam.title}</h1>
-          <p className="text-muted-foreground">Statistics for {classData.name}</p>
+          <p className="text-muted-foreground">{classData.name}-ийн статистик</p>
         </div>
-        <Button onClick={downloadStats}>Download Report</Button>
+        <Button onClick={downloadStats}>Тайлан татах</Button>
       </div>
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Submissions</CardDescription>
+            <CardDescription>Илгээлт</CardDescription>
             <CardTitle className="text-3xl">{results.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Average Score</CardDescription>
+            <CardDescription>Дундаж оноо</CardDescription>
             <CardTitle className="text-3xl">{avgScore}%</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Highest Score</CardDescription>
+            <CardDescription>Хамгийн өндөр оноо</CardDescription>
             <CardTitle className="text-3xl">{Math.round(highestScore)}%</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Lowest Score</CardDescription>
+            <CardDescription>Хамгийн бага оноо</CardDescription>
             <CardTitle className="text-3xl">{Math.round(lowestScore)}%</CardTitle>
           </CardHeader>
         </Card>

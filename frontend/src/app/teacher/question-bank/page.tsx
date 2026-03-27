@@ -70,8 +70,8 @@ export default function QuestionBankPage() {
     setSelectedFile(null);
     setIsDialogOpen(false);
     toast({
-      title: "🎉 Амжилттай хадгалагдлаа,",
-      description: "✨ Тухайн мэдээлэл мэдлэгийн санд амжилттай нэмэгдлээ.",
+      title: "Амжилттай хадгаллаа",
+      description: "Шалгалтыг асуултын санд амжилттай нэмлээ.",
     });
   };
 
@@ -79,9 +79,9 @@ export default function QuestionBankPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Question Bank</h1>
+          <h1 className="text-2xl font-bold">Асуултын сан</h1>
           <p className="text-muted-foreground">
-            Upload and manage mock tests for your students
+            Сурагчдад зориулсан жишиг шалгалтуудыг оруулж, удирдах
           </p>
         </div>
         <QuestionBankUploadDialog
@@ -103,9 +103,9 @@ export default function QuestionBankPage() {
       {tests.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">Одоогоор demo шалгалт оруулаагүй байна</p>
+            <p className="text-muted-foreground">Одоогоор жишиг шалгалт оруулаагүй байна</p>
             <Button className="mt-4" onClick={() => setIsDialogOpen(true)}>
-              Анхны Шалгалтаа Оруулах
+              Эхний шалгалтаа оруулах
             </Button>
           </CardContent>
         </Card>
@@ -117,7 +117,7 @@ export default function QuestionBankPage() {
                 <CardHeader>
                   <CardTitle className="text-base">{test.name}</CardTitle>
                   <CardDescription>
-                    Uploaded on {test.uploadedAt}
+                    Оруулсан огноо: {test.uploadedAt}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

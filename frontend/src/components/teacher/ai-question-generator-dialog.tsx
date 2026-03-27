@@ -55,14 +55,14 @@ export function AIQuestionGeneratorDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Generate Questions with AI</DialogTitle>
+          <DialogTitle>AI ашиглан асуулт үүсгэх</DialogTitle>
           <DialogDescription>
-            Use question bank items, freshly uploaded files, or both as source material.
+            Асуултын сангийн материал, шинээр оруулсан файл, эсвэл хоёуланг нь эх сурвалж болгон ашиглах боломжтой.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>Select content from Question Bank</Label>
+            <Label>Асуултын сангаас агуулга сонгох</Label>
             <div className="space-y-2 max-h-32 overflow-auto border rounded p-2">
               {mockTests.map((test) => (
                 <div key={test.id} className="flex items-center gap-2">
@@ -74,7 +74,7 @@ export function AIQuestionGeneratorDialog({
           </div>
 
           <div className="space-y-2">
-            <Label>Add another file as AI source</Label>
+            <Label>AI-д ашиглах өөр файл нэмэх</Label>
             <div
               className={
                 isDragging
@@ -86,11 +86,11 @@ export function AIQuestionGeneratorDialog({
               onDrop={onDrop}
             >
               <p className="text-sm text-muted-foreground mb-2">
-                Drag and drop PDF or Word files here, or choose files manually
+                PDF эсвэл Word файлаа энд оруулна уу.
               </p>
               <label htmlFor="ai-source-files">
                 <Button variant="outline" asChild>
-                  <span>Add Source Files</span>
+                  <span>Эх файл нэмэх</span>
                 </Button>
               </label>
               <input
@@ -117,7 +117,7 @@ export function AIQuestionGeneratorDialog({
                       size="sm"
                       onClick={() => onRemoveSourceFile(file.name)}
                     >
-                      Remove
+                      Устгах
                     </Button>
                   </div>
                 ))}
@@ -126,11 +126,11 @@ export function AIQuestionGeneratorDialog({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <CountField label="Multiple Choice" value={aiMCCount} onChange={setAiMCCount} />
-            <CountField label="True/False" value={aiTFCount} onChange={setAiTFCount} />
-            <CountField label="Short Answer" value={aiShortCount} onChange={setAiShortCount} />
+            <CountField label="Сонгох хариулттай" value={aiMCCount} onChange={setAiMCCount} />
+            <CountField label="Үнэн/Худал" value={aiTFCount} onChange={setAiTFCount} />
+            <CountField label="Богино хариулт" value={aiShortCount} onChange={setAiShortCount} />
             <div className="space-y-2">
-              <Label>Total Questions</Label>
+              <Label>Нийт асуулт</Label>
               <div className="h-9 flex items-center px-3 border rounded-md bg-muted">
                 {aiMCCount + aiTFCount + aiShortCount}
               </div>
@@ -138,9 +138,9 @@ export function AIQuestionGeneratorDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Болих</Button>
           <Button onClick={onGenerate} disabled={isGenerating || !hasSource}>
-            {isGenerating ? 'Generating...' : 'Generate Questions'}
+            {isGenerating ? 'Үүсгэж байна...' : 'Асуулт үүсгэх'}
           </Button>
         </DialogFooter>
       </DialogContent>

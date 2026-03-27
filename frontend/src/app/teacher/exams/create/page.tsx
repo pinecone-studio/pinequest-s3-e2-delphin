@@ -91,25 +91,25 @@ export default function CreateExamPage() {
       <div className="flex items-center justify-between">
         <div>
           <Link href="/teacher/exams" className="text-sm text-muted-foreground hover:underline">
-            &larr; Back to Exams
+            &larr; Шалгалтууд руу буцах
           </Link>
-          <h1 className="text-2xl font-bold mt-2">Create New Exam</h1>
+          <h1 className="text-2xl font-bold mt-2">Шинэ шалгалт үүсгэх</h1>
         </div>
         <Button onClick={() => setShowAIDialog(true)}>
-          Prepare Questions with AI
+          AI ашиглан асуулт бэлтгэх
         </Button>
       </div>
       <Card>
         <CardContent className="pt-6">
           <Input
-            placeholder="Untitled Exam"
+            placeholder="Нэр өгөөгүй шалгалт"
             value={examTitle}
             onChange={(e) => setExamTitle(e.target.value)}
             className="text-xl font-semibold border-0 border-b rounded-none focus-visible:ring-0 px-0"
           />
         </CardContent>
       </Card>
-      {submissionError ? <Alert variant="destructive"><CircleAlert /><AlertTitle>Save failed</AlertTitle><AlertDescription>{submissionError}</AlertDescription></Alert> : null}
+      {submissionError ? <Alert variant="destructive"><CircleAlert /><AlertTitle>Хадгалж чадсангүй</AlertTitle><AlertDescription>{submissionError}</AlertDescription></Alert> : null}
       <ExamBuilderQuestionList
         onAddQuestion={addQuestion}
         onRemoveQuestion={removeQuestion}
@@ -133,17 +133,13 @@ export default function CreateExamPage() {
       <div className="flex justify-end gap-3">
         <Button variant="outline" onClick={() => void submitExam("draft")} disabled={!canSaveDraft}>
           {submitMode === "draft" ? <Spinner className="mr-2" /> : null}
-          Save as Draft
+          Ноорог болгон хадгалах
         </Button>
         <Button onClick={() => void submitExam("scheduled")} disabled={!canScheduleExam}>
           {submitMode === "scheduled" ? <Spinner className="mr-2" /> : null}
-          Create & Notify Students
+          Үүсгээд сурагчдад мэдэгдэх
         </Button>
       </div>
-      <p className="text-sm text-muted-foreground">
-        Student notification is still a placeholder in this demo. This action saves the exam to
-        the backend, but it does not send a real message yet.
-      </p>
       <AIQuestionGeneratorDialog
         aiMCCount={aiMCCount}
         aiShortCount={aiShortCount}

@@ -32,7 +32,7 @@ export function TeacherExamsSection({
                   <div>
                     <CardTitle className="text-base">{exam.title}</CardTitle>
                     <CardDescription>
-                      {exam.questions.length} questions, {exam.duration} min
+                      {exam.questions.length} асуулт, {exam.duration} мин
                     </CardDescription>
                   </div>
                   <Badge variant={getBadgeVariant(exam.status)}>{formatStatus(exam.status)}</Badge>
@@ -41,7 +41,7 @@ export function TeacherExamsSection({
               <CardContent>
                 {exam.status === 'draft' ? (
                   <Link href={`/teacher/exams/${exam.id}/edit`}>
-                    <Button variant="outline" size="sm">Continue Editing</Button>
+                    <Button variant="outline" size="sm">Засварыг үргэлжлүүлэх</Button>
                   </Link>
                 ) : (
                   <div className="space-y-3">
@@ -52,7 +52,7 @@ export function TeacherExamsSection({
                             href={`/teacher/classes/${schedule.classId}/exam/${exam.id}`}
                             className="hover:underline"
                           >
-                            {schedule.classId} - {schedule.date} - View Results
+                            {schedule.classId} - {schedule.date} - Үр дүнг харах
                           </Link>
                         </div>
                       ) : (
@@ -61,14 +61,14 @@ export function TeacherExamsSection({
                           className="text-sm flex justify-between"
                         >
                           <span className="font-medium">{schedule.classId}</span>
-                          <span className="text-muted-foreground">{schedule.date} at {schedule.time}</span>
+                          <span className="text-muted-foreground">{schedule.date} {schedule.time}</span>
                         </div>
                       ),
                     )}
                     {exam.status === 'scheduled' ? (
                       <div className="flex gap-2 pt-2">
                         <Link href={`/teacher/exams/${exam.id}/edit`}>
-                          <Button variant="outline" size="sm">Edit</Button>
+                          <Button variant="outline" size="sm">Засах</Button>
                         </Link>
                       </div>
                     ) : null}
@@ -83,7 +83,7 @@ export function TeacherExamsSection({
   )
 }
 
-const ALL_CLASSES_LABEL = 'All Classes'
+const ALL_CLASSES_LABEL = 'Бүх анги'
 
 function getDisplaySchedules(exam: TeacherExam) {
   if (exam.status === 'completed') {
@@ -122,7 +122,9 @@ function getDisplaySchedules(exam: TeacherExam) {
 }
 
 function formatStatus(status: TeacherExam['status']) {
-  return status.charAt(0).toUpperCase() + status.slice(1)
+  if (status === 'completed') return 'Дууссан'
+  if (status === 'draft') return 'Ноорог'
+  return 'Товлогдсон'
 }
 
 function getBadgeVariant(status: TeacherExam['status']) {

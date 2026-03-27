@@ -48,17 +48,17 @@ export function ExamBuilderSummaryCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Exam Summary</CardTitle>
+        <CardTitle>Шалгалтын хураангуй</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <SummaryStat label="Questions" value={questionTotal} />
-          <SummaryStat label="Total Points" value={totalPoints} />
-          <SummaryStat label="Multiple Choice" value={questionCounts["multiple-choice"]} />
-          <SummaryStat label="True/False" value={questionCounts["true-false"]} />
+          <SummaryStat label="Асуулт" value={questionTotal} />
+          <SummaryStat label="Нийт оноо" value={totalPoints} />
+          <SummaryStat label="Сонгох хариулттай" value={questionCounts["multiple-choice"]} />
+          <SummaryStat label="Үнэн/Худал" value={questionCounts["true-false"]} />
         </div>
         <div className="flex items-center gap-4">
-          <Label>Duration (minutes)</Label>
+          <Label>Хугацаа (минут)</Label>
           <Input
             type="number"
             value={duration}
@@ -68,7 +68,7 @@ export function ExamBuilderSummaryCard({
         </div>
 
         <div className="space-y-2">
-          <Label>Student Exam Report Availability</Label>
+          <Label>Сурагчдад шалгалтын дүн харагдах хугацаа</Label>
           <Select
             value={reportReleaseMode}
             onValueChange={(value) =>
@@ -76,14 +76,14 @@ export function ExamBuilderSummaryCard({
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="Choose report release timing" />
+              <SelectValue placeholder="Шалгалтын дүн харагдах хугацааг сонгоно уу" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="after-all-classes-complete">
-                After all scheduled classes finish
+                Товлогдсон бүх анги дууссаны дараа
               </SelectItem>
               <SelectItem value="immediately">
-                Immediately after each student submits
+                Сурагч бүр илгээсний дараа
               </SelectItem>
             </SelectContent>
           </Select>
@@ -91,15 +91,15 @@ export function ExamBuilderSummaryCard({
 
         <div className="pt-4 border-t">
           <div className="flex items-center justify-between mb-3">
-            <Label>Schedule Exam</Label>
+            <Label>Шалгалт товлох</Label>
             <Button variant="outline" size="sm" onClick={onAddScheduleEntry}>
-              Add Class Schedule
+              Ангийн хуваарь нэмэх
             </Button>
           </div>
 
           {scheduleEntries.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No classes scheduled yet
+              Одоогоор анги товлоогүй байна
             </p>
           ) : (
             <div className="space-y-3">
@@ -115,11 +115,11 @@ export function ExamBuilderSummaryCard({
                     }
                   >
                     <SelectTrigger className="w-40">
-                      <SelectValue placeholder="Class" />
+                      <SelectValue placeholder="Анги" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value={ALL_CLASSES_OPTION}>
-                        All Classes
+                        Бүх анги
                       </SelectItem>
                       {classes.map((classEntry) => (
                         <SelectItem key={classEntry.id} value={classEntry.id}>
@@ -149,7 +149,7 @@ export function ExamBuilderSummaryCard({
                     size="sm"
                     onClick={() => onRemoveScheduleEntry(index)}
                   >
-                    Remove
+                    Устгах
                   </Button>
                 </div>
               ))}

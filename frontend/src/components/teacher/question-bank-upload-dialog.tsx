@@ -35,19 +35,19 @@ export function QuestionBankUploadDialog({
 }) {
   return (
     <Dialog open={isDialogOpen} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild><Button>Шинэ Шалгалт Оруулах</Button></DialogTrigger>
+      <DialogTrigger asChild><Button>Шинэ шалгалт оруулах</Button></DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Demo Шалгалт Оруулах</DialogTitle>
-          <DialogDescription>Сурагчдад дасгал болгох demo шалгалтын файл нэмнэ</DialogDescription>
+          <DialogTitle>Жишиг шалгалт оруулах</DialogTitle>
+          <DialogDescription>Сурагчдад зориулсан жишиг шалгалтын файл нэмнэ</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="testName">Шалгалтын Нэр</Label>
-            <Input id="testName" placeholder="ж: HTML Суурь Ойлголтын Тест" value={newTestName} onChange={(e) => setNewTestName(e.target.value)} />
+            <Label htmlFor="testName">Шалгалтын нэр</Label>
+            <Input id="testName" placeholder="ж: HTML-ийн суурь ойлголтын тест" value={newTestName} onChange={(e) => setNewTestName(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label>Шалгалтын Файл (PDF эсвэл Word)</Label>
+            <Label>Шалгалтын файл (PDF эсвэл Word)</Label>
             <div className={isDragging ? 'border-2 border-dashed rounded-lg p-8 text-center transition-colors border-primary bg-primary/5' : 'border-2 border-dashed rounded-lg p-8 text-center transition-colors border-muted-foreground/25'} onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
               {selectedFile ? (
                 <div>
@@ -59,7 +59,7 @@ export function QuestionBankUploadDialog({
                 <div>
                   <p className="text-muted-foreground mb-2">Файлаа энд чирж оруулах эсвэл</p>
                   <label htmlFor="fileInput">
-                    <Button variant="outline" asChild><span>Файл Сонгох</span></Button>
+                    <Button variant="outline" asChild><span>Файл сонгох</span></Button>
                   </label>
                   <input id="fileInput" type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={onFileSelect} />
                 </div>

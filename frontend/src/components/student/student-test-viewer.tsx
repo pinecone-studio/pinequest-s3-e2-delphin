@@ -35,7 +35,7 @@ export function StudentTestViewer({
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Zoom:</span>
+            <span className="text-sm text-muted-foreground">Томруулах:</span>
             <Slider value={[zoom]} onValueChange={([value]) => onZoomChange(value)} min={50} max={200} step={10} className="w-24" />
             <span className="text-sm w-12">{zoom}%</span>
           </div>

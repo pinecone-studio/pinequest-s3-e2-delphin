@@ -34,16 +34,17 @@ export default function LandingPage() {
               <Card className="role-card h-full cursor-pointer rounded-[1.75rem] transition-all duration-200">
                 <CardHeader>
                   <CardTitle className="text-foreground">
-                    I am a Teacher
+                    Багш
                   </CardTitle>
                   <CardDescription className="text-muted-foreground">
-                    Create and manage exams, view student results, and organize
-                    your question bank
+                    Шалгалт үүсгэх, хянах, сурагчдын дүнг харах, асуултын санд
+                    хичээл оруулна
+
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Button className="primary-ocean-button w-full rounded-full border-0 font-semibold">
-                    Enter as Teacher
+                    Багшаар нэвтрэх
                   </Button>
                 </CardContent>
               </Card>
@@ -53,10 +54,10 @@ export default function LandingPage() {
               <Card className="role-card h-full cursor-pointer rounded-[1.75rem] transition-all duration-200">
                 <CardHeader>
                   <CardTitle className="text-foreground">
-                    I am a Student
+                    Cурагч
                   </CardTitle>
                   <CardDescription className="text-muted-foreground">
-                    Шалгалт өгч, demo шалгалтууд үзэж, хуваариа шалгана
+                    Шалгалт өгч, шалгалтууд үзэж, хуваариа шалгана
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -64,7 +65,7 @@ export default function LandingPage() {
                     className="secondary-ocean-button w-full rounded-full font-semibold"
                     variant="outline"
                   >
-                    Enter as Student
+                    Сурагчаар нэвтрэх
                   </Button>
                 </CardContent>
               </Card>

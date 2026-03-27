@@ -10,9 +10,9 @@ import { cn } from "@/lib/utils"
 import { teacher } from "@/lib/mock-data-helpers"
 
 const navItems = [
-  { href: "/teacher/dashboard", label: "Хянах Самбар", icon: LayoutDashboard },
+  { href: "/teacher/dashboard", label: "Хяналтын самбар", icon: LayoutDashboard },
   { href: "/teacher/classes", label: "Ангиуд", icon: Users },
-  { href: "/teacher/question-bank", label: "Асуултын Сан", icon: BookOpen },
+  { href: "/teacher/question-bank", label: "Асуултын сан", icon: BookOpen },
   { href: "/teacher/exams", label: "Шалгалтууд", icon: ClipboardList },
 ]
 
@@ -35,10 +35,10 @@ export default function TeacherLayout({
           <div className="flex items-center gap-4">
             <ThemeToggleButton />
             <span className="text-sm text-muted-foreground">
-              Logged in as: <span className="text-foreground">{teacher.name}</span>
+              Нэвтэрсэн хэрэглэгч: <span className="text-foreground">{teacher.name}</span>
             </span>
             <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
-              Logout
+              Гарах
             </Link>
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function TeacherLayout({
               type="button"
               onClick={() => setIsSidebarCollapsed((current) => !current)}
               className="rounded-md border p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground dark:border-[#1B2A36] dark:bg-[#000000] dark:hover:bg-[#081018]"
-              aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              aria-label={isSidebarCollapsed ? "Хажуугийн цэсийг дэлгэх" : "Хажуугийн цэсийг хураах"}
             >
               {isSidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </button>

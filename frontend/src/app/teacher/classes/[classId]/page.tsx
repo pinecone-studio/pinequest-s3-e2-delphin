@@ -18,7 +18,7 @@ function getSemesterLabel(date: string) {
   const year = Number(yearString)
   const month = Number(monthString)
   const semester = month >= 1 && month <= 6 ? 1 : 2
-  return `Semester ${semester} ${year}`
+  return `${semester}-р улирал ${year}`
 }
 
 export default function ClassDetailPage({ params }: { params: Promise<{ classId: string }> }) {
@@ -49,9 +49,9 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
   if (!classData) {
     return (
       <div className="text-center py-12">
-        <h1 className="text-2xl font-bold">Class not found</h1>
+        <h1 className="text-2xl font-bold">Анги олдсонгүй</h1>
         <Link href="/teacher/classes">
-          <Button className="mt-4">Back to Classes</Button>
+          <Button className="mt-4">Ангиуд руу буцах</Button>
         </Link>
       </div>
     )
@@ -62,10 +62,10 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
       <div className="flex items-center justify-between">
         <div>
           <Link href="/teacher/classes" className="text-sm text-muted-foreground hover:underline">
-            &larr; Back to Classes
+            &larr; Ангиуд руу буцах
           </Link>
           <h1 className="text-2xl font-bold mt-2">{classData.name}</h1>
-          <p className="text-muted-foreground">{classData.students.length} students enrolled</p>
+          <p className="text-muted-foreground">{classData.students.length} сурагч бүртгэлтэй</p>
         </div>
       </div>
 
@@ -74,15 +74,15 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
         <div>
           <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-lg font-semibold">Exam History</h2>
-              <p className="text-sm text-muted-foreground">Filter completed exams by semester</p>
+              <h2 className="text-lg font-semibold">Шалгалтын түүх</h2>
+              <p className="text-sm text-muted-foreground">Дууссан шалгалтуудыг улирлаар шүүх</p>
             </div>
             <Select value={selectedSemester} onValueChange={setSelectedSemester}>
               <SelectTrigger className="w-full sm:w-56">
-                <SelectValue placeholder="Filter by semester" />
+                <SelectValue placeholder="Улирлаар шүүх" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All semesters</SelectItem>
+                <SelectItem value="all">Бүх улирал</SelectItem>
                 {semesterOptions.map((semester) => (
                   <SelectItem key={semester} value={semester}>
                     {semester}
@@ -94,7 +94,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
           {visibleCompletedExams.length === 0 ? (
             <Card>
               <CardContent className="py-6 text-center text-muted-foreground">
-                No completed exams found for {selectedSemester}.
+                {selectedSemester} улиралд дууссан шалгалт олдсонгүй.
               </CardContent>
             </Card>
           ) : (
@@ -112,7 +112,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base">{exam.title}</CardTitle>
                       <CardDescription>
-                        {schedule?.date} at {schedule?.time}
+                        {schedule?.date} {schedule?.time}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -120,8 +120,8 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                         {schedule?.date ? (
                           <Badge variant="outline">{getSemesterLabel(schedule.date)}</Badge>
                         ) : null}
-                        <Badge variant="secondary">Avg: {avgScore}%</Badge>
-                        <Badge variant="outline">{results.length} submissions</Badge>
+                        <Badge variant="secondary">Дундаж: {avgScore}%</Badge>
+                        <Badge variant="outline">{results.length} илгээлт</Badge>
                       </div>
                     </CardContent>
                   </Card>
@@ -136,16 +136,16 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
       {/* Student List */}
       <Card>
         <CardHeader>
-          <CardTitle>Student List</CardTitle>
-          <CardDescription>All students enrolled in {classData.name}</CardDescription>
+          <CardTitle>Сурагчдын жагсаалт</CardTitle>
+          <CardDescription>{classData.name}-д бүртгэлтэй бүх сурагч</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Student ID</TableHead>
+                <TableHead>Нэр</TableHead>
+                <TableHead>Имэйл</TableHead>
+                <TableHead>Сурагчийн ID</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

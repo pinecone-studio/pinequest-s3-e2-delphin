@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { classes, exams } from "@/lib/mock-data"
 import { classSchedule, teacher } from "@/lib/mock-data-helpers"
 
-const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+const daysOfWeek = ["Даваа", "Мягмар", "Лхагва", "Пүрэв", "Баасан"]
 const timeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"]
 
 // Get current week dates
@@ -21,7 +21,7 @@ function getWeekDates() {
     return {
       day,
       date: date.toISOString().split('T')[0],
-      displayDate: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      displayDate: date.toLocaleDateString('mn-MN', { month: 'short', day: 'numeric' })
     }
   })
 }
@@ -34,33 +34,33 @@ export default function TeacherDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back, {teacher.name}</p>
+        <h1 className="text-2xl font-bold">Хяналтын самбар</h1>
+        <p className="text-muted-foreground">Тавтай морилно уу, {teacher.name}</p>
       </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription className="secondary-text">Total Classes</CardDescription>
+            <CardDescription className="secondary-text">Нийт анги</CardDescription>
             <CardTitle className="text-3xl">{classes.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription className="secondary-text">Total Students</CardDescription>
+            <CardDescription className="secondary-text">Нийт сурагч</CardDescription>
             <CardTitle className="text-3xl">{classes.reduce((sum, c) => sum + c.students.length, 0)}</CardTitle>
           </CardHeader>
         </Card>
         <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription className="secondary-text">Upcoming Exams</CardDescription>
+            <CardDescription className="secondary-text">Удахгүй болох шалгалт</CardDescription>
             <CardTitle className="text-3xl">{upcomingExams.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card className="panel-surface rounded-[1.5rem]">
           <CardHeader className="pb-2">
-            <CardDescription className="secondary-text">Completed Exams</CardDescription>
+            <CardDescription className="secondary-text">Дууссан шалгалт</CardDescription>
             <CardTitle className="text-3xl">{completedExams.length}</CardTitle>
           </CardHeader>
         </Card>
@@ -69,15 +69,15 @@ export default function TeacherDashboard() {
       {/* Weekly Calendar */}
       <Card className="panel-surface rounded-[1.5rem]">
         <CardHeader>
-          <CardTitle>Weekly Schedule</CardTitle>
-          <CardDescription className="secondary-text">Classes and exams for this week</CardDescription>
+          <CardTitle>7 хоногийн хуваарь</CardTitle>
+          <CardDescription className="secondary-text">Энэ 7 хоногийн анги, шалгалтын хуваарь</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <div className="min-w-[800px]">
               {/* Calendar Header */}
               <div className="strong-divider grid grid-cols-6 border-b">
-                <div className="secondary-text p-2 font-medium">Time</div>
+                <div className="secondary-text p-2 font-medium">Цаг</div>
                 {weekDates.map(({ day, displayDate }) => (
                   <div key={day} className="soft-divider p-2 text-center border-l">
                     <div className="font-medium">{day}</div>
@@ -129,12 +129,12 @@ export default function TeacherDashboard() {
       {/* Upcoming Exams List */}
       <Card className="panel-surface rounded-[1.5rem]">
         <CardHeader>
-          <CardTitle>Upcoming Exams</CardTitle>
-          <CardDescription className="secondary-text">Scheduled exams for your classes</CardDescription>
+          <CardTitle>Удахгүй болох шалгалтууд</CardTitle>
+          <CardDescription className="secondary-text">Таны ангиудад товлогдсон шалгалтууд</CardDescription>
         </CardHeader>
         <CardContent>
           {upcomingExams.length === 0 ? (
-            <p className="muted-text text-sm">No upcoming exams scheduled</p>
+            <p className="muted-text text-sm">Товлогдсон удахгүй болох шалгалт алга байна</p>
           ) : (
             <div className="space-y-3">
               {upcomingExams.map(exam => (
@@ -142,7 +142,7 @@ export default function TeacherDashboard() {
                   <div>
                     <div className="font-medium">{exam.title}</div>
                     <div className="secondary-text text-sm">
-                      {exam.questions.length} questions, {exam.duration} min
+                      {exam.questions.length} асуулт, {exam.duration} мин
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2">

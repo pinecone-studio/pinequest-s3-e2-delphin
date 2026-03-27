@@ -15,14 +15,14 @@ export function EditExamAlerts({
       {loadError ? (
         <Alert variant="destructive">
           <CircleAlert />
-          <AlertTitle>Could not load exam</AlertTitle>
+          <AlertTitle>Шалгалтыг ачаалж чадсангүй</AlertTitle>
           <AlertDescription>{loadError}</AlertDescription>
         </Alert>
       ) : null}
       {submissionError ? (
         <Alert variant="destructive">
           <CircleAlert />
-          <AlertTitle>Save failed</AlertTitle>
+          <AlertTitle>Хадгалж чадсангүй</AlertTitle>
           <AlertDescription>{submissionError}</AlertDescription>
         </Alert>
       ) : null}

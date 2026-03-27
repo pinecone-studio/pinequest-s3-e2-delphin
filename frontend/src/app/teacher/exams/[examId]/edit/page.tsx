@@ -53,7 +53,7 @@ export default function EditExamPage({
       } catch (error) {
         if (!isMounted) return;
         setLoadError(
-          error instanceof Error ? error.message : "Failed to load exam.",
+          error instanceof Error ? error.message : "Шалгалтыг ачаалж чадсангүй.",
         );
       } finally {
         if (isMounted) {
@@ -99,11 +99,11 @@ export default function EditExamPage({
       router.push("/teacher/exams");
     } catch (error) {
       toast({
-        title: "Could not delete exam",
+        title: "Шалгалтыг устгаж чадсангүй",
         description:
           error instanceof Error
             ? error.message
-            : "Something went wrong while deleting the exam.",
+            : "Шалгалтыг устгах явцад алдаа гарлаа.",
         variant: "destructive",
       });
     } finally {

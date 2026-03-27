@@ -14,17 +14,17 @@ export function TeacherExamResultsTable({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Student Results</CardTitle>
-        <CardDescription>Individual scores for this exam</CardDescription>
+        <CardTitle>Сурагчдын үр дүн</CardTitle>
+        <CardDescription>Энэ шалгалтын сурагч бүрийн оноо</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Student</TableHead>
-              <TableHead>Score</TableHead>
-              <TableHead>Percentage</TableHead>
-              <TableHead>Submitted At</TableHead>
+              <TableHead>Сурагч</TableHead>
+              <TableHead>Оноо</TableHead>
+              <TableHead>Хувь</TableHead>
+              <TableHead>Илгээсэн огноо</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

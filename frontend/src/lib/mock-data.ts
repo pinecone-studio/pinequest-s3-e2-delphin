@@ -86,17 +86,17 @@ export const students: Student[] = [
 
 // Mock Classes
 export const classes: Class[] = [
-  { id: '10A', name: 'Class 10A', students: students.filter(s => s.classId === '10A') },
-  { id: '10B', name: 'Class 10B', students: students.filter(s => s.classId === '10B') },
-  { id: '10C', name: 'Class 10C', students: students.filter(s => s.classId === '10C') },
+  { id: '10A', name: '10A анги', students: students.filter(s => s.classId === '10A') },
+  { id: '10B', name: '10B анги', students: students.filter(s => s.classId === '10B') },
+  { id: '10C', name: '10C анги', students: students.filter(s => s.classId === '10C') },
 ]
 
 // Mock Tests (Question Bank)
 export const mockTests: MockTest[] = [
-  { id: 'mt1', name: 'Математикийн дасгал', fileName: 'mathematics-test.pdf', fileType: 'pdf', uploadedAt: '2026-03-10', teacherId: 'teacher1' },
-  { id: 'mt2', name: 'Нийгмийн ухааны шалгалт', fileName: 'social-studies-test.pdf', fileType: 'pdf', uploadedAt: '2026-03-12', teacherId: 'teacher1' },
-  { id: 'mt3', name: 'Физикийн сорил', fileName: 'physics-quiz.pdf', fileType: 'pdf', uploadedAt: '2026-03-15', teacherId: 'teacher1' },
-  { id: 'mt4', name: 'Нэгдсэн жишиг шалгалт', fileName: 'combined-mock-exam.pdf', fileType: 'pdf', uploadedAt: '2026-03-18', teacherId: 'teacher1' },
+  { id: 'mt1', name: 'Математикийн дасгал', fileName: 'математикийн-тест.pdf', fileType: 'pdf', uploadedAt: '2026-03-10', teacherId: 'teacher1' },
+  { id: 'mt2', name: 'Нийгмийн ухааны шалгалт', fileName: 'нийгмийн-ухааны-шалгалт.pdf', fileType: 'pdf', uploadedAt: '2026-03-12', teacherId: 'teacher1' },
+  { id: 'mt3', name: 'Физикийн сорил', fileName: 'физикийн-сорил.pdf', fileType: 'pdf', uploadedAt: '2026-03-15', teacherId: 'teacher1' },
+  { id: 'mt4', name: 'Нэгдсэн жишиг шалгалт', fileName: 'нэгдсэн-жишиг-шалгалт.pdf', fileType: 'pdf', uploadedAt: '2026-03-18', teacherId: 'teacher1' },
 ]
 
 // Mock Exams

@@ -66,7 +66,7 @@ export default function StudentLayout({
         <aside
           className={cn(
             "flex flex-col border-r border-[#d6e7fb] bg-[#edf7ff] px-3 py-4 transition-all duration-200 dark:border-[#101820] dark:bg-[#000000]",
-            isSidebarCollapsed ? "w-[84px]" : "w-[175px]",
+            isSidebarCollapsed ? "w-[84px]" : "w-[200px]",
           )}
         >
           <div className={cn("mb-4 flex", isSidebarCollapsed ? "justify-center" : "justify-end")}>

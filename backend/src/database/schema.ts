@@ -4,6 +4,18 @@ export const users = sqliteTable('users', {
   id: text('id').primaryKey(),
   username: text('username').notNull(),
   role: text('role').notNull(),
+  email: text('email'),
+  password: text('password'),
+});
+
+export const studentProfiles = sqliteTable('student_profiles', {
+  userId: text('user_id').primaryKey(),
+  classId: text('class_id').notNull(),
+});
+
+export const teacherProfiles = sqliteTable('teacher_profiles', {
+  userId: text('user_id').primaryKey(),
+  subject: text('subject').notNull(),
 });
 
 export const courses = sqliteTable('courses', {
@@ -68,6 +80,21 @@ export const results = sqliteTable('results', {
   submissionId: text('submission_id').notNull(),
   score: integer('score').notNull(),
   passed: integer('passed', { mode: 'boolean' }).notNull(),
+});
+
+export const studentExamResults = sqliteTable('student_exam_results', {
+  id: text('id').primaryKey(),
+  examId: text('exam_id').notNull(),
+  studentId: text('student_id').notNull(),
+  studentName: text('student_name').notNull(),
+  classId: text('class_id').notNull(),
+  answersJson: text('answers_json').notNull(),
+  score: integer('score').notNull(),
+  totalPoints: integer('total_points').notNull(),
+  status: text('status').notNull(),
+  submittedAt: text('submitted_at').notNull(),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
 });
 
 export const uploadedFiles = sqliteTable('uploaded_files', {

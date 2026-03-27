@@ -19,6 +19,14 @@ type D1ApiResponse<T> = {
   result?: Array<D1StatementResult<T>>;
 };
 
+const TRANSIENT_STATUSES = new Set([429, 502, 503, 504]);
+const RETRY_DELAYS_MS = [250, 750];
+const REQUEST_TIMEOUT_MS = 8000;
+
+function wait(delayMs: number) {
+  return new Promise((resolve) => setTimeout(resolve, delayMs));
+}
+
 @Injectable()
 export class DatabaseService {
   private getConfig() {
@@ -101,49 +109,92 @@ export class DatabaseService {
       );
     }
 
-    const response = await fetch(
-      `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sql,
-          params,
-        }),
-      },
-    );
+    let lastError: ServiceUnavailableException | null = null;
 
-    if (!response.ok) {
-      throw new ServiceUnavailableException(
-        `Cloudflare D1 request failed with status ${response.status}`,
-      );
+    for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt += 1) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+      try {
+        const response = await fetch(
+          `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              sql,
+              params,
+            }),
+            signal: controller.signal,
+          },
+        );
+
+        if (!response.ok) {
+          const transientMessage = `Cloudflare D1 request failed with status ${response.status}`;
+          lastError = new ServiceUnavailableException(transientMessage);
+
+          if (!TRANSIENT_STATUSES.has(response.status) || attempt === RETRY_DELAYS_MS.length) {
+            throw lastError;
+          }
+        } else {
+          const payload = (await response.json()) as D1ApiResponse<T>;
+          if (!payload.success) {
+            const message =
+              payload.errors?.map((entry) => entry.message).filter(Boolean).join(' ') ||
+              'Cloudflare D1 rejected the request';
+            lastError = new ServiceUnavailableException(message);
+
+            if (attempt === RETRY_DELAYS_MS.length) {
+              throw lastError;
+            }
+          } else {
+            const [statement] = payload.result ?? [];
+            if (!statement) {
+              return {};
+            }
+
+            if (statement.success === false) {
+              const message =
+                statement.errors
+                  ?.map((entry) => entry.message)
+                  .filter(Boolean)
+                  .join(' ') || 'Cloudflare D1 statement failed';
+              lastError = new ServiceUnavailableException(message);
+
+              if (attempt === RETRY_DELAYS_MS.length) {
+                throw lastError;
+              }
+            } else {
+              return statement;
+            }
+          }
+        }
+      } catch (error) {
+        if (error instanceof ServiceUnavailableException) {
+          lastError = error;
+        } else {
+          const message =
+            error instanceof Error && error.name === 'AbortError'
+              ? 'Cloudflare D1 request timed out'
+                : error instanceof Error
+                  ? error.message
+                  : 'Cloudflare D1 request failed';
+          lastError = new ServiceUnavailableException(message);
+        }
+
+        if (attempt === RETRY_DELAYS_MS.length) {
+          throw lastError;
+        }
+      } finally {
+        clearTimeout(timeout);
+      }
+
+      await wait(RETRY_DELAYS_MS[attempt]);
     }
 
-    const payload = (await response.json()) as D1ApiResponse<T>;
-    if (!payload.success) {
-      const message =
-        payload.errors?.map((entry) => entry.message).filter(Boolean).join(' ') ||
-        'Cloudflare D1 rejected the request';
-      throw new ServiceUnavailableException(message);
-    }
-
-    const [statement] = payload.result ?? [];
-    if (!statement) {
-      return {};
-    }
-
-    if (statement.success === false) {
-      const message =
-        statement.errors
-          ?.map((entry) => entry.message)
-          .filter(Boolean)
-          .join(' ') || 'Cloudflare D1 statement failed';
-      throw new ServiceUnavailableException(message);
-    }
-
-    return statement;
+    throw lastError ?? new ServiceUnavailableException('Cloudflare D1 request failed');
   }
 }

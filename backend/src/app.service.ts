@@ -57,6 +57,9 @@ export class AppService {
       status: ready ? 'ready' : 'not-ready',
       timestamp: new Date().toISOString(),
       service: 'pinequest-backend',
+      message: ready
+        ? 'Сервер бэлэн байна.'
+        : 'Сервер бүрэн бэлэн биш байна. Cloudflare D1 эсвэл R2 үйлчилгээ, эсвэл орчны хувьсагчийн тохиргоог шалгана уу.',
       checks: {
         database,
         storage,

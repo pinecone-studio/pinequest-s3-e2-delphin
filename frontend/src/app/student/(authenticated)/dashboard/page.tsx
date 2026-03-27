@@ -33,13 +33,11 @@ export default function StudentDashboard() {
   }, [])
 
   const myExams = useMemo(
-    () =>
-      allExams.filter((exam) =>
-        exam.scheduledClasses.some((schedule) => schedule.classId === studentClass),
-      ),
+    () => allExams.filter((exam) =>
+      exam.scheduledClasses.some((schedule) => schedule.classId === studentClass),
+    ),
     [allExams, studentClass],
   )
-
   const myResults = useMemo(
     () => examResults.filter((result) => result.studentId === studentId),
     [studentId],
@@ -73,11 +71,7 @@ export default function StudentDashboard() {
         <StudentDashboardScheduleCard exams={myExams} studentClass={studentClass} />
       </div>
 
-      <StudentExamsOverviewPanel
-        exams={myExams}
-        results={myResults}
-        today={getLocalDateString()}
-      />
+      <StudentExamsOverviewPanel exams={myExams} results={myResults} today={getLocalDateString()} />
     </div>
   )
 }

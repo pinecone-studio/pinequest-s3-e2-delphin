@@ -18,11 +18,34 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { notifyStudentSessionChange } from "@/hooks/use-student-session"
 
-const defaultBio = "Би ирээдүйд Дизайнер болно."
-const storageKeys = { bio: "studentProfileBio", image: "studentProfileImage" } as const
+const STORAGE_KEYS = {
+  bio: "studentProfileBio",
+  image: "studentProfileImage",
+} as const
 
-type Props = { studentName: string }
-type Profile = { name: string; bio: string; image: string }
+const defaultBio = "Би ирээдүйд Дизайнер болно."
+
+type StudentDashboardProfileCardProps = {
+  studentName: string
+}
+
+type ProfileState = {
+  name: string
+  bio: string
+  image: string
+}
+
+function getStoredProfile(studentName: string): ProfileState {
+  if (typeof window === "undefined") {
+    return { name: studentName, bio: defaultBio, image: "" }
+  }
+
+  return {
+    name: localStorage.getItem("studentName") || studentName,
+    bio: localStorage.getItem(STORAGE_KEYS.bio) || defaultBio,
+    image: localStorage.getItem(STORAGE_KEYS.image) || "",
+  }
+}
 
 function getInitials(name: string) {
   return name
@@ -33,34 +56,27 @@ function getInitials(name: string) {
     .join("")
 }
 
-function getStoredProfile(studentName: string): Profile {
-  if (typeof window === "undefined") return { name: studentName, bio: defaultBio, image: "" }
-
-  return {
-    name: localStorage.getItem("studentName") || studentName,
-    bio: localStorage.getItem(storageKeys.bio) || defaultBio,
-    image: localStorage.getItem(storageKeys.image) || "",
-  }
-}
-
-export function StudentDashboardProfileCard({ studentName }: Props) {
+export function StudentDashboardProfileCard({
+  studentName,
+}: StudentDashboardProfileCardProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [profile, setProfile] = useState<Profile>(() => getStoredProfile(studentName))
-  const [draft, setDraft] = useState<Profile>(() => getStoredProfile(studentName))
+  const [profile, setProfile] = useState<ProfileState>(() => getStoredProfile(studentName))
+  const [draft, setDraft] = useState<ProfileState>(() => getStoredProfile(studentName))
+
+  const handleOpenChange = (open: boolean) => {
+    if (open) setDraft(profile)
+    setIsOpen(open)
+  }
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
 
     const reader = new FileReader()
-    reader.onload = () =>
+    reader.onload = () => {
       setDraft((current) => ({ ...current, image: String(reader.result || "") }))
+    }
     reader.readAsDataURL(file)
-  }
-
-  const handleOpenChange = (open: boolean) => {
-    if (open) setDraft(profile)
-    setIsOpen(open)
   }
 
   const handleSave = () => {
@@ -71,9 +87,9 @@ export function StudentDashboardProfileCard({ studentName }: Props) {
     }
 
     localStorage.setItem("studentName", nextProfile.name)
-    localStorage.setItem(storageKeys.bio, nextProfile.bio)
-    if (nextProfile.image) localStorage.setItem(storageKeys.image, nextProfile.image)
-    else localStorage.removeItem(storageKeys.image)
+    localStorage.setItem(STORAGE_KEYS.bio, nextProfile.bio)
+    if (nextProfile.image) localStorage.setItem(STORAGE_KEYS.image, nextProfile.image)
+    else localStorage.removeItem(STORAGE_KEYS.image)
 
     notifyStudentSessionChange()
     setProfile(nextProfile)
@@ -116,29 +132,20 @@ export function StudentDashboardProfileCard({ studentName }: Props) {
       <DialogContent className="rounded-[24px] border-[#d8eaff] bg-white p-6 sm:max-w-[520px]">
         <DialogHeader>
           <DialogTitle>Профайл засах</DialogTitle>
-          <DialogDescription>
-            Зураг, нэр, bio мэдээллээ student талдаа шинэчилнэ.
-          </DialogDescription>
+          <DialogDescription>Зураг, нэр, bio мэдээллээ student талдаа шинэчилнэ.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="student-profile-image">Зураг</Label>
-            <Input
-              id="student-profile-image"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
+            <Input id="student-profile-image" type="file" accept="image/*" onChange={handleImageChange} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="student-profile-name">Нэр</Label>
             <Input
               id="student-profile-name"
               value={draft.name}
-              onChange={(event) =>
-                setDraft((current) => ({ ...current, name: event.target.value }))
-              }
+              onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))}
             />
           </div>
           <div className="space-y-2">
@@ -146,9 +153,7 @@ export function StudentDashboardProfileCard({ studentName }: Props) {
             <Textarea
               id="student-profile-bio"
               value={draft.bio}
-              onChange={(event) =>
-                setDraft((current) => ({ ...current, bio: event.target.value }))
-              }
+              onChange={(event) => setDraft((current) => ({ ...current, bio: event.target.value }))}
             />
           </div>
         </div>

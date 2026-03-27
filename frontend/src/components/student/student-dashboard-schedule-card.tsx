@@ -31,11 +31,7 @@ function getWeekEvents(exams: Exam[], studentClass: string, weekKeys: Set<string
         .filter((schedule) => schedule.classId === studentClass && weekKeys.has(schedule.date))
         .map((schedule) => ({ exam, schedule })),
     )
-    .sort((left, right) =>
-      `${left.schedule.date}${left.schedule.time}`.localeCompare(
-        `${right.schedule.date}${right.schedule.time}`,
-      ),
-    )
+    .sort((left, right) => `${left.schedule.date}${left.schedule.time}`.localeCompare(`${right.schedule.date}${right.schedule.time}`))
 }
 
 export function StudentDashboardScheduleCard({
@@ -58,11 +54,7 @@ export function StudentDashboardScheduleCard({
         {weekDates.map((entry) => (
           <div key={entry.key} className="text-center">
             <p className="font-sans text-[12px] font-medium text-[#808080]">{entry.day}</p>
-            <div
-              className={`mt-5 inline-flex h-[42px] w-[42px] items-center justify-center rounded-full text-[17px] font-semibold ${
-                entry.isToday ? "bg-[#5b9cf3] text-white" : "text-[#364152]"
-              }`}
-            >
+            <div className={`mt-5 inline-flex h-[42px] w-[42px] items-center justify-center rounded-full text-[17px] font-semibold ${entry.isToday ? "bg-[#5b9cf3] text-white" : "text-[#364152]"}`}>
               {entry.number}
             </div>
           </div>
@@ -75,19 +67,13 @@ export function StudentDashboardScheduleCard({
             <div key={`${exam.id}-${schedule.date}-${schedule.time}`} className="space-y-4">
               <div className="flex items-center gap-4">
                 <p className="shrink-0 font-sans text-[16px] font-medium text-[#111827]">
-                  {schedule.time} -{" "}
-                  {String(Number(schedule.time.slice(0, 2)) + Math.ceil(exam.duration / 60)).padStart(2, "0")}
-                  :{schedule.time.slice(3, 5)}
+                  {schedule.time} - {String(Number(schedule.time.slice(0, 2)) + Math.ceil(exam.duration / 60)).padStart(2, "0")}:{schedule.time.slice(3, 5)}
                 </p>
                 <div className="h-px flex-1 border-t border-dashed border-[#b6d7ff]" />
               </div>
               <div className="flex items-center justify-between gap-4 rounded-[20px] border border-[#cfe5ff] bg-white px-5 py-4">
                 <p className="font-sans text-[16px] font-medium text-[#2b3440]">{exam.title}</p>
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="h-[34px] rounded-[14px] border border-[#cfe5ff] bg-[#edf6ff] px-4 text-[#4f6f96] hover:bg-[#e2f0ff]"
-                >
+                <Button asChild variant="ghost" className="h-[34px] rounded-[14px] border border-[#cfe5ff] bg-[#edf6ff] px-4 text-[#4f6f96] hover:bg-[#e2f0ff]">
                   <Link href={`/student/exams/${exam.id}`}>Дэлгэрэнгүй</Link>
                 </Button>
               </div>

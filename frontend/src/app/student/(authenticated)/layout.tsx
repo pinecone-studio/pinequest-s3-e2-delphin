@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
-import { BookOpen, ChevronLeft, ChevronRight, ClipboardList, LayoutDashboard, Lightbulb } from "lucide-react"
+import { ChevronLeft, ChevronRight, ClipboardList, LayoutDashboard, Lightbulb } from "lucide-react"
 import { BrandLogo } from "@/components/brand-logo"
 import { ThemeToggleButton } from "@/components/theme-toggle-button"
 import { notifyStudentSessionChange, useStudentSession } from "@/hooks/use-student-session"
@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils"
 
 const navItems = [
   { href: "/student/dashboard", label: "Хянах самбар", icon: LayoutDashboard },
-  { href: "/student/question-bank", label: "Асуултын сан", icon: BookOpen },
   { href: "/student/exams", label: "Шалгалтууд", icon: ClipboardList },
 ]
 

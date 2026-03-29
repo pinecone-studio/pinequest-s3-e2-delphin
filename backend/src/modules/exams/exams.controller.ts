@@ -61,4 +61,12 @@ export class ExamsController {
       `Failed to handle DELETE /exams/${id}`,
     );
   }
+
+  @Get(':id/attempts/live')
+  async getLiveAttempts(@Param('id') id: string): Promise<any[]> {
+    return executeOrRethrowAsync(
+      () => this.examsService.getLiveAttempts(id),
+      `Failed to handle GET /exams/${id}/attempts/live`,
+    );
+  }
 }

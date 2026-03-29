@@ -370,6 +370,55 @@ export class ExamsService {
     }, `Failed to delete exam ${id}`);
   }
 
+  async getLiveAttempts(examId: string): Promise<any[]> {
+    return executeOrRethrowAsync(async () => {
+      // For now, return mock data. In production, this would query the database
+      // for active student attempts for this exam
+      const mockAttempts = [
+        {
+          id: 'attempt-1',
+          studentId: 'student-1',
+          studentName: 'Бат-Эрдэнэ',
+          classId: '10A',
+          status: 'in_progress',
+          currentQuestion: 3,
+          timeRemaining: 2400,
+          lastActivity: new Date().toISOString(),
+          suspiciousEvents: [],
+        },
+        {
+          id: 'attempt-2',
+          studentId: 'student-2',
+          studentName: 'Сараа',
+          classId: '10A',
+          status: 'tab_switched',
+          currentQuestion: 5,
+          timeRemaining: 1800,
+          lastActivity: new Date(Date.now() - 30000).toISOString(),
+          suspiciousEvents: [
+            {
+              type: 'tab_hidden',
+              timestamp: new Date(Date.now() - 30000).toISOString(),
+            },
+          ],
+        },
+        {
+          id: 'attempt-3',
+          studentId: 'student-3',
+          studentName: 'Дорж',
+          classId: '10B',
+          status: 'submitted',
+          currentQuestion: 10,
+          timeRemaining: 0,
+          lastActivity: new Date(Date.now() - 60000).toISOString(),
+          suspiciousEvents: [],
+        },
+      ];
+
+      return mockAttempts;
+    }, `Failed to get live attempts for exam ${examId}`);
+  }
+
   private async loadAllRecords(): Promise<{
     examRecords: ExamRecord[];
     questionRecords: ExamQuestionRecord[];

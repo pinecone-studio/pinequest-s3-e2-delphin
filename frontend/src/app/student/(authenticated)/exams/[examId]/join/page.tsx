@@ -23,10 +23,9 @@ export default function StudentExamJoinPage({
 }) {
   const { examId } = use(params);
   const router = useRouter();
-  const { studentClass, studentId, studentName } = useStudentSession();
+  const { studentClass } = useStudentSession();
   const [allExams, setAllExams] = useState<Exam[]>(legacyExams);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadExam = async () => {
@@ -51,6 +50,12 @@ export default function StudentExamJoinPage({
     schedule && exam
       ? isScheduleOpenNow(schedule.date, schedule.time, exam.duration)
       : false;
+
+  useEffect(() => {
+    if (isOpenNow) {
+      router.push(`/student/exams/${examId}/take`);
+    }
+  }, [examId, isOpenNow, router]);
 
   if (isLoading) {
     return (
@@ -130,13 +135,6 @@ export default function StudentExamJoinPage({
       </div>
     );
   }
-
-  // Exam is open - redirect to take page
-  useEffect(() => {
-    if (isOpenNow) {
-      router.push(`/student/exams/${examId}/take`);
-    }
-  }, [isOpenNow, examId, router]);
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">

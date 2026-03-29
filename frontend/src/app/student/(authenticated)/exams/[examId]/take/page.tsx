@@ -2,8 +2,9 @@
 
 import { use, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { StudentTakeExamClosed, StudentTakeExamNotFound, StudentTakeExamSubmitted } from "@/components/student/student-take-exam-states";
 import { StudentTakeExamContent } from "@/components/student/student-take-exam-content";
+import { useExamIntegrityGuard } from "@/hooks/use-exam-integrity-guard";
 import { useStudentSession } from "@/hooks/use-student-session";
 import { exams as legacyExams, type Exam } from "@/lib/mock-data";
 import { upsertStudentExamAttempt } from "@/lib/student-exam-attempts";
@@ -44,8 +45,9 @@ export default function StudentTakeExamPage({
           ),
         );
       } catch (error) {
-        if (isMounted)
+        if (isMounted) {
           console.warn("Failed to load the exam-taking page.", error);
+        }
       } finally {
         if (isMounted) setIsLoading(false);
       }
@@ -70,13 +72,14 @@ export default function StudentTakeExamPage({
       : false;
 
   useEffect(() => {
-    if (!exam || !schedule || !isOpenNow || alreadySubmitted || !studentId)
+    if (!exam || !schedule || !isOpenNow || alreadySubmitted || !studentId) {
       return;
+    }
 
     void upsertStudentExamAttempt({
       examId: exam.id,
       studentId,
-      studentName: studentName || "Сурагч",
+      studentName: studentName || "Ð¡ÑƒÑ€Ð°Ð³Ñ‡",
       classId: studentClass,
       status: "in_progress",
       startedAt: new Date().toISOString(),
@@ -92,80 +95,7 @@ export default function StudentTakeExamPage({
     studentName,
   ]);
 
-  // Tab switching detection
-  useEffect(() => {
-    if (!exam || !studentId) return;
-
-    const logSuspiciousActivity = async (
-      eventType: "tab_hidden" | "window_blurred" | "fullscreen_exited",
-    ) => {
-      try {
-        // TODO: Replace with actual API call
-        console.log(`Suspicious activity detected: ${eventType}`, {
-          examId: exam.id,
-          studentId,
-          timestamp: new Date().toISOString(),
-          eventType,
-        });
-
-        // Mock API call for now
-        // await fetch(`/api/exams/${exam.id}/attempts/${studentId}/events`, {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({
-        //     eventType,
-        //     timestamp: new Date().toISOString()
-        //   })
-        // })
-      } catch (error) {
-        console.error("Failed to log suspicious activity:", error);
-      }
-    };
-
-    // Detect tab/window visibility changes
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        void logSuspiciousActivity("tab_hidden");
-      }
-    };
-
-    // Detect window blur (user clicked outside window)
-    const handleWindowBlur = () => {
-      void logSuspiciousActivity("window_blurred");
-    };
-
-    // Detect fullscreen exit
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) {
-        void logSuspiciousActivity("fullscreen_exited");
-      }
-    };
-
-    // Request fullscreen on exam start
-    const requestFullscreen = () => {
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch((err) => {
-          console.log("Fullscreen not available:", err);
-        });
-      }
-    };
-
-    // Add event listeners
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    window.addEventListener("blur", handleWindowBlur);
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-
-    // Request fullscreen after a short delay
-    const fullscreenTimer = setTimeout(requestFullscreen, 1000);
-
-    return () => {
-      // Cleanup
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("blur", handleWindowBlur);
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-      clearTimeout(fullscreenTimer);
-    };
-  }, [exam, studentId]);
+  useExamIntegrityGuard({ examId: exam?.id, studentId });
 
   const answeredCount = exam
     ? exam.questions.filter(
@@ -177,62 +107,26 @@ export default function StudentTakeExamPage({
     totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
   const unansweredCount = Math.max(totalQuestions - answeredCount, 0);
 
-  if (isLoading)
-    return (
-      <p className="text-sm text-muted-foreground">Шалгалтыг ачаалж байна...</p>
-    );
+  if (isLoading) return <p className="text-sm text-muted-foreground">Ð¨Ð°Ð»Ð³Ð°Ð»Ñ‚Ñ‹Ð³ Ð°Ñ‡Ð°Ð°Ð»Ð¶ Ð±Ð°Ð¹Ð½Ð°...</p>;
 
   if (!exam || !schedule) {
-    return (
-      <div className="py-12 text-center">
-        <h1 className="text-2xl font-bold">Шалгалт олдсонгүй</h1>
-        <Button className="mt-4" onClick={() => router.push("/student/exams")}>
-          Шалгалтууд руу буцах
-        </Button>
-      </div>
-    );
+    return <StudentTakeExamNotFound onBack={() => router.push("/student/exams")} />;
   }
 
   if (alreadySubmitted) {
     return (
-      <div className="mx-auto max-w-2xl space-y-4">
-        <h1 className="text-2xl font-bold">
-          Энэ шалгалтыг аль хэдийн илгээсэн байна
-        </h1>
-        <p className="text-muted-foreground">
-          Таны хариулт хадгалагдсан. Тайлангийн хуудаснаас дүнгээ үзнэ үү.
-        </p>
-        <div className="flex gap-3">
-          <Button onClick={() => router.push(`/student/reports/${examId}`)}>
-            Тайлан үзэх
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => router.push("/student/exams")}
-          >
-            Шалгалтууд руу буцах
-          </Button>
-        </div>
-      </div>
+      <StudentTakeExamSubmitted
+        onBack={() => router.push("/student/exams")}
+        onViewReport={() => router.push(`/student/reports/${examId}`)}
+      />
     );
   }
 
   if (!isOpenNow) {
     return (
-      <div className="mx-auto max-w-2xl space-y-4">
-        <h1 className="text-2xl font-bold">
-          Шалгалт одоогоор нээлттэй биш байна
-        </h1>
-        <p className="text-muted-foreground">
-          Энэ шалгалтыг зөвхөн товлосон эхлэх хугацаанд өгөх боломжтой.
-        </p>
-        <Button
-          variant="outline"
-          onClick={() => router.push(`/student/exams/${examId}`)}
-        >
-          Шалгалтын дэлгэрэнгүй рүү буцах
-        </Button>
-      </div>
+      <StudentTakeExamClosed
+        onBack={() => router.push(`/student/exams/${examId}`)}
+      />
     );
   }
 
@@ -249,7 +143,7 @@ export default function StudentTakeExamPage({
         exam,
         answers,
         studentId,
-        studentName: studentName || "Сурагч",
+        studentName: studentName || "Ð¡ÑƒÑ€Ð°Ð³Ñ‡",
         studentClass,
       });
       router.push(`/student/reports/${exam.id}`);
@@ -263,7 +157,7 @@ export default function StudentTakeExamPage({
       exam={exam}
       schedule={schedule}
       studentClass={studentClass}
-      studentName={studentName || "Сурагч"}
+      studentName={studentName || "Ð¡ÑƒÑ€Ð°Ð³Ñ‡"}
       answers={answers}
       answeredCount={answeredCount}
       totalQuestions={totalQuestions}

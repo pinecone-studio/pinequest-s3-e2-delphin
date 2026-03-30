@@ -1,15 +1,17 @@
 "use client"
 
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import type { Exam } from "@/lib/mock-data"
 
-const weekdayLabels = ["Ня", "Да", "Мя", "Лх", "Пү", "Ба", "Бя"]
+const weekdayLabels = ["ДАВ", "МЯГ", "ЛХА", "ПҮ", "БА", "БЯ", "НЯ"]
+const timeSlots = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00"]
+const eventTone = ["bg-[#F9D0F0]", "bg-[#B9E4FF]", "bg-[#FFE1A8]", "bg-[#FFD4D4]"]
 
 function getWeekDates() {
   const today = new Date()
+  const mondayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1
   const start = new Date(today)
-  start.setDate(today.getDate() - today.getDay())
+  start.setDate(today.getDate() - mondayIndex)
 
   return Array.from({ length: 7 }, (_, index) => {
     const date = new Date(start)
@@ -31,7 +33,9 @@ function getWeekEvents(exams: Exam[], studentClass: string, weekKeys: Set<string
         .filter((schedule) => schedule.classId === studentClass && weekKeys.has(schedule.date))
         .map((schedule) => ({ exam, schedule })),
     )
-    .sort((left, right) => `${left.schedule.date}${left.schedule.time}`.localeCompare(`${right.schedule.date}${right.schedule.time}`))
+    .sort((left, right) =>
+      `${left.schedule.date}${left.schedule.time}`.localeCompare(`${right.schedule.date}${right.schedule.time}`),
+    )
 }
 
 export function StudentDashboardScheduleCard({
@@ -44,46 +48,50 @@ export function StudentDashboardScheduleCard({
   const weekDates = getWeekDates()
   const weekEvents = getWeekEvents(exams, studentClass, new Set(weekDates.map((entry) => entry.key)))
   const baseDate = weekDates[0]?.date ?? new Date()
-  const monthLabel = `${baseDate.getFullYear()} оны ${baseDate.getMonth() + 1}-р сар`
+  const monthLabel = `${baseDate.getMonth() + 1}-р сар ${baseDate.getFullYear()} он`
+  const eventsByCell = new Map(
+    weekEvents.map(({ exam, schedule }, index) => [
+      `${schedule.date}-${schedule.time.slice(0, 2)}`,
+      { title: exam.title, tone: eventTone[index % eventTone.length] },
+    ]),
+  )
 
   return (
-    <section className="w-full max-w-[780px] rounded-[28px] border border-[#cfe5ff] bg-white p-[21px] shadow-[0_10px_24px_rgba(102,157,214,0.08)]">
-      <h2 className="font-sans text-[16px] font-semibold text-[#1f2937]">{monthLabel}</h2>
-
-      <div className="mt-10 grid grid-cols-7 gap-2">
-        {weekDates.map((entry) => (
-          <div key={entry.key} className="text-center">
-            <p className="font-sans text-[12px] font-medium text-[#808080]">{entry.day}</p>
-            <div className={`mt-5 inline-flex h-[42px] w-[42px] items-center justify-center rounded-full text-[17px] font-semibold ${entry.isToday ? "bg-[#5b9cf3] text-white" : "text-[#364152]"}`}>
-              {entry.number}
-            </div>
+    <section className="w-full rounded-[20px] border border-[#DCE8F3] bg-white p-[18px] shadow-[0_6px_24px_rgba(114,144,179,0.10)]">
+      <div className="flex items-center justify-center gap-8">
+        <button type="button" className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F7F3FB] text-[#7B6CA8]">
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <h2 className="text-[18px] font-medium text-[#4C5370]">{monthLabel}</h2>
+        <button type="button" className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F7F3FB] text-[#7B6CA8]">
+          <ChevronRight className="h-5 w-5" />
+        </button>
+      </div>
+      <div className="mt-4 grid grid-cols-[72px_repeat(7,minmax(0,1fr))] gap-x-2 gap-y-1">
+        <div />
+        {weekDates.map((entry, index) => (
+          <div key={entry.key} className="pb-2 text-center text-[15px] font-medium text-[#4B5563]">
+            {weekdayLabels[index]}
           </div>
         ))}
-      </div>
-
-      <div className="mt-10 space-y-6">
-        {weekEvents.length > 0 ? (
-          weekEvents.map(({ exam, schedule }) => (
-            <div key={`${exam.id}-${schedule.date}-${schedule.time}`} className="space-y-4">
-              <div className="flex items-center gap-4">
-                <p className="shrink-0 font-sans text-[16px] font-medium text-[#111827]">
-                  {schedule.time} - {String(Number(schedule.time.slice(0, 2)) + Math.ceil(exam.duration / 60)).padStart(2, "0")}:{schedule.time.slice(3, 5)}
-                </p>
-                <div className="h-px flex-1 border-t border-dashed border-[#b6d7ff]" />
-              </div>
-              <div className="flex items-center justify-between gap-4 rounded-[20px] border border-[#cfe5ff] bg-white px-5 py-4">
-                <p className="font-sans text-[16px] font-medium text-[#2b3440]">{exam.title}</p>
-                <Button asChild variant="ghost" className="h-[34px] rounded-[14px] border border-[#cfe5ff] bg-[#edf6ff] px-4 text-[#4f6f96] hover:bg-[#e2f0ff]">
-                  <Link href={`/student/exams/${exam.id}`}>Дэлгэрэнгүй</Link>
-                </Button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="rounded-[20px] border border-[#cfe5ff] bg-[#fbfdff] px-5 py-6 text-[14px] text-[#5B646F]">
-            Энэ долоо хоногт таны ангид товлогдсон шалгалт алга.
+        {timeSlots.map((time) => (
+          <div key={time} className="contents">
+            <div className="pt-3 text-center text-[14px] font-medium text-[#2B86FF]">{time}</div>
+            {weekDates.map((entry) => {
+              const event = eventsByCell.get(`${entry.key}-${time.slice(0, 2)}`)
+              return (
+                <div key={`${entry.key}-${time}`} className="min-h-[64px] rounded-[10px] border border-[#E8EEF5] bg-white px-2 py-2">
+                  {event ? (
+                    <div className="flex items-start gap-1.5 text-[11px] leading-4 text-[#4A5565]">
+                      <span className={`mt-1 h-2.5 w-2.5 rounded-full ${event.tone}`} />
+                      <span className="line-clamp-2">{event.title}</span>
+                    </div>
+                  ) : null}
+                </div>
+              )
+            })}
           </div>
-        )}
+        ))}
       </div>
     </section>
   )

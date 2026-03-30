@@ -1,17 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import {
-  ChevronLeft,
-  ChevronRight,
+  Bell,
   ClipboardList,
   LayoutDashboard,
-  Lightbulb,
+  LogOut,
+  Moon,
 } from "lucide-react"
 import { BrandLogo } from "@/components/brand-logo"
-import { ThemeToggleButton } from "@/components/theme-toggle-button"
 import { notifyStudentSessionChange, useStudentSession } from "@/hooks/use-student-session"
 import { cn } from "@/lib/utils"
 
@@ -28,7 +27,6 @@ export default function StudentLayout({
   const router = useRouter()
   const pathname = usePathname()
   const { studentName } = useStudentSession()
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true)
 
   useEffect(() => {
     if (!studentName) {
@@ -49,91 +47,72 @@ export default function StudentLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#eaf6ff] text-foreground">
-      <header className="border-b border-[#d6e7fb] bg-[#edf7ff] dark:border-[#101820] dark:bg-[#000000]">
-        <div className="flex h-[70px] w-full items-center justify-between px-4 sm:px-6">
-          <Link href="/student/dashboard" className="font-semibold">
+    <div className="min-h-screen bg-[#DCEAF9] text-[#2C3440]">
+      <div className="mx-auto min-h-[calc(100vh-20px)] w-full max-w-[1440px] rounded-[2px] bg-[#FDFEFE] shadow-[0_10px_35px_rgba(110,150,190,0.10)]">
+        <header className="relative z-10">
+          <div className="grid min-h-[82px] grid-cols-[1fr_auto_1fr] items-center px-[42px] pt-5">
+            <Link href="/student/dashboard" className="justify-self-start font-semibold">
             <BrandLogo
-              className="gap-2"
-              textClassName="text-sm font-semibold text-foreground sm:text-base"
+              className="gap-2.5"
+              textClassName="text-left"
             />
-          </Link>
-          <div className="flex items-center gap-4">
-            <ThemeToggleButton />
-            <span className="text-sm font-medium text-[#6984a3]">{studentName}</span>
-            <button
-              onClick={handleLogout}
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Гарах
-            </button>
-          </div>
-        </div>
-      </header>
+            </Link>
 
-      <div className="flex min-h-[calc(100vh-70px)]">
-        <aside
-          className={cn(
-            "flex flex-col border-r border-[#d6e7fb] bg-[#edf7ff] px-3 py-4 transition-all duration-200 dark:border-[#101820] dark:bg-[#000000]",
-            isSidebarCollapsed ? "w-[84px]" : "w-[200px]",
-          )}
-        >
-          <div
-            className={cn("mb-4 flex", isSidebarCollapsed ? "justify-center" : "justify-end")}
-          >
-            <button
-              type="button"
-              onClick={() => setIsSidebarCollapsed((current) => !current)}
-              className="rounded-md border p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground dark:border-[#1B2A36] dark:bg-[#000000] dark:hover:bg-[#081018]"
-              aria-label={
-                isSidebarCollapsed ? "Хажуу самбарыг дэлгэх" : "Хажуу самбарыг хумих"
-              }
-            >
-              {isSidebarCollapsed ? (
-                <ChevronRight className="h-4 w-4" />
-              ) : (
-                <ChevronLeft className="h-4 w-4" />
-              )}
-            </button>
-          </div>
-          <nav className="flex flex-col gap-1">
+            <nav className="flex h-[46px] items-center gap-1 rounded-full bg-[#FFFFFF] p-1 shadow-[0_12px_40px_rgba(90,143,203,0.18)]">
             {navItems.map((item) => {
               const Icon = item.icon
+              const active = pathname === item.href || pathname.startsWith(item.href + "/")
 
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  title={isSidebarCollapsed ? item.label : undefined}
                   className={cn(
-                    "flex items-center rounded-[12px] px-3 py-3 text-sm font-medium transition-colors",
-                    isSidebarCollapsed ? "justify-center" : "gap-3",
-                    pathname === item.href || pathname.startsWith(item.href + "/")
-                      ? "bg-[#4f9cf9] text-white shadow-[0_10px_20px_rgba(79,156,249,0.22)] dark:border dark:border-[rgba(56,189,248,0.55)] dark:bg-[#022638]"
-                      : "text-[#587492] hover:bg-[#e0effd] dark:hover:bg-[#081018]",
+                    "flex h-[38px] items-center justify-center gap-2 rounded-full px-5 text-[14px] font-medium",
+                    active
+                      ? "bg-[linear-gradient(180deg,#5EB6FF_0%,#3CA6F5_100%)] text-white shadow-[0_8px_18px_rgba(76,170,242,0.35)]"
+                      : "text-[#697586]",
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
-                  {!isSidebarCollapsed ? <span>{item.label}</span> : null}
+                  <span>{item.label}</span>
                 </Link>
               )
             })}
-          </nav>
-          {!isSidebarCollapsed ? (
-            <div className="sticky bottom-4 mt-auto rounded-[18px] bg-[#fff4d7] px-4 py-5 text-[#df8620]">
-              <div className="flex items-start gap-2">
-                <Lightbulb className="mt-0.5 h-4 w-4 shrink-0" />
-                <p className="text-xs font-semibold leading-6">
-                  Өдрийн зөвлөгөө
-                  <br />
-                  Шалгалт эхлэхээс өмнө 3 удаа гүнзгий амьсгал аваарай!
-                </p>
-              </div>
-            </div>
-          ) : null}
-        </aside>
+            </nav>
 
-        <main className="content-surface flex-1 overflow-auto bg-[#eaf6ff] p-4 md:p-5">
+            <div className="isolate flex items-center justify-self-end gap-3">
+            <button
+              type="button"
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-[#D6E2F0] bg-white text-[#7B8898] transition hover:text-[#2C3440]"
+              aria-label="Мэдэгдэл"
+            >
+              <Bell className="h-4 w-4 stroke-[1.75]" />
+            </button>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-[#D6E2F0] bg-white text-[#7B8898] transition hover:text-[#2C3440]"
+              aria-label="Гарах"
+            >
+              <LogOut className="h-4 w-4 stroke-[1.75]" />
+            </button>
+            <button
+              type="button"
+              className="relative h-[30px] w-[48px] overflow-hidden rounded-full bg-[#133A63] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]"
+              aria-label="Theme switch"
+            >
+              <span className="absolute left-[7px] top-[8px] h-[2px] w-[2px] rounded-full bg-[#D5E2F0]" />
+              <span className="absolute left-[11px] top-[13px] h-[1.5px] w-[1.5px] rounded-full bg-[#D5E2F0]" />
+              <span className="absolute left-[15px] top-[9px] h-[1.5px] w-[1.5px] rounded-full bg-[#D5E2F0]" />
+              <span className="absolute right-[3px] top-[3px] z-10 h-6 w-6 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.22)]" />
+              <Moon className="absolute left-[5px] top-[6px] h-4 w-4 text-[#C2D6EC]" />
+            </button>
+            </div>
+          </div>
+        </header>
+
+        <main className="relative z-10 min-h-[calc(100vh-82px)] w-full">
           {children}
         </main>
       </div>

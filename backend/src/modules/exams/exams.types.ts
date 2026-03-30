@@ -63,3 +63,19 @@ export type UpdateExamDto = Partial<
   questions?: CreateExamQuestionDto[];
   schedules?: CreateExamScheduleDto[];
 };
+
+export type AIGenerateQuestionSourceFileDto = {
+  name: string;
+  startPage: number;
+  endPage: number;
+};
+
+export type AIGenerateQuestionsDto = {
+  sourceFiles: AIGenerateQuestionSourceFileDto[];
+  mcCount: number;
+  tfCount: number;
+  shortAnswerCount: number;
+  variants: number;
+  difficulty: 'easy' | 'standard' | 'hard';
+  category: string;
+};

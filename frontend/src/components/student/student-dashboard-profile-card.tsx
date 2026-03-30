@@ -98,20 +98,20 @@ export function StudentDashboardProfileCard({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <div className="h-[135px] w-full rounded-[16px] bg-[linear-gradient(126.97deg,rgba(6,11,38,0.74)_28.26%,rgba(26,31,55,0.5)_91.2%)] p-[20px] backdrop-blur-[60px]">
+      <div className="h-[102px] w-full rounded-[20px] border border-[#DCE8F3] bg-white p-[21px] shadow-[0_6px_24px_rgba(114,144,179,0.10)] xl:max-w-[900px]">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 items-end gap-4">
-            <Avatar className="h-[60px] w-[60px] border border-[rgba(0,113,223,0.20)] p-[1px]">
+            <Avatar className="h-[58px] w-[58px] border border-[#E3EDF6] p-[1px] shadow-sm">
               <AvatarImage src={profile.image} alt={profile.name} className="object-cover" />
-              <AvatarFallback className="bg-[#68a8ff] text-lg font-bold text-white">
+              <AvatarFallback className="bg-[#D8E9FF] text-lg font-bold text-[#4E87C7]">
                 {getInitials(profile.name)}
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0">
-              <p className="truncate font-sans text-[24px] font-semibold leading-[29px] text-[#E1E6EB]">
+              <p className="truncate font-sans text-[24px] font-semibold leading-[29px] text-[#2F3845]">
                 {profile.name}
               </p>
-              <p className="mt-1 truncate font-sans text-[14px] font-normal italic leading-[17px] text-[#C2C9D0]">
+              <p className="mt-1 truncate font-sans text-[14px] font-normal italic leading-[17px] text-[#667284]">
                 &quot;{profile.bio}&quot;
               </p>
             </div>
@@ -120,7 +120,7 @@ export function StudentDashboardProfileCard({
           <DialogTrigger asChild>
             <button
               type="button"
-              className="rounded-full p-2 text-[#C2C9D0] transition hover:bg-[rgba(255,255,255,0.08)]"
+              className="rounded-full p-2 text-[#7B8797] transition hover:bg-[#F4F8FC]"
               aria-label="Профайл засах"
             >
               <Pencil className="h-5 w-5" />

@@ -9,6 +9,7 @@ import {
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   HeadBucketCommand,
   PutObjectCommand,
@@ -205,7 +206,11 @@ export class UploadsService {
   }
 
   private async sendStorageCommand<T>(
-    command: GetObjectCommand | HeadBucketCommand | PutObjectCommand,
+    command:
+      | DeleteObjectCommand
+      | GetObjectCommand
+      | HeadBucketCommand
+      | PutObjectCommand,
     operationName: string,
   ): Promise<T> {
     let lastError: unknown;
@@ -451,13 +456,21 @@ export class UploadsService {
   async findAllUploads(
     page: number,
     limit: number,
+    folder?: string,
   ): Promise<PaginatedUploadRecords> {
     try {
       await this.ensureLocalRecordsLoaded();
+      const normalizedFolder = folder
+        ? this.normalizeFolder(folder)
+        : undefined;
       if (!this.databaseService.isConfigured()) {
-        const items = [...this.uploadRecords.values()].sort((left, right) =>
-          right.uploadedAt.localeCompare(left.uploadedAt),
-        );
+        const items = [...this.uploadRecords.values()]
+          .filter((record) =>
+            normalizedFolder ? record.folder === normalizedFolder : true,
+          )
+          .sort((left, right) =>
+            right.uploadedAt.localeCompare(left.uploadedAt),
+          );
         const start = (page - 1) * limit;
         const pagedItems = items.slice(start, start + limit);
 
@@ -497,6 +510,9 @@ export class UploadsService {
           uploadedAt: record.uploadedAt,
           publicUrl: this.buildPublicUrl(record.key),
         }))
+        .filter((record) =>
+          normalizedFolder ? record.folder === normalizedFolder : true,
+        )
         .sort((left, right) => right.uploadedAt.localeCompare(left.uploadedAt));
 
       const start = (page - 1) * limit;
@@ -524,6 +540,37 @@ export class UploadsService {
       return record;
     } catch (error) {
       rethrowAsInternal(error, `Failed to load upload ${id}`);
+    }
+  }
+
+  async removeUpload(id: string): Promise<UploadRecord> {
+    try {
+      const record = await this.findUploadById(id);
+
+      await this.sendStorageCommand(
+        new DeleteObjectCommand({
+          Bucket: record.bucket,
+          Key: record.key,
+        }),
+        'R2 delete',
+      );
+
+      await this.ensureLocalRecordsLoaded();
+      this.uploadRecords.delete(id);
+
+      if (!this.databaseService.isConfigured()) {
+        await this.persistLocalRecords();
+        return record;
+      }
+
+      await this.databaseService.execute(
+        'DELETE FROM uploaded_files WHERE id = ?',
+        [id],
+      );
+
+      return record;
+    } catch (error) {
+      rethrowAsInternal(error, `Failed to delete upload ${id}`);
     }
   }
 

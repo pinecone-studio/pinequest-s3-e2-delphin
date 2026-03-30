@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -54,6 +55,7 @@ export class UploadsController {
   async findAll(
     @Query('page') page?: string,
     @Query('limit') limit?: string,
+    @Query('folder') folder?: string,
   ): Promise<PaginatedUploadRecords> {
     return executeOrRethrowAsync(() => {
       const pagination = parsePaginationParams(page, limit);
@@ -61,6 +63,7 @@ export class UploadsController {
       return this.uploadsService.findAllUploads(
         pagination.page,
         pagination.limit,
+        folder,
       );
     }, 'Failed to list upload metadata records');
   }
@@ -70,6 +73,14 @@ export class UploadsController {
     return executeOrRethrowAsync(
       () => this.uploadsService.findUploadById(id),
       `Failed to load upload ${id}`,
+    );
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return executeOrRethrowAsync(
+      () => this.uploadsService.removeUpload(id),
+      `Failed to delete upload ${id}`,
     );
   }
 

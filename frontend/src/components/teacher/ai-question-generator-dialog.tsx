@@ -1,171 +1,177 @@
-'use client'
+"use client";
 
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { mockTests } from '@/lib/mock-data'
+import { useState, type ChangeEvent, type DragEvent } from "react";
+import { AIQuestionSettingsPanel } from "@/components/teacher/ai-question-settings-panel";
+import { AIQuestionSourceSelector } from "@/components/teacher/ai-question-source-selector";
+import type {
+  AIQuestionGeneratorDialogProps,
+  SourceFileWithPages,
+} from "@/components/teacher/ai-question-generator-dialog-types";
+import { isBuilderDialogProps } from "@/components/teacher/ai-question-generator-dialog-types";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
-export function AIQuestionGeneratorDialog({
-  aiMCCount,
-  aiShortCount,
-  aiTFCount,
-  isGenerating,
-  isDragging,
-  onGenerate,
-  onDragLeave,
-  onDragOver,
-  onDrop,
-  onFileSelect,
-  onOpenChange,
-  onRemoveSourceFile,
-  onToggleTest,
-  open,
-  selectedMockTests,
-  selectedSourceFiles,
-  setAiMCCount,
-  setAiShortCount,
-  setAiTFCount,
-}: {
-  aiMCCount: number
-  aiShortCount: number
-  aiTFCount: number
-  isGenerating: boolean
-  isDragging: boolean
-  onGenerate: () => void
-  onDragLeave: (e: React.DragEvent) => void
-  onDragOver: (e: React.DragEvent) => void
-  onDrop: (e: React.DragEvent) => void
-  onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
-  onOpenChange: (open: boolean) => void
-  onRemoveSourceFile: (fileName: string) => void
-  onToggleTest: (testId: string, checked: boolean) => void
-  open: boolean
-  selectedMockTests: string[]
-  selectedSourceFiles: File[]
-  setAiMCCount: (value: number) => void
-  setAiShortCount: (value: number) => void
-  setAiTFCount: (value: number) => void
-}) {
-  const hasSource =
-    selectedMockTests.length > 0 || selectedSourceFiles.length > 0
+function createSourceFileEntry(file: File): SourceFileWithPages {
+  return { file, startPage: 1, endPage: 10 };
+}
+
+export function AIQuestionGeneratorDialog(props: AIQuestionGeneratorDialogProps) {
+  const { isGenerating, onOpenChange, open, selectedMockTests } = props;
+  const availableSourceFiles = props.availableSourceFiles ?? [];
+  const [sourceFilesWithPages, setSourceFilesWithPages] = useState<
+    SourceFileWithPages[]
+  >([]);
+  const [localAiMCCount, setLocalAiMCCount] = useState(0);
+  const [localAiTFCount, setLocalAiTFCount] = useState(0);
+  const [localAiShortCount, setLocalAiShortCount] = useState(0);
+  const [variants, setVariants] = useState(1);
+  const [difficulty, setDifficulty] = useState<"easy" | "standard" | "hard">(
+    "standard",
+  );
+  const [category, setCategory] = useState("");
+  const [localIsDragging, setLocalIsDragging] = useState(false);
+
+  const isBuilderDialog = isBuilderDialogProps(props);
+  const aiMCCount = isBuilderDialog ? props.aiMCCount : localAiMCCount;
+  const aiTFCount = isBuilderDialog ? props.aiTFCount : localAiTFCount;
+  const aiShortCount = isBuilderDialog ? props.aiShortCount : localAiShortCount;
+  const selectedSourceFiles = isBuilderDialog ? props.selectedSourceFiles : [];
+  const isDragging = isBuilderDialog ? props.isDragging : localIsDragging;
+  const hasSource = isBuilderDialog
+    ? selectedMockTests.length > 0 || selectedSourceFiles.length > 0
+    : selectedMockTests.length > 0 || sourceFilesWithPages.length > 0;
+  const totalQuestions = aiMCCount + aiTFCount + aiShortCount;
+  const finalQuestionCount = totalQuestions * variants;
+
+  const submit = () => {
+    if (isBuilderDialog) {
+      void props.onGenerate();
+      return;
+    }
+
+    void props.onGenerate({
+      sourceFilesWithPages,
+      aiMCCount,
+      aiTFCount,
+      aiShortCount,
+      variants,
+      difficulty,
+      category,
+      selectedMockTests,
+    });
+  };
+
+  const handleLocalFileSelect = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const files = Array.from(event.target.files).map(createSourceFileEntry);
+      setSourceFilesWithPages((current) => [...current, ...files]);
+    }
+    event.target.value = "";
+  };
+
+  const handleLocalDrop = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setLocalIsDragging(false);
+    const files = Array.from(event.dataTransfer.files).map(createSourceFileEntry);
+    setSourceFilesWithPages((current) => [...current, ...files]);
+  };
+
+  const updatePageRange = (
+    fileName: string,
+    field: "startPage" | "endPage",
+    value: number,
+  ) => {
+    setSourceFilesWithPages((current) =>
+      current.map((item) =>
+        item.file.name === fileName ? { ...item, [field]: value } : item,
+      ),
+    );
+  };
+
+  const removeSourceFile = (fileName: string) => {
+    setSourceFilesWithPages((current) =>
+      current.filter((item) => item.file.name !== fileName),
+    );
+  };
+
+  const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setLocalIsDragging(true);
+  };
+
+  const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setLocalIsDragging(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>AI ашиглан асуулт үүсгэх</DialogTitle>
+          <DialogTitle>AI Ð°ÑˆÐ¸Ð³Ð»Ð°Ð½ Ð°ÑÑƒÑƒÐ»Ñ‚ Ò¯Ò¯ÑÐ³ÑÑ…</DialogTitle>
           <DialogDescription>
-            Асуултын сангийн материал, шинээр оруулсан файл, эсвэл хоёуланг нь эх сурвалж болгон ашиглах боломжтой.
+            ÐœÐµÐ´Ð»ÑÐ³Ð¸Ð¹Ð½ ÑÐ°Ð½Ð³Ð¸Ð¹Ð½ Ñ„Ð°Ð¹Ð»ÑƒÑƒÐ´ ÑÑÐ²ÑÐ» ÑˆÐ¸Ð½Ñ Ñ„Ð°Ð¹Ð» Ð´ÑÑÑ€ Ñ‚ÑƒÐ»Ð³ÑƒÑƒÑ€Ð»Ð°Ð½ Ð°ÑÑƒÑƒÐ»Ñ‚
+            Ò¯Ò¯ÑÐ³ÑÐ½Ñ.
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label>Асуултын сангаас агуулга сонгох</Label>
-            <div className="space-y-2 max-h-32 overflow-auto border rounded p-2">
-              {mockTests.map((test) => (
-                <div key={test.id} className="flex items-center gap-2">
-                  <Checkbox id={test.id} checked={selectedMockTests.includes(test.id)} onCheckedChange={(checked) => onToggleTest(test.id, Boolean(checked))} />
-                  <label htmlFor={test.id} className="text-sm">{test.name}</label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label>AI-д ашиглах өөр файл нэмэх</Label>
-            <div
-              className={
-                isDragging
-                  ? 'border-2 border-dashed rounded-lg p-6 text-center transition-colors border-primary bg-primary/5'
-                  : 'border-2 border-dashed rounded-lg p-6 text-center transition-colors border-muted-foreground/25'
-              }
-              onDragLeave={onDragLeave}
-              onDragOver={onDragOver}
-              onDrop={onDrop}
-            >
-              <p className="text-sm text-muted-foreground mb-2">
-                PDF эсвэл Word файлаа энд оруулна уу.
-              </p>
-              <label htmlFor="ai-source-files">
-                <Button variant="outline" asChild>
-                  <span>Эх файл нэмэх</span>
-                </Button>
-              </label>
-              <input
-                id="ai-source-files"
-                type="file"
-                accept=".pdf,.doc,.docx"
-                className="hidden"
-                multiple
-                onChange={onFileSelect}
-              />
-            </div>
-            {selectedSourceFiles.length > 0 ? (
-              <div className="space-y-2 rounded-lg border p-3">
-                {selectedSourceFiles.map((file) => (
-                  <div key={`${file.name}-${file.size}`} className="flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-sm font-medium">{file.name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {(file.size / 1024).toFixed(1)} KB
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onRemoveSourceFile(file.name)}
-                    >
-                      Устгах
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <CountField label="Сонгох хариулттай" value={aiMCCount} onChange={setAiMCCount} />
-            <CountField label="Үнэн/Худал" value={aiTFCount} onChange={setAiTFCount} />
-            <CountField label="Богино хариулт" value={aiShortCount} onChange={setAiShortCount} />
-            <div className="space-y-2">
-              <Label>Нийт асуулт</Label>
-              <div className="h-9 flex items-center px-3 border rounded-md bg-muted">
-                {aiMCCount + aiTFCount + aiShortCount}
-              </div>
-            </div>
-          </div>
+        <div className="space-y-6 py-4">
+          <AIQuestionSourceSelector
+            availableSourceFiles={availableSourceFiles}
+            isBuilderDialog={isBuilderDialog}
+            isDragging={isDragging}
+            onDragEnter={isBuilderDialog ? props.onDragOver : handleDragOver}
+            onDragLeave={isBuilderDialog ? props.onDragLeave : handleDragLeave}
+            onDragOver={isBuilderDialog ? props.onDragOver : handleDragOver}
+            onDrop={isBuilderDialog ? props.onDrop : handleLocalDrop}
+            onFileSelect={isBuilderDialog ? props.onFileSelect : handleLocalFileSelect}
+            onRemoveBuilderFile={isBuilderDialog ? props.onRemoveSourceFile : () => {}}
+            onRemoveLocalFile={removeSourceFile}
+            onToggleTest={props.onToggleTest}
+            onUpdatePageRange={updatePageRange}
+            selectedBuilderFiles={selectedSourceFiles}
+            selectedMockTests={selectedMockTests}
+            sourceFilesWithPages={sourceFilesWithPages}
+          />
+          <AIQuestionSettingsPanel
+            aiMCCount={aiMCCount}
+            aiShortCount={aiShortCount}
+            aiTFCount={aiTFCount}
+            category={category}
+            difficulty={difficulty}
+            finalQuestionCount={finalQuestionCount}
+            onAiMCCountChange={isBuilderDialog ? props.setAiMCCount : setLocalAiMCCount}
+            onAiShortCountChange={
+              isBuilderDialog ? props.setAiShortCount : setLocalAiShortCount
+            }
+            onAiTFCountChange={isBuilderDialog ? props.setAiTFCount : setLocalAiTFCount}
+            onCategoryChange={setCategory}
+            onDifficultyChange={setDifficulty}
+            onVariantsChange={setVariants}
+            totalQuestions={totalQuestions}
+            variants={variants}
+          />
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Болих</Button>
-          <Button onClick={onGenerate} disabled={isGenerating || !hasSource}>
-            {isGenerating ? 'Үүсгэж байна...' : 'Асуулт үүсгэх'}
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Ð‘Ð¾Ð»Ð¸Ñ…
+          </Button>
+          <Button
+            onClick={submit}
+            disabled={isGenerating || !hasSource || totalQuestions === 0}
+          >
+            {isGenerating
+              ? "Ò®Ò¯ÑÐ³ÑÐ¶ Ð±Ð°Ð¹Ð½Ð°..."
+              : `${finalQuestionCount} Ð°ÑÑƒÑƒÐ»Ñ‚ Ò¯Ò¯ÑÐ³ÑÑ…`}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
-
-function CountField({
-  label,
-  onChange,
-  value,
-}: {
-  label: string
-  onChange: (value: number) => void
-  value: number
-}) {
-  return (
-    <div className="space-y-2">
-      <Label>{label}</Label>
-      <Input
-        min={0}
-        type="number"
-        value={value}
-        onChange={(e) => onChange(Math.max(0, parseInt(e.target.value, 10) || 0))}
-      />
-    </div>
-  )
+  );
 }

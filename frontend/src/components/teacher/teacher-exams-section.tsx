@@ -1,7 +1,13 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { TeacherExamScheduleList } from "@/components/teacher/teacher-exam-schedule-list";
 import type { TeacherExam } from "@/lib/teacher-exams";
 
@@ -40,7 +46,7 @@ export function TeacherExamsSection({
                   <div>
                     <CardTitle className="text-base">{exam.title}</CardTitle>
                     <CardDescription>
-                      {exam.questions.length} Ð°ÑÑƒÑƒÐ»Ñ‚, {exam.duration} Ð¼Ð¸Ð½
+                      {exam.questions.length} асуулт, {exam.duration} мин
                     </CardDescription>
                   </div>
                   <Badge
@@ -66,16 +72,16 @@ export function TeacherExamsSection({
 }
 
 function formatStatus(status: TeacherExam["status"]) {
-  if (status === "completed") return "Ð”ÑƒÑƒÑÑÐ°Ð½";
-  if (status === "draft") return "ÐÐ¾Ð¾Ñ€Ð¾Ð³";
-  return "Ð¢Ð¾Ð²Ð»Ð¾Ð³Ð´ÑÐ¾Ð½";
+  if (status === "completed") return "Дууссан";
+  if (status === "draft") return "Ноорог";
+  return "Товлогдсон";
 }
 
 function getBadgeVariant(
   status: TeacherExam["status"],
   statusLabelOverride?: string,
 ) {
-  if (statusLabelOverride === "Ð¯Ð²Ð°Ð³Ð´Ð°Ð¶ Ð±Ð°Ð¹Ð½Ð°") return "default";
+  if (statusLabelOverride === "Явагдаж байна") return "default";
   if (status === "completed") return "secondary";
   if (status === "draft") return "outline";
   return "default";

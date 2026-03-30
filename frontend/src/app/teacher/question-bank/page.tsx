@@ -1,140 +1,159 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { QuestionBankUploadDialog } from "@/components/teacher/question-bank-upload-dialog";
+import { useEffect, useState } from "react";
+import { AIQuestionGeneratorDialog } from "@/components/teacher/ai-question-generator-dialog";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  createQuestionBankCategoryAction,
+  saveQuestionBankQuestionSet,
+} from "@/components/teacher/question-bank-actions";
+import { generateQuestionBankAIQuestions } from "@/components/teacher/question-bank-ai-actions";
+import { QuestionBankBuilderCard } from "@/components/teacher/question-bank-builder-card";
+import { QuestionBankFiltersCard } from "@/components/teacher/question-bank-filters-card";
+import { QuestionBankResults } from "@/components/teacher/question-bank-results";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "@/hooks/use-toast";
-import { mockTests, type MockTest } from "@/lib/mock-data";
+import { useQuestionBankBuilder } from "@/hooks/use-question-bank-builder";
+import { useQuestionBankData } from "@/hooks/use-question-bank-data";
+import { Plus } from "lucide-react";
 
 export default function QuestionBankPage() {
-  const [tests, setTests] = useState<MockTest[]>(mockTests);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newTestName, setNewTestName] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const builder = useQuestionBankBuilder();
+  const data = useQuestionBankData({
+    searchQuery: builder.searchQuery,
+    selectedCategoryFilter: builder.selectedCategoryFilter,
+    selectedDifficulty: builder.selectedDifficulty,
+  });
+  const { builderCategoryId, setBuilderCategoryId } = builder;
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (
-      file &&
-      (file.type === "application/pdf" ||
-        file.name.endsWith(".doc") ||
-        file.name.endsWith(".docx"))
-    ) {
-      setSelectedFile(file);
+  useEffect(() => {
+    if (!builderCategoryId && data.questionBank[0]) {
+      setBuilderCategoryId(data.questionBank[0].id);
     }
-  };
+  }, [builderCategoryId, data.questionBank, setBuilderCategoryId]);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-    }
-  };
-
-  const handleSubmit = () => {
-    if (!newTestName || !selectedFile) return;
-
-    const newTest: MockTest = {
-      id: `mt${tests.length + 1}`,
-      name: newTestName,
-      fileName: selectedFile.name,
-      fileType: selectedFile.name.split(".").pop() || "pdf",
-      uploadedAt: new Date().toISOString().split("T")[0],
-      teacherId: "teacher1",
-    };
-
-    setTests([...tests, newTest]);
-    setNewTestName("");
-    setSelectedFile(null);
-    setIsDialogOpen(false);
-    toast({
-      title: "Амжилттай хадгаллаа",
-      description: "Шалгалтыг асуултын санд амжилттай нэмлээ.",
-    });
-  };
+  const builderCategoryName =
+    data.questionBank.find((category) => category.id === builderCategoryId)?.name ?? "";
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Асуултын сан</h1>
+          <h1 className="text-2xl font-bold">ÐÑÑƒÑƒÐ»Ñ‚Ñ‹Ð½ ÑÐ°Ð½</h1>
           <p className="text-muted-foreground">
-            Сурагчдад зориулсан жишиг шалгалтуудыг оруулж, удирдах
+            ÐÐ½Ð³Ð¸Ð»Ð°Ð», ÑÑÐ´Ð²ÑÑÑ€ Ð·Ð¾Ñ…Ð¸Ð¾Ð½ Ð±Ð°Ð¹Ð³ÑƒÑƒÐ»ÑÐ°Ð½ Ð°ÑÑƒÑƒÐ»Ñ‚ÑƒÑƒÐ´.
           </p>
         </div>
-        <QuestionBankUploadDialog
-          isDialogOpen={isDialogOpen}
-          isDragging={isDragging}
-          newTestName={newTestName}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          onFileSelect={handleFileSelect}
-          onOpenChange={setIsDialogOpen}
-          onSubmit={handleSubmit}
-          selectedFile={selectedFile}
-          setNewTestName={setNewTestName}
-          setSelectedFile={setSelectedFile}
-        />
+        <Button onClick={() => builder.setShowBuilder(!builder.showBuilder)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Ð¨Ð¸Ð½Ñ Ð°ÑÑƒÑƒÐ»Ñ‚ÑƒÑƒÐ´ Ò¯Ò¯ÑÐ³ÑÑ…
+        </Button>
       </div>
 
-      {tests.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">Одоогоор жишиг шалгалт оруулаагүй байна</p>
-            <Button className="mt-4" onClick={() => setIsDialogOpen(true)}>
-              Эхний шалгалтаа оруулах
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {tests.map((test) => (
-            <Link key={test.id} href={`/teacher/question-bank/${test.id}`}>
-              <Card className="h-full cursor-pointer hover:border-foreground transition-colors">
-                <CardHeader>
-                  <CardTitle className="text-base">{test.name}</CardTitle>
-                  <CardDescription>
-                    Оруулсан огноо: {test.uploadedAt}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary">
-                      {test.fileType.toUpperCase()}
-                    </Badge>
-                    <span className="text-sm text-muted-foreground">
-                      {test.fileName}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      )}
+      {builder.showBuilder ? (
+        <QuestionBankBuilderCard
+          builderCategoryId={builder.builderCategoryId}
+          builderCategoryName={builderCategoryName}
+          builderDifficulty={builder.builderDifficulty}
+          builderNewCategoryName={builder.builderNewCategoryName}
+          builderQuestions={builder.builderQuestions}
+          builderTopicName={builder.builderTopicName}
+          isCreatingCategory={isCreatingCategory}
+          isSaving={isSaving}
+          onAddQuestion={builder.addQuestion}
+          onBuilderCategoryNameChange={builder.setBuilderNewCategoryName}
+          onBuilderDifficultyChange={builder.setBuilderDifficulty}
+          onBuilderTopicNameChange={builder.setBuilderTopicName}
+          onCancel={() => {
+            builder.resetBuilder();
+            builder.setShowBuilder(false);
+          }}
+          onCategorySelect={(value) =>
+            builder.setBuilderCategoryId(value === "__create_new_category__" ? "" : value)
+          }
+          onCreateCategory={() =>
+            void createQuestionBankCategoryAction({
+              name: builder.builderNewCategoryName,
+              onCreated: builder.setBuilderCategoryId,
+              setBuilderCategoryId: builder.setBuilderCategoryId,
+              setBuilderNewCategoryName: builder.setBuilderNewCategoryName,
+              setIsCreatingCategory,
+              setNewCategoryName: builder.setNewCategoryName,
+              setQuestionBank: data.setQuestionBank,
+            })
+          }
+          onOpenAIDialog={() => builder.setShowAIDialog(true)}
+          onRemoveQuestion={builder.removeQuestion}
+          onSave={() =>
+            void saveQuestionBankQuestionSet({
+              builderCategoryId: builder.builderCategoryId,
+              builderDifficulty: builder.builderDifficulty,
+              builderQuestions: builder.builderQuestions,
+              builderTopicName: builder.builderTopicName,
+              onComplete: () => {
+                builder.resetBuilder();
+                builder.setShowBuilder(false);
+              },
+              setIsSaving,
+              setQuestionBank: data.setQuestionBank,
+            })
+          }
+          onUpdateOption={builder.updateOption}
+          onUpdateQuestion={builder.updateQuestion}
+          questionBank={data.questionBank}
+        />
+      ) : null}
+
+      <QuestionBankFiltersCard
+        isCreatingCategory={isCreatingCategory}
+        newCategoryName={builder.newCategoryName}
+        onCreateCategory={() =>
+          void createQuestionBankCategoryAction({
+            name: builder.newCategoryName,
+            setBuilderCategoryId: builder.setBuilderCategoryId,
+            setBuilderNewCategoryName: builder.setBuilderNewCategoryName,
+            setIsCreatingCategory,
+            setNewCategoryName: builder.setNewCategoryName,
+            setQuestionBank: data.setQuestionBank,
+          })
+        }
+        onNewCategoryNameChange={builder.setNewCategoryName}
+        onSearchQueryChange={builder.setSearchQuery}
+        onSelectedCategoryFilterChange={builder.setSelectedCategoryFilter}
+        onSelectedDifficultyChange={builder.setSelectedDifficulty}
+        questionBank={data.questionBank}
+        searchQuery={builder.searchQuery}
+        selectedCategoryFilter={builder.selectedCategoryFilter}
+        selectedDifficulty={builder.selectedDifficulty}
+      />
+
+      <QuestionBankResults categories={data.filteredCategories} isLoading={data.isLoading} />
+
+      <AIQuestionGeneratorDialog
+        availableSourceFiles={data.sourceFiles}
+        isGenerating={isGenerating}
+        onGenerate={(payload) =>
+          generateQuestionBankAIQuestions({
+            builderCategoryId: builder.builderCategoryId,
+            onComplete: () => builder.setShowAIDialog(false),
+            payload,
+            questionBank: data.questionBank,
+            setBuilderDifficulty: builder.setBuilderDifficulty,
+            setBuilderQuestions: builder.setBuilderQuestions,
+            setIsGenerating,
+            sourceFiles: data.sourceFiles,
+          })
+        }
+        onOpenChange={builder.setShowAIDialog}
+        onToggleTest={(sourceId, checked) =>
+          builder.setSelectedSourceIds((current) =>
+            checked ? [...new Set([...current, sourceId])] : current.filter((id) => id !== sourceId),
+          )
+        }
+        open={builder.showAIDialog}
+        selectedMockTests={builder.selectedSourceIds}
+      />
     </div>
   );
 }

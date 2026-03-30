@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { executeOrRethrowAsync } from '../../common/error-handling';
 import {
+  type AIGenerateQuestionsDto,
   type CreateExamDto,
   type Exam,
   type UpdateExamDto,
@@ -67,6 +68,16 @@ export class ExamsController {
     return executeOrRethrowAsync(
       () => this.examsService.getLiveAttempts(id),
       `Failed to handle GET /exams/${id}/attempts/live`,
+    );
+  }
+
+  @Post('ai/generate')
+  async generateAIQuestions(
+    @Body() payload: AIGenerateQuestionsDto,
+  ): Promise<any[]> {
+    return executeOrRethrowAsync(
+      () => this.examsService.generateAIQuestions(payload),
+      `Failed to handle POST /exams/ai/generate`,
     );
   }
 }

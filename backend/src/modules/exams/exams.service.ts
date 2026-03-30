@@ -20,6 +20,7 @@ import type {
   ExamStatus,
   ReportReleaseMode,
   UpdateExamDto,
+  AIGenerateQuestionsDto,
 } from './exams.types';
 
 type ExamRecord = {
@@ -368,6 +369,71 @@ export class ExamsService {
 
       return existingExam;
     }, `Failed to delete exam ${id}`);
+  }
+
+  async generateAIQuestions(
+    payload: AIGenerateQuestionsDto,
+  ): Promise<ExamQuestion[]> {
+    return executeOrRethrowAsync(async () => {
+      if (!payload.sourceFiles || payload.sourceFiles.length === 0) {
+        throw new BadRequestException(
+          'Source files are required for AI generation',
+        );
+      }
+
+      const totalCount =
+        payload.mcCount + payload.tfCount + payload.shortAnswerCount;
+      if (totalCount <= 0) {
+        throw new BadRequestException(
+          'Question counts must be greater than zero',
+        );
+      }
+
+      const questions: ExamQuestion[] = [];
+      let order = 1;
+
+      const createMockQuestion = (
+        type: ExamQuestionType,
+        index: number,
+      ): ExamQuestion => {
+        let questionText = `AI-generated ${type} question #${index} (category: ${payload.category || 'General'})`;
+        const points =
+          type === 'true-false' ? 5 : type === 'short-answer' ? 10 : 10;
+        const options =
+          type === 'multiple-choice' ? ['А', 'Б', 'В', 'Г'] : undefined;
+
+        return {
+          id: crypto.randomUUID(),
+          type,
+          question: questionText,
+          options,
+          correctAnswer:
+            type === 'multiple-choice'
+              ? 'А'
+              : type === 'true-false'
+                ? 'true'
+                : undefined,
+          points,
+          order: order++,
+        };
+      };
+
+      for (let variant = 1; variant <= payload.variants; variant += 1) {
+        for (let i = 0; i < payload.mcCount; i += 1) {
+          questions.push(createMockQuestion('multiple-choice', i + 1));
+        }
+
+        for (let i = 0; i < payload.tfCount; i += 1) {
+          questions.push(createMockQuestion('true-false', i + 1));
+        }
+
+        for (let i = 0; i < payload.shortAnswerCount; i += 1) {
+          questions.push(createMockQuestion('short-answer', i + 1));
+        }
+      }
+
+      return questions;
+    }, 'Failed to generate AI questions');
   }
 
   async getLiveAttempts(examId: string): Promise<any[]> {

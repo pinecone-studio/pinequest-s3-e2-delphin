@@ -47,20 +47,18 @@ export default function StudentLayout({
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[linear-gradient(159.02deg,#0F123B_14.25%,#090D2E_56.45%,#020515_86.14%)] text-foreground">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(42,92,255,0.38),rgba(10,18,55,0.14)_52%,transparent_78%)] blur-[136px]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[linear-gradient(180deg,rgba(70,120,255,0.18)_0%,rgba(70,120,255,0.04)_55%,transparent_100%)]" />
-
-      <header className="relative z-10">
-        <div className="flex h-[82px] w-full items-center justify-between px-5 py-4 sm:px-6 lg:px-8 xl:px-10">
-          <Link href="/student/dashboard" className="font-semibold">
+    <div className="min-h-screen bg-[#DCEAF9] text-[#2C3440]">
+      <div className="mx-auto min-h-[calc(100vh-20px)] w-full max-w-[1440px] rounded-[2px] bg-[#FDFEFE] shadow-[0_10px_35px_rgba(110,150,190,0.10)]">
+        <header className="relative z-10">
+          <div className="grid min-h-[82px] grid-cols-[1fr_auto_1fr] items-center px-[42px] pt-5">
+            <Link href="/student/dashboard" className="justify-self-start font-semibold">
             <BrandLogo
-              className="gap-2"
-              textClassName="text-base font-semibold text-[#F5FAFF]"
+              className="gap-2.5"
+              textClassName="text-left"
             />
-          </Link>
+            </Link>
 
-          <nav className="flex h-[49px] items-center gap-2 rounded-full bg-[linear-gradient(111.84deg,rgba(6,11,38,0.94)_59.3%,rgba(26,31,55,0)_100%)] p-1">
+            <nav className="flex h-[46px] items-center gap-1 rounded-full bg-[#FFFFFF] p-1 shadow-[0_12px_40px_rgba(90,143,203,0.18)]">
             {navItems.map((item) => {
               const Icon = item.icon
               const active = pathname === item.href || pathname.startsWith(item.href + "/")
@@ -70,23 +68,23 @@ export default function StudentLayout({
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex h-10 items-center justify-center gap-[6px] rounded-full px-4 text-sm font-medium",
+                    "flex h-[38px] items-center justify-center gap-2 rounded-full px-5 text-[14px] font-medium",
                     active
-                      ? "bg-[#001933] text-white shadow-[0px_3.5px_5.5px_rgba(0,0,0,0.02)]"
-                      : "text-[#A4ADB5]",
+                      ? "bg-[linear-gradient(180deg,#5EB6FF_0%,#3CA6F5_100%)] text-white shadow-[0_8px_18px_rgba(76,170,242,0.35)]"
+                      : "text-[#697586]",
                   )}
                 >
-                  <Icon className="h-5 w-5 shrink-0" />
+                  <Icon className="h-4 w-4 shrink-0" />
                   <span>{item.label}</span>
                 </Link>
               )
             })}
-          </nav>
+            </nav>
 
-          <div className="isolate flex h-6 items-center gap-2">
+            <div className="isolate flex items-center justify-self-end gap-3">
             <button
               type="button"
-              className="flex h-6 w-6 items-center justify-center rounded-full text-[#C2C9D0] transition hover:bg-[rgba(255,255,255,0.08)] hover:text-white"
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-[#D6E2F0] bg-white text-[#7B8898] transition hover:text-[#2C3440]"
               aria-label="Мэдэгдэл"
             >
               <Bell className="h-4 w-4 stroke-[1.75]" />
@@ -94,32 +92,30 @@ export default function StudentLayout({
             <button
               type="button"
               onClick={handleLogout}
-              className="flex h-6 w-6 items-center justify-center rounded-full text-[#C2C9D0] transition hover:bg-[rgba(255,255,255,0.08)] hover:text-white"
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-[#D6E2F0] bg-white text-[#7B8898] transition hover:text-[#2C3440]"
               aria-label="Гарах"
             >
               <LogOut className="h-4 w-4 stroke-[1.75]" />
             </button>
             <button
               type="button"
-              className="relative h-6 w-[46px] overflow-hidden rounded-[21.2308px] bg-[#A2D1FD] shadow-[inset_0px_2.12308px_3.18462px_#72BBFF]"
+              className="relative h-[30px] w-[48px] overflow-hidden rounded-full bg-[#133A63] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]"
               aria-label="Theme switch"
             >
-              <span className="absolute inset-0 rounded-[21.2308px] bg-[linear-gradient(180deg,#E0FDFF_0%,#A2D1FD_100%)] opacity-90" />
-              <span className="absolute left-[7px] top-[4px] h-[2px] w-[2px] rounded-full bg-[#DEE5F3]" />
-              <span className="absolute left-[10px] top-[10px] h-[1px] w-[1px] rounded-full bg-[#DEE5F3]" />
-              <span className="absolute left-[14px] top-[6px] h-[1.5px] w-[1.5px] rounded-full bg-[#DEE5F3]" />
-              <span className="absolute right-[10px] top-[6px] h-[10px] w-[16px] rounded-full bg-white/95 blur-[0.2px]" />
-              <span className="absolute right-[15px] top-[9px] h-[7px] w-[10px] rounded-full bg-white" />
-              <span className="absolute right-[2px] top-[2px] z-10 h-5 w-5 rounded-full bg-[rgba(255,193,135,0.96)] shadow-[-0.88px_1.47px_1.17px_rgba(183,183,183,0.35),0px_0px_2.65px_rgba(255,193,135,0.6),inset_0px_-0.59px_1.17px_#FFA149,inset_0px_0.59px_1.17px_#FFD0A5]" />
-              <Moon className="absolute left-[6px] top-[4px] h-4 w-4 text-[#C2C9D0]" />
+              <span className="absolute left-[7px] top-[8px] h-[2px] w-[2px] rounded-full bg-[#D5E2F0]" />
+              <span className="absolute left-[11px] top-[13px] h-[1.5px] w-[1.5px] rounded-full bg-[#D5E2F0]" />
+              <span className="absolute left-[15px] top-[9px] h-[1.5px] w-[1.5px] rounded-full bg-[#D5E2F0]" />
+              <span className="absolute right-[3px] top-[3px] z-10 h-6 w-6 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.22)]" />
+              <Moon className="absolute left-[5px] top-[6px] h-4 w-4 text-[#C2D6EC]" />
             </button>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="relative z-10 min-h-[calc(100vh-82px)] w-full">
-        {children}
-      </main>
+        <main className="relative z-10 min-h-[calc(100vh-82px)] w-full">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

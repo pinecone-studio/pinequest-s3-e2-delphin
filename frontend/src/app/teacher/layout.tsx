@@ -28,7 +28,7 @@ export default function TeacherLayout({
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       {/* Header */}
       <header className="border-b bg-background dark:border-[#101820] dark:bg-[#000000]">
-        <div className="flex h-14 w-full items-center justify-between px-4 sm:px-6">
+        <div className="mx-auto flex h-14 w-full max-w-[1440px] items-center justify-between px-4 sm:px-6">
           <Link href="/teacher/dashboard" className="font-semibold">
             <BrandLogo className="gap-2" textClassName="text-sm font-semibold text-foreground sm:text-base" />
           </Link>
@@ -44,7 +44,7 @@ export default function TeacherLayout({
         </div>
       </header>
 
-      <div className="flex flex-1">
+      <div className="mx-auto flex w-full max-w-[1440px] flex-1">
         {/* Sidebar */}
         <aside
           className={cn(

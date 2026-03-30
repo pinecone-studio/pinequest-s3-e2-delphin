@@ -10,6 +10,12 @@ import { exams as legacyExams, type Exam } from "@/lib/mock-data"
 import { getLocalDateString } from "@/lib/student-exam-time"
 import { getStudentExams } from "@/lib/student-exams"
 
+const statCards = [
+  { label: "Нийт амжилт", value: "92.4%", detail: "+1.2%", icon: Trophy },
+  { label: "Мэдээлэл зүй", value: "98 A", detail: "Сүүлийн дүн", icon: Medal },
+  { label: "Энэ 7 хоногт", value: "3", detail: "Өгөх шалгалт", icon: CalendarDays },
+] as const
+
 export default function StudentDashboard() {
   const { studentClass, studentName } = useStudentSession()
   const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
@@ -40,57 +46,38 @@ export default function StudentDashboard() {
   )
 
   return (
-    <div className="flex min-h-[calc(100vh-82px)] flex-col gap-6 px-5 pb-6 pt-2 sm:px-6 lg:gap-[30px] lg:px-10 lg:pb-[30px] lg:pt-[10px]">
-      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+    <div className="flex min-h-[calc(100vh-82px)] flex-col gap-5 px-10 pb-[28px] pt-[18px]">
+      <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
         <div className="min-w-0">
-          <h1 className="font-sans text-[32px] font-medium leading-8 tracking-[-0.02em] text-[#F9FAFB]">
+          <h1 className="font-sans text-[33px] font-semibold leading-[1.1] tracking-[-0.03em] text-[#2D3642]">
             Сайн уу, {studentName}!
           </h1>
-          <p className="mt-[6px] font-sans text-[16px] font-normal leading-5 text-[#C2C9D0]">
+          <p className="mt-[6px] font-sans text-[16px] font-normal leading-5 text-[#606C80]">
             Өнөөдөр чиний гялалзах өдөр ✨
           </p>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 xl:flex xl:items-start xl:gap-10">
-          <div className="flex items-center gap-3">
-            <div className="flex h-14 w-14 items-center justify-center rounded-[16px] bg-[linear-gradient(126.97deg,rgba(6,11,38,0.74)_28.26%,rgba(26,31,55,0.5)_91.2%)] text-white backdrop-blur-[60px]">
-              <Trophy className="h-7 w-7" />
-            </div>
-            <div>
-              <p className="text-[14px] text-[#C2C9D0]">Нийт амжилт</p>
-              <div className="mt-1 flex items-end gap-1">
-                <p className="text-[24px] font-semibold leading-[1] tracking-[-0.03em] text-[#F0F3F5]">92.4%</p>
-                <p className="bg-[linear-gradient(49.24deg,#339CFE_16.29%,#62CBFF_70.59%)] bg-clip-text text-[12px] font-medium text-transparent">+1.2%</p>
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 xl:gap-8">
+          {statCards.map((item) => {
+            const Icon = item.icon
+            return (
+              <div key={item.label} className="flex items-center gap-3">
+                <div className="flex h-[56px] w-[56px] items-center justify-center rounded-full border border-[#D9E8F4] bg-[#F3F9FF] text-[#39424E]">
+                  <Icon className="h-[26px] w-[26px] stroke-[1.7]" />
+                </div>
+                <div>
+                  <p className="text-[14px] leading-5 text-[#7A8698]">{item.label}</p>
+                  <div className="mt-1 flex items-end gap-1.5">
+                    <p className="text-[24px] font-semibold leading-none tracking-[-0.03em] text-[#39424E]">{item.value}</p>
+                    <p className="text-[12px] font-medium text-[#4A9DFF]">{item.detail}</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex h-14 w-14 items-center justify-center rounded-[16px] bg-[linear-gradient(126.97deg,rgba(6,11,38,0.74)_28.26%,rgba(26,31,55,0.5)_91.2%)] text-white backdrop-blur-[60px]">
-              <Medal className="h-7 w-7" />
-            </div>
-            <div>
-              <p className="text-[14px] text-[#C2C9D0]">Мэдээлэл зүй</p>
-              <div className="mt-1 flex items-end gap-1">
-                <p className="text-[24px] font-semibold leading-[1] tracking-[-0.03em] text-[#F0F3F5]">98 A</p>
-                <p className="bg-[linear-gradient(49.24deg,#339CFE_16.29%,#62CBFF_70.59%)] bg-clip-text text-[12px] font-medium text-transparent">Сүүлийн дүн</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex h-14 w-14 items-center justify-center rounded-[16px] bg-[linear-gradient(126.97deg,rgba(6,11,38,0.74)_28.26%,rgba(26,31,55,0.5)_91.2%)] text-white backdrop-blur-[60px]">
-              <CalendarDays className="h-7 w-7" />
-            </div>
-            <div>
-              <p className="text-[14px] text-[#C2C9D0]">Энэ 7 хоногт</p>
-              <div className="mt-1 flex items-end gap-1">
-                <p className="text-[24px] font-semibold leading-[1] tracking-[-0.03em] text-[#F0F3F5]">3</p>
-                <p className="bg-[linear-gradient(49.24deg,#339CFE_16.29%,#62CBFF_70.59%)] bg-clip-text text-[12px] font-medium text-transparent">Өгөх шалгалт</p>
-              </div>
-            </div>
-          </div>
+            )
+          })}
         </div>
       </div>
 
-      <div className="grid flex-1 gap-5 xl:grid-cols-[minmax(0,1fr)_360px] 2xl:grid-cols-[minmax(0,1fr)_440px]">
+      <div className="grid flex-1 gap-5 xl:grid-cols-[minmax(0,1fr)_402px]">
         <div className="space-y-5">
           <StudentDashboardProfileCard studentName={studentName} />
           <StudentDashboardScheduleCard exams={myExams} studentClass={studentClass} />

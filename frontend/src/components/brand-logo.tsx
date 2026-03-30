@@ -15,24 +15,28 @@ export function BrandLogo({
   textClassName,
 }: BrandLogoProps) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full p-1">
-        <Image
-          src="/dolphin-logo.png"
-          alt="ExamFlow dolphin logo"
-          fill
-          sizes="40px"
-          className={cn("object-contain", imageClassName)}
-          priority
-        />
-      </span>
-      <span
-        className={cn(
-          "text-base font-semibold tracking-tight text-[#16324F]",
-          textClassName,
-        )}
-      >
-        Дэльфин LMS
+    <span className={cn("inline-flex items-center gap-[6px] whitespace-nowrap", className)}>
+      <Image
+        src="/huurhun.svg"
+        alt="Edulphin logo"
+        width={41}
+        height={45}
+        className={cn("h-[45.1px] w-[40.5px] shrink-0 object-contain", imageClassName)}
+        priority
+      />
+      <span className={cn("flex flex-col", textClassName)}>
+        <span
+          className="bg-[linear-gradient(90deg,#339CFE_0%,#62CBFF_100%)] bg-clip-text text-[28px] font-light leading-none tracking-[0.02em] text-transparent"
+          style={{ fontFamily: "Roboto, sans-serif" }}
+        >
+          EDULPHIN
+        </span>
+        <span
+          className="mt-1 bg-[linear-gradient(90deg,#339CFE_0%,#62CBFF_100%)] bg-clip-text text-[9px] font-light uppercase tracking-[0.28em] leading-none text-transparent"
+          style={{ fontFamily: "Roboto, sans-serif" }}
+        >
+          DIVE·INTO·LEARNING
+        </span>
       </span>
     </span>
   );

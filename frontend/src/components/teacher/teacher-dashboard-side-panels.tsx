@@ -11,10 +11,7 @@ export function TeacherDashboardSidePanels(props: { selectedClassId: string }) {
   const [message, setMessage] = useState("")
   const [currentTime, setCurrentTime] = useState(() => new Date())
   const chart = useMemo(() => buildChartModel(), [])
-
-  useEffect(() => {
-    if (selectedClassId !== "all") setAnnouncementClassId(selectedClassId)
-  }, [selectedClassId])
+  const activeAnnouncementClassId = selectedClassId !== "all" ? selectedClassId : announcementClassId
 
   useEffect(() => {
     const timer = window.setInterval(() => setCurrentTime(new Date()), 60_000)
@@ -39,7 +36,7 @@ export function TeacherDashboardSidePanels(props: { selectedClassId: string }) {
         </div>
         <div className="relative mt-4">
           <Image src="/list-bullets-small.svg" alt="" width={16} height={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2" />
-          <select value={announcementClassId} onChange={(event) => setAnnouncementClassId(event.target.value)} className="h-10 w-full cursor-pointer appearance-none rounded-[12px] border border-[#e5eaf5] bg-white pl-10 pr-10 text-[14px] text-[#7c82a0] outline-none">
+          <select value={activeAnnouncementClassId} onChange={(event) => setAnnouncementClassId(event.target.value)} className="h-10 w-full cursor-pointer appearance-none rounded-[12px] border border-[#e5eaf5] bg-white pl-10 pr-10 text-[14px] text-[#7c82a0] outline-none">
             <option value="all">Бүх анги</option>
             {classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
@@ -48,7 +45,7 @@ export function TeacherDashboardSidePanels(props: { selectedClassId: string }) {
         <p className="mt-4 text-[14px] font-medium text-[#666d8c]">Зар оруулах</p>
         <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Мэдэгдлээ энд бичнэ үү." className="mt-2 h-[88px] w-full resize-none rounded-[12px] border border-[#cfe0ff] px-3 py-3 text-[14px] text-[#59607f] outline-none placeholder:text-[#a0a8bf]" />
         <div className="absolute bottom-[5px] right-5 flex justify-end">
-          <button type="button" onClick={() => message.trim() && (saveDashboardAnnouncement({ classId: announcementClassId, message }), setMessage(""))} className="h-9 cursor-pointer rounded-full bg-[#6a9cff] px-5 text-[14px] font-medium text-white transition hover:bg-[#5b8cff]">Илгээх</button>
+          <button type="button" onClick={() => message.trim() && (saveDashboardAnnouncement({ classId: activeAnnouncementClassId, message }), setMessage(""))} className="h-9 cursor-pointer rounded-full bg-[#6a9cff] px-5 text-[14px] font-medium text-white transition hover:bg-[#5b8cff]">Илгээх</button>
         </div>
       </section>
     </div>

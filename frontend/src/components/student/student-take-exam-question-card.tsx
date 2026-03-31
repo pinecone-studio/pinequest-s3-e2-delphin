@@ -51,13 +51,13 @@ export function StudentTakeExamQuestionCard(props: {
             onValueChange={(nextValue) => onAnswerChange(question.id, nextValue)}
             className="gap-3"
           >
-            {options.map((option) => {
+            {options.map((option, optionIndex) => {
               const isSelected = value === option
-              const controlId = `${question.id}-${option}`
+              const controlId = `${question.id}-${optionIndex}-${option}`
 
               return (
                 <Label
-                  key={option}
+                  key={`${question.id}-${optionIndex}-${option}`}
                   htmlFor={controlId}
                   className={cn(
                     "flex cursor-pointer items-center gap-4 rounded-2xl border px-4 py-4 transition-all",

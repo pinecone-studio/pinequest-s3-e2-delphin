@@ -3,128 +3,122 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import {
-  BookOpen,
-  ChevronLeft,
-  ChevronRight,
-  ClipboardList,
-  FileText,
-  LayoutDashboard,
-  Users,
-} from "lucide-react";
+import { Bell, BookOpen, ChevronLeft, ChevronRight, ClipboardList, FileText, LayoutDashboard, Users } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggleButton } from "@/components/theme-toggle-button";
-import { cn } from "@/lib/utils";
 import { teacher } from "@/lib/mock-data-helpers";
+import { cn } from "@/lib/utils";
 
 const navItems = [
-  {
-    href: "/teacher/dashboard",
-    label: "Хяналтын самбар",
-    icon: LayoutDashboard,
-  },
+  { href: "/teacher/dashboard", label: "Хяналтын самбар", icon: LayoutDashboard },
   { href: "/teacher/classes", label: "Ангиуд", icon: Users },
-  { href: "/teacher/sources", label: "Медлегийн сан", icon: FileText },
+  { href: "/teacher/sources", label: "Мэдлэгийн сан", icon: FileText },
   { href: "/teacher/question-bank", label: "Асуултын сан", icon: BookOpen },
   { href: "/teacher/exams", label: "Шалгалтууд", icon: ClipboardList },
 ];
 
-export default function TeacherLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function TeacherLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
-      {/* Header */}
-      <header className="border-b bg-background dark:border-[#101820] dark:bg-[#000000]">
-        <div className="mx-auto flex h-14 w-full max-w-[1440px] items-center justify-between px-4 sm:px-6">
-          <Link href="/teacher/dashboard" className="font-semibold">
-            <BrandLogo
-              className="gap-2"
-              textClassName="text-sm font-semibold text-foreground sm:text-base"
-            />
+    <div className="min-h-screen bg-[linear-gradient(180deg,#eef6ff_0%,#f7fbff_100%)] text-foreground dark:bg-[linear-gradient(180deg,#050910_0%,#09111d_100%)]">
+      <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col">
+        <header className="flex h-[82px] items-center justify-between px-[40px] py-[16px]">
+          <Link href="/teacher/dashboard" className="cursor-pointer font-semibold">
+            <BrandLogo />
           </Link>
-          <div className="flex items-center gap-4">
-            <ThemeToggleButton />
-            <span className="text-sm text-muted-foreground">
-              Нэвтэрсэн хэрэглэгч:{" "}
-              <span className="text-foreground">{teacher.name}</span>
-            </span>
-            <Link
-              href="/"
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Гарах
-            </Link>
+          <div className="flex items-center gap-3">
+            <span className="hidden text-sm text-[#8ea4c5] dark:text-[#b8c8e6] xl:inline">Нэвтэрсэн хэрэглэгч: <span className="text-[#5d7397] dark:text-white">{teacher.name}</span></span>
+            <div className="flex h-[24px] w-[110.91px] items-center justify-between self-center">
+              <IconActionButton label="Notifications">
+                <Bell className="h-[18px] w-[18px]" strokeWidth={1.85} />
+              </IconActionButton>
+              <IconLinkButton href="/" label="Гарах">
+                <LogoutFrameIcon />
+              </IconLinkButton>
+              <ThemeToggleButton />
+            </div>
           </div>
+        </header>
+
+        <div className="flex flex-1 overflow-hidden">
+          <aside className={cn("border-r border-[#e2ecfb] bg-white/30 p-4 transition-all duration-200 dark:border-[#101820] dark:bg-[#000000]", isSidebarCollapsed ? "w-20" : "w-56")}>
+            <div className={cn("mb-4 flex", isSidebarCollapsed ? "justify-center" : "justify-end")}>
+              <button
+                type="button"
+                onClick={() => setIsSidebarCollapsed((current) => !current)}
+                className="rounded-md border border-[#dce8fb] bg-white/70 p-2 text-[#7e97bb] transition-colors hover:bg-white hover:text-[#5e7399] dark:border-[#1B2A36] dark:bg-[#000000] dark:hover:bg-[#081018]"
+                aria-label={isSidebarCollapsed ? "Хажуугийн цэсийг дэлгэх" : "Хажуугийн цэсийг хураах"}
+              >
+                {isSidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+              </button>
+            </div>
+            <nav className="flex flex-col gap-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const active = pathname === item.href || pathname.startsWith(item.href + "/");
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    title={isSidebarCollapsed ? item.label : undefined}
+                    className={cn(
+                      "flex items-center rounded-md px-3 py-2 text-sm transition-colors",
+                      isSidebarCollapsed ? "justify-center" : "gap-3",
+                      active ? "bg-[#0b4078] text-white shadow-[0_10px_18px_rgba(61,124,255,0.18)] dark:border dark:border-[rgba(56,189,248,0.55)] dark:bg-[#022638]" : "text-[#5f7397] hover:bg-white/70 dark:hover:bg-[#081018]",
+                    )}
+                  >
+                    <Icon className="h-4 w-4 shrink-0" />
+                    {!isSidebarCollapsed ? <span>{item.label}</span> : null}
+                  </Link>
+                );
+              })}
+            </nav>
+          </aside>
+
+          <main className="content-surface flex-1 overflow-auto rounded-[2rem] px-[40px] pb-[24px]">
+            {children}
+          </main>
         </div>
-      </header>
-
-      <div className="mx-auto flex w-full max-w-[1440px] flex-1">
-        {/* Sidebar */}
-        <aside
-          className={cn(
-            "border-r bg-muted/30 p-4 transition-all duration-200 dark:border-[#101820] dark:bg-[#000000]",
-            isSidebarCollapsed ? "w-20" : "w-56",
-          )}
-        >
-          <div
-            className={cn(
-              "mb-4 flex",
-              isSidebarCollapsed ? "justify-center" : "justify-end",
-            )}
-          >
-            <button
-              type="button"
-              onClick={() => setIsSidebarCollapsed((current) => !current)}
-              className="rounded-md border p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground dark:border-[#1B2A36] dark:bg-[#000000] dark:hover:bg-[#081018]"
-              aria-label={
-                isSidebarCollapsed
-                  ? "Хажуугийн цэсийг дэлгэх"
-                  : "Хажуугийн цэсийг хураах"
-              }
-            >
-              {isSidebarCollapsed ? (
-                <ChevronRight className="h-4 w-4" />
-              ) : (
-                <ChevronLeft className="h-4 w-4" />
-              )}
-            </button>
-          </div>
-          <nav className="flex flex-col gap-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  title={isSidebarCollapsed ? item.label : undefined}
-                  className={cn(
-                    "flex items-center rounded-md px-3 py-2 text-sm transition-colors",
-                    isSidebarCollapsed ? "justify-center" : "gap-3",
-                    pathname === item.href ||
-                      pathname.startsWith(item.href + "/")
-                      ? "bg-primary text-primary-foreground dark:border dark:border-[rgba(56,189,248,0.55)] dark:bg-[#022638] dark:shadow-[0_0_0_1px_rgba(56,189,248,0.08),0_0_16px_rgba(34,211,238,0.10)]"
-                      : "hover:bg-muted dark:hover:bg-[#081018]",
-                  )}
-                >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  {!isSidebarCollapsed ? <span>{item.label}</span> : null}
-                </Link>
-              );
-            })}
-          </nav>
-        </aside>
-
-        {/* Main Content */}
-        <main className="content-surface flex-1 overflow-auto p-6">
-          {children}
-        </main>
       </div>
     </div>
+  );
+}
+
+function IconActionButton({ children, label }: { children: React.ReactNode; label: string }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      className="inline-flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full border border-[#dce8fb] bg-white/72 text-[#8ea4c5] shadow-[0_6px_12px_rgba(133,164,214,0.1)] backdrop-blur transition-all hover:bg-white hover:text-[#6d87ad] hover:shadow-[0_8px_16px_rgba(133,164,214,0.16)] dark:border-[#24384f] dark:bg-white/5 dark:text-[#b8c8e6] dark:hover:bg-white/10"
+    >
+      {children}
+    </button>
+  );
+}
+
+function IconLinkButton({ children, href, label }: { children: React.ReactNode; href: string; label: string }) {
+  return (
+    <Link
+      href={href}
+      aria-label={label}
+      title={label}
+      className="inline-flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full border border-[#dce8fb] bg-white/72 text-[#8ea4c5] shadow-[0_6px_12px_rgba(133,164,214,0.1)] backdrop-blur transition-all hover:bg-white hover:text-[#6d87ad] hover:shadow-[0_8px_16px_rgba(133,164,214,0.16)] dark:border-[#24384f] dark:bg-white/5 dark:text-[#b8c8e6] dark:hover:bg-white/10"
+    >
+      {children}
+    </Link>
+  );
+}
+
+function LogoutFrameIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path
+        d="M9.25547 16.5851C9.25547 16.6951 9.21175 16.8007 9.13394 16.8785C9.05613 16.9563 8.9506 17 8.84056 17H4.41491C4.30487 17 4.19933 16.9563 4.12152 16.8785C4.04371 16.8007 4 16.6951 4 16.5851V4.41489C4 4.30486 4.04371 4.19933 4.12152 4.12152C4.19933 4.04371 4.30487 4 4.41491 4H8.84056C8.9506 4 9.05613 4.04371 9.13394 4.12152C9.21175 4.19933 9.25547 4.30486 9.25547 4.41489C9.25547 4.52493 9.21175 4.63046 9.13394 4.70827C9.05613 4.78608 8.9506 4.82979 8.84056 4.82979H4.82981V16.1702H8.84056C8.9506 16.1702 9.05613 16.2139 9.13394 16.2917C9.21175 16.3695 9.25547 16.4751 9.25547 16.5851ZM16.8787 10.2068L14.1126 7.44085C14.034 7.36756 13.9299 7.32767 13.8225 7.32956C13.715 7.33146 13.6124 7.375 13.5364 7.45102C13.4604 7.52703 13.4168 7.62959 13.4149 7.73707C13.413 7.84456 13.4529 7.94858 13.5262 8.02723L15.5835 10.0851H8.84056C8.73052 10.0851 8.62499 10.1288 8.54718 10.2066C8.46937 10.2844 8.42566 10.39 8.42566 10.5C8.42566 10.61 8.46937 10.7156 8.54718 10.7934C8.62499 10.8712 8.73052 10.9149 8.84056 10.9149H15.5835L13.5262 12.9728C13.4855 13.0107 13.4528 13.0566 13.4301 13.1074C13.4074 13.1583 13.3952 13.2133 13.3942 13.269C13.3933 13.3247 13.4035 13.38 13.4244 13.4317C13.4452 13.4834 13.4763 13.5303 13.5157 13.5697C13.5551 13.6091 13.602 13.6401 13.6537 13.661C13.7053 13.6819 13.7607 13.6921 13.8164 13.6911C13.8721 13.6902 13.927 13.678 13.9779 13.6553C14.0288 13.6326 14.0746 13.5999 14.1126 13.5591L16.8787 10.7932C16.9564 10.7154 17 10.6099 17 10.5C17 10.3901 16.9564 10.2846 16.8787 10.2068Z"
+        fill="#6F7982"
+      />
+    </svg>
   );
 }

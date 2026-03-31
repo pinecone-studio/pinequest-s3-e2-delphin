@@ -1,86 +1,16 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { CheckCircle2, ChevronLeft, ChevronRight, Clock3, FileText, Link2, PencilLine, ShieldCheck } from "lucide-react"
+import { ChevronLeft, ChevronRight, Clock3 } from "lucide-react"
 import { BrandLogo } from "@/components/brand-logo"
+import { ExampleExamBookletQuestion } from "@/components/demo/example-exam-booklet-question"
+import {
+  demoQuestions,
+  pageSize,
+  totalQuestionCount,
+} from "@/components/demo/example-exam-demo-data"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
-
-const pageSize = 10
-const totalQuestionCount = 30
-const questionTypes = ["mcq", "tf", "matching", "open", "fill"] as const
-const matchingPrompts = [
-  { id: "m1", left: "HTML", options: ["Programming language", "Markup language", "Database"] },
-  { id: "m2", left: "CSS", options: ["Styling language", "Version control", "Backend runtime"] },
-  { id: "m3", left: "SQL", options: ["Database query language", "UI framework", "Package manager"] },
-] as const
-
-type QuestionType = (typeof questionTypes)[number]
-
-type DemoQuestion = {
-  id: number
-  type: QuestionType
-  points: number
-  title: string
-  prompt: string
-}
-
-const demoQuestions: DemoQuestion[] = Array.from({ length: totalQuestionCount }, (_, index) => {
-  const id = index + 1
-  const type = questionTypes[index % questionTypes.length]
-
-  if (type === "mcq") {
-    return { id, type, points: 2, title: "Multiple Choice", prompt: "Which option correctly expands the term CSS?" }
-  }
-
-  if (type === "tf") {
-    return {
-      id,
-      type,
-      points: 1,
-      title: "True / False",
-      prompt: "HTML is a programming language used to create application logic.",
-    }
-  }
-
-  if (type === "matching") {
-    return {
-      id,
-      type,
-      points: 3,
-      title: "Connect / Matching",
-      prompt: "Match each concept with the best description.",
-    }
-  }
-
-  if (type === "open") {
-    return {
-      id,
-      type,
-      points: 4,
-      title: "Open Ended",
-      prompt: "Explain what a REST API is in one or two concise sentences.",
-    }
-  }
-
-  return {
-    id,
-    type,
-    points: 2,
-    title: "Fill In The Blank",
-    prompt: "Complete the sentence using the correct CSS box model terms.",
-  }
-})
-
-function getQuestionIcon(type: QuestionType) {
-  if (type === "mcq") return <CheckCircle2 className="h-4 w-4" />
-  if (type === "tf") return <ShieldCheck className="h-4 w-4" />
-  if (type === "matching") return <Link2 className="h-4 w-4" />
-  if (type === "open") return <PencilLine className="h-4 w-4" />
-  return <FileText className="h-4 w-4" />
-}
 
 export function ExampleExamDemo() {
   const [page, setPage] = useState(1)
@@ -119,132 +49,6 @@ export function ExampleExamDemo() {
   ]
     .map((value) => String(value).padStart(2, "0"))
     .join(":")
-
-  const renderQuestionBody = (question: DemoQuestion) => {
-    if (question.type === "mcq") {
-      return (
-        <div className="grid gap-3">
-          {["A. Cascading Style Sheets", "B. Central Style Syntax", "C. Computer Style Sheet", "D. Creative Style System"].map((option) => (
-            <button
-              key={option}
-              type="button"
-              onClick={() => setSelectedMcq((current) => ({ ...current, [question.id]: option[0].toLowerCase() }))}
-              className={cn(
-                "flex items-center justify-between rounded-[18px] border px-4 py-4 text-left transition",
-                selectedMcq[question.id] === option[0].toLowerCase()
-                  ? "border-[#184C7C] bg-[#F4F9FF] text-[#173A5E]"
-                  : "border-[#D8E2EC] bg-white text-[#33485E] hover:border-[#B9CADB]",
-              )}
-            >
-              <span className="text-[16px] font-medium">{option}</span>
-              <span
-                className={cn(
-                  "h-5 w-5 rounded-full border-2",
-                  selectedMcq[question.id] === option[0].toLowerCase() ? "border-[#184C7C] bg-[#184C7C]" : "border-[#AFC2D4]",
-                )}
-              />
-            </button>
-          ))}
-        </div>
-      )
-    }
-
-    if (question.type === "tf") {
-      return (
-        <div className="grid gap-3 md:grid-cols-2">
-          {["True", "False"].map((option) => (
-            <button
-              key={option}
-              type="button"
-              onClick={() => setSelectedTrueFalse((current) => ({ ...current, [question.id]: option.toLowerCase() }))}
-              className={cn(
-                "rounded-[18px] border px-4 py-5 text-left transition",
-                selectedTrueFalse[question.id] === option.toLowerCase()
-                  ? "border-[#184C7C] bg-[#F4F9FF] text-[#173A5E]"
-                  : "border-[#D8E2EC] bg-white text-[#33485E] hover:border-[#B9CADB]",
-              )}
-            >
-              <p className="text-[17px] font-semibold">{option}</p>
-              <p className="mt-2 text-[14px] leading-6 text-[#6A7C8F]">Mark the statement as correct or incorrect.</p>
-            </button>
-          ))}
-        </div>
-      )
-    }
-
-    if (question.type === "matching") {
-      return (
-        <div className="space-y-3">
-          {matchingPrompts.map((item) => (
-            <div key={item.id} className="grid gap-3 rounded-[18px] border border-[#D8E2EC] bg-[#FCFDFC] p-4 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
-              <p className="text-[15px] font-semibold text-[#2C4156]">{item.left}</p>
-              <select
-                value={matchingAnswers[question.id]?.[item.id] ?? ""}
-                onChange={(event) =>
-                  setMatchingAnswers((current) => ({
-                    ...current,
-                    [question.id]: {
-                      ...(current[question.id] ?? {}),
-                      [item.id]: event.target.value,
-                    },
-                  }))
-                }
-                className="h-12 rounded-[14px] border border-[#D4DFEA] bg-white px-4 text-[14px] text-[#31465A]"
-              >
-                <option value="" disabled>
-                  Select match
-                </option>
-                {item.options.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ))}
-        </div>
-      )
-    }
-
-    if (question.type === "open") {
-      return (
-        <Textarea
-          value={shortAnswer[question.id] ?? ""}
-          onChange={(event) => setShortAnswer((current) => ({ ...current, [question.id]: event.target.value }))}
-          className="min-h-[180px] rounded-[18px] border-[#D8E2EC] bg-[#FFFEFC] px-4 py-4 text-[15px] leading-7 text-[#33485E]"
-          placeholder="Write your answer here..."
-        />
-      )
-    }
-
-    return (
-      <div className="rounded-[18px] border border-[#D8E2EC] bg-[#FFFEFC] p-4 text-[15px] leading-8 text-[#334658]">
-        CSS box model-д гадна зайг
-        <Input
-          value={fillBlank[question.id]?.blank1 ?? ""}
-          onChange={(event) =>
-            setFillBlank((current) => ({
-              ...current,
-              [question.id]: { ...(current[question.id] ?? { blank1: "", blank2: "" }), blank1: event.target.value },
-            }))
-          }
-          className="mx-2 inline-flex h-10 w-[140px] rounded-[12px] border-[#C9D8E8] bg-white align-middle"
-        />
-        гэж нэрлэдэг. Харин дотор зайг
-        <Input
-          value={fillBlank[question.id]?.blank2 ?? ""}
-          onChange={(event) =>
-            setFillBlank((current) => ({
-              ...current,
-              [question.id]: { ...(current[question.id] ?? { blank1: "", blank2: "" }), blank2: event.target.value },
-            }))
-          }
-          className="mx-2 inline-flex h-10 w-[140px] rounded-[12px] border-[#C9D8E8] bg-white align-middle"
-        />
-        гэж нэрлэдэг.
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#dce8f3_0%,#eef3f7_22%,#f7f4ee_100%)] px-4 py-6 lg:px-8">
@@ -292,33 +96,22 @@ export function ExampleExamDemo() {
           </div>
 
           <div className="mt-8 space-y-8">
-            {visibleQuestions.map((question) => {
-              return (
-                <article key={question.id} className="border-b border-dashed border-[#e1e7ed] pb-8 last:border-b-0 last:pb-0">
-                  <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                    <div className="flex items-start gap-4">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#d7e0e8] bg-[#f3f7fb] text-[#2c6aab]">
-                        {getQuestionIcon(question.type)}
-                      </div>
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#7c8ea1]">
-                            Question {question.id}
-                          </span>
-                          <span className="rounded-full bg-[#f1f4f7] px-2.5 py-1 text-[12px] font-semibold text-[#556a7d]">
-                            {question.points} points
-                          </span>
-                        </div>
-                        <h3 className="mt-2 text-[26px] font-semibold text-[#243445]">{question.title}</h3>
-                        <p className="mt-3 max-w-[760px] text-[16px] leading-7 text-[#495f74]">{question.prompt}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6">{renderQuestionBody(question)}</div>
-                </article>
-              )
-            })}
+            {visibleQuestions.map((question) => (
+              <ExampleExamBookletQuestion
+                key={question.id}
+                fillBlank={fillBlank}
+                matchingAnswers={matchingAnswers}
+                question={question}
+                selectedMcq={selectedMcq}
+                selectedTrueFalse={selectedTrueFalse}
+                setFillBlank={setFillBlank}
+                setMatchingAnswers={setMatchingAnswers}
+                setSelectedMcq={setSelectedMcq}
+                setSelectedTrueFalse={setSelectedTrueFalse}
+                setShortAnswer={setShortAnswer}
+                shortAnswer={shortAnswer}
+              />
+            ))}
           </div>
 
           <div className="mt-10 flex flex-col gap-4 border-t border-[#e5eaef] pt-6 lg:flex-row lg:items-center lg:justify-between">

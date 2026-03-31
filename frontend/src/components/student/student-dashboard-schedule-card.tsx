@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react"
 import type { Exam } from "@/lib/mock-data"
 
 const weekdayLabels = ["ДАВ", "МЯГ", "ЛХА", "ПҮ", "БА", "БЯ", "НЯ"]
@@ -58,13 +58,22 @@ export function StudentDashboardScheduleCard({
 
   return (
     <section className="font-sans h-[659px] w-full overflow-y-auto rounded-[20px] border border-[#DCE8F3] bg-white p-[18px] shadow-[0_6px_24px_rgba(114,144,179,0.10)] xl:h-[659px] xl:max-w-[900px]">
-      <div className="flex items-center justify-center gap-8">
-        <button type="button" className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F7F3FB] text-[#7B6CA8]">
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <h2 className="text-[18px] font-medium text-[#4C5370]">{monthLabel}</h2>
-        <button type="button" className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F7F3FB] text-[#7B6CA8]">
-          <ChevronRight className="h-5 w-5" />
+      <div className="relative flex items-center justify-center">
+        <div className="flex items-center justify-center gap-8">
+          <button type="button" className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F7F3FB] text-[#7B6CA8]">
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <h2 className="text-[18px] font-medium text-[#4C5370]">{monthLabel}</h2>
+          <button type="button" className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F7F3FB] text-[#7B6CA8]">
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+        <button
+          type="button"
+          className="absolute right-0 inline-flex h-10 items-center gap-2 rounded-full border border-[#E3EDF7] bg-white px-5 text-[14px] font-medium text-[#0066CC] shadow-[0_4px_16px_rgba(0,102,204,0.08)]"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Хуваарь</span>
         </button>
       </div>
       <div className="mt-4 grid grid-cols-[92px_repeat(7,minmax(0,1fr))] gap-2">

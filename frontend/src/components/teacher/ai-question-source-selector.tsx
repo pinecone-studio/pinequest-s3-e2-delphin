@@ -49,14 +49,14 @@ export function AIQuestionSourceSelector({
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label>Ð­Ñ… ÑÑƒÑ€Ð²Ð°Ð»Ð¶ ÑÐ¾Ð½Ð³Ð¾Ñ…</Label>
+        <Label>Эх сурвалж сонгох</Label>
         <div className="max-h-40 space-y-2 overflow-auto rounded border p-2">
           <p className="text-sm text-muted-foreground">
-            ÐœÐµÐ´Ð»ÑÐ³Ð¸Ð¹Ð½ ÑÐ°Ð½Ð³Ð¸Ð¹Ð½ Ñ„Ð°Ð¹Ð»ÑƒÑƒÐ´:
+            Медлэгийн сангийн файлууд:
           </p>
           {availableSourceFiles.length === 0 ? (
             <div className="text-sm text-muted-foreground">
-              ÐœÐµÐ´Ð»ÑÐ³Ð¸Ð¹Ð½ ÑÐ°Ð½Ð´ Ñ…Ð°Ñ€Ð°Ð°Ñ…Ð°Ð½ Ñ„Ð°Ð¹Ð» Ð°Ð»Ð³Ð° Ð±Ð°Ð¹Ð½Ð°.
+              Медлэгийн санд хараахан файл алга байна.
             </div>
           ) : (
             availableSourceFiles.map((source) => (

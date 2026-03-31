@@ -19,10 +19,10 @@ import type {
 } from "@/components/teacher/exam-builder-types";
 
 export function getQuestionTypeLabel(type: QuestionType) {
-  if (type === "multiple-choice") return "Ð¡Ð¾Ð½Ð³Ð¾Ñ… Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ñ‚Ñ‚Ð°Ð¹";
-  if (type === "true-false") return "Ò®Ð½ÑÐ½/Ð¥ÑƒÐ´Ð°Ð»";
-  if (type === "short-answer") return "Ð‘Ð¾Ð³Ð¸Ð½Ð¾ Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ñ‚";
-  return "Ð­ÑÑÑ";
+  if (type === "multiple-choice") return "Сонгох хариулттай";
+  if (type === "true-false") return "Үнэн/Худал";
+  if (type === "short-answer") return "Богино хариулт";
+  return "Эсээ";
 }
 
 function MultipleChoiceEditor({
@@ -44,7 +44,7 @@ function MultipleChoiceEditor({
             {String.fromCharCode(65 + optionIndex)}
           </div>
           <Input
-            placeholder={`Ð¡Ð¾Ð½Ð³Ð¾Ð»Ñ‚ ${String.fromCharCode(65 + optionIndex)}`}
+            placeholder={`Сонголт ${String.fromCharCode(65 + optionIndex)}`}
             value={option}
             onChange={(event) =>
               onUpdateOption(question.id, optionIndex, event.target.value)
@@ -54,7 +54,7 @@ function MultipleChoiceEditor({
         </div>
       ))}
       <div className="mt-2 flex items-center gap-2">
-        <Label className="text-sm text-muted-foreground">Ð—Ó©Ð² Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ñ‚:</Label>
+        <Label className="text-sm text-muted-foreground">Зөв хариулт:</Label>
         <Select
           value={question.correctAnswer}
           onValueChange={(value) =>
@@ -62,15 +62,15 @@ function MultipleChoiceEditor({
           }
         >
           <SelectTrigger className="w-40">
-            <SelectValue placeholder="Ð¡Ð¾Ð½Ð³Ð¾Ñ…" />
+            <SelectValue placeholder="Сонгох" />
           </SelectTrigger>
           <SelectContent>
             {question.options.map((option, optionIndex) => (
               <SelectItem
                 key={optionIndex}
-                value={option || `Ð¡Ð¾Ð½Ð³Ð¾Ð»Ñ‚ ${String.fromCharCode(65 + optionIndex)}`}
+                value={option || `Сонголт ${String.fromCharCode(65 + optionIndex)}`}
               >
-                {String.fromCharCode(65 + optionIndex)}: {option || "(Ñ…Ð¾Ð¾ÑÐ¾Ð½)"}
+                {String.fromCharCode(65 + optionIndex)}: {option || "(хоосон)"}
               </SelectItem>
             ))}
           </SelectContent>
@@ -99,7 +99,7 @@ export function ExamBuilderQuestionCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div>
-              <div className="text-sm font-semibold">ÐÑÑƒÑƒÐ»Ñ‚ {index + 1}</div>
+              <div className="text-sm font-semibold">Асуулт {index + 1}</div>
               <div className="text-xs text-muted-foreground capitalize">
                 {getQuestionTypeLabel(question.type)}
               </div>
@@ -117,16 +117,16 @@ export function ExamBuilderQuestionCard({
               }
               className="h-8 w-20"
             />
-            <span className="text-sm text-muted-foreground">Ð¾Ð½Ð¾Ð¾</span>
+            <span className="text-sm text-muted-foreground">оноо</span>
             <Button variant="ghost" size="sm" onClick={() => onRemoveQuestion(question.id)}>
-              Ð£ÑÑ‚Ð³Ð°Ñ…
+              Устгах
             </Button>
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <Textarea
-          placeholder={`ÐÑÑƒÑƒÐ»Ñ‚ ${index + 1}-Ð¸Ð¹Ð³ Ð±Ð¸Ñ‡Ð½Ñ Ò¯Ò¯`}
+          placeholder={`Асуулт ${index + 1}-ийг бичнэ үү`}
           value={question.question}
           onChange={(event) =>
             onUpdateQuestion(question.id, { question: event.target.value })
@@ -140,7 +140,7 @@ export function ExamBuilderQuestionCard({
         />
         {question.type === "true-false" ? (
           <div className="flex items-center gap-4">
-            <Label className="text-sm text-muted-foreground">Ð—Ó©Ð² Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ñ‚:</Label>
+            <Label className="text-sm text-muted-foreground">Зөв хариулт:</Label>
             <Select
               value={question.correctAnswer}
               onValueChange={(value) =>
@@ -151,8 +151,8 @@ export function ExamBuilderQuestionCard({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="True">Ò®Ð½ÑÐ½</SelectItem>
-                <SelectItem value="False">Ð¥ÑƒÐ´Ð°Ð»</SelectItem>
+                <SelectItem value="True">Үнэн</SelectItem>
+                <SelectItem value="False">Худал</SelectItem>
               </SelectContent>
             </Select>
           </div>

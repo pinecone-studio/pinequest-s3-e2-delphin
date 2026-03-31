@@ -37,11 +37,11 @@ export default function SourcesPage() {
       } catch (error) {
         if (!isMounted) return;
         toast({
-          title: "ÐÐ»Ð´Ð°Ð°",
+          title: "Алдаа",
           description:
             error instanceof Error
               ? error.message
-              : "ÐœÐµÐ´Ð»ÑÐ³Ð¸Ð¹Ð½ ÑÐ°Ð½Ð³Ð¸Ð¹Ð½ Ñ„Ð°Ð¹Ð»ÑƒÑƒÐ´Ñ‹Ð³ Ð°Ñ‡Ð°Ð°Ð»Ð¶ Ñ‡Ð°Ð´ÑÐ°Ð½Ð³Ò¯Ð¹.",
+              : "Медлэгийн сангийн файлуудыг ачаалж чадсангүй.",
           variant: "destructive",
         });
       } finally {
@@ -65,8 +65,8 @@ export default function SourcesPage() {
   const handleUpload = async () => {
     if (!selectedFile || !newFileName.trim()) {
       toast({
-        title: "ÐÐ»Ð´Ð°Ð°",
-        description: "Ð¤Ð°Ð¹Ð» ÑÐ¾Ð½Ð³Ð¾Ð¾Ð´ Ð½ÑÑ€ Ð¾Ñ€ÑƒÑƒÐ»Ð½Ð° ÑƒÑƒ.",
+        title: "Алдаа",
+        description: "Файл сонгоод нэр оруулна уу.",
         variant: "destructive",
       });
       return;
@@ -83,14 +83,14 @@ export default function SourcesPage() {
       setSelectedFile(null);
       setNewFileName("");
       toast({
-        title: "ÐÐ¼Ð¶Ð¸Ð»Ñ‚Ñ‚Ð°Ð¹",
-        description: "Ð¤Ð°Ð¹Ð» Ð¼ÐµÐ´Ð»ÑÐ³Ð¸Ð¹Ð½ ÑÐ°Ð½Ð´ Ñ…Ð°Ð´Ð³Ð°Ð»Ð°Ð³Ð´Ð»Ð°Ð°.",
+        title: "Амжилттай",
+        description: "Файл медлэгийн санд хадгалагдлаа.",
       });
     } catch (error) {
       toast({
-        title: "ÐÐ»Ð´Ð°Ð°",
+        title: "Алдаа",
         description:
-          error instanceof Error ? error.message : "Ð¤Ð°Ð¹Ð» Ñ…ÑƒÑƒÐ»Ð°Ñ…Ð°Ð´ Ð°Ð»Ð´Ð°Ð° Ð³Ð°Ñ€Ð»Ð°Ð°.",
+          error instanceof Error ? error.message : "Файл хуулахад алдаа гарлаа.",
         variant: "destructive",
       });
     } finally {
@@ -103,14 +103,14 @@ export default function SourcesPage() {
       await deleteUpload(fileId);
       setFiles((current) => current.filter((file) => file.id !== fileId));
       toast({
-        title: "ÐÐ¼Ð¶Ð¸Ð»Ñ‚Ñ‚Ð°Ð¹",
-        description: "Ð¤Ð°Ð¹Ð» ÑƒÑÑ‚Ð³Ð°Ð³Ð´Ð»Ð°Ð°.",
+        title: "Амжилттай",
+        description: "Файл устгагдлаа.",
       });
     } catch (error) {
       toast({
-        title: "ÐÐ»Ð´Ð°Ð°",
+        title: "Алдаа",
         description:
-          error instanceof Error ? error.message : "Ð¤Ð°Ð¹Ð» ÑƒÑÑ‚Ð³Ð°Ð¶ Ñ‡Ð°Ð´ÑÐ°Ð½Ð³Ò¯Ð¹.",
+          error instanceof Error ? error.message : "Файл устгаж чадсангүй.",
         variant: "destructive",
       });
     }
@@ -119,9 +119,9 @@ export default function SourcesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">ÐœÐµÐ´Ð»ÑÐ³Ð¸Ð¹Ð½ ÑÐ°Ð½</h1>
+        <h1 className="text-2xl font-bold">Медлэгийн сан</h1>
         <p className="text-muted-foreground">
-          ÐÑÑƒÑƒÐ»Ñ‚ Ò¯Ò¯ÑÐ³ÑÑ…Ð´ÑÑ Ð°ÑˆÐ¸Ð³Ð»Ð°Ñ… Ð¼Ð°Ñ‚ÐµÑ€Ð¸Ð°Ð», Ð½Ð¾Ð¼, Ñ„Ð°Ð¹Ð»ÑƒÑƒÐ´.
+          Асуулт үүсгэхдээ ашиглах материал, ном, файлууд.
         </p>
       </div>
       <SourcesUploadCard

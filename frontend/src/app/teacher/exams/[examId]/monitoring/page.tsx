@@ -26,7 +26,7 @@ export default function ExamMonitoringPage({
     return (
       <div className="flex min-h-[50vh] items-center justify-center gap-3 text-sm text-muted-foreground">
         <Spinner />
-        Ð¥ÑÐ½Ð°Ð»Ñ‚Ñ‹Ð½ Ñ…ÑƒÑƒÐ´ÑÑ‹Ð³ Ð°Ñ‡Ð°Ð°Ð»Ð»Ð°Ð¶ Ð±Ð°Ð¹Ð½Ð°...
+        Хяналтын хуудсыг ачааллаж байна...
       </div>
     );
   }
@@ -34,10 +34,10 @@ export default function ExamMonitoringPage({
   if (error || !exam) {
     return (
       <div className="py-12 text-center">
-        <h1 className="text-2xl font-bold">ÐÐ»Ð´Ð°Ð° Ð³Ð°Ñ€Ð»Ð°Ð°</h1>
+        <h1 className="text-2xl font-bold">Алдаа гарлаа</h1>
         <p className="mt-2 text-sm text-muted-foreground">{error}</p>
         <Button className="mt-4" onClick={() => router.back()}>
-          Ð‘ÑƒÑ†Ð°Ñ…
+          Буцах
         </Button>
       </div>
     );
@@ -49,11 +49,11 @@ export default function ExamMonitoringPage({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Ð¨Ð°Ð»Ð³Ð°Ð»Ñ‚Ñ‹Ð½ Ñ…ÑÐ½Ð°Ð»Ñ‚</h1>
+          <h1 className="text-2xl font-bold">Шалгалтын хяналт</h1>
           <p className="text-muted-foreground">{exam.title}</p>
         </div>
         <Button variant="outline" onClick={() => router.back()}>
-          Ð¨Ð°Ð»Ð³Ð°Ð»Ñ‚ÑƒÑƒÐ´ Ñ€ÑƒÑƒ Ð±ÑƒÑ†Ð°Ñ…
+          Шалгалтууд руу буцах
         </Button>
       </div>
 

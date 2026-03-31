@@ -50,7 +50,7 @@ export function QuestionBankFiltersCard({
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 className="pl-10"
-                placeholder="ÐÑÑƒÑƒÐ»Ñ‚ Ñ…Ð°Ð¹Ñ…..."
+                placeholder="Асуулт хайх..."
                 value={searchQuery}
                 onChange={(event) => onSearchQueryChange(event.target.value)}
               />
@@ -62,10 +62,10 @@ export function QuestionBankFiltersCard({
             onValueChange={onSelectedCategoryFilterChange}
           >
             <SelectTrigger className="w-full md:w-56">
-              <SelectValue placeholder="ÐÐ½Ð³Ð¸Ð»Ð°Ð» ÑÐ¾Ð½Ð³Ð¾Ñ…" />
+              <SelectValue placeholder="Ангилал сонгох" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Ð‘Ò¯Ñ… Ð°Ð½Ð³Ð¸Ð»Ð°Ð»</SelectItem>
+              <SelectItem value="all">Бүх ангилал</SelectItem>
               {questionBank.map((category) => (
                 <SelectItem key={category.id} value={category.id}>
                   {category.name}
@@ -76,22 +76,22 @@ export function QuestionBankFiltersCard({
 
           <Select value={selectedDifficulty} onValueChange={onSelectedDifficultyChange}>
             <SelectTrigger className="w-full md:w-48">
-              <SelectValue placeholder="Ð¢Ò¯Ð²ÑˆÐ¸Ð½ ÑÐ¾Ð½Ð³Ð¾Ñ…" />
+              <SelectValue placeholder="Түвшин сонгох" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Ð‘Ò¯Ñ… Ñ‚Ò¯Ð²ÑˆÐ¸Ð½</SelectItem>
-              <SelectItem value="easy">Ð¥Ó©Ð½Ð³Ó©Ð½</SelectItem>
-              <SelectItem value="standard">Ð”ÑƒÐ½Ð´</SelectItem>
-              <SelectItem value="hard">Ð¥ÑÑ†Ò¯Ò¯</SelectItem>
+              <SelectItem value="all">Бүх түвшин</SelectItem>
+              <SelectItem value="easy">Хөнгөн</SelectItem>
+              <SelectItem value="standard">Дунд</SelectItem>
+              <SelectItem value="hard">Хэцүү</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className="flex flex-col gap-3 border-t pt-4 md:flex-row md:items-end">
           <div className="flex-1 space-y-2">
-            <Label>Ð¨Ð¸Ð½Ñ Ð°Ð½Ð³Ð¸Ð»Ð°Ð»</Label>
+            <Label>Шинэ ангилал</Label>
             <Input
-              placeholder="Ð–Ð¸ÑˆÑÑ: ÐœÐ°Ñ‚ÐµÐ¼Ð°Ñ‚Ð¸Ðº"
+              placeholder="Жишээ: Математик"
               value={newCategoryName}
               onChange={(event) => onNewCategoryNameChange(event.target.value)}
             />

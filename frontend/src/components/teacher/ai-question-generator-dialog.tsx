@@ -115,10 +115,10 @@ export function AIQuestionGeneratorDialog(props: AIQuestionGeneratorDialogProps)
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>AI Ð°ÑˆÐ¸Ð³Ð»Ð°Ð½ Ð°ÑÑƒÑƒÐ»Ñ‚ Ò¯Ò¯ÑÐ³ÑÑ…</DialogTitle>
+          <DialogTitle>AI ашиглан асуулт үүсгэх</DialogTitle>
           <DialogDescription>
-            ÐœÐµÐ´Ð»ÑÐ³Ð¸Ð¹Ð½ ÑÐ°Ð½Ð³Ð¸Ð¹Ð½ Ñ„Ð°Ð¹Ð»ÑƒÑƒÐ´ ÑÑÐ²ÑÐ» ÑˆÐ¸Ð½Ñ Ñ„Ð°Ð¹Ð» Ð´ÑÑÑ€ Ñ‚ÑƒÐ»Ð³ÑƒÑƒÑ€Ð»Ð°Ð½ Ð°ÑÑƒÑƒÐ»Ñ‚
-            Ò¯Ò¯ÑÐ³ÑÐ½Ñ.
+            Медлэгийн сангийн файлууд эсвэл шинэ файл дээр тулгуурлан асуулт
+            үүсгэнэ.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-6 py-4">
@@ -160,15 +160,15 @@ export function AIQuestionGeneratorDialog(props: AIQuestionGeneratorDialogProps)
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Ð‘Ð¾Ð»Ð¸Ñ…
+            Болих
           </Button>
           <Button
             onClick={submit}
             disabled={isGenerating || !hasSource || totalQuestions === 0}
           >
             {isGenerating
-              ? "Ò®Ò¯ÑÐ³ÑÐ¶ Ð±Ð°Ð¹Ð½Ð°..."
-              : `${finalQuestionCount} Ð°ÑÑƒÑƒÐ»Ñ‚ Ò¯Ò¯ÑÐ³ÑÑ…`}
+              ? "Үүсгэж байна..."
+              : `${finalQuestionCount} асуулт үүсгэх`}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -40,14 +40,14 @@ export default function QuestionBankPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">ÐÑÑƒÑƒÐ»Ñ‚Ñ‹Ð½ ÑÐ°Ð½</h1>
+          <h1 className="text-2xl font-bold">Асуултын сан</h1>
           <p className="text-muted-foreground">
-            ÐÐ½Ð³Ð¸Ð»Ð°Ð», ÑÑÐ´Ð²ÑÑÑ€ Ð·Ð¾Ñ…Ð¸Ð¾Ð½ Ð±Ð°Ð¹Ð³ÑƒÑƒÐ»ÑÐ°Ð½ Ð°ÑÑƒÑƒÐ»Ñ‚ÑƒÑƒÐ´.
+            Ангилал, сэдвээр зохион байгуулсан асуултууд.
           </p>
         </div>
         <Button onClick={() => builder.setShowBuilder(!builder.showBuilder)}>
           <Plus className="mr-2 h-4 w-4" />
-          Ð¨Ð¸Ð½Ñ Ð°ÑÑƒÑƒÐ»Ñ‚ÑƒÑƒÐ´ Ò¯Ò¯ÑÐ³ÑÑ…
+          Шинэ асуултууд үүсгэх
         </Button>
       </div>
 

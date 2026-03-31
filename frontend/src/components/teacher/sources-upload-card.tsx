@@ -36,26 +36,26 @@ export function SourcesUploadCard({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Upload className="h-5 w-5" />
-          Ð¨Ð¸Ð½Ñ Ñ„Ð°Ð¹Ð» Ð½ÑÐ¼ÑÑ…
+          Шинэ файл нэмэх
         </CardTitle>
         <CardDescription>
-          PDF, Word Ð·ÑÑ€ÑÐ³ Ñ„Ð°Ð¹Ð»ÑƒÑƒÐ´Ñ‹Ð³ Ñ…Ð°Ð´Ð³Ð°Ð»Ð¶, Ð´Ð°Ñ€Ð°Ð° Ð½ÑŒ Ð°ÑÑƒÑƒÐ»Ñ‚ Ò¯Ò¯ÑÐ³ÑÑ…Ð´ÑÑ
-          Ð°ÑˆÐ¸Ð³Ð»Ð°Ð½Ð°.
+          PDF, Word зэрэг файлуудыг хадгалж, дараа нь асуулт үүсгэхдээ
+          ашиглана.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="file-name">Ð¤Ð°Ð¹Ð»Ñ‹Ð½ Ð½ÑÑ€</Label>
+            <Label htmlFor="file-name">Файлын нэр</Label>
             <Input
               id="file-name"
-              placeholder="Ð–Ð¸ÑˆÑÑ: 7-Ñ€ Ð°Ð½Ð³Ð¸Ð¹Ð½ Ð°Ð»Ð³ÐµÐ±Ñ€Ñ‹Ð½ Ñ‚Ð¾Ð¼ÑŒÑ‘Ð¾"
+              placeholder="Жишээ: 7-р ангийн алгебрын томьёо"
               value={newFileName}
               onChange={(event) => onFileNameChange(event.target.value)}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="file-upload">Ð¤Ð°Ð¹Ð» ÑÐ¾Ð½Ð³Ð¾Ñ…</Label>
+            <Label htmlFor="file-upload">Файл сонгох</Label>
             <Input
               id="file-upload"
               type="file"
@@ -82,7 +82,7 @@ export function SourcesUploadCard({
           disabled={!selectedFile || !newFileName.trim() || isUploading}
           className="w-full md:w-auto"
         >
-          {isUploading ? "Ð¥ÑƒÑƒÐ»Ð¶ Ð±Ð°Ð¹Ð½Ð°..." : "Ð¤Ð°Ð¹Ð» Ñ…ÑƒÑƒÐ»Ð°Ñ…"}
+          {isUploading ? "Хуулж байна..." : "Файл хуулах"}
         </Button>
       </CardContent>
     </Card>

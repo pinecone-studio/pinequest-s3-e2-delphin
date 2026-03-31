@@ -21,7 +21,7 @@ export function AIQuestionUploadDropzone({
 }) {
   return (
     <div className="space-y-2">
-      <Label>Ð­ÑÐ²ÑÐ» ÑˆÐ¸Ð½Ñ Ñ„Ð°Ð¹Ð» Ð½ÑÐ¼ÑÑ…</Label>
+      <Label>Эсвэл шинэ файл нэмэх</Label>
       <div
         className={
           isDragging
@@ -34,11 +34,11 @@ export function AIQuestionUploadDropzone({
         onDrop={onDrop}
       >
         <p className="mb-2 text-sm text-muted-foreground">
-          PDF Ñ„Ð°Ð¹Ð»Ñ‹Ð³ ÑÐ½Ð´ Ñ‡Ð¸Ñ€Ð¶ Ð¾Ñ€ÑƒÑƒÐ»Ð½Ð° ÑƒÑƒ
+          PDF файлыг энд чирж оруулна уу
         </p>
         <label htmlFor="ai-source-files">
           <Button variant="outline" asChild>
-            <span>Ð¤Ð°Ð¹Ð» ÑÐ¾Ð½Ð³Ð¾Ñ…</span>
+            <span>Файл сонгох</span>
           </Button>
         </label>
         <input

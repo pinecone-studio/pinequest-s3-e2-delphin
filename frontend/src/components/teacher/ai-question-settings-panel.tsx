@@ -70,20 +70,20 @@ export function AIQuestionSettingsPanel({
     <>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label>ÐÑÑƒÑƒÐ»Ñ‚Ñ‹Ð½ Ñ‚Ó©Ñ€Ó©Ð»</Label>
+          <Label>Асуултын төрөл</Label>
           <div className="space-y-2">
             <QuestionTypeCounter
-              label="Ð¡Ð¾Ð½Ð³Ð¾Ñ… Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ñ‚Ñ‚Ð°Ð¹"
+              label="Сонгох хариулттай"
               value={aiMCCount}
               onChange={onAiMCCountChange}
             />
             <QuestionTypeCounter
-              label="Ò®Ð½ÑÐ½/Ð¥ÑƒÐ´Ð°Ð»"
+              label="Үнэн/Худал"
               value={aiTFCount}
               onChange={onAiTFCountChange}
             />
             <QuestionTypeCounter
-              label="Ð‘Ð¾Ð³Ð¸Ð½Ð¾ Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ñ‚"
+              label="Богино хариулт"
               value={aiShortCount}
               onChange={onAiShortCountChange}
             />
@@ -91,12 +91,12 @@ export function AIQuestionSettingsPanel({
         </div>
 
         <div className="space-y-2">
-          <Label>ÐÑÑƒÑƒÐ»Ñ‚Ñ‹Ð½ Ñ‚Ð¾Ð¾</Label>
+          <Label>Асуултын тоо</Label>
           <div className="flex h-9 items-center rounded-md border bg-muted px-3">
             {totalQuestions}
           </div>
 
-          <Label>Ð¥ÑƒÐ²Ð¸Ð»Ð±Ð°Ñ€Ñ‹Ð½ Ñ‚Ð¾Ð¾</Label>
+          <Label>Хувилбарын тоо</Label>
           <Select
             value={variants.toString()}
             onValueChange={(value) => onVariantsChange(parseInt(value))}
@@ -105,28 +105,28 @@ export function AIQuestionSettingsPanel({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1">1 Ñ…ÑƒÐ²Ð¸Ð»Ð±Ð°Ñ€</SelectItem>
-              <SelectItem value="2">2 Ñ…ÑƒÐ²Ð¸Ð»Ð±Ð°Ñ€</SelectItem>
-              <SelectItem value="3">3 Ñ…ÑƒÐ²Ð¸Ð»Ð±Ð°Ñ€</SelectItem>
-              <SelectItem value="4">4 Ñ…ÑƒÐ²Ð¸Ð»Ð±Ð°Ñ€</SelectItem>
+              <SelectItem value="1">1 хувилбар</SelectItem>
+              <SelectItem value="2">2 хувилбар</SelectItem>
+              <SelectItem value="3">3 хувилбар</SelectItem>
+              <SelectItem value="4">4 хувилбар</SelectItem>
             </SelectContent>
           </Select>
 
-          <Label>Ð¢Ò¯Ð²ÑˆÐ¸Ð½</Label>
+          <Label>Түвшин</Label>
           <Select value={difficulty} onValueChange={onDifficultyChange}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="easy">Ð¥Ó©Ð½Ð³Ó©Ð½</SelectItem>
-              <SelectItem value="standard">Ð”ÑƒÐ½Ð´</SelectItem>
-              <SelectItem value="hard">Ð¥ÑÑ†Ò¯Ò¯</SelectItem>
+              <SelectItem value="easy">Хөнгөн</SelectItem>
+              <SelectItem value="standard">Дунд</SelectItem>
+              <SelectItem value="hard">Хэцүү</SelectItem>
             </SelectContent>
           </Select>
 
-          <Label>ÐÐ½Ð³Ð¸Ð»Ð°Ð»</Label>
+          <Label>Ангилал</Label>
           <Input
-            placeholder="Ð–Ð¸ÑˆÑÑ: ÐœÐ°Ñ‚ÐµÐ¼Ð°Ñ‚Ð¸Ðº"
+            placeholder="Жишээ: Математик"
             value={category}
             onChange={(event) => onCategoryChange(event.target.value)}
           />
@@ -135,9 +135,9 @@ export function AIQuestionSettingsPanel({
 
       <div className="rounded-lg bg-muted p-4">
         <div className="flex items-center justify-between text-sm">
-          <span>ÐÐ¸Ð¹Ñ‚ Ð°ÑÑƒÑƒÐ»Ñ‚:</span>
+          <span>Нийт асуулт:</span>
           <span className="font-medium">
-            {finalQuestionCount} ({totalQuestions} Ã— {variants} Ñ…ÑƒÐ²Ð¸Ð»Ð±Ð°Ñ€)
+            {finalQuestionCount} ({totalQuestions} × {variants} хувилбар)
           </span>
         </div>
       </div>

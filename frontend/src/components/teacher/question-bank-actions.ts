@@ -28,7 +28,7 @@ export async function createQuestionBankCategoryAction({
 }) {
   const trimmedName = name.trim();
   if (!trimmedName) {
-    toast({ title: "ÐÐ»Ð´Ð°Ð°", description: "ÐÐ½Ð³Ð¸Ð»Ð»Ñ‹Ð½ Ð½ÑÑ€ Ð¾Ñ€ÑƒÑƒÐ»Ð½Ð° ÑƒÑƒ.", variant: "destructive" });
+    toast({ title: "Алдаа", description: "Ангиллын нэр оруулна уу.", variant: "destructive" });
     return;
   }
 
@@ -45,13 +45,13 @@ export async function createQuestionBankCategoryAction({
     setNewCategoryName("");
     setBuilderNewCategoryName("");
     toast({
-      title: "ÐÐ¼Ð¶Ð¸Ð»Ñ‚Ñ‚Ð°Ð¹",
-      description: `"${createdCategory.name}" Ð°Ð½Ð³Ð¸Ð»Ð°Ð» Ò¯Ò¯ÑÐ»ÑÑ.`,
+      title: "Амжилттай",
+      description: `"${createdCategory.name}" ангилал үүслээ.`,
     });
   } catch (error) {
     toast({
-      title: "ÐÐ»Ð´Ð°Ð°",
-      description: error instanceof Error ? error.message : "ÐÐ½Ð³Ð¸Ð»Ð°Ð» Ò¯Ò¯ÑÐ³ÑÐ¶ Ñ‡Ð°Ð´ÑÐ°Ð½Ð³Ò¯Ð¹.",
+      title: "Алдаа",
+      description: error instanceof Error ? error.message : "Ангилал үүсгэж чадсангүй.",
       variant: "destructive",
     });
   } finally {
@@ -78,17 +78,17 @@ export async function saveQuestionBankQuestionSet({
 }) {
   const hasEmptyQuestion = builderQuestions.some((question) => !question.question.trim());
   if (!builderCategoryId) {
-    toast({ title: "ÐÐ»Ð´Ð°Ð°", description: "ÐÐ½Ð³Ð¸Ð»Ð°Ð» ÑÐ¾Ð½Ð³Ð¾Ð½Ð¾ ÑƒÑƒ.", variant: "destructive" });
+    toast({ title: "Алдаа", description: "Ангилал сонгоно уу.", variant: "destructive" });
     return;
   }
   if (!builderTopicName.trim()) {
-    toast({ title: "ÐÐ»Ð´Ð°Ð°", description: "Ð¡ÑÐ´Ð²Ð¸Ð¹Ð½ Ð½ÑÑ€ Ð¾Ñ€ÑƒÑƒÐ»Ð½Ð° ÑƒÑƒ.", variant: "destructive" });
+    toast({ title: "Алдаа", description: "Сэдвийн нэр оруулна уу.", variant: "destructive" });
     return;
   }
   if (builderQuestions.length === 0 || hasEmptyQuestion) {
     toast({
-      title: "ÐÐ»Ð´Ð°Ð°",
-      description: "Ð¥Ð°Ð¼Ð³Ð¸Ð¹Ð½ Ð±Ð°Ð³Ð°Ð´Ð°Ð° Ð½ÑÐ³ Ð±Ò¯Ñ€ÑÐ½ Ð°ÑÑƒÑƒÐ»Ñ‚ Ð¾Ñ€ÑƒÑƒÐ»Ð½Ð° ÑƒÑƒ.",
+      title: "Алдаа",
+      description: "Хамгийн багадаа нэг бүрэн асуулт оруулна уу.",
       variant: "destructive",
     });
     return;
@@ -105,14 +105,14 @@ export async function saveQuestionBankQuestionSet({
     setQuestionBank(await getQuestionBank());
     onComplete();
     toast({
-      title: "ÐÐ¼Ð¶Ð¸Ð»Ñ‚Ñ‚Ð°Ð¹",
-      description: "Ð¨Ð¸Ð½Ñ Ð°ÑÑƒÑƒÐ»Ñ‚ÑƒÑƒÐ´ Ð°ÑÑƒÑƒÐ»Ñ‚Ñ‹Ð½ ÑÐ°Ð½Ð´ Ñ…Ð°Ð´Ð³Ð°Ð»Ð°Ð³Ð´Ð»Ð°Ð°.",
+      title: "Амжилттай",
+      description: "Шинэ асуултууд асуултын санд хадгалагдлаа.",
     });
   } catch (error) {
     toast({
-      title: "ÐÐ»Ð´Ð°Ð°",
+      title: "Алдаа",
       description:
-        error instanceof Error ? error.message : "ÐÑÑƒÑƒÐ»Ñ‚ÑƒÑƒÐ´Ñ‹Ð³ Ñ…Ð°Ð´Ð³Ð°Ð»Ð¶ Ñ‡Ð°Ð´ÑÐ°Ð½Ð³Ò¯Ð¹.",
+        error instanceof Error ? error.message : "Асуултуудыг хадгалж чадсангүй.",
       variant: "destructive",
     });
   } finally {

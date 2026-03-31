@@ -7,7 +7,7 @@ import type { TeacherExam } from "@/lib/teacher-exams";
 
 type ReviewMode = "completed" | "live";
 
-const ALL_CLASSES_LABEL = "Ð‘Ò¯Ñ… Ð°Ð½Ð³Ð¸";
+const ALL_CLASSES_LABEL = "Бүх анги";
 
 export function TeacherExamScheduleList({
   actionLabelOverride,
@@ -22,7 +22,7 @@ export function TeacherExamScheduleList({
     return (
       <Link href={`/teacher/exams/${exam.id}/edit`}>
         <Button variant="outline" size="sm">
-          Ð—Ð°ÑÐ²Ð°Ñ€Ñ‹Ð³ Ò¯Ñ€Ð³ÑÐ»Ð¶Ð»Ò¯Ò¯Ð»ÑÑ…
+          Засварыг үргэлжлүүлэх
         </Button>
       </Link>
     );
@@ -47,14 +47,14 @@ export function TeacherExamScheduleList({
                 <Button asChild size="sm">
                   <Link href={`/teacher/classes/${schedule.classId}/exam/${exam.id}`}>
                     {reviewMode === "live"
-                      ? (actionLabelOverride ?? "Ð¯Ð²Ñ†Ñ‹Ð³ Ñ…Ð°Ñ€Ð°Ñ…")
-                      : (actionLabelOverride ?? "Ò®Ñ€ Ð´Ò¯Ð½Ð³ Ñ…Ð°Ñ€Ð°Ñ…")}
+                      ? (actionLabelOverride ?? "Явцыг харах")
+                      : (actionLabelOverride ?? "Үр дүнг харах")}
                   </Link>
                 </Button>
                 {reviewMode === "live" && (
                   <Button asChild variant="outline" size="sm">
                     <Link href={`/teacher/exams/${exam.id}/monitoring`}>
-                      Ð¥ÑÐ½Ð°Ð»Ñ‚Ñ‹Ð½ ÑÐ°Ð¼Ð±Ð°Ñ€
+                      Хяналтын самбар
                     </Link>
                   </Button>
                 )}
@@ -83,7 +83,7 @@ export function TeacherExamScheduleList({
         <div className="flex gap-2 pt-2">
           <Link href={`/teacher/exams/${exam.id}/edit`}>
             <Button variant="outline" size="sm">
-              {actionLabelOverride ?? "Ð—Ð°ÑÐ°Ñ…"}
+              {actionLabelOverride ?? "Засах"}
             </Button>
           </Link>
         </div>

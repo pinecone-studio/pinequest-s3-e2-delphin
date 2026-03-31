@@ -27,21 +27,21 @@ export function SourcesFileListCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Ð¥ÑƒÑƒÐ»ÑÐ°Ð½ Ñ„Ð°Ð¹Ð»ÑƒÑƒÐ´ ({files.length})</CardTitle>
+        <CardTitle>Хуулсан файлууд ({files.length})</CardTitle>
         <CardDescription>
-          Ð­Ð´Ð³ÑÑÑ€ Ñ„Ð°Ð¹Ð»ÑƒÑƒÐ´ ÐÑÑƒÑƒÐ»Ñ‚Ñ‹Ð½ ÑÐ°Ð½ Ð´Ð°Ñ…ÑŒ AI Ò¯Ò¯ÑÐ³ÑÐ»Ñ‚ÑÐ´ ÑˆÑƒÑƒÐ´ Ñ…Ð°Ñ€Ð°Ð³Ð´Ð°Ð½Ð°.
+          Эдгээр файлууд Асуултын сан дахь AI үүсгэлтэд шууд харагдана.
         </CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading ? (
           <div className="flex items-center gap-2 py-8 text-sm text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
-            Ð¤Ð°Ð¹Ð»ÑƒÑƒÐ´Ñ‹Ð³ Ð°Ñ‡Ð°Ð°Ð»Ð¶ Ð±Ð°Ð¹Ð½Ð°...
+            Файлуудыг ачаалж байна...
           </div>
         ) : files.length === 0 ? (
           <div className="py-8 text-center text-muted-foreground">
             <FileText className="mx-auto mb-4 h-12 w-12 opacity-50" />
-            <p>ÐžÐ´Ð¾Ð¾Ð³Ð¾Ð¾Ñ€ Ñ„Ð°Ð¹Ð» Ð°Ð»Ð³Ð° Ð±Ð°Ð¹Ð½Ð°.</p>
+            <p>Одоогоор файл алга байна.</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -55,7 +55,7 @@ export function SourcesFileListCard({
                   <div>
                     <p className="font-medium">{file.originalName}</p>
                     <p className="text-sm text-muted-foreground">
-                      {formatFileSize(file.size)} â€¢ Ð¥ÑƒÑƒÐ»ÑÐ°Ð½:{" "}
+                      {formatFileSize(file.size)} • Хуулсан:{" "}
                       {new Date(file.uploadedAt).toLocaleDateString()}
                     </p>
                   </div>

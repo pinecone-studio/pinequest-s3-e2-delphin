@@ -36,7 +36,7 @@ export function LocalSourceFileList({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="text-xs">Ð­Ñ…Ð»ÑÑ… Ñ…ÑƒÑƒÐ´Ð°Ñ</Label>
+              <Label className="text-xs">Эхлэх хуудас</Label>
               <Input
                 type="number"
                 min="1"
@@ -52,7 +52,7 @@ export function LocalSourceFileList({
               />
             </div>
             <div>
-              <Label className="text-xs">Ð”ÑƒÑƒÑÐ°Ñ… Ñ…ÑƒÑƒÐ´Ð°Ñ</Label>
+              <Label className="text-xs">Дуусах хуудас</Label>
               <Input
                 type="number"
                 min="1"

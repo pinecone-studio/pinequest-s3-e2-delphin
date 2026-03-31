@@ -33,11 +33,11 @@ export function useQuestionBankData({
       } catch (error) {
         if (!isMounted) return;
         toast({
-          title: "ÐÐ»Ð´Ð°Ð°",
+          title: "Алдаа",
           description:
             error instanceof Error
               ? error.message
-              : "ÐÑÑƒÑƒÐ»Ñ‚Ñ‹Ð½ ÑÐ°Ð½Ð³Ð¸Ð¹Ð½ Ð¼ÑÐ´ÑÑÐ»Ð»Ð¸Ð¹Ð³ Ð°Ñ‡Ð°Ð°Ð»Ð¶ Ñ‡Ð°Ð´ÑÐ°Ð½Ð³Ò¯Ð¹.",
+              : "Асуултын сангийн мэдээллийг ачаалж чадсангүй.",
           variant: "destructive",
         });
       } finally {

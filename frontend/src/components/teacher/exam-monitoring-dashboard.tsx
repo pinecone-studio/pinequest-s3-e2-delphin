@@ -32,31 +32,31 @@ export function ExamMonitoringDashboard({
   return (
     <>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-        <MonitoringStat icon={<Users className="h-4 w-4 text-muted-foreground" />} label="ÃÂÃÂ¸ÃÂ¹Ã‘â€š Ã‘ÂÃ‘Æ’Ã‘â‚¬ÃÂ°ÃÂ³Ã‘â€¡" value={totalStudents} />
-        <MonitoringStat icon={<CheckCircle className="h-4 w-4 text-green-600" />} label="ÃÂÃ‘ÂÃÂ²Ã‘â€šÃ‘ÂÃ‘â‚¬Ã‘ÂÃ‘ÂÃÂ½" value={joinedStudents} />
-        <MonitoringStat icon={<Eye className="h-4 w-4 text-blue-600" />} label="ÃÂ¯ÃÂ²ÃÂ°ÃÂ³ÃÂ´ÃÂ°ÃÂ¶ ÃÂ±ÃÂ°ÃÂ¹ÃÂ½ÃÂ°" value={inProgressStudents} />
-        <MonitoringStat icon={<Clock className="h-4 w-4 text-orange-600" />} label="Ã’Â®ÃÂ»ÃÂ´Ã‘ÂÃ‘ÂÃÂ½ Ã‘â€¦Ã‘Æ’ÃÂ³ÃÂ°Ã‘â€ ÃÂ°ÃÂ°" value={timeRemaining} />
-        <MonitoringStat icon={<AlertTriangle className="h-4 w-4 text-red-600" />} label="ÃÂ¡Ã‘ÂÃÂ¶ÃÂ¸ÃÂ³Ã‘â€šÃ‘ÂÃÂ¹ Ã’Â¯ÃÂ¹ÃÂ»ÃÂ´Ã‘ÂÃÂ»" value={suspiciousActivities} />
+        <MonitoringStat icon={<Users className="h-4 w-4 text-muted-foreground" />} label="Нийт сурагч" value={totalStudents} />
+        <MonitoringStat icon={<CheckCircle className="h-4 w-4 text-green-600" />} label="Нэвтэрсэн" value={joinedStudents} />
+        <MonitoringStat icon={<Eye className="h-4 w-4 text-blue-600" />} label="Явагдаж байна" value={inProgressStudents} />
+        <MonitoringStat icon={<Clock className="h-4 w-4 text-orange-600" />} label="Үлдсэн хугацаа" value={timeRemaining} />
+        <MonitoringStat icon={<AlertTriangle className="h-4 w-4 text-red-600" />} label="Сэжигтэй үйлдэл" value={suspiciousActivities} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><QrCode className="h-5 w-5" />ÃÂ¨ÃÂ°ÃÂ»ÃÂ³ÃÂ°ÃÂ»Ã‘â€šÃÂ°ÃÂ½ÃÂ´ ÃÂ½Ã‘ÂÃÂ²Ã‘â€šÃ‘â‚¬Ã‘ÂÃ‘â€¦</CardTitle>
-            <CardDescription>ÃÂ¡Ã‘Æ’Ã‘â‚¬ÃÂ°ÃÂ³Ã‘â€¡ÃÂ¸ÃÂ´ Ã‘ÂÃÂ½Ã‘Â QR ÃÂºÃÂ¾ÃÂ´Ã‘â€¹ÃÂ³ Ã‘Æ’ÃÂ½Ã‘Ë†Ã‘Æ’Ã‘Æ’ÃÂ»ÃÂ¶ Ã‘Ë†ÃÂ°ÃÂ»ÃÂ³ÃÂ°ÃÂ»Ã‘â€šÃÂ°ÃÂ½ÃÂ´ ÃÂ½Ã‘ÂÃÂ²Ã‘â€šÃ‘ÂÃ‘â‚¬ÃÂ½Ã‘Â</CardDescription>
+            <CardTitle className="flex items-center gap-2"><QrCode className="h-5 w-5" />Шалгалтанд нэвтрэх</CardTitle>
+            <CardDescription>Сурагчид энэ QR кодыг уншуулж шалгалтанд нэвтэрнэ</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex justify-center">
               <Image src={qrCodeUrl} alt="Exam QR Code" width={192} height={192} className="rounded-lg border" unoptimized />
             </div>
-            <p className="mt-4 text-center text-xs text-muted-foreground">ÃÂ­Ã‘ÂÃÂ²Ã‘ÂÃÂ» ÃÂ»ÃÂ¸ÃÂ½ÃÂº: {examUrl}</p>
+            <p className="mt-4 text-center text-xs text-muted-foreground">Эсвэл линк: {examUrl}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>ÃÂÃ‘ÂÃ‘Æ’Ã‘Æ’ÃÂ»Ã‘â€šÃ‘â€¹ÃÂ½ Ã‘ÂÃ‘â€šÃÂ°Ã‘â€šÃÂ¸Ã‘ÂÃ‘â€šÃÂ¸ÃÂº</CardTitle>
-            <CardDescription>Ãâ€˜ÃÂ¾ÃÂ´ÃÂ¸Ã‘â€š Ã‘â€ ÃÂ°ÃÂ³ ÃÂ´ÃÂ°Ã‘â€¦Ã‘Å’ Ã‘â€¦ÃÂ°Ã‘â‚¬ÃÂ¸Ã‘Æ’ÃÂ»Ã‘â€šÃ‘â€¹ÃÂ½ Ã‘ÂÃ‘â€šÃÂ°Ã‘â€šÃÂ¸Ã‘ÂÃ‘â€šÃÂ¸ÃÂº</CardDescription>
+            <CardTitle>Асуултын статистик</CardTitle>
+            <CardDescription>Бодит цаг дахь хариултын статистик</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -66,7 +66,7 @@ export function ExamMonitoringDashboard({
 
                 return (
                   <div key={question.id} className="flex items-center justify-between">
-                    <span className="text-sm">ÃÂÃ‘ÂÃ‘Æ’Ã‘Æ’ÃÂ»Ã‘â€š {index + 1}</span>
+                    <span className="text-sm">Асуулт {index + 1}</span>
                     <div className="flex items-center gap-2">
                       <div className="h-2 w-20 rounded-full bg-gray-200">
                         <div className="h-2 rounded-full bg-green-600" style={{ width: `${progress}%` }} />
@@ -82,8 +82,8 @@ export function ExamMonitoringDashboard({
 
         <Card>
           <CardHeader>
-            <CardTitle>ÃÂ¡Ã‘Æ’Ã‘â‚¬ÃÂ°ÃÂ³Ã‘â€¡ÃÂ¸ÃÂ´ ({attempts.length})</CardTitle>
-            <CardDescription>Ãâ€˜ÃÂ¾ÃÂ´ÃÂ¸Ã‘â€š Ã‘â€ ÃÂ°ÃÂ³ ÃÂ´ÃÂ°Ã‘â€¦Ã‘Å’ Ã‘ÂÃ‘Æ’Ã‘â‚¬ÃÂ°ÃÂ³Ã‘â€¡ÃÂ´Ã‘â€¹ÃÂ½ Ã‘â€šÃ“Â©ÃÂ»Ã“Â©ÃÂ²</CardDescription>
+            <CardTitle>Сурагчид ({attempts.length})</CardTitle>
+            <CardDescription>Бодит цаг дахь сурагчдын төлөв</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="max-h-96 space-y-3 overflow-y-auto">
@@ -92,7 +92,7 @@ export function ExamMonitoringDashboard({
                   <div>
                     <p className="font-medium">{attempt.studentName}</p>
                     <p className="text-sm text-muted-foreground">
-                      {attempt.classId} Ã¢â‚¬Â¢ ÃÂÃ‘ÂÃ‘Æ’Ã‘Æ’ÃÂ»Ã‘â€š {attempt.currentQuestion}/{exam.questions.length}
+                      {attempt.classId} • Асуулт {attempt.currentQuestion}/{exam.questions.length}
                     </p>
                   </div>
                   <AttemptStatusBadge status={attempt.status} />
@@ -107,7 +107,7 @@ export function ExamMonitoringDashboard({
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            {suspiciousActivities} Ã‘ÂÃ‘Æ’Ã‘â‚¬ÃÂ°ÃÂ³Ã‘â€¡ Ã‘ÂÃ‘ÂÃÂ¶ÃÂ¸ÃÂ³Ã‘â€šÃ‘ÂÃÂ¹ Ã’Â¯ÃÂ¹ÃÂ»ÃÂ´Ã‘ÂÃÂ» Ã‘â€¦ÃÂ¸ÃÂ¹Ã‘ÂÃ‘ÂÃÂ½ (Ã‘â€šÃÂ°ÃÂ± Ã‘ÂÃ‘ÂÃÂ²Ã‘ÂÃÂ» ÃÂ°ÃÂ¿ÃÂ¿ Ã‘ÂÃÂ¾ÃÂ»Ã‘Å’Ã‘ÂÃÂ¾ÃÂ½).
+            {suspiciousActivities} сурагч сэжигтэй үйлдэл хийсэн (таб эсвэл апп солисон).
           </AlertDescription>
         </Alert>
       )}
@@ -135,18 +135,18 @@ function MonitoringStat({
 
 function AttemptStatusBadge({ status }: { status: StudentAttempt["status"] }) {
   if (status === "joined") {
-    return <Badge variant="secondary" className="bg-blue-100 text-blue-800">ÃÂÃ‘ÂÃÂ²Ã‘â€šÃ‘ÂÃ‘â‚¬Ã‘ÂÃ‘ÂÃÂ½</Badge>;
+    return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Нэвтэрсэн</Badge>;
   }
   if (status === "in_progress") {
-    return <Badge variant="default" className="bg-green-100 text-green-800">ÃÂ¯ÃÂ²ÃÂ°ÃÂ³ÃÂ´ÃÂ°ÃÂ¶ ÃÂ±ÃÂ°ÃÂ¹ÃÂ½ÃÂ°</Badge>;
+    return <Badge variant="default" className="bg-green-100 text-green-800">Явагдаж байна</Badge>;
   }
   if (status === "submitted") {
-    return <Badge variant="secondary" className="bg-gray-100 text-gray-800">Ãâ€Ã‘Æ’Ã‘Æ’Ã‘ÂÃ‘ÂÃÂ°ÃÂ½</Badge>;
+    return <Badge variant="secondary" className="bg-gray-100 text-gray-800">Дууссан</Badge>;
   }
   if (status === "tab_switched") {
-    return <Badge variant="destructive">ÃÂ¢ÃÂ°ÃÂ± Ã‘ÂÃÂ¾ÃÂ»Ã‘Å’Ã‘ÂÃÂ¾ÃÂ½</Badge>;
+    return <Badge variant="destructive">Таб солисон</Badge>;
   }
-  return <Badge variant="destructive">ÃÂÃÂ¿ÃÂ¿ Ã‘ÂÃÂ¾ÃÂ»Ã‘Å’Ã‘ÂÃÂ¾ÃÂ½</Badge>;
+  return <Badge variant="destructive">Апп солисон</Badge>;
 }
 
 function getQuestionProgress(index: number) {

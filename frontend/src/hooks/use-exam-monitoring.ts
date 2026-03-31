@@ -65,7 +65,7 @@ export function useExamMonitoring(examId: string) {
         setError(
           loadError instanceof Error
             ? loadError.message
-            : "Ð¨Ð°Ð»Ð³Ð°Ð»Ñ‚Ñ‹Ð³ Ð°Ñ‡Ð°Ð°Ð»Ð¶ Ñ‡Ð°Ð´ÑÐ°Ð½Ð³Ò¯Ð¹",
+            : "Шалгалтыг ачаалж чадсангүй",
         );
       } finally {
         setIsLoading(false);
@@ -133,7 +133,7 @@ function createMockAttempts(): StudentAttempt[] {
     {
       id: "1",
       studentId: "s1",
-      studentName: "Ð‘Ð°Ñ‚-Ð­Ñ€Ð´ÑÐ½Ñ",
+      studentName: "Бат-Эрдэнэ",
       classId: "10A",
       status: "in_progress",
       currentQuestion: 3,
@@ -143,7 +143,7 @@ function createMockAttempts(): StudentAttempt[] {
     {
       id: "2",
       studentId: "s2",
-      studentName: "Ð¡Ð°Ñ€Ð°Ð°",
+      studentName: "Сараа",
       classId: "10A",
       status: "tab_switched",
       currentQuestion: 5,
@@ -153,7 +153,7 @@ function createMockAttempts(): StudentAttempt[] {
     {
       id: "3",
       studentId: "s3",
-      studentName: "Ð”Ð¾Ñ€Ð¶",
+      studentName: "Дорж",
       classId: "10B",
       status: "submitted",
       currentQuestion: 10,

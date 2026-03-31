@@ -40,7 +40,7 @@ export async function generateQuestionBankAIQuestions({
 }) {
   const totalQuestions = payload.aiMCCount + payload.aiTFCount + payload.aiShortCount;
   if (totalQuestions === 0) {
-    toast({ title: "ÐÐ»Ð´Ð°Ð°", description: "ÐÑÑƒÑƒÐ»Ñ‚Ñ‹Ð½ Ñ‚Ð¾Ð¾ Ð¾Ñ€ÑƒÑƒÐ»Ð½Ð° ÑƒÑƒ.", variant: "destructive" });
+    toast({ title: "Алдаа", description: "Асуултын тоо оруулна уу.", variant: "destructive" });
     return;
   }
 
@@ -48,7 +48,7 @@ export async function generateQuestionBankAIQuestions({
     .map((id) => sourceFiles.find((file) => file.id === id))
     .filter((file): file is UploadRecord => Boolean(file));
   if (selectedUploads.length === 0 && payload.sourceFilesWithPages.length === 0) {
-    toast({ title: "ÐÐ»Ð´Ð°Ð°", description: "Ð­Ñ… ÑÑƒÑ€Ð²Ð°Ð»Ð¶ Ñ„Ð°Ð¹Ð» ÑÐ¾Ð½Ð³Ð¾Ð½Ð¾ ÑƒÑƒ.", variant: "destructive" });
+    toast({ title: "Алдаа", description: "Эх сурвалж файл сонгоно уу.", variant: "destructive" });
     return;
   }
 
@@ -73,22 +73,22 @@ export async function generateQuestionBankAIQuestions({
         category:
           payload.category ||
           questionBank.find((item) => item.id === builderCategoryId)?.name ||
-          "Ð•Ñ€Ó©Ð½Ñ…Ð¸Ð¹",
+          "Ерөнхий",
       },
-      fallbackMessage: "AI Ð°ÑÑƒÑƒÐ»Ñ‚ Ò¯Ò¯ÑÐ³ÑÑ…ÑÐ´ Ð°Ð»Ð´Ð°Ð° Ð³Ð°Ñ€Ð»Ð°Ð°.",
+      fallbackMessage: "AI асуулт үүсгэхэд алдаа гарлаа.",
     });
     setBuilderQuestions((current) => [...current, ...generatedQuestions.map(toBuilderQuestion)]);
     setBuilderDifficulty(payload.difficulty);
     onComplete();
     toast({
-      title: "ÐÐ¼Ð¶Ð¸Ð»Ñ‚Ñ‚Ð°Ð¹",
-      description: `${generatedQuestions.length} Ð°ÑÑƒÑƒÐ»Ñ‚ Ð½Ð¾Ð¾Ñ€Ð¾Ð³Ñ‚ Ð½ÑÐ¼ÑÐ³Ð´Ð»ÑÑ.`,
+      title: "Амжилттай",
+      description: `${generatedQuestions.length} асуулт ноорогт нэмэгдлээ.`,
     });
   } catch (error) {
     toast({
-      title: "ÐÐ»Ð´Ð°Ð°",
+      title: "Алдаа",
       description:
-        error instanceof Error ? error.message : "AI Ð°ÑÑƒÑƒÐ»Ñ‚ Ò¯Ò¯ÑÐ³ÑÑ…ÑÐ´ Ð°Ð»Ð´Ð°Ð° Ð³Ð°Ñ€Ð»Ð°Ð°.",
+        error instanceof Error ? error.message : "AI асуулт үүсгэхэд алдаа гарлаа.",
       variant: "destructive",
     });
   } finally {

@@ -19,11 +19,11 @@ export function TeacherDashboardSidePanels(props: { selectedClassId: string }) {
   }, [])
 
   return (
-    <div className="flex h-[724px] w-[445px] max-w-[445px] flex-col gap-5">
-      <section className="h-[382px] rounded-[32px] bg-[rgba(255,255,255,0.84)] px-6 pb-[15px] pt-6 shadow-[0_24px_48px_rgba(193,209,234,0.22)]">
+    <div className="flex h-[724px] min-w-0 w-full flex-col gap-4">
+      <section className="h-[382px] rounded-[32px] bg-[rgba(255,255,255,0.84)] px-5 pb-[15px] pt-6 shadow-[0_24px_48px_rgba(193,209,234,0.22)]">
         <h2 className="text-[20px] font-semibold leading-none text-[#515779]">Дүнгийн мэдээлэл</h2>
         <p className="mt-3 text-[16px] leading-none text-[#868db3]">Сурагчдын дундаж үнэлгээ.</p>
-        <div className="mt-5 flex h-[272px] w-[400px] items-start justify-center rounded-[24px] border border-[rgba(234,239,248,0.92)] bg-[linear-gradient(180deg,rgba(255,255,255,0.94)_0%,rgba(251,253,255,0.92)_100%)] px-0 pb-0 pt-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.85),0_10px_30px_rgba(211,224,245,0.14)]">
+        <div className="mt-5 flex h-[272px] w-full items-start justify-center rounded-[24px] border border-[rgba(234,239,248,0.92)] bg-[linear-gradient(180deg,rgba(255,255,255,0.94)_0%,rgba(251,253,255,0.92)_100%)] px-0 pb-0 pt-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.85),0_10px_30px_rgba(211,224,245,0.14)]">
           <AnalyticsChart chart={chart} />
         </div>
       </section>
@@ -55,8 +55,8 @@ export function TeacherDashboardSidePanels(props: { selectedClassId: string }) {
 function AnalyticsChart(props: { chart: ReturnType<typeof buildChartModel> }) {
   const { chart } = props
   return (
-    <div className="relative h-[272px] w-[400px]">
-      <svg viewBox="0 0 400 224" className="h-[224px] w-[400px]">
+    <div className="relative h-[272px] w-full">
+      <svg viewBox="0 0 400 224" className="h-[224px] w-full">
         {chart.axis.map((label, index) => <text key={label} x="18" y={22 + index * 27} fontSize="14" fill="#979fc0">{label}</text>)}
         {chart.badges.map((badge) => <g key={badge.id} transform={`translate(${badge.x},${badge.y})`}><rect width="68" height="28" rx="14" fill={badge.fill} /><circle cx="13" cy="14" r="3" fill={badge.dot} /><text x="23" y="19" fontSize="14" fill="#7e84b2" fontWeight="600">{badge.text}</text></g>)}
         {chart.series.map((item) => <path key={item.color} d={item.path} fill="none" stroke={item.color} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" filter={`url(#glow-${item.id})`} />)}

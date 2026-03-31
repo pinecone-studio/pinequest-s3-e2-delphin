@@ -12,44 +12,22 @@ import { TeacherDashboardSidePanels } from "@/components/teacher/teacher-dashboa
 export default function TeacherDashboard() {
   const [selectedClassId, setSelectedClassId] = useState("all")
   const [weekOffset, setWeekOffset] = useState(0)
-  const [now, setNow] = useState<Date | null>(null)
+  const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
-    const syncTimer = window.setTimeout(() => setNow(new Date()), 0)
     const timer = window.setInterval(() => setNow(new Date()), 60_000)
-    return () => {
-      window.clearTimeout(syncTimer)
-      window.clearInterval(timer)
-    }
+    return () => window.clearInterval(timer)
   }, [])
 
   const metrics = useTeacherDashboardMetrics(selectedClassId)
-  const dashboardNow = now ?? new Date("2026-01-01T09:00:00")
-  const activeWeekDate = new Date(dashboardNow)
-  activeWeekDate.setDate(dashboardNow.getDate() + weekOffset * 7)
+  const activeWeekDate = new Date(now)
+  activeWeekDate.setDate(now.getDate() + weekOffset * 7)
 
   return (
-    <div className="space-y-6">
-      <TeacherDashboardHero
-        academicWeekLabel={now ? getAcademicWeekLabel(dashboardNow) : "--"}
-        classes={classes}
-        currentGreeting={now ? getGreetingLabel(dashboardNow) : "Сайн байна уу"}
-        headerDate={now ? formatHeaderDate(dashboardNow) : ""}
-        metrics={metrics}
-        selectedClassId={selectedClassId}
-        teacherName={teacher.name}
-        onClassChange={setSelectedClassId}
-      />
-
-      <section className="grid gap-4 xl:ml-[86px] xl:grid-cols-[minmax(0,1.65fr)_minmax(360px,1fr)] 2xl:grid-cols-[minmax(0,1.7fr)_minmax(380px,1fr)]">
-        <TeacherDashboardScheduleSection
-          calendarTitle={`${activeWeekDate.getMonth() + 1}-р сар ${activeWeekDate.getFullYear()} он`}
-          onNextWeek={() => setWeekOffset((current) => current + 1)}
-          onPreviousWeek={() => setWeekOffset((current) => current - 1)}
-          selectedClassId={selectedClassId}
-          todayDate={dashboardNow.toISOString().split("T")[0]}
-          weekDates={getTeacherWeekDates(activeWeekDate)}
-        />
+    <div className="space-y-7 pt-[25px]">
+      <TeacherDashboardHero academicWeekLabel={getAcademicWeekLabel(now)} classes={classes} currentGreeting={getGreetingLabel(now)} headerDate={formatHeaderDate(now)} metrics={metrics} selectedClassId={selectedClassId} teacherName={teacher.name} onClassChange={setSelectedClassId} />
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,900px)_minmax(360px,440px)]">
+        <TeacherDashboardScheduleSection calendarTitle={`${activeWeekDate.getMonth() + 1}-р сар ${activeWeekDate.getFullYear()} он`} onNextWeek={() => setWeekOffset((current) => current + 1)} onPreviousWeek={() => setWeekOffset((current) => current - 1)} selectedClassId={selectedClassId} todayDate={now.toISOString().split("T")[0]} weekDates={getTeacherWeekDates(activeWeekDate)} />
         <TeacherDashboardSidePanels selectedClassId={selectedClassId} />
       </section>
     </div>

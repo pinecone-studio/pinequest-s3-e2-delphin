@@ -40,7 +40,7 @@
 }
 
 .dark {
-  --background: #000000;
+  --background: #0f123b;
   --foreground: #eaf4ff;
   --card: #243f49;
   --card-foreground: #eaf4ff;
@@ -344,13 +344,28 @@
   }
 
   .dark .content-surface {
-    background: #000000;
+    background: transparent;
   }
 
   .panel-surface {
     background: #ffffff;
     border: 1px solid #d9ecff;
     box-shadow: 0 10px 24px rgba(59, 130, 246, 0.08);
+  }
+
+  .teacher-theme [data-slot="card"] {
+    background: linear-gradient(
+      233deg,
+      rgba(255, 255, 255, 0.45) 4.4%,
+      rgba(255, 255, 255, 0.65) 61.8%,
+      rgba(255, 255, 255, 0.54) 119.9%
+    );
+    border-color: #ededed;
+    box-shadow: 50px 38px 102px rgba(120, 118, 148, 0.14);
+  }
+
+  .teacher-theme [data-slot="card-description"] {
+    color: #6f6c99;
   }
 
   .dark .panel-surface {
@@ -363,6 +378,20 @@
     box-shadow:
       0 0 0 1px rgba(56, 189, 248, 0.03),
       0 10px 26px rgba(0, 0, 0, 0.28);
+  }
+
+  .dark .teacher-theme [data-slot="card"] {
+    background: linear-gradient(
+      112deg,
+      rgba(6, 11, 38, 0.74) 28%,
+      rgba(26, 31, 55, 0.5) 91%
+    ) !important;
+    border-color: rgba(224, 225, 226, 0.08) !important;
+    box-shadow: 50px 38px 102px rgba(120, 118, 148, 0.14) !important;
+  }
+
+  .dark .teacher-theme [data-slot="card-description"] {
+    color: #c2c9d0;
   }
 
   .elevated-surface {

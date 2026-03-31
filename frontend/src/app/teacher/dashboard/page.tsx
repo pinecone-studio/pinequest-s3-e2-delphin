@@ -41,7 +41,7 @@ export default function TeacherDashboard() {
         onClassChange={setSelectedClassId}
       />
 
-      <section className="grid gap-5 xl:grid-cols-[900px_445px]">
+      <section className="grid gap-4 xl:ml-[86px] xl:grid-cols-[minmax(0,1.65fr)_minmax(360px,1fr)] 2xl:grid-cols-[minmax(0,1.7fr)_minmax(380px,1fr)]">
         <TeacherDashboardScheduleSection
           calendarTitle={`${activeWeekDate.getMonth() + 1}-р сар ${activeWeekDate.getFullYear()} он`}
           onNextWeek={() => setWeekOffset((current) => current + 1)}

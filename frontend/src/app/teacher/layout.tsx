@@ -2,14 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { Bell, BookOpen, ChevronLeft, ChevronRight, ClipboardList, FileText, LayoutDashboard, Users } from "lucide-react";
+import { Bell, BookOpen, ClipboardList, FileText, LayoutDashboard, Users, type LucideIcon } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggleButton } from "@/components/theme-toggle-button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { teacher } from "@/lib/mock-data-helpers";
 import { cn } from "@/lib/utils";
 
-const navItems = [
+type NavItem = {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+};
+
+const navItems: NavItem[] = [
   { href: "/teacher/dashboard", label: "Хяналтын самбар", icon: LayoutDashboard },
   { href: "/teacher/classes", label: "Ангиуд", icon: Users },
   { href: "/teacher/sources", label: "Мэдлэгийн сан", icon: FileText },
@@ -19,7 +25,7 @@ const navItems = [
 
 export default function TeacherLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const isDashboardPage = pathname === "/teacher/dashboard";
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#eef6ff_0%,#f7fbff_100%)] text-foreground dark:bg-[linear-gradient(180deg,#050910_0%,#09111d_100%)]">
@@ -29,7 +35,9 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
             <BrandLogo />
           </Link>
           <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-[#8ea4c5] dark:text-[#b8c8e6] xl:inline">Нэвтэрсэн хэрэглэгч: <span className="text-[#5d7397] dark:text-white">{teacher.name}</span></span>
+            <span className="hidden text-sm text-[#8ea4c5] dark:text-[#b8c8e6] xl:inline">
+              Нэвтэрсэн хэрэглэгч: <span className="text-[#5d7397] dark:text-white">{teacher.name}</span>
+            </span>
             <div className="flex h-[24px] w-[110.91px] items-center justify-between self-center">
               <IconActionButton label="Notifications">
                 <Bell className="h-[18px] w-[18px]" strokeWidth={1.85} />
@@ -42,46 +50,73 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
           </div>
         </header>
 
-        <div className="flex flex-1 overflow-hidden">
-          <aside className={cn("border-r border-[#e2ecfb] bg-white/30 p-4 transition-all duration-200 dark:border-[#101820] dark:bg-[#000000]", isSidebarCollapsed ? "w-20" : "w-56")}>
-            <div className={cn("mb-4 flex", isSidebarCollapsed ? "justify-center" : "justify-end")}>
-              <button
-                type="button"
-                onClick={() => setIsSidebarCollapsed((current) => !current)}
-                className="rounded-md border border-[#dce8fb] bg-white/70 p-2 text-[#7e97bb] transition-colors hover:bg-white hover:text-[#5e7399] dark:border-[#1B2A36] dark:bg-[#000000] dark:hover:bg-[#081018]"
-                aria-label={isSidebarCollapsed ? "Хажуугийн цэсийг дэлгэх" : "Хажуугийн цэсийг хураах"}
-              >
-                {isSidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-              </button>
-            </div>
-            <nav className="flex flex-col gap-1">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const active = pathname === item.href || pathname.startsWith(item.href + "/");
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    title={isSidebarCollapsed ? item.label : undefined}
-                    className={cn(
-                      "flex items-center rounded-md px-3 py-2 text-sm transition-colors",
-                      isSidebarCollapsed ? "justify-center" : "gap-3",
-                      active ? "bg-[#0b4078] text-white shadow-[0_10px_18px_rgba(61,124,255,0.18)] dark:border dark:border-[rgba(56,189,248,0.55)] dark:bg-[#022638]" : "text-[#5f7397] hover:bg-white/70 dark:hover:bg-[#081018]",
-                    )}
-                  >
-                    <Icon className="h-4 w-4 shrink-0" />
-                    {!isSidebarCollapsed ? <span>{item.label}</span> : null}
-                  </Link>
-                );
-              })}
-            </nav>
-          </aside>
-
-          <main className="content-surface flex-1 overflow-auto rounded-[2rem] px-[40px] pb-[24px]">
-            {children}
-          </main>
+        <div className="relative flex flex-1 overflow-hidden pb-4">
+          {isDashboardPage ? (
+            <>
+              <aside className="absolute left-[30px] top-[228px] z-10">
+                <SidebarNav navItems={navItems} pathname={pathname} />
+              </aside>
+              <main className="content-surface min-w-0 flex-1 overflow-x-hidden overflow-y-auto rounded-[2rem] px-[40px] pb-[24px] pr-[28px]">
+                {children}
+              </main>
+            </>
+          ) : (
+            <>
+              <aside className="shrink-0 pl-[30px] pr-[10px] pt-2">
+                <SidebarNav navItems={navItems} pathname={pathname} />
+              </aside>
+              <main className="content-surface min-w-0 flex-1 overflow-x-hidden overflow-y-auto rounded-[2rem] px-[20px] pb-[24px] pr-[20px] sm:px-[24px] sm:pr-[24px] lg:px-[28px] lg:pr-[28px]">
+                {children}
+              </main>
+            </>
+          )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function SidebarNav({
+  navItems,
+  pathname,
+}: {
+  navItems: NavItem[];
+  pathname: string;
+}) {
+  return (
+    <div className="w-[76px] rounded-[2rem] bg-[#b9d7f5] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_18px_40px_rgba(115,157,215,0.22)] dark:bg-[#0b2338]">
+      <nav className="flex flex-col items-center gap-2">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const active = pathname === item.href || pathname.startsWith(item.href + "/");
+
+          return (
+            <Tooltip key={item.href}>
+              <TooltipTrigger asChild>
+                <Link
+                  href={item.href}
+                  aria-label={item.label}
+                  className={cn(
+                    "flex h-12 w-12 items-center justify-center rounded-[1.1rem] text-sm transition-all duration-200",
+                    active
+                      ? "bg-[#0b1118] text-white shadow-[0_10px_24px_rgba(8,22,40,0.28)] dark:bg-[#02070d]"
+                      : "text-[#1d3d62] hover:bg-white/45 hover:text-[#10273f] dark:text-[#d5e6ff] dark:hover:bg-white/10 dark:hover:text-white",
+                  )}
+                >
+                  <Icon className="h-5 w-5 shrink-0" />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                sideOffset={12}
+                className="rounded-xl border border-white/70 bg-[#0b1118] px-3 py-2 text-xs font-medium text-white shadow-[0_14px_28px_rgba(8,22,40,0.22)] dark:border-white/10 dark:bg-[#10273f]"
+              >
+                {item.label}
+              </TooltipContent>
+            </Tooltip>
+          );
+        })}
+      </nav>
     </div>
   );
 }

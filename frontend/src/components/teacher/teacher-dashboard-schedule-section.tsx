@@ -18,7 +18,7 @@ export function TeacherDashboardScheduleSection(props: {
   const { calendarTitle, onNextWeek, onPreviousWeek, selectedClassId, todayDate, weekDates } = props
 
   return (
-    <section className="h-[724px] w-full max-w-[900px] rounded-[2rem] border border-[#e7eef9] bg-white/80 p-[18px] shadow-[0_18px_40px_rgba(185,203,232,0.16)]">
+    <section className="h-[724px] min-w-0 w-full rounded-[2rem] border border-[#e7eef9] bg-white/80 p-4 shadow-[0_18px_40px_rgba(185,203,232,0.16)] lg:p-[18px]">
       <div className="mb-4 flex items-center justify-center gap-8">
         <button type="button" onClick={onPreviousWeek} className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-[#f7f9ff] text-[#8c94bc] transition hover:bg-[#eef4ff]" aria-label="Өмнөх долоо хоног">
           <ChevronLeft className="h-4 w-4" />
@@ -29,9 +29,9 @@ export function TeacherDashboardScheduleSection(props: {
         </button>
       </div>
 
-      <div className="overflow-x-auto overflow-y-hidden">
-        <div className="min-w-[856px]">
-          <div className="grid grid-cols-[72px_repeat(7,108px)] gap-1">
+      <div className="min-w-0 overflow-x-hidden overflow-y-hidden">
+        <div className="min-w-0">
+          <div className="grid grid-cols-[60px_repeat(7,minmax(0,1fr))] gap-1">
             <div className="flex h-16 items-center px-2 text-sm font-semibold text-[#8a90b2]">Цаг</div>
             {weekDates.map((item) => (
               <div
@@ -75,7 +75,7 @@ function TimeRow(props: { selectedClassId: string; time: string; todayDate: stri
         return (
           <div
             key={`${item.date}-${time}`}
-            className={`h-16 w-[108px] rounded-[14px] border px-2 py-1.5 ${
+            className={`h-16 min-w-0 rounded-[14px] border px-2 py-1.5 ${
               item.date === todayDate ? "border-[#d7e5ff] bg-[#fbfdff]" : "border-[#edf1f8] bg-white"
             }`}
           >

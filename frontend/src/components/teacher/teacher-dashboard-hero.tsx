@@ -26,11 +26,11 @@ export function TeacherDashboardHero(props: {
     <section className="relative px-1 py-2">
       <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-5">
-          <div className="flex items-start gap-[18px]">
-            <div className="relative h-[64px] w-[67.02px] shrink-0">
-              <Image src="/teacher-greeting-illustration.svg" alt="Greeting illustration" fill sizes="67px" className="object-contain" priority />
+          <div className="flex items-center gap-0">
+            <div className="relative h-[76px] w-[80px] shrink-0">
+              <Image src="/teacher-greeting-illustration.svg" alt="Greeting illustration" fill sizes="80px" className="object-contain" priority />
             </div>
-            <div className="space-y-[6px] pt-[2px]">
+            <div className="-ml-1.5 space-y-1">
               <h1 className="text-[32px] font-semibold leading-[1.15] tracking-[-0.02em] text-[#4f5676]">{currentGreeting}, {teacherName}!</h1>
               <div className="flex flex-wrap items-center gap-[10px] text-[14px] font-medium text-[#7d88a6]">
                 <span>{headerDate}</span>

@@ -40,7 +40,7 @@ export function TeacherStudentRegistrationDialog(props: {
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-2">
               <DialogTitle className="text-[20px] font-semibold leading-none text-[#4a5672]">Сурагчийн бүртгэл</DialogTitle>
-              <DialogDescription className="text-[13px] leading-[18px] text-[#8892a7]">"Сурагчийн дэлгэрэнгүй мэдээлэл оруулна уу"</DialogDescription>
+              <DialogDescription className="text-[13px] leading-[18px] text-[#8892a7]">&quot;Сурагчийн дэлгэрэнгүй мэдээлэл оруулна уу&quot;</DialogDescription>
             </div>
             <button aria-label="Хаах" className="rounded-full p-1 text-[#8e98ae] transition hover:bg-[#f3f6fb]" onClick={onClose} type="button">
               <X className="h-5 w-5" />

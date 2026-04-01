@@ -109,11 +109,9 @@ export function OverviewInsightCard({
 
 function Sparkline({
   height,
-  stroke,
   trend,
 }: {
   height: number
-  stroke: string
   trend: number[]
 }) {
   return (

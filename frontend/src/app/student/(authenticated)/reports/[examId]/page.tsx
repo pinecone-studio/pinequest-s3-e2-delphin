@@ -4,11 +4,7 @@ import { use, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
-import { StudentReportHero } from "@/components/student/report/student-report-hero"
-import { StudentReportLocked } from "@/components/student/report/student-report-locked"
-import { StudentReportQuestions } from "@/components/student/report/student-report-questions"
-import { StudentReportSidebar } from "@/components/student/report/student-report-sidebar"
-import { StudentReportSummary } from "@/components/student/report/student-report-summary"
+import { StudentReportShell } from "@/components/student/report/student-report-shell"
 import { useStudentSession } from "@/hooks/use-student-session"
 import { exams as legacyExams, type Exam } from "@/lib/mock-data"
 import { getCachedStudentExamResults, loadStudentExamResults } from "@/lib/student-exam-results"
@@ -112,39 +108,24 @@ export default function StudentExamReportPage({
       : "Нээх нөхцөл биелмэгц энэ тайлан автоматаар харагдана."
 
   return (
-    <div className="mx-auto grid max-w-[1400px] gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="space-y-4">
-        <StudentReportHero
-          examTitle={exam.title}
-          studentClass={studentClass}
-          studentName={studentName || "Сурагч"}
-        />
-        <StudentReportSummary
-          duration={exam.duration}
-          percentage={metrics.percentage}
-          scoreLabel={`${result.score}/${result.totalPoints}`}
-          scheduleLabel={schedule ? `${schedule.date} ${schedule.time}` : "Тов гараагүй"}
-          submittedLabel={new Date(result.submittedAt).toLocaleString("mn-MN")}
-        />
-        {isAvailable ? (
-          <StudentReportQuestions exam={exam} result={result} />
-        ) : (
-          <StudentReportLocked message={releaseMessage} />
-        )}
-      </div>
-
-      <StudentReportSidebar
-        examTitle={exam.title}
-        isAvailable={isAvailable}
-        percentage={metrics.percentage}
-        scoreLabel={`${result.score}/${result.totalPoints} • ${getExamLetterGrade(metrics.percentage)}`}
-        questionCount={metrics.totalQuestions}
-        correctCount={metrics.correctCount}
-        wrongCount={metrics.wrongCount}
-        unansweredCount={metrics.unansweredCount}
-        pendingReviewCount={metrics.pendingReviewCount}
-        releaseMessage={releaseMessage}
-      />
-    </div>
+    <StudentReportShell
+      correctCount={metrics.correctCount}
+      exam={exam}
+      examTitle={exam.title}
+      isAvailable={isAvailable}
+      pendingReviewCount={metrics.pendingReviewCount}
+      percentage={metrics.percentage}
+      questionCount={metrics.totalQuestions}
+      releaseMessage={releaseMessage}
+      result={result}
+      scoreLabel={`${result.score}/${result.totalPoints} • ${getExamLetterGrade(metrics.percentage)}`}
+      scheduleLabel={schedule ? `${schedule.date} ${schedule.time}` : "Тов гараагүй"}
+      studentClass={studentClass}
+      studentName={studentName || "Сурагч"}
+      submittedLabel={new Date(result.submittedAt).toLocaleString("mn-MN")}
+      totalPoints={result.totalPoints}
+      unansweredCount={metrics.unansweredCount}
+      wrongCount={metrics.wrongCount}
+    />
   )
 }

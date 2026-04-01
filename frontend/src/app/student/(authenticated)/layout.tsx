@@ -19,6 +19,18 @@ const navItems = [
   { href: "/student/exams", label: "Шалгалтууд", icon: ClipboardList },
 ]
 
+function isStudentNavItemActive(pathname: string, href: string) {
+  if (pathname === href || pathname.startsWith(href + "/")) {
+    return true
+  }
+
+  if (href === "/student/exams" && pathname.startsWith("/student/reports/")) {
+    return true
+  }
+
+  return false
+}
+
 export default function StudentLayout({
   children,
 }: {
@@ -61,7 +73,7 @@ export default function StudentLayout({
             <nav className="flex h-[46px] items-center gap-1 rounded-full bg-[#FFFFFF] p-1 shadow-[0_12px_40px_rgba(90,143,203,0.18)]">
               {navItems.map((item) => {
                 const Icon = item.icon
-                const active = pathname === item.href || pathname.startsWith(item.href + "/")
+                const active = isStudentNavItemActive(pathname, item.href)
 
                 return (
                   <Link
@@ -102,7 +114,11 @@ export default function StudentLayout({
           </div>
         </header>
 
-        <main className="relative z-10 h-[calc(100vh-82px)] w-full overflow-hidden">
+        <main
+          className={cn(
+            "relative z-10 w-full min-h-[calc(100vh-82px)] overflow-visible",
+          )}
+        >
           {children}
         </main>
       </div>

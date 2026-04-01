@@ -17,26 +17,13 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ThemeToggleButton } from "@/components/theme-toggle-button";
 import { notifyStudentSessionChange } from "@/hooks/use-student-session";
 import { students } from "@/lib/mock-data";
-
-const judgeDemoNames = [
-  "Бат-Оргил.Э",
-  "Эрдэнэгомбо.М",
-  "Анар.Т",
-  "Болор.Э",
-  "Буяндэлгэр.Т",
-  "Өсөхбаяр.Ж",
-  "Түвшин.О",
-  "Өгөөмөр.Л",
-];
+import { judgeDemoStudents } from "@/lib/judge-demo-students";
 
 export default function StudentLoginPage() {
   const router = useRouter();
   const demoStudent =
     students.find((student) => student.email === "nandin@school.com") ??
     students[0];
-  const judgeDemoStudents = judgeDemoNames
-    .map((name) => students.find((student) => student.name === name))
-    .filter((student): student is (typeof students)[number] => Boolean(student));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

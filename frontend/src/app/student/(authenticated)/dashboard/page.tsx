@@ -46,7 +46,7 @@ export default function StudentDashboard() {
   )
 
   return (
-    <div className="mx-auto flex h-full w-full max-w-[1360px] flex-col gap-5 overflow-hidden pb-[28px] pt-[18px]">
+    <div className="mx-auto flex min-h-full w-full max-w-[1360px] flex-col gap-5 pb-[28px] pt-[18px]">
       <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
         <div className="min-w-0">
           <h1 className="font-sans text-[33px] font-semibold leading-[1.1] tracking-[-0.03em] text-[#2D3642]">

@@ -54,7 +54,7 @@ export default function StudentLoginPage() {
   };
 
   return (
-    <main className="skywash-background relative min-h-screen overflow-hidden p-4">
+    <main className="skywash-background relative min-h-screen overflow-x-hidden p-4">
       <div className="pointer-events-none absolute inset-0 dark:hidden">
         <div className="absolute left-1/2 top-[25%] h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/30 blur-3xl dark:bg-cyan-300/8" />
         <div className="absolute left-1/2 top-[78%] h-44 w-[24rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-200/18 blur-3xl dark:bg-sky-400/6" />

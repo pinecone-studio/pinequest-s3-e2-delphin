@@ -13,7 +13,7 @@ import {
 
 export default function LandingPage() {
   return (
-    <main className="skywash-background relative min-h-screen overflow-hidden p-4">
+    <main className="skywash-background relative min-h-screen overflow-x-hidden p-4">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 bottom-0 h-28 opacity-90 md:h-40 dark:opacity-60"

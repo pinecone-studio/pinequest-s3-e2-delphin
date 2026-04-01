@@ -590,12 +590,6 @@ export class ExamsService {
       );
     }
 
-    if (payload.status === 'scheduled' && payload.schedules.length === 0) {
-      throw new BadRequestException(
-        'At least one schedule entry is required before scheduling an exam',
-      );
-    }
-
     payload.questions.forEach((question, index) => {
       if (!question.question.trim()) {
         throw new BadRequestException(
@@ -649,24 +643,30 @@ export class ExamsService {
     questions: ExamQuestionRecord[],
     schedules: ExamScheduleRecord[],
   ): Exam {
+    const mappedSchedules = schedules
+      .slice()
+      .sort((left, right) =>
+        left.scheduledDate.localeCompare(right.scheduledDate),
+      )
+      .map((schedule) => this.mapScheduleRecord(schedule));
+
     return {
       id: exam.id,
       title: exam.title,
       durationMinutes: exam.durationMinutes,
       reportReleaseMode: this.toReportReleaseMode(exam.reportReleaseMode),
-      status: this.toExamStatus(exam.status),
+      status: this.getDerivedExamStatus(
+        this.toExamStatus(exam.status),
+        mappedSchedules,
+        exam.durationMinutes,
+      ),
       createdAt: exam.createdAt,
       updatedAt: exam.updatedAt,
       questions: questions
         .slice()
         .sort((left, right) => left.displayOrder - right.displayOrder)
         .map((question) => this.mapQuestionRecord(question)),
-      schedules: schedules
-        .slice()
-        .sort((left, right) =>
-          left.scheduledDate.localeCompare(right.scheduledDate),
-        )
-        .map((schedule) => this.mapScheduleRecord(schedule)),
+      schedules: mappedSchedules,
     };
   }
 
@@ -741,6 +741,38 @@ export class ExamsService {
 
   private toExamStatus(value: string): ExamStatus {
     return value as ExamStatus;
+  }
+
+  private getDerivedExamStatus(
+    status: ExamStatus,
+    schedules: ExamSchedule[],
+    durationMinutes: number,
+    now = new Date(),
+  ): ExamStatus {
+    if (status !== 'scheduled') {
+      return status;
+    }
+
+    const latestScheduleEnd = schedules.reduce<number | null>(
+      (latest, schedule) => {
+        const start = new Date(`${schedule.date}T${schedule.time}:00`);
+        const startTime = start.getTime();
+
+        if (Number.isNaN(startTime)) {
+          return latest;
+        }
+
+        const endTime = startTime + durationMinutes * 60 * 1000;
+        return latest === null || endTime > latest ? endTime : latest;
+      },
+      null,
+    );
+
+    if (latestScheduleEnd !== null && latestScheduleEnd < now.getTime()) {
+      return 'completed';
+    }
+
+    return status;
   }
 
   private toReportReleaseMode(value: string): ReportReleaseMode {

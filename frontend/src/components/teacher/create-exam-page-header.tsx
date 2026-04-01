@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
-export function CreateExamPageHeader({ onOpenAi }: { onOpenAi: () => void }) {
+export function CreateExamPageHeader({ onOpenAi }: { onOpenAi?: () => void }) {
   return (
     <div className="flex items-center justify-between">
       <div>
@@ -12,7 +12,7 @@ export function CreateExamPageHeader({ onOpenAi }: { onOpenAi: () => void }) {
         </Link>
         <h1 className="mt-2 text-2xl font-bold">Шинэ шалгалт үүсгэх</h1>
       </div>
-      <Button onClick={onOpenAi}>AI ашиглан асуулт бэлтгэх</Button>
+      {onOpenAi ? <Button onClick={onOpenAi}>AI ашиглан асуулт бэлтгэх</Button> : null}
     </div>
   )
 }

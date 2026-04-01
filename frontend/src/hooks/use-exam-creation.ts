@@ -14,7 +14,7 @@ import {
 } from "@/lib/exams-api"
 import { validateExamPayloadInput, type ExamValidationSection } from "@/lib/exam-validation"
 
-type SubmitMode = "draft" | "scheduled"
+type SubmitMode = "draft" | "ready" | "scheduled"
 
 export function useExamCreation({
   duration,
@@ -22,6 +22,7 @@ export function useExamCreation({
   examTitle,
   mode = "create",
   onValidationError,
+  onSuccess,
   questions,
   reportReleaseMode,
   scheduleEntries,
@@ -31,6 +32,7 @@ export function useExamCreation({
   examTitle: string
   mode?: "create" | "edit"
   onValidationError?: (section: ExamValidationSection) => void
+  onSuccess?: () => void
   questions: NewQuestion[]
   reportReleaseMode: "after-all-classes-complete" | "immediately"
   scheduleEntries: ScheduleEntry[]
@@ -40,8 +42,12 @@ export function useExamCreation({
   const [submitMode, setSubmitMode] = React.useState<SubmitMode | null>(null)
 
   const isSubmitting = submitMode !== null
+  const hasCompleteSchedule = scheduleEntries.some(
+    (entry) => entry.classId.trim() && entry.date.trim() && entry.time.trim(),
+  )
   const canSaveDraft = !isSubmitting
-  const canScheduleExam = !isSubmitting
+  const canMarkReady = !isSubmitting
+  const canScheduleExam = !isSubmitting && hasCompleteSchedule
 
   const submitExam = React.useCallback(
     async (status: SubmitMode) => {
@@ -68,7 +74,7 @@ export function useExamCreation({
           questions,
           reportReleaseMode,
           scheduleEntries,
-          status,
+          status: status === "draft" ? "draft" : "scheduled",
         })
 
         if (mode === "edit" && examId) {
@@ -82,21 +88,30 @@ export function useExamCreation({
             mode === "edit"
               ? status === "draft"
                 ? "Ноорог амжилттай шинэчлэгдлээ"
-                : "Шалгалт амжилттай шинэчлэгдлээ"
+                : status === "ready"
+                  ? "Шалгалт бэлэн болсон төлөвт шинэчлэгдлээ"
+                  : "Шалгалт амжилттай шинэчлэгдлээ"
               : status === "draft"
                 ? "Ноорог амжилттай хадгалагдлаа"
-                : "Шалгалт амжилттай үүслээ",
+                : status === "ready"
+                  ? "Шалгалт бэлэн болсон төлөвт хадгалагдлаа"
+                  : "Шалгалт амжилттай товлогдлоо",
           description:
             mode === "edit"
               ? status === "draft"
                 ? "Шалгалтын ноорог амжилттай шинэчлэгдлээ."
-                : "Товлогдсон шалгалт амжилттай шинэчлэгдлээ."
+                : status === "ready"
+                  ? "Шалгалт хуваарьгүйгээр бэлэн болсон төлөвт шинэчлэгдлээ."
+                  : "Товлогдсон шалгалт амжилттай шинэчлэгдлээ."
               : status === "draft"
                 ? "Шалгалтын ноорог амжилттай хадгалагдлаа."
-                : "Шалгалт амжилттай үүсэж, товлогдлоо.",
+                : status === "ready"
+                  ? "Шалгалт хуваарьгүйгээр бэлэн болсон төлөвт хадгалагдлаа."
+                  : "Шалгалт амжилттай үүсэж, товлогдлоо.",
         })
 
         await new Promise((resolve) => setTimeout(resolve, 150))
+        onSuccess?.()
         router.push("/teacher/exams")
       } catch (error) {
         const message =
@@ -120,6 +135,7 @@ export function useExamCreation({
       examTitle,
       mode,
       onValidationError,
+      onSuccess,
       questions,
       reportReleaseMode,
       router,
@@ -128,6 +144,7 @@ export function useExamCreation({
   )
 
   return {
+    canMarkReady,
     canSaveDraft,
     canScheduleExam,
     isSubmitting,

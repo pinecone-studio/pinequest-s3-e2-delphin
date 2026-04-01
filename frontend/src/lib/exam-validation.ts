@@ -31,7 +31,7 @@ export function validateExamPayloadInput({
   duration: number
   questions: NewQuestion[]
   scheduleEntries: ScheduleEntry[]
-  status: 'draft' | 'scheduled'
+  status: 'draft' | 'ready' | 'scheduled'
 }) {
   const errors: ExamValidationIssue[] = []
 
@@ -105,7 +105,7 @@ export function validateExamPayloadInput({
     }
   })
 
-  if (status === 'scheduled' && questions.length === 0) {
+  if ((status === 'ready' || status === 'scheduled') && questions.length === 0) {
     errors.push({ message: 'Шалгалт үүсгэхийн өмнө дор хаяж нэг асуулт нэмнэ үү.', section: 'questions' })
   }
 

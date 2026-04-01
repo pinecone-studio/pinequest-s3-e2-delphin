@@ -45,6 +45,183 @@ type LocalQuestionBankStore = {
   questions: StoredQuestion[];
 };
 
+type QuestionSeed = {
+  correctAnswer?: string;
+  difficulty: QuestionBankDifficulty;
+  options?: string[];
+  points: number;
+  question: string;
+  type: QuestionBankQuestion['type'];
+};
+
+type TopicSeed = {
+  name: string;
+  questions: QuestionSeed[];
+};
+
+type CategorySeed = {
+  name: string;
+  topics: TopicSeed[];
+};
+
+const DEFAULT_QUESTION_BANK_SEED: CategorySeed[] = [
+  {
+    name: 'Математик',
+    topics: [
+      {
+        name: 'Алгебр',
+        questions: [
+          {
+            type: 'multiple-choice',
+            question: '2x + 7 = 19 тэгшитгэлийг бодоход x хэд вэ?',
+            options: ['5', '6', '7', '8'],
+            correctAnswer: '6',
+            points: 8,
+            difficulty: 'easy',
+          },
+          {
+            type: 'short-answer',
+            question:
+              '3x - 4 = 17 бол бодолтын алхмаа богино тайлбартай бичээд x-ийн утгыг ол.',
+            correctAnswer: 'x = 7',
+            points: 10,
+            difficulty: 'standard',
+          },
+          {
+            type: 'short-answer',
+            question:
+              'Квадрат тэгшитгэлийг ялгавар ашиглан бодох аргыг жишээтэй тайлбарла.',
+            correctAnswer:
+              'Ялгавар D = b² - 4ac-г олж, язгуурын томьёо ашиглана.',
+            points: 12,
+            difficulty: 'hard',
+          },
+        ],
+      },
+      {
+        name: 'Функц ба график',
+        questions: [
+          {
+            type: 'multiple-choice',
+            question: 'y = 2x + 1 функцийн налалт хэд вэ?',
+            options: ['1', '2', '-1', '0'],
+            correctAnswer: '2',
+            points: 8,
+            difficulty: 'easy',
+          },
+          {
+            type: 'true-false',
+            question:
+              'y = x² функцийн график нь доошоо нээгдсэн парабол байдаг.',
+            correctAnswer: 'false',
+            points: 6,
+            difficulty: 'easy',
+          },
+          {
+            type: 'short-answer',
+            question:
+              'f(x) = x² - 4x + 3 функцийн оройн цэгийн x координатыг ол.',
+            correctAnswer: '2',
+            points: 10,
+            difficulty: 'standard',
+          },
+        ],
+      },
+      {
+        name: 'Геометр',
+        questions: [
+          {
+            type: 'multiple-choice',
+            question:
+              'Тэгш өнцөгт гурвалжны катетууд 6 ба 8 бол гипотенуз хэд вэ?',
+            options: ['10', '12', '14', '16'],
+            correctAnswer: '10',
+            points: 8,
+            difficulty: 'easy',
+          },
+          {
+            type: 'short-answer',
+            question:
+              'Радиус нь 5 см тойргийн талбайг π-ээр илэрхийл.',
+            correctAnswer: '25π',
+            points: 8,
+            difficulty: 'standard',
+          },
+          {
+            type: 'short-answer',
+            question:
+              'Пифагорын теоремыг ашиглан бодлого бодох ерөнхий дарааллыг тайлбарла.',
+            correctAnswer:
+              'Тэгш өнцөгт гурвалжны талуудыг таньж, a² + b² = c² томьёог хэрэглэнэ.',
+            points: 10,
+            difficulty: 'standard',
+          },
+        ],
+      },
+      {
+        name: 'Магадлал ба статистик',
+        questions: [
+          {
+            type: 'multiple-choice',
+            question:
+              'Шударга шоо нэг удаа хаяхад тэгш тоо буух магадлал хэд вэ?',
+            options: ['1/6', '1/3', '1/2', '2/3'],
+            correctAnswer: '1/2',
+            points: 6,
+            difficulty: 'easy',
+          },
+          {
+            type: 'true-false',
+            question:
+              'Өгөгдлийн дундаж утга нь медиантай заавал тэнцүү байдаг.',
+            correctAnswer: 'false',
+            points: 6,
+            difficulty: 'easy',
+          },
+          {
+            type: 'short-answer',
+            question:
+              '4, 7, 7, 9, 13 өгөгдлийн медианыг ол.',
+            correctAnswer: '7',
+            points: 8,
+            difficulty: 'standard',
+          },
+        ],
+      },
+      {
+        name: 'Тооцоо ба уламжлалын суурь',
+        questions: [
+          {
+            type: 'multiple-choice',
+            question: 'f(x) = x³ функцийн уламжлал аль нь вэ?',
+            options: ['x²', '2x', '3x²', '3x'],
+            correctAnswer: '3x²',
+            points: 10,
+            difficulty: 'standard',
+          },
+          {
+            type: 'short-answer',
+            question:
+              'f(x) = 5x² - 2x функцийн уламжлалыг бич.',
+            correctAnswer: '10x - 2',
+            points: 10,
+            difficulty: 'standard',
+          },
+          {
+            type: 'short-answer',
+            question:
+              'Уламжлалын бодит амьдрал дахь хэрэглээнээс нэг жишээ авч тайлбарла.',
+            correctAnswer:
+              'Хурдны агшин зуурын өөрчлөлтийг уламжлалаар илэрхийлж болно.',
+            points: 12,
+            difficulty: 'hard',
+          },
+        ],
+      },
+    ],
+  },
+];
+
 @Injectable()
 export class QuestionBankService {
   private readonly localStorePath = resolve(
@@ -210,12 +387,18 @@ export class QuestionBankService {
         topics: parsed.topics ?? [],
         questions: parsed.questions ?? [],
       };
+      const didSeedDefaults = this.ensureDefaultMathQuestionBank();
       this.localStoreLoaded = true;
+      if (didSeedDefaults) {
+        await this.persistLocalStore();
+      }
     } catch (error) {
       const nodeError = error as NodeJS.ErrnoException;
 
       if (nodeError.code === 'ENOENT') {
+        this.ensureDefaultMathQuestionBank();
         this.localStoreLoaded = true;
+        await this.persistLocalStore();
         return;
       }
 
@@ -240,5 +423,52 @@ export class QuestionBankService {
         `Failed to persist question bank records to ${this.localStorePath}`,
       );
     }
+  }
+
+  private ensureDefaultMathQuestionBank() {
+    const hasMathCategory = this.localStore.categories.some(
+      (category) => category.name.trim().toLowerCase() === 'математик',
+    );
+
+    if (hasMathCategory) {
+      return false;
+    }
+
+    const createdAt = new Date().toISOString();
+
+    DEFAULT_QUESTION_BANK_SEED.forEach((categorySeed) => {
+      const categoryId = crypto.randomUUID();
+      this.localStore.categories.push({
+        id: categoryId,
+        name: categorySeed.name,
+        createdAt,
+      });
+
+      categorySeed.topics.forEach((topicSeed) => {
+        const topicId = crypto.randomUUID();
+        this.localStore.topics.push({
+          id: topicId,
+          categoryId,
+          name: topicSeed.name,
+          createdAt,
+        });
+
+        topicSeed.questions.forEach((questionSeed) => {
+          this.localStore.questions.push({
+            id: crypto.randomUUID(),
+            topicId,
+            type: questionSeed.type,
+            question: questionSeed.question,
+            options: questionSeed.options,
+            correctAnswer: questionSeed.correctAnswer,
+            points: questionSeed.points,
+            difficulty: questionSeed.difficulty,
+            createdAt,
+          });
+        });
+      });
+    });
+
+    return true;
   }
 }

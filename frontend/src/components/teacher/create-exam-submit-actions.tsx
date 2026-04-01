@@ -4,13 +4,23 @@ import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 
 export function CreateExamSubmitActions(props: {
+  canMarkReady: boolean
   canSaveDraft: boolean
   canScheduleExam: boolean
-  submitMode: "draft" | "scheduled" | null
+  submitMode: "draft" | "ready" | "scheduled" | null
   onSubmitDraft: () => void
+  onSubmitReady: () => void
   onSubmitScheduled: () => void
 }) {
-  const { canSaveDraft, canScheduleExam, submitMode, onSubmitDraft, onSubmitScheduled } = props
+  const {
+    canMarkReady,
+    canSaveDraft,
+    canScheduleExam,
+    submitMode,
+    onSubmitDraft,
+    onSubmitReady,
+    onSubmitScheduled,
+  } = props
 
   return (
     <div className="flex justify-end gap-3">
@@ -18,9 +28,13 @@ export function CreateExamSubmitActions(props: {
         {submitMode === "draft" ? <Spinner className="mr-2" /> : null}
         Ноорог болгон хадгалах
       </Button>
+      <Button variant="secondary" onClick={onSubmitReady} disabled={!canMarkReady}>
+        {submitMode === "ready" ? <Spinner className="mr-2" /> : null}
+        Бэлэн болгож хадгалах
+      </Button>
       <Button onClick={onSubmitScheduled} disabled={!canScheduleExam}>
         {submitMode === "scheduled" ? <Spinner className="mr-2" /> : null}
-        Үүсгээд сурагчдад мэдэгдэх
+        Товлож хадгалах
       </Button>
     </div>
   )

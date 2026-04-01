@@ -8,6 +8,7 @@ import type {
 } from "@/components/teacher/exam-builder-types";
 
 type ExamBuilderQuestionListProps = {
+  allowAddQuestion?: boolean;
   onAddQuestion: (type: QuestionType) => void;
   onRemoveQuestion: (id: string) => void;
   onUpdateOption: (questionId: string, optionIndex: number, value: string) => void;
@@ -16,6 +17,7 @@ type ExamBuilderQuestionListProps = {
 };
 
 export function ExamBuilderQuestionList({
+  allowAddQuestion = true,
   onAddQuestion,
   onRemoveQuestion,
   onUpdateOption,
@@ -34,7 +36,9 @@ export function ExamBuilderQuestionList({
           onUpdateQuestion={onUpdateQuestion}
         />
       ))}
-      <ExamBuilderAddQuestionCard onAddQuestion={onAddQuestion} />
+      {allowAddQuestion ? (
+        <ExamBuilderAddQuestionCard onAddQuestion={onAddQuestion} />
+      ) : null}
     </>
   );
 }

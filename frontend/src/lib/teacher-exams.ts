@@ -23,18 +23,55 @@ export type TeacherExam = {
   }>
 }
 
+function getDerivedTeacherExamStatus(args: {
+  duration: number
+  scheduledClasses: Array<{ date: string; time: string }>
+  status: TeacherExam['status']
+  now?: Date
+}): TeacherExam['status'] {
+  const { duration, now = new Date(), scheduledClasses, status } = args
+
+  if (status !== 'scheduled') {
+    return status
+  }
+
+  const latestScheduleEnd = scheduledClasses.reduce<number | null>((latest, schedule) => {
+    const start = new Date(`${schedule.date}T${schedule.time}:00`)
+    const startTime = start.getTime()
+
+    if (Number.isNaN(startTime)) {
+      return latest
+    }
+
+    const scheduleEnd = startTime + duration * 60 * 1000
+    return latest === null || scheduleEnd > latest ? scheduleEnd : latest
+  }, null)
+
+  if (latestScheduleEnd !== null && latestScheduleEnd < now.getTime()) {
+    return 'completed'
+  }
+
+  return status
+}
+
 function mapCreatedExamToTeacherExam(exam: CreatedExam): TeacherExam {
+  const scheduledClasses = exam.schedules.map((schedule) => ({
+    classId: schedule.classId,
+    date: schedule.date,
+    time: schedule.time,
+  }))
+
   return {
     id: exam.id,
     title: exam.title,
     duration: exam.durationMinutes,
-    status: exam.status,
+    status: getDerivedTeacherExamStatus({
+      duration: exam.durationMinutes,
+      scheduledClasses,
+      status: exam.status,
+    }),
     questions: exam.questions,
-    scheduledClasses: exam.schedules.map((schedule) => ({
-      classId: schedule.classId,
-      date: schedule.date,
-      time: schedule.time,
-    })),
+    scheduledClasses,
   }
 }
 
@@ -43,7 +80,11 @@ function mapLegacyExamToTeacherExam(exam: (typeof legacyExams)[number]): Teacher
     id: exam.id,
     title: exam.title,
     duration: exam.duration,
-    status: exam.status,
+    status: getDerivedTeacherExamStatus({
+      duration: exam.duration,
+      scheduledClasses: exam.scheduledClasses,
+      status: exam.status,
+    }),
     questions: exam.questions.map((question, index) => ({
       ...question,
       order: index + 1,

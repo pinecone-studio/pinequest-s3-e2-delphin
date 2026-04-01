@@ -27,9 +27,13 @@ export function QuestionBankSourcePanel({ files, setSourceFiles }: Props) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [newSourceName, setNewSourceName] = useState("");
-  const [selectedSourceFile, setSelectedSourceFile] = useState<File | null>(null);
+  const [selectedSourceFile, setSelectedSourceFile] = useState<File | null>(
+    null,
+  );
 
-  const handleSourceFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSourceFileSelect = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
     setSelectedSourceFile(file);
@@ -62,7 +66,9 @@ export function QuestionBankSourcePanel({ files, setSourceFiles }: Props) {
       toast({
         title: "Алдаа",
         description:
-          error instanceof Error ? error.message : "Файл нэмэх үед алдаа гарлаа.",
+          error instanceof Error
+            ? error.message
+            : "Файл нэмэх үед алдаа гарлаа.",
         variant: "destructive",
       });
     } finally {
@@ -75,15 +81,9 @@ export function QuestionBankSourcePanel({ files, setSourceFiles }: Props) {
       <TeacherSurfaceCard className="space-y-5">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8aa0d2]">
-              Эх сурвалж
-            </p>
             <h2 className="text-xl font-semibold tracking-[-0.02em] text-[#303959] dark:text-white">
-              AI-д ашиглах файлууд
+              Эх сурвалж
             </h2>
-            <p className="text-sm leading-6 text-[#6f7898] dark:text-[#9eabcf]">
-              Энд байгаа файлууд AI асуулт үүсгэх хэсэгт шууд харагдана.
-            </p>
           </div>
           <Button
             className="rounded-2xl bg-[#f3e7f7] text-[#7a3f75] shadow-none hover:bg-[#eddcf3]"
@@ -98,7 +98,9 @@ export function QuestionBankSourcePanel({ files, setSourceFiles }: Props) {
           {files.length === 0 ? (
             <div className="rounded-[24px] border border-dashed border-[#d7e3ff] bg-[linear-gradient(180deg,#f9fbff_0%,#ffffff_100%)] px-4 py-8 text-center">
               <FileText className="mx-auto mb-3 h-10 w-10 text-[#98a9ca]" />
-              <p className="font-medium text-[#344264]">Эх сурвалж файл алга байна</p>
+              <p className="font-medium text-[#344264]">
+                Эх сурвалж файл алга байна
+              </p>
               <p className="mt-1 text-sm text-[#6f7898]">
                 Шинэ файл нэмээд AI-аар асуулт үүсгэхдээ ашиглаарай.
               </p>

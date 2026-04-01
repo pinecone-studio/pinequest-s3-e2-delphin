@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { ExamBuilderScheduleEditor } from "@/components/teacher/exam-builder-schedule-editor";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,8 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { ScheduleEntry } from "@/components/teacher/exam-builder-types";
-import { ALL_CLASSES_OPTION } from "@/lib/exams-api";
-import { classes, type Exam } from "@/lib/mock-data";
+import { type Exam } from "@/lib/mock-data";
 
 type QuestionCounts = Record<
   "multiple-choice" | "true-false" | "matching" | "ordering" | "short-answer",
@@ -52,117 +51,62 @@ export function ExamBuilderSummaryCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Shalgaltiin huraanguy</CardTitle>
+        <CardTitle>Шалгалтын хураангуй</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-5">
         <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-3 xl:grid-cols-5">
-          <SummaryStat label="Asuult" value={questionTotal} />
-          <SummaryStat label="Niit onoo" value={totalPoints} />
-          <SummaryStat label="Songoh hariulttai" value={questionCounts["multiple-choice"]} />
-          <SummaryStat label="Unen / Hudal" value={questionCounts["true-false"]} />
-          <SummaryStat label="Matching" value={questionCounts["matching"]} />
-          <SummaryStat label="Ordering" value={questionCounts["ordering"]} />
-          <SummaryStat label="Bogino hariult" value={questionCounts["short-answer"]} />
-        </div>
-        <div className="flex items-center gap-4">
-          <Label>Hugatsaa (minut)</Label>
-          <Input
-            type="number"
-            value={duration}
-            onChange={(e) => onDurationChange(parseInt(e.target.value) || 60)}
-            className="w-24"
-          />
+          <SummaryStat label="Асуулт" value={questionTotal} />
+          <SummaryStat label="Нийт оноо" value={totalPoints} />
+          <SummaryStat label="Сонгох хариулттай" value={questionCounts["multiple-choice"]} />
+          <SummaryStat label="Үнэн / Худал" value={questionCounts["true-false"]} />
+          <SummaryStat label="Харгалзуулах" value={questionCounts["matching"]} />
+          <SummaryStat label="Дараалуулах" value={questionCounts["ordering"]} />
+          <SummaryStat label="Богино хариулт" value={questionCounts["short-answer"]} />
         </div>
 
-        <div className="space-y-2">
-          <Label>Suragchdad shalgaltiin dun haragdah hugatsaa</Label>
-          <Select
-            value={reportReleaseMode}
-            onValueChange={(value) =>
-              onReportReleaseModeChange(value as Exam["reportReleaseMode"])
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Shalgaltiin dun haragdah hugatsaag songono uu" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="after-all-classes-complete">
-                Tovlogdson buh angi duussanii daraa
-              </SelectItem>
-              <SelectItem value="immediately">
-                Suragch bur ilgeesnii daraa
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="border-t pt-4">
-          <div className="mb-3 flex items-center justify-between">
-            <Label>Shalgalt tovloh</Label>
-            <Button variant="outline" size="sm" onClick={onAddScheduleEntry}>
-              Angiin huvaari nemekh
-            </Button>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-foreground">
+              Хугацаа (минут)
+            </Label>
+            <Input
+              type="number"
+              value={duration}
+              onChange={(e) => onDurationChange(parseInt(e.target.value) || 60)}
+              className="h-11 w-full md:max-w-[220px]"
+            />
           </div>
 
-          {scheduleEntries.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Odoogoor angi tovlogoogui baina
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {scheduleEntries.map((entry, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-3 rounded-lg border p-3"
-                >
-                  <Select
-                    value={entry.classId}
-                    onValueChange={(value) =>
-                      onScheduleEntryChange(index, "classId", value)
-                    }
-                  >
-                    <SelectTrigger className="w-40">
-                      <SelectValue placeholder="Angi" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={ALL_CLASSES_OPTION}>
-                        Buh angi
-                      </SelectItem>
-                      {classes.map((classEntry) => (
-                        <SelectItem key={classEntry.id} value={classEntry.id}>
-                          {classEntry.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    type="date"
-                    value={entry.date}
-                    onChange={(e) =>
-                      onScheduleEntryChange(index, "date", e.target.value)
-                    }
-                    className="w-40"
-                  />
-                  <Input
-                    type="time"
-                    value={entry.time}
-                    onChange={(e) =>
-                      onScheduleEntryChange(index, "time", e.target.value)
-                    }
-                    className="w-32"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onRemoveScheduleEntry(index)}
-                  >
-                    Ustgah
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-foreground">
+              Сурагчдад дүн харагдах хугацаа
+            </Label>
+            <Select
+              value={reportReleaseMode}
+              onValueChange={(value) =>
+                onReportReleaseModeChange(value as Exam["reportReleaseMode"])
+              }
+            >
+              <SelectTrigger className="h-11">
+                <SelectValue placeholder="Дүн харагдах хугацааг сонгоно уу" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="after-all-classes-complete">
+                  Товлогдсон бүх анги дууссаны дараа
+                </SelectItem>
+                <SelectItem value="immediately">
+                  Сурагч илгээмэгц шууд
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
+        <ExamBuilderScheduleEditor
+          onAddScheduleEntry={onAddScheduleEntry}
+          onRemoveScheduleEntry={onRemoveScheduleEntry}
+          onScheduleEntryChange={onScheduleEntryChange}
+          scheduleEntries={scheduleEntries}
+        />
       </CardContent>
     </Card>
   );

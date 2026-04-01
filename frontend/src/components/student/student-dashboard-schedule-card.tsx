@@ -1,27 +1,36 @@
 "use client"
 
+import { useState } from "react"
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react"
 import type { Exam } from "@/lib/mock-data"
 
-const weekdayLabels = ["ДАВ", "МЯГ", "ЛХА", "ПҮ", "БА", "БЯ", "НЯ"]
+const weekdayLabels = ["НЯ", "ДАВ", "МЯГ", "ЛХА", "ПҮ", "БА", "БЯ"]
 const timeSlots = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00"]
 const eventTone = ["bg-[#F9D0F0]", "bg-[#B9E4FF]", "bg-[#FFE1A8]", "bg-[#FFD4D4]"]
 
-function getWeekDates() {
-  const today = new Date()
-  const mondayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1
-  const start = new Date(today)
-  start.setDate(today.getDate() - mondayIndex)
+function getDateKey(date: Date) {
+  return date.toISOString().split("T")[0]
+}
+
+function shiftDate(date: Date, days: number) {
+  const next = new Date(date)
+  next.setDate(next.getDate() + days)
+  return next
+}
+
+function getWeekDates(anchorDate: Date) {
+  const sundayIndex = anchorDate.getDay()
+  const start = new Date(anchorDate)
+  start.setDate(anchorDate.getDate() - sundayIndex)
 
   return Array.from({ length: 7 }, (_, index) => {
     const date = new Date(start)
     date.setDate(start.getDate() + index)
     return {
-      key: date.toISOString().split("T")[0],
+      key: getDateKey(date),
       day: weekdayLabels[index],
       date,
       number: date.getDate(),
-      isToday: date.toDateString() === today.toDateString(),
     }
   })
 }
@@ -45,10 +54,13 @@ export function StudentDashboardScheduleCard({
   exams: Exam[]
   studentClass: string
 }) {
-  const weekDates = getWeekDates()
+  const today = new Date()
+  const [anchorDate, setAnchorDate] = useState(() => today)
+  const todayKey = getDateKey(today)
+  const weekDates = getWeekDates(anchorDate)
   const weekEvents = getWeekEvents(exams, studentClass, new Set(weekDates.map((entry) => entry.key)))
-  const baseDate = weekDates[0]?.date ?? new Date()
-  const monthLabel = `${baseDate.getMonth() + 1}-р сар ${baseDate.getFullYear()} он`
+  const monthDate = weekDates.find((entry) => entry.date.getMonth() === anchorDate.getMonth())?.date ?? anchorDate
+  const monthLabel = `${monthDate.getMonth() + 1}-р сар ${monthDate.getFullYear()} он`
   const eventsByCell = new Map(
     weekEvents.map(({ exam, schedule }, index) => [
       `${schedule.date}-${schedule.time.slice(0, 2)}`,
@@ -60,11 +72,19 @@ export function StudentDashboardScheduleCard({
     <section className="font-sans h-[659px] w-full overflow-y-auto rounded-[20px] border border-[#DCE8F3] bg-white p-[18px] shadow-[0_6px_24px_rgba(114,144,179,0.10)] xl:h-[659px] xl:max-w-[900px]">
       <div className="relative flex items-center justify-center">
         <div className="flex items-center justify-center gap-8">
-          <button type="button" className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F7F3FB] text-[#7B6CA8]">
+          <button
+            type="button"
+            onClick={() => setAnchorDate((current) => shiftDate(current, -7))}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F7F3FB] text-[#7B6CA8]"
+          >
             <ChevronLeft className="h-5 w-5" />
           </button>
           <h2 className="text-[18px] font-medium text-[#4C5370]">{monthLabel}</h2>
-          <button type="button" className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F7F3FB] text-[#7B6CA8]">
+          <button
+            type="button"
+            onClick={() => setAnchorDate((current) => shiftDate(current, 7))}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F7F3FB] text-[#7B6CA8]"
+          >
             <ChevronRight className="h-5 w-5" />
           </button>
         </div>
@@ -78,18 +98,29 @@ export function StudentDashboardScheduleCard({
       </div>
       <div className="mt-4 grid grid-cols-[92px_repeat(7,minmax(0,1fr))] gap-2">
         <div />
-        {weekDates.map((entry, index) => (
-          <div key={entry.key} className="flex h-10 items-center justify-center text-center text-[15px] font-medium text-[#4B5563]">
-            {weekdayLabels[index]}
-          </div>
-        ))}
+        {weekDates.map((entry, index) => {
+          const isToday = entry.key === todayKey
+          return (
+            <div key={entry.key} className="flex h-[72px] flex-col items-center justify-center gap-1 text-center">
+              <span className="text-[15px] font-medium text-[#98A2B3]">{weekdayLabels[index]}</span>
+              <span className={`flex h-11 min-w-11 items-center justify-center rounded-full px-1 text-[20px] font-semibold leading-none ${
+                isToday ? "bg-[#409CFF] text-white shadow-[0_6px_16px_rgba(64,156,255,0.28)]" : "text-[#2D3642]"
+              }`}>
+                {String(entry.number).padStart(2, "0")}
+              </span>
+            </div>
+          )
+        })}
         {timeSlots.map((time) => (
           <div key={time} className="contents">
             <div className="flex min-h-[64px] items-start justify-center pt-5 text-center text-[14px] font-medium text-[#2B86FF]">{time}</div>
             {weekDates.map((entry) => {
               const event = eventsByCell.get(`${entry.key}-${time.slice(0, 2)}`)
               return (
-                <div key={`${entry.key}-${time}`} className="min-h-[64px] rounded-[10px] border border-[#E8EEF5] bg-white px-2 py-2">
+                <div
+                  key={`${entry.key}-${time}`}
+                  className="min-h-[64px] rounded-[10px] border border-[#E8EEF5] bg-white px-2 py-2"
+                >
                   {event ? (
                     <div className="flex items-start gap-1.5 text-[11px] leading-4 text-[#4A5565]">
                       <span className={`mt-1 h-2.5 w-2.5 rounded-full ${event.tone}`} />

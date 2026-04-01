@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, BookOpen, ClipboardList, LayoutDashboard, LogOut, LucideIcon, Users } from "lucide-react";
+import {
+  Bell,
+  BookOpen,
+  BookOpenText,
+  ClipboardList,
+  LayoutDashboard,
+  LogOut,
+  LucideIcon,
+  Users,
+} from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggleButton } from "@/components/theme-toggle-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -14,6 +23,7 @@ export type NavItem = { href: string; label: string; icon: LucideIcon };
 export const teacherNavItems: NavItem[] = [
   { href: "/teacher/dashboard", label: "Хянах самбар", icon: LayoutDashboard },
   { href: "/teacher/classes", label: "Ангиуд", icon: Users },
+  { href: "/teacher/sources", label: "Мэдлэгийн сан", icon: BookOpenText },
   { href: "/teacher/question-bank", label: "Асуултын сан", icon: BookOpen },
   { href: "/teacher/exams", label: "Шалгалтууд", icon: ClipboardList },
 ];
@@ -22,7 +32,9 @@ export function TeacherHeader() {
   const pathname = usePathname();
   return (
     <header className="flex h-[74px] items-center justify-between px-[40px] py-[12px]">
-      <Link href="/teacher/dashboard" className="cursor-pointer font-semibold"><BrandLogo className="dark:w-[204px]" /></Link>
+      <Link href="/teacher/dashboard" className="cursor-pointer font-semibold">
+        <BrandLogo className="dark:w-[204px]" />
+      </Link>
       <nav className="hidden rounded-[36px] border border-[#f0f3f5] bg-[linear-gradient(189deg,rgba(255,255,255,0.45)_4.4%,rgba(255,255,255,0.65)_61.8%,rgba(255,255,255,0.54)_119.9%)] p-1 lg:flex lg:items-center lg:gap-1.5 dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(161deg,rgba(6,11,38,0.94)_59%,rgba(26,31,55,0)_100%)]">
         {teacherNavItems.map((item) => {
           const Icon = item.icon;

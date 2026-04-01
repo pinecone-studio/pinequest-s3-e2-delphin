@@ -7,6 +7,12 @@ import {
   CREATE_CATEGORY_FILTER_VALUE,
   QuestionBankFiltersCard,
 } from "@/components/teacher/question-bank-filters-card";
+import {
+  TeacherPageHeader,
+  TeacherPageShell,
+  TeacherPageStatCard,
+  TeacherPageStatGrid,
+} from "@/components/teacher/teacher-page-primitives";
 import { QuestionBankResults } from "@/components/teacher/question-bank-results";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useQuestionBankBuilder } from "@/hooks/use-question-bank-builder";
 import { useQuestionBankData } from "@/hooks/use-question-bank-data";
-import { Plus } from "lucide-react";
+import { BookOpen, FolderTree, Plus, Shapes } from "lucide-react";
 
 export default function QuestionBankPage() {
   const [isCreatingCategory, setIsCreatingCategory] = useState(false);
@@ -31,17 +37,26 @@ export default function QuestionBankPage() {
     selectedCategoryFilter: builder.selectedCategoryFilter,
     selectedDifficulty: builder.selectedDifficulty,
   });
+  const totalTopicCount = data.questionBank.reduce(
+    (sum, category) => sum + category.topics.length,
+    0,
+  );
+  const totalQuestionCount = data.questionBank.reduce(
+    (sum, category) =>
+      sum +
+      category.topics.reduce((topicSum, topic) => topicSum + topic.questions.length, 0),
+    0,
+  );
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Асуултын сан</h1>
-          <p className="text-muted-foreground">
-            Эх сурвалж файлууд болон асуултуудаа нэг газраас удирдана.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
+    <TeacherPageShell>
+      <TeacherPageHeader
+        title="Асуултын сан"
+        description="Эх сурвалж файлууд, ангиллууд, сэдвүүд, асуултуудаа нэг цэгээс удирдаж дараагийн дизайн шилжилтэд бэлэн болгоно."
+        icon={BookOpen}
+        eyebrow={<span>Сангийн бүтэц болон логик одоогийн байдлаараа хадгалагдана.</span>}
+        actions={
+          <>
           <Button variant="outline" asChild>
             <Link href="/teacher/sources">Мэдлэгийн сан</Link>
           </Button>
@@ -51,8 +66,29 @@ export default function QuestionBankPage() {
               Шинэ асуултууд үүсгэх
             </Link>
           </Button>
-        </div>
-      </div>
+          </>
+        }
+      />
+
+      <TeacherPageStatGrid>
+        <TeacherPageStatCard
+          icon={FolderTree}
+          label="Ангиллууд"
+          value={`${data.questionBank.length} ангилал`}
+        />
+        <TeacherPageStatCard
+          icon={Shapes}
+          label="Сэдвүүд"
+          tone="mint"
+          value={`${totalTopicCount} сэдэв`}
+        />
+        <TeacherPageStatCard
+          icon={BookOpen}
+          label="Нийт асуулт"
+          tone="violet"
+          value={`${totalQuestionCount} асуулт`}
+        />
+      </TeacherPageStatGrid>
 
       <QuestionBankFiltersCard
         onSearchQueryChange={builder.setSearchQuery}
@@ -125,6 +161,6 @@ export default function QuestionBankPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </TeacherPageShell>
   );
 }

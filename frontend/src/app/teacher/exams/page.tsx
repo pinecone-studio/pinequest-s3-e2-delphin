@@ -2,6 +2,12 @@
 
 import * as React from "react"
 import Link from "next/link"
+import {
+  TeacherPageHeader,
+  TeacherPageShell,
+  TeacherPageStatCard,
+  TeacherPageStatGrid,
+} from "@/components/teacher/teacher-page-primitives"
 import { TeacherExamsSection } from "@/components/teacher/teacher-exams-section"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
@@ -10,6 +16,7 @@ import {
   getTeacherExams,
   type TeacherExam,
 } from "@/lib/teacher-exams"
+import { ClipboardList, FileClock, PlayCircle, Trophy } from "lucide-react"
 
 function isExamOngoing(exam: TeacherExam, now = new Date()) {
   if (exam.status !== "scheduled") {
@@ -68,18 +75,38 @@ export default function ExamsPage() {
   )
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Шалгалтууд</h1>
-          <p className="text-muted-foreground">
-            Шалгалт үүсгэж, зохион байгуулах хэсэг.
-          </p>
-        </div>
-        <Link href="/teacher/question-bank/create">
-          <Button>Шинэ асуултууд үүсгэх</Button>
-        </Link>
-      </div>
+    <TeacherPageShell>
+      <TeacherPageHeader
+        title="Шалгалтууд"
+        description="Шалгалтын ноорог, товлолт, явц, дууссан үр дүнг нэг урсгалд харуулах шинэ shell суурь."
+        icon={ClipboardList}
+        eyebrow={<span>Дараагийн PR-д бүрэн Figma exam flow руу салгаж шилжүүлнэ.</span>}
+        actions={
+          <Link href="/teacher/question-bank/create">
+            <Button>Шинэ асуултууд үүсгэх</Button>
+          </Link>
+        }
+      />
+
+      <TeacherPageStatGrid>
+        <TeacherPageStatCard
+          icon={PlayCircle}
+          label="Явагдаж буй"
+          value={`${ongoingExams.length} шалгалт`}
+        />
+        <TeacherPageStatCard
+          icon={FileClock}
+          label="Товлогдсон"
+          tone="mint"
+          value={`${scheduledExams.length} шалгалт`}
+        />
+        <TeacherPageStatCard
+          icon={Trophy}
+          label="Дууссан"
+          tone="violet"
+          value={`${completedExams.length} шалгалт`}
+        />
+      </TeacherPageStatGrid>
 
       {isLoading ? (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -116,6 +143,6 @@ export default function ExamsPage() {
           title="Нооргууд"
         />
       ) : null}
-    </div>
+    </TeacherPageShell>
   )
 }

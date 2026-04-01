@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  TeacherPageHeader,
+  TeacherPageShell,
+  TeacherPageStatCard,
+  TeacherPageStatGrid,
+} from "@/components/teacher/teacher-page-primitives";
 import { SourcesFileListCard } from "@/components/teacher/sources-file-list-card";
 import { SourcesUploadCard } from "@/components/teacher/sources-upload-card";
 import { toast } from "@/hooks/use-toast";
@@ -10,6 +16,7 @@ import {
   uploadFile,
   type UploadRecord,
 } from "@/lib/uploads-api";
+import { BookOpenText, FileStack, FolderArchive } from "lucide-react";
 
 const SOURCES_FOLDER = "sources";
 
@@ -116,14 +123,29 @@ export default function SourcesPage() {
     }
   };
 
+  const totalSize = files.reduce((sum, file) => sum + file.size, 0);
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Мэдлэгийн сан</h1>
-        <p className="text-muted-foreground">
-          Асуулт үүсгэхдээ ашиглах материал, ном, файлууд.
-        </p>
-      </div>
+    <TeacherPageShell>
+      <TeacherPageHeader
+        title="Мэдлэгийн сан"
+        description="Асуулт болон шалгалтын урсгалд ашиглах файлуудыг төвлөрүүлж, дараагийн Figma-д суурилсан эх сурвалжийн бүртгэлийн суурийг бэлдэнэ."
+        icon={BookOpenText}
+        eyebrow={<span>Энэ PR-д одоогийн upload логик өөрчлөгдөхгүй.</span>}
+      />
+      <TeacherPageStatGrid>
+        <TeacherPageStatCard
+          icon={FolderArchive}
+          label="Бүртгэсэн файл"
+          value={`${files.length} файл`}
+        />
+        <TeacherPageStatCard
+          icon={FileStack}
+          label="Нийт хэмжээ"
+          tone="mint"
+          value={formatFileSize(totalSize)}
+        />
+      </TeacherPageStatGrid>
       <SourcesUploadCard
         formatFileSize={formatFileSize}
         isUploading={isUploading}
@@ -139,6 +161,6 @@ export default function SourcesPage() {
         isLoading={isLoading}
         onDelete={(fileId) => void handleDelete(fileId)}
       />
-    </div>
+    </TeacherPageShell>
   );
 }

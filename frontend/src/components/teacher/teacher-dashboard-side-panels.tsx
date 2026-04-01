@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { useMemo, useState } from "react"
 import { useCurrentTime } from "@/hooks/use-current-time"
+import { toast } from "@/hooks/use-toast"
 import { classes, examResults } from "@/lib/mock-data"
 import { saveDashboardAnnouncement } from "@/lib/dashboard-announcements"
 import { formatIsoDate, formatTimeLabel } from "@/lib/teacher-dashboard-utils"
@@ -15,6 +16,36 @@ export function TeacherDashboardSidePanels(props: { selectedClassId: string }) {
   const currentTime = useCurrentTime()
   const chart = useMemo(() => buildChartModel(), [])
   const activeAnnouncementClassId = selectedClassId !== "all" ? selectedClassId : announcementClassId
+
+  const handleSendAnnouncement = () => {
+    const trimmedMessage = message.trim()
+
+    if (activeAnnouncementClassId === "all") {
+      toast({
+        title: "Анхааруулга",
+        description: "Мэдэгдэл илгээхийн өмнө ангиа сонгоно уу.",
+      })
+      return
+    }
+
+    if (!trimmedMessage) {
+      toast({
+        title: "Анхааруулга",
+        description: "Илгээх мэдэгдлийн агуулгаа оруулна уу.",
+      })
+      return
+    }
+
+    saveDashboardAnnouncement({ classId: activeAnnouncementClassId, message: trimmedMessage })
+    setMessage("")
+
+    const targetClass = classes.find((item) => item.id === activeAnnouncementClassId)
+
+    toast({
+      title: "Амжилттай",
+      description: `${targetClass?.name ?? "Сонгосон анги"} руу мэдэгдэл амжилттай илгээгдлээ.`,
+    })
+  }
 
   return (
     <div className="flex min-w-0 w-full flex-col gap-5">
@@ -42,7 +73,7 @@ export function TeacherDashboardSidePanels(props: { selectedClassId: string }) {
         <p className="mt-4 text-[14px] font-medium text-[#4c4c66] dark:text-[#e6f2ff]">Зар оруулах</p>
         <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Улирлын шалгалт 7 хоногийн дараа авна." className="mt-2 h-[83px] w-full resize-none rounded-[12px] border border-[rgba(24,100,251,0.5)] bg-transparent px-3 py-[9px] text-[14px] text-[#4c4c66] outline-none placeholder:text-[#6f6c99] dark:border-[rgba(224,225,226,0.08)] dark:bg-[rgba(255,255,255,0.08)] dark:text-[#f9fafb] dark:placeholder:text-[#89939c]" />
         <div className="mt-4 flex justify-end">
-          <button type="button" onClick={() => message.trim() && (saveDashboardAnnouncement({ classId: activeAnnouncementClassId, message }), setMessage(""))} className={cn("h-9 rounded-[12px] bg-[#5b91fc] px-5 text-[14px] text-white transition hover:bg-[#4b83f5]", !message.trim() && "opacity-70")}>Илгээх</button>
+          <button type="button" onClick={handleSendAnnouncement} className={cn("h-9 rounded-[12px] bg-[#5b91fc] px-5 text-[14px] text-white transition hover:bg-[#4b83f5]", !message.trim() && "opacity-70")}>Илгээх</button>
         </div>
       </section>
     </div>

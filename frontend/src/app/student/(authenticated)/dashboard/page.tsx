@@ -46,13 +46,13 @@ export default function StudentDashboard() {
   )
 
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-[1360px] flex-col gap-5 pb-[28px] pt-[18px]">
+    <div className="mx-auto flex w-full max-w-[1360px] flex-col gap-5 pb-[28px] pt-[18px]">
       <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
         <div className="min-w-0">
-          <h1 className="font-sans text-[33px] font-semibold leading-[1.1] tracking-[-0.03em] text-[#2D3642]">
+          <h1 className="font-sans text-[33px] font-semibold leading-[1.1] tracking-[-0.03em] text-[#2D3642] dark:text-[#edf4ff]">
             Сайн уу, {studentName}!
           </h1>
-          <p className="mt-[6px] font-sans text-[16px] font-normal leading-5 text-[#606C80]">
+          <p className="mt-[6px] font-sans text-[16px] font-normal leading-5 text-[#606C80] dark:text-[#aab7cb]">
             Өнөөдөр чиний гялалзах өдөр ✨
           </p>
         </div>
@@ -61,13 +61,13 @@ export default function StudentDashboard() {
             const Icon = item.icon
             return (
               <div key={item.label} className="flex items-center gap-3">
-                <div className="flex h-[56px] w-[56px] items-center justify-center rounded-full border border-[#D9E8F4] bg-[#F3F9FF] text-[#39424E]">
+                <div className="flex h-[56px] w-[56px] items-center justify-center rounded-full border border-[#D9E8F4] bg-[#F3F9FF] text-[#39424E] dark:border-white/10 dark:bg-white/8 dark:text-[#edf4ff]">
                   <Icon className="h-[26px] w-[26px] stroke-[1.7]" />
                 </div>
                 <div>
-                  <p className="text-[14px] leading-5 text-[#7A8698]">{item.label}</p>
+                  <p className="text-[14px] leading-5 text-[#7A8698] dark:text-[#9eacc3]">{item.label}</p>
                   <div className="mt-1 flex items-end gap-1.5">
-                    <p className="text-[24px] font-semibold leading-none tracking-[-0.03em] text-[#39424E]">{item.value}</p>
+                    <p className="text-[24px] font-semibold leading-none tracking-[-0.03em] text-[#39424E] dark:text-[#edf4ff]">{item.value}</p>
                     <p className="text-[12px] font-medium text-[#4A9DFF]">{item.detail}</p>
                   </div>
                 </div>
@@ -77,8 +77,8 @@ export default function StudentDashboard() {
         </div>
       </div>
 
-      <div className="grid min-h-0 flex-1 gap-5 xl:grid-cols-[900px_440px] xl:gap-[20px]">
-        <div className="flex min-h-0 flex-col gap-[20px] xl:w-[900px]">
+      <div className="grid gap-5 xl:grid-cols-[900px_440px] xl:items-stretch xl:gap-[20px]">
+        <div className="flex h-full flex-col gap-[20px] xl:w-[900px]">
           <StudentDashboardProfileCard studentId={studentId} studentName={studentName} />
           <StudentDashboardScheduleCard exams={myExams} studentClass={studentClass} />
         </div>

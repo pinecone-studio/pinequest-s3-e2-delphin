@@ -43,9 +43,9 @@ export function StudentExamsOverviewPanel(props: { exams: Exam[]; studentClass: 
   }, [studentClass])
 
   return (
-    <section className="box-border h-[814px] w-full overflow-y-auto rounded-[20px] border border-[#DCE8F3] bg-white p-5 shadow-[0_6px_24px_rgba(114,144,179,0.10)] xl:h-full xl:w-[440px]">
-      <h1 className="font-sans text-[22px] font-semibold leading-6 text-[#2F3845]">Шинэ содон</h1>
-      <p className="mt-[7px] font-sans text-[14px] font-normal leading-5 text-[#687386]">Чамд зориулсан хамгийн сүүлийн үеийн мэдээллүүд.</p>
+    <section className="box-border h-[781px] w-full overflow-y-auto rounded-[20px] border border-[#DCE8F3] bg-white p-5 shadow-[0_6px_24px_rgba(114,144,179,0.10)] dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(12,18,44,0.94)_0%,rgba(11,17,38,0.9)_100%)] dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)] xl:w-[440px]">
+      <h1 className="font-sans text-[22px] font-semibold leading-6 text-[#2F3845] dark:text-[#edf4ff]">Шинэ содон</h1>
+      <p className="mt-[7px] font-sans text-[14px] font-normal leading-5 text-[#687386] dark:text-[#aab7cb]">Чамд зориулсан хамгийн сүүлийн үеийн мэдээллүүд.</p>
 
       <div className="mt-5 grid h-[44px] w-full grid-cols-3 rounded-full bg-[#003366] p-1 shadow-[0_10px_22px_rgba(52,94,145,0.20)]">
         {tabs.map((tab) => (
@@ -57,18 +57,18 @@ export function StudentExamsOverviewPanel(props: { exams: Exam[]; studentClass: 
 
       {activeTab === "all" ? (
         <div className="mt-5 space-y-5">
-          {announcement ? <article className="rounded-[18px] border border-[#D8E7FB] bg-[#E7F0FD] px-5 py-4"><p className="text-[14px] font-semibold leading-7 text-[#2F3845]">{announcement}</p></article> : null}
-          {visibleNotices.map((notice) => <article key={notice.id} className={`rounded-[18px] border border-[#E1EAF4] px-5 py-4 ${notice.tone}`}><p className="text-[14px] font-semibold leading-7 text-[#2F3845]">{notice.title} <span className="font-normal">{notice.body}</span></p></article>)}
+          {announcement ? <article className="rounded-[18px] border border-[#D8E7FB] bg-[#E7F0FD] px-5 py-4 dark:border-white/10 dark:bg-[#132044]"><p className="text-[14px] font-semibold leading-7 text-[#2F3845] dark:text-[#edf4ff]">{announcement}</p></article> : null}
+          {visibleNotices.map((notice) => <article key={notice.id} className={`rounded-[18px] border border-[#E1EAF4] px-5 py-4 dark:border-white/10 dark:bg-white/6 ${notice.tone}`}><p className="text-[14px] font-semibold leading-7 text-[#2F3845] dark:text-[#edf4ff]">{notice.title} <span className="font-normal dark:text-[#c4d0e3]">{notice.body}</span></p></article>)}
         </div>
       ) : null}
 
-      {visibleExams.length > 0 ? <div className="mt-5"><h2 className="font-sans text-[14px] font-semibold leading-5 text-[#7A8698]">Удахгүй болох шалгалтууд</h2><div className="mt-5 space-y-5">{visibleExams.map((exam) => {
+      {visibleExams.length > 0 ? <div className="mt-5"><h2 className="font-sans text-[14px] font-semibold leading-5 text-[#7A8698] dark:text-[#9eacc3]">Удахгүй болох шалгалтууд</h2><div className="mt-5 space-y-5">{visibleExams.map((exam) => {
         const schedule = exam.scheduledClasses[0]
         const isToday = schedule?.date === today
-        return <article key={exam.id} className="rounded-[18px] border border-[#DFE8F2] bg-[#F8FBFF] p-[17px]"><div className="flex items-start justify-between gap-4"><p className="font-sans text-[16px] font-bold leading-6 text-[#2F3845]">{exam.title}</p>{isToday ? <span className="rounded-full bg-[#DFF5E5] px-2 py-0.5 text-[12px] font-medium text-[#188B43]">Бэлэн</span> : null}</div><div className="mt-2 flex items-center gap-3 text-[12px] text-[#718093]"><Clock3 className="h-[14px] w-[14px]" /><span>{exam.duration} мин</span><span>{isToday ? `Өнөөдөр · ${schedule?.time}` : `${schedule?.date} · ${schedule?.time}`}</span></div><Button asChild variant="ghost" className="mt-3 h-[44px] w-full rounded-[12px] bg-[#0B4078] text-[14px] font-medium text-white hover:bg-[#0F4C8B]"><Link href={`/student/exams/${exam.id}`}>Дэлгэрэнгүй</Link></Button></article>
+        return <article key={exam.id} className="rounded-[18px] border border-[#DFE8F2] bg-[#F8FBFF] p-[17px] dark:border-white/10 dark:bg-white/6"><div className="flex items-start justify-between gap-4"><p className="font-sans text-[16px] font-bold leading-6 text-[#2F3845] dark:text-[#edf4ff]">{exam.title}</p>{isToday ? <span className="rounded-full bg-[#DFF5E5] px-2 py-0.5 text-[12px] font-medium text-[#188B43] dark:bg-[#153924] dark:text-[#7ce3a0]">Бэлэн</span> : null}</div><div className="mt-2 flex items-center gap-3 text-[12px] text-[#718093] dark:text-[#aab7cb]"><Clock3 className="h-[14px] w-[14px]" /><span>{exam.duration} мин</span><span>{isToday ? `Өнөөдөр · ${schedule?.time}` : `${schedule?.date} · ${schedule?.time}`}</span></div><Button asChild variant="ghost" className="mt-3 h-[44px] w-full rounded-[12px] bg-[#0B4078] text-[14px] font-medium text-white hover:bg-[#0F4C8B] dark:bg-[#1b4f9c] dark:hover:bg-[#2461b7]"><Link href={`/student/exams/${exam.id}`}>Дэлгэрэнгүй</Link></Button></article>
       })}</div></div> : null}
 
-      {visibleResults.length > 0 ? <div className="mt-5"><h2 className="font-sans text-[14px] font-semibold leading-5 text-[#7A8698]">Сүүлийн дүнгүүд</h2><div className="mt-5 space-y-5">{visibleResults.map((result) => <Link key={result.id} href="/student/reports/e1" className="flex items-center justify-between rounded-[18px] border border-[#DFE8F2] bg-[#F8FBFF] px-3 py-3 transition hover:bg-[#F0F6FF]"><div className="flex items-center gap-4"><div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#CFE0F1] bg-white text-[12px] text-[#2F3845]">{result.short}</div><div><p className="font-sans text-[14px] font-medium leading-5 text-[#2F3845]">{result.subject}</p><p className="text-[12px] leading-4 text-[#768395]">{result.score}</p></div></div><span className={`rounded-full px-3 py-1 text-[14px] font-bold leading-5 ${result.grade.tone}`}>{result.grade.label}</span></Link>)}</div></div> : null}
+      {visibleResults.length > 0 ? <div className="mt-5"><h2 className="font-sans text-[14px] font-semibold leading-5 text-[#7A8698] dark:text-[#9eacc3]">Сүүлийн дүнгүүд</h2><div className="mt-5 space-y-5">{visibleResults.map((result) => <Link key={result.id} href="/student/reports/e1" className="flex items-center justify-between rounded-[18px] border border-[#DFE8F2] bg-[#F8FBFF] px-3 py-3 transition hover:bg-[#F0F6FF] dark:border-white/10 dark:bg-white/6 dark:hover:bg-white/10"><div className="flex items-center gap-4"><div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#CFE0F1] bg-white text-[12px] text-[#2F3845] dark:border-white/10 dark:bg-white/8 dark:text-[#edf4ff]">{result.short}</div><div><p className="font-sans text-[14px] font-medium leading-5 text-[#2F3845] dark:text-[#edf4ff]">{result.subject}</p><p className="text-[12px] leading-4 text-[#768395] dark:text-[#aab7cb]">{result.score}</p></div></div><span className={`rounded-full px-3 py-1 text-[14px] font-bold leading-5 ${result.grade.tone}`}>{result.grade.label}</span></Link>)}</div></div> : null}
     </section>
   )
 }

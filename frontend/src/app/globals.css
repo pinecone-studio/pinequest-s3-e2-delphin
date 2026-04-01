@@ -185,6 +185,16 @@
       linear-gradient(180deg, #000000 0%, #010203 45%, #030507 100%);
   }
 
+  .dark .student-dark-shell {
+    background:
+      radial-gradient(circle at top, rgba(28, 102, 251, 0.28) 0%, transparent 28%),
+      linear-gradient(165deg, #0f123b 14%, #090d2e 56%, #020515 86%);
+  }
+
+  .dark .student-dark-surface {
+    background: linear-gradient(180deg, rgba(12, 18, 44, 0.94) 0%, rgba(11, 17, 38, 0.9) 100%);
+  }
+
   .ocean-glow {
     background: radial-gradient(
       circle at center,

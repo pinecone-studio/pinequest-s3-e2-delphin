@@ -51,12 +51,12 @@ export default function StudentExamsPage() {
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Шалгалт хайх..."
-              className="h-11 rounded-full border border-[#E6F2FF] bg-[#F5FAFF] pl-10 text-[14px] font-medium text-[#566069] placeholder:text-[#566069] dark:border-white/10 dark:bg-white/6 dark:text-[#d0d8e6] dark:placeholder:text-[#8fa0bb]"
+              className="h-11 rounded-full border border-[#E6F2FF] bg-[#F5FAFF] pl-10 text-[14px] font-medium text-[#566069] placeholder:text-[#566069] dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(156deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#d0d8e6] dark:placeholder:text-[#8fa0bb]"
             />
           </div>
 
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="h-12 min-w-[152px] rounded-full border border-[#E6F2FF] bg-[#66B2FF] px-4 text-[14px] font-medium text-[#F5FAFF] shadow-none dark:border-white/10 dark:bg-[#1b4f9c] [&_svg]:text-white [&_svg]:opacity-100">
+            <SelectTrigger className="h-12 min-w-[152px] rounded-full border border-[#E6F2FF] bg-[#66B2FF] px-4 text-[14px] font-medium text-[#F5FAFF] shadow-none dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(161deg,rgba(6,11,38,0.94)_59%,rgba(26,31,55,0)_100%)] [&_svg]:text-white [&_svg]:opacity-100">
               <SelectValue placeholder="Бүх хичээл" />
             </SelectTrigger>
             <SelectContent>
@@ -68,7 +68,7 @@ export default function StudentExamsPage() {
             </SelectContent>
           </Select>
 
-          <div className="flex w-[427px] items-center rounded-full border border-[#E6F2FF] bg-[#003366] p-2 shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:border-white/10 dark:bg-[#091733] dark:shadow-[0_20px_44px_rgba(2,6,23,0.4)]">
+          <div className="flex w-[427px] items-center rounded-full border border-[#E6F2FF] bg-[#003366] p-2 shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_20px_44px_rgba(2,6,23,0.4)]">
             <SegmentedTab active={activeTab === "all"} count={allCount} label="Бүгд" onClick={() => setActiveTab("all")} />
             <SegmentedTab active={activeTab === "upcoming"} count={filteredUpcomingExams.length} label="Удахгүй" onClick={() => setActiveTab("upcoming")} />
             <SegmentedTab active={activeTab === "finished"} count={finishedItems.length} label="Дууссан" onClick={() => setActiveTab("finished")} />
@@ -115,7 +115,7 @@ export default function StudentExamsPage() {
           ) : null}
 
           {!isLoading && filteredUpcomingExams.length === 0 && finishedItems.length === 0 ? (
-            <div className="rounded-2xl border border-[#E6F2FF] bg-[#F9FAFB] px-6 py-10 text-center text-[#566069] dark:border-white/10 dark:bg-white/6 dark:text-[#aab7cb]">
+            <div className="rounded-2xl border border-[#E6F2FF] bg-[#F9FAFB] px-6 py-10 text-center text-[#566069] dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(112deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#aab7cb]">
               Хайлтын нөхцөлд тохирох шалгалт олдсонгүй.
             </div>
           ) : null}

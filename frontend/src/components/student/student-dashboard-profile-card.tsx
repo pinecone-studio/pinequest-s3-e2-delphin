@@ -58,7 +58,7 @@ export function StudentDashboardProfileCard({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <div className="h-[102px] w-full rounded-[20px] border border-[#DCE8F3] bg-white p-[21px] shadow-[0_6px_24px_rgba(114,144,179,0.10)] dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(12,18,44,0.94)_0%,rgba(11,17,38,0.9)_100%)] dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)] xl:max-w-[900px]">
+      <div className="h-[102px] w-full rounded-[20px] border border-[#DCE8F3] bg-white p-[21px] shadow-[0_6px_24px_rgba(114,144,179,0.10)] dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)] xl:max-w-[900px]">
         <input
           ref={imageInputRef}
           type="file"
@@ -76,9 +76,9 @@ export function StudentDashboardProfileCard({
               aria-label="Профайлын зураг сонгох"
               disabled={isUploadingImage}
             >
-              <Avatar className="h-[58px] w-[58px] border border-[#E3EDF6] p-[1px] shadow-sm transition group-hover:brightness-95 dark:border-white/10">
+              <Avatar className="h-[58px] w-[58px] border border-[#E3EDF6] p-[1px] shadow-sm transition group-hover:brightness-95 dark:border-[rgba(224,225,226,0.08)]">
                 <AvatarImage src={profile.image} alt={profile.name} className="object-cover" />
-                <AvatarFallback className="bg-[#D8E9FF] text-lg font-bold text-[#4E87C7] dark:bg-[#1c366f] dark:text-[#d8e7ff]">
+                <AvatarFallback className="bg-[#D8E9FF] text-lg font-bold text-[#4E87C7] dark:bg-[linear-gradient(156deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#d8e7ff]">
                   {getInitials(profile.name)}
                 </AvatarFallback>
               </Avatar>
@@ -103,7 +103,7 @@ export function StudentDashboardProfileCard({
           <DialogTrigger asChild>
             <button
               type="button"
-              className="cursor-pointer rounded-full p-2 text-[#7B8797] transition hover:bg-[#F4F8FC] dark:text-[#c5d0e0] dark:hover:bg-white/8"
+              className="cursor-pointer rounded-full p-2 text-[#7B8797] transition hover:bg-[#F4F8FC] dark:text-[#c5d0e0] dark:hover:bg-[linear-gradient(156deg,rgba(8,14,46,0.82)_28%,rgba(30,36,63,0.56)_91%)]"
               aria-label="Профайл засах"
             >
               <Pencil className="h-5 w-5" />
@@ -112,7 +112,7 @@ export function StudentDashboardProfileCard({
         </div>
       </div>
 
-      <DialogContent className="rounded-[24px] border-[#d8eaff] bg-white p-6 dark:border-white/10 dark:bg-[#0b1126] sm:max-w-[520px]">
+      <DialogContent className="rounded-[24px] border-[#d8eaff] bg-white p-6 dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(127deg,rgba(6,11,38,0.92)_18%,rgba(12,18,44,0.86)_58%,rgba(26,31,55,0.72)_100%)] dark:shadow-[0_28px_90px_rgba(2,6,23,0.55)] sm:max-w-[520px]">
         <DialogHeader>
           <DialogTitle>Профайл засах</DialogTitle>
           <DialogDescription>Зураг, нэр, bio мэдээллээ student талдаа шинэчилнэ.</DialogDescription>

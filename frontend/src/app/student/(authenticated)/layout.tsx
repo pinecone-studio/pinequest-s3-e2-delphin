@@ -59,7 +59,7 @@ export default function StudentLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#eef6ff_0%,#f7fbff_100%)] text-foreground dark:bg-[linear-gradient(180deg,#050910_0%,#09111d_100%)]">
+    <div className="min-h-screen bg-[linear-gradient(180deg,#eef6ff_0%,#f7fbff_100%)] text-foreground student-dark-shell">
       <div className="mx-auto min-h-screen w-full max-w-[1440px] shadow-[0_10px_35px_rgba(110,150,190,0.10)] dark:shadow-[0_20px_60px_rgba(2,6,23,0.38)]">
         <header className="relative z-10">
           <div className="grid grid-cols-[1fr_auto_1fr] items-center px-10 py-4">
@@ -70,7 +70,7 @@ export default function StudentLayout({
               <BrandLogo className="gap-2.5" textClassName="text-left" />
             </Link>
 
-            <nav className="flex h-[46px] items-center gap-1 rounded-full bg-[#FFFFFF] p-1 shadow-[0_12px_40px_rgba(90,143,203,0.18)] dark:border dark:border-white/10 dark:bg-[linear-gradient(161deg,rgba(6,11,38,0.94)_59%,rgba(26,31,55,0)_100%)] dark:shadow-[0_20px_44px_rgba(2,6,23,0.4)]">
+            <nav className="flex h-[46px] items-center gap-1 rounded-full bg-[#FFFFFF] p-1 shadow-[0_12px_40px_rgba(90,143,203,0.18)] dark:border dark:border-white/10 student-dark-surface dark:shadow-[0_20px_44px_rgba(2,6,23,0.4)]">
               {navItems.map((item) => {
                 const Icon = item.icon
                 const active = isStudentNavItemActive(pathname, item.href)

@@ -4,17 +4,32 @@ import { type ChangeEvent, useCallback, useEffect, useState } from "react"
 import { notifyStudentSessionChange } from "@/hooks/use-student-session"
 import { deleteUpload, listUploads, uploadFile } from "@/lib/uploads-api"
 
-const STORAGE_KEYS = {
-  bio: "studentProfileBio",
-} as const
+const fallbackBio = "Би ирээдүйд Дизайнер болно."
 
-const defaultBio = "Би ирээдүйд Дизайнер болно."
+const studentDefaultBios: Record<string, string> = {
+  "Бат-Оргил.Э": "Шалгалтын урсгал, интерфэйсийг нягталж буй шүүгчийн дэмо хэрэглэгч.",
+  "Эрдэнэгомбо.М": "Хариу өгөх явц болон тайлангийн туршлагыг шалгаж буй шүүгчийн профайл.",
+  "Анар.Т": "Сурагчийн нэвтрэлт, шалгалт эхлүүлэх алхмуудыг турших шүүгч.",
+  "Болор.Э": "Шалгалтын харагдац, ойлгомжтой байдлыг ажиглаж буй шүүгчийн дэмо профайл.",
+  "Буяндэлгэр.Т": "Дашбоард болон шалгалтын урсгалын хэрэглээг туршиж буй шүүгч.",
+  "Өсөхбаяр.Ж": "Оноо, тайлан, сурагчийн туршлагыг үнэлэхэд ашиглах дэмо хэрэглэгч.",
+  "Түвшин.О": "Шалгалтын тогтвортой байдал, навигацыг шалгах шүүгчийн профайл.",
+  "Өгөөмөр.Л": "Презентацын үеэр сурагчийн дүрээр шалгалт өгөх шүүгчийн профайл.",
+}
 
 export type StudentProfileState = {
   name: string
   bio: string
   image: string
   imageUploadId: string
+}
+
+function getNameStorageKey(studentId: string) {
+  return `studentProfileName:${studentId || "anonymous"}`
+}
+
+function getBioStorageKey(studentId: string) {
+  return `studentProfileBio:${studentId || "anonymous"}`
 }
 
 function getAvatarStorageKey(studentId: string) {
@@ -25,16 +40,24 @@ function buildAvatarContentUrl(uploadId: string) {
   return `/api/backend/uploads/${uploadId}/content`
 }
 
+function getDefaultBio(studentName: string) {
+  return studentDefaultBios[studentName] || fallbackBio
+}
+
 function getStoredProfile(studentId: string, studentName: string): StudentProfileState {
+  const defaultBio = getDefaultBio(studentName)
+
   if (typeof window === "undefined") {
     return { name: studentName, bio: defaultBio, image: "", imageUploadId: "" }
   }
 
   const imageUploadId = studentId ? localStorage.getItem(getAvatarStorageKey(studentId)) || "" : ""
+  const storedName = studentId ? localStorage.getItem(getNameStorageKey(studentId)) || "" : ""
+  const storedBio = studentId ? localStorage.getItem(getBioStorageKey(studentId)) || "" : ""
 
   return {
-    name: localStorage.getItem("studentName") || studentName,
-    bio: localStorage.getItem(STORAGE_KEYS.bio) || defaultBio,
+    name: storedName || studentName,
+    bio: storedBio || defaultBio,
     image: imageUploadId ? buildAvatarContentUrl(imageUploadId) : "",
     imageUploadId,
   }
@@ -44,10 +67,15 @@ export function useStudentDashboardProfile(studentId: string, studentName: strin
   const [profile, setProfile] = useState<StudentProfileState>(() => getStoredProfile(studentId, studentName))
   const [draft, setDraft] = useState<StudentProfileState>(() => getStoredProfile(studentId, studentName))
   const [isUploadingImage, setIsUploadingImage] = useState(false)
+  const defaultBio = getDefaultBio(studentName)
 
   const persistProfile = useCallback((nextProfile: StudentProfileState) => {
+    if (studentId) {
+      localStorage.setItem(getNameStorageKey(studentId), nextProfile.name)
+      localStorage.setItem(getBioStorageKey(studentId), nextProfile.bio)
+    }
+
     localStorage.setItem("studentName", nextProfile.name)
-    localStorage.setItem(STORAGE_KEYS.bio, nextProfile.bio)
 
     if (studentId && nextProfile.imageUploadId) {
       localStorage.setItem(getAvatarStorageKey(studentId), nextProfile.imageUploadId)

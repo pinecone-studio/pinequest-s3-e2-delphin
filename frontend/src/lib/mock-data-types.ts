@@ -6,6 +6,14 @@ export interface Student {
   classId: string
 }
 
+export interface Teacher {
+  id: string
+  name: string
+  email: string
+  password: string
+  subject: string
+}
+
 export interface Class {
   id: string
   name: string

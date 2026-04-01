@@ -3,6 +3,7 @@ import {
   examResults,
   exams,
   students,
+  teachers,
   type Exam,
 } from "@/lib/mock-data";
 export { teacherDashboardExams } from "@/lib/teacher-dashboard-mock-data";
@@ -46,12 +47,7 @@ export const classSchedule = [
   },
 ];
 
-export const teacher = {
-  id: "teacher1",
-  name: "Амарбаясгалан",
-  email: "amarbaysgalan@school.com",
-  subject: "Математик",
-};
+export const teacher = teachers[0];
 
 export function getClassById(id: string) {
   return classes.find((courseClass) => courseClass.id === id);

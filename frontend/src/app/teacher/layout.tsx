@@ -1,12 +1,38 @@
 "use client";
 
+import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { TeacherHeader } from "@/components/teacher/teacher-layout-shell";
+import { useTeacherSession } from "@/hooks/use-teacher-session";
 
 export default function TeacherLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { teacherName } = useTeacherSession();
+  const isLoginPage = pathname === "/teacher/login";
+
+  useEffect(() => {
+    if (!teacherName && !isLoginPage) {
+      router.push("/teacher/login");
+    }
+
+    if (teacherName && isLoginPage) {
+      router.push("/teacher/dashboard");
+    }
+  }, [isLoginPage, router, teacherName]);
+
+  if (isLoginPage) {
+    return children;
+  }
+
+  if (!teacherName) {
+    return null;
+  }
+
   return (
     <div className="teacher-theme min-h-screen bg-[#f6fafe] text-foreground dark:bg-[radial-gradient(circle_at_top,rgba(28,102,251,0.28)_0%,transparent_28%),linear-gradient(165deg,#0f123b_14%,#090d2e_56%,#020515_86%)]">
       <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col">

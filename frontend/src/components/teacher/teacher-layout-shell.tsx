@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Bell,
   BookOpen,
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggleButton } from "@/components/theme-toggle-button";
+import { notifyTeacherSessionChange, useTeacherSession } from "@/hooks/use-teacher-session";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +28,18 @@ export const teacherNavItems: NavItem[] = [
 
 export function TeacherHeader() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { teacherName, teacherSubject } = useTeacherSession();
+
+  const handleLogout = () => {
+    localStorage.removeItem("teacherId");
+    localStorage.removeItem("teacherName");
+    localStorage.removeItem("teacherEmail");
+    localStorage.removeItem("teacherSubject");
+    notifyTeacherSessionChange();
+    router.push("/");
+  };
+
   return (
     <header className="flex h-[74px] items-center justify-between px-[40px] py-[12px]">
       <Link href="/teacher/dashboard" className="cursor-pointer font-semibold">
@@ -40,9 +53,17 @@ export function TeacherHeader() {
         })}
       </nav>
       <div className="flex items-center gap-3">
+        <div className="hidden rounded-full border border-[#dde7ff] bg-white/80 px-3 py-1.5 text-right shadow-[0_10px_24px_rgba(204,229,255,0.45)] lg:block dark:border-[rgba(224,225,226,0.08)] dark:bg-white/6 dark:shadow-none">
+          <p className="text-sm font-semibold text-[#1f2a37] dark:text-white">
+            {teacherName || "Багш"}
+          </p>
+          <p className="text-xs text-[#6b7893] dark:text-[#c2c9d0]">
+            {teacherSubject || "Хичээл"}
+          </p>
+        </div>
         <div className="flex items-center gap-3">
           <IconButton as="button" label="Notifications"><Bell className="h-[18px] w-[18px]" strokeWidth={1.85} /></IconButton>
-          <IconButton as="link" href="/" label="Гарах"><LogOut className="h-[18px] w-[18px]" strokeWidth={1.8} /></IconButton>
+          <IconButton as="button" label="Гарах" onClick={handleLogout}><LogOut className="h-[18px] w-[18px]" strokeWidth={1.8} /></IconButton>
           <ThemeToggleButton className="h-[35px] w-[69px]" />
         </div>
       </div>
@@ -64,7 +85,7 @@ export function SidebarNav({ navItems, pathname }: { navItems: NavItem[]; pathna
   );
 }
 
-function IconButton(props: { as: "button"; label: string; children: React.ReactNode } | { as: "link"; href: string; label: string; children: React.ReactNode }) {
+function IconButton(props: { as: "button"; label: string; children: React.ReactNode; onClick?: () => void } | { as: "link"; href: string; label: string; children: React.ReactNode }) {
   const className = "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#f0f3f5] bg-white/72 text-[#6b7893] transition-all hover:bg-white hover:text-[#42516f] dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(161deg,rgba(6,11,38,0.94)_59%,rgba(26,31,55,0)_100%)] dark:text-[#c2c9d0]";
-  return props.as === "button" ? <button type="button" aria-label={props.label} title={props.label} className={className}>{props.children}</button> : <Link href={props.href} aria-label={props.label} title={props.label} className={className}>{props.children}</Link>;
+  return props.as === "button" ? <button type="button" onClick={props.onClick} aria-label={props.label} title={props.label} className={className}>{props.children}</button> : <Link href={props.href} aria-label={props.label} title={props.label} className={className}>{props.children}</Link>;
 }

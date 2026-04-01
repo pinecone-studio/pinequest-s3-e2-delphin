@@ -40,7 +40,7 @@ export default function LandingPage() {
           </div>
 
           <div className="relative grid grid-cols-1 gap-6 md:grid-cols-2">
-            <Link href="/teacher/dashboard">
+            <Link href="/teacher/login">
               <Card className="role-card h-full cursor-pointer rounded-[1.75rem] transition-all duration-200">
                 <CardHeader>
                   <CardTitle className="text-foreground">Багш</CardTitle>

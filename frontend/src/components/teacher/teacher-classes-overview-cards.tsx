@@ -102,7 +102,7 @@ export function OverviewInsightCard({
         </span>
       </div>
       <p className="mt-1.5 text-[24px] leading-none text-[#454561]">{card.value}</p>
-      <Sparkline height={24} stroke={card.stroke} trend={card.trend} />
+      <Sparkline height={24} trend={card.trend} />
     </div>
   )
 }

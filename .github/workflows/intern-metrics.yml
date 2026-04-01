@@ -366,4 +366,5 @@ jobs:
           curl -sS \
             "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/storage/kv/namespaces/$CF_KV_NAMESPACE_ID/values/$KV_KEY" \
             -H "Authorization: Bearer $CF_API_TOKEN" \
-            | head -c 200 && echo
+            -o /tmp/cf_kv_readback.json
+          head -c 200 /tmp/cf_kv_readback.json && echo

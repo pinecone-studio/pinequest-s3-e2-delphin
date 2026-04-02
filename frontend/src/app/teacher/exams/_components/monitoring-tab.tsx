@@ -90,7 +90,7 @@ function LiveMonitoringPanel({ examId }: { examId: string }) {
 
   return (
     <TeacherSurfaceCard className="rounded-[32px] p-6">
-      <ExamMonitoringPageDashboard attempts={attempts} exam={exam} resultsHref={isCompleted && firstClassId ? `/teacher/classes/${firstClassId}/exam/${examId}` : undefined} joinedStudents={stats.joinedStudents} suspiciousActivities={stats.suspiciousActivities} totalStudents={stats.totalStudents} />
+      <ExamMonitoringPageDashboard attempts={attempts} exam={exam} joinedStudents={stats.joinedStudents} resultsHref={isCompleted && firstClassId ? `/teacher/classes/${firstClassId}/exam/${examId}` : undefined} suspiciousActivities={stats.suspiciousActivities} totalStudents={stats.totalStudents} />
     </TeacherSurfaceCard>
   );
 }

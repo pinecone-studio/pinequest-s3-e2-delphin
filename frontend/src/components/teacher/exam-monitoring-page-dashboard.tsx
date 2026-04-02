@@ -32,7 +32,7 @@ export function ExamMonitoringPageDashboard({
             <Button
               asChild
               variant="ghost"
-              className="h-auto w-fit rounded-full px-0 py-0 text-[15px] font-medium text-[#53627e] hover:bg-transparent hover:text-[#263551]"
+              className="h-auto w-fit rounded-full px-0 py-0 text-[15px] font-medium text-[#53627e] hover:bg-transparent hover:text-[#263551] dark:text-[#C7D2E5] dark:hover:text-[#EDF4FF]"
             >
               <Link href={backHref}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
@@ -44,7 +44,7 @@ export function ExamMonitoringPageDashboard({
             <Button
               asChild
               variant="outline"
-              className="w-fit rounded-full border-[#dce7f8] bg-white/85 px-4 text-[#42516d] shadow-[0_12px_30px_rgba(197,214,237,0.38)]"
+              className="w-fit rounded-full border-[#dce7f8] bg-white/85 px-4 text-[#42516d] shadow-[0_12px_30px_rgba(197,214,237,0.38)] dark:border-[rgba(82,146,237,0.24)] dark:bg-[#11183C] dark:text-[#EDF4FF] dark:shadow-[0_16px_32px_rgba(2,6,23,0.35)]"
             >
               <Link href={resultsHref}>
                 Үр дүн харах

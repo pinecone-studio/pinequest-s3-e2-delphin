@@ -13,10 +13,18 @@ type AttemptStatusView = {
 }
 
 function getAttemptStatusView(
-  status: 'not_started' | 'in_progress' | 'submitted',
+  status: 'not_started' | 'in_progress' | 'submitted' | 'tab_switched' | 'app_switched',
 ): AttemptStatusView {
   if (status === 'submitted') {
     return { label: 'Илгээсэн', variant: 'default' }
+  }
+
+  if (status === 'tab_switched') {
+    return { label: 'Таб сольсон', variant: 'secondary' }
+  }
+
+  if (status === 'app_switched') {
+    return { label: 'Апп сольсон', variant: 'secondary' }
   }
 
   if (status === 'in_progress') {

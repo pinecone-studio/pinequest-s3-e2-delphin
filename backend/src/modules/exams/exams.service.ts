@@ -374,7 +374,7 @@ export class ExamsService {
   async generateAIQuestions(
     payload: AIGenerateQuestionsDto,
   ): Promise<ExamQuestion[]> {
-    return executeOrRethrowAsync(async () => {
+    return executeOrRethrowAsync(() => {
       if (!payload.sourceFiles || payload.sourceFiles.length === 0) {
         throw new BadRequestException(
           'Source files are required for AI generation',
@@ -396,7 +396,7 @@ export class ExamsService {
         type: ExamQuestionType,
         index: number,
       ): ExamQuestion => {
-        let questionText = `AI-generated ${type} question #${index} (category: ${payload.category || 'General'})`;
+        const questionText = `AI-generated ${type} question #${index} (category: ${payload.category || 'General'})`;
         const points =
           type === 'true-false' ? 5 : type === 'short-answer' ? 10 : 10;
         const options =
@@ -437,7 +437,7 @@ export class ExamsService {
   }
 
   async getLiveAttempts(examId: string): Promise<any[]> {
-    return executeOrRethrowAsync(async () => {
+    return executeOrRethrowAsync(() => {
       // For now, return mock data. In production, this would query the database
       // for active student attempts for this exam
       const mockAttempts = [

@@ -2,7 +2,11 @@
 
 import { requestBackendJson } from '@/lib/backend-fetch'
 
-export type StudentExamAttemptStatus = 'in_progress' | 'submitted'
+export type StudentExamAttemptStatus =
+  | 'in_progress'
+  | 'submitted'
+  | 'tab_switched'
+  | 'app_switched'
 
 export type StudentExamAttempt = {
   id: string

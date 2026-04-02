@@ -1,62 +1,55 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { upsertStudentExamAttempt } from "@/lib/student-exam-attempts";
 
 export function useExamIntegrityGuard({
   examId,
+  studentClass,
   studentId,
+  studentName,
 }: {
   examId?: string;
+  studentClass?: string;
   studentId?: string;
+  studentName?: string;
 }) {
-  useEffect(() => {
-    if (!examId || !studentId) return;
+  const hasReportedRef = useRef(false);
 
-    const logSuspiciousActivity = async (
-      eventType: "tab_hidden" | "window_blurred" | "fullscreen_exited",
-    ) => {
-      try {
-        console.log(`Suspicious activity detected: ${eventType}`, {
-          examId,
-          studentId,
-          timestamp: new Date().toISOString(),
-          eventType,
-        });
-      } catch (error) {
-        console.error("Failed to log suspicious activity:", error);
-      }
-    };
+  useEffect(() => {
+    if (!examId || !studentClass || !studentId || !studentName) return;
 
     const handleVisibilityChange = () => {
-      if (document.hidden) {
-        void logSuspiciousActivity("tab_hidden");
-      }
-    };
-    const handleWindowBlur = () => void logSuspiciousActivity("window_blurred");
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) {
-        void logSuspiciousActivity("fullscreen_exited");
-      }
-    };
-    const requestFullscreen = () => {
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch((error) => {
-          console.log("Fullscreen not available:", error);
-        });
-      }
+      if (!document.hidden || hasReportedRef.current) return;
+
+      hasReportedRef.current = true;
+      void upsertStudentExamAttempt({
+        examId,
+        studentId,
+        studentName,
+        classId: studentClass,
+        status: isLikelyMobileDevice() ? "app_switched" : "tab_switched",
+        startedAt: new Date().toISOString(),
+        submittedAt: null,
+      }).catch((error) => {
+        console.error("Failed to report tab switch.", error);
+        hasReportedRef.current = false;
+      });
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    window.addEventListener("blur", handleWindowBlur);
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-
-    const fullscreenTimer = setTimeout(requestFullscreen, 1000);
-
-    return () => {
+    return () =>
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("blur", handleWindowBlur);
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-      clearTimeout(fullscreenTimer);
-    };
-  }, [examId, studentId]);
+  }, [examId, studentClass, studentId, studentName]);
+}
+
+function isLikelyMobileDevice() {
+  if (typeof navigator === "undefined" || typeof window === "undefined") {
+    return false;
+  }
+
+  return (
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
+    window.matchMedia("(pointer: coarse)").matches
+  );
 }

@@ -1,7 +1,11 @@
 import { resolve } from 'node:path';
 import type { DatabaseService } from '../../database/database.service';
 
-export type StudentExamAttemptStatus = 'in_progress' | 'submitted';
+export type StudentExamAttemptStatus =
+  | 'in_progress'
+  | 'submitted'
+  | 'tab_switched'
+  | 'app_switched';
 
 export type StudentExamAttempt = {
   id: string;

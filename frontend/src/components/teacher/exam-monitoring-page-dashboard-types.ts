@@ -78,6 +78,7 @@ export type AlertItem = {
   highlighted?: boolean;
   id: string;
   severity: AlertSeverity;
+  studentId?: string;
   studentRef?: string;
   timestamp?: string;
   title: string;

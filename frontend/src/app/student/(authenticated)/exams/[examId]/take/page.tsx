@@ -25,7 +25,8 @@ export default function StudentTakeExamPage({
 }) {
   const { examId } = use(params);
   const router = useRouter();
-  const { studentClass, studentId } = useStudentSession();
+  const { studentClass, studentId, studentName } = useStudentSession();
+  const resolvedStudentName = studentName || "Сурагч";
   const [allExams, setAllExams] = useState<Exam[]>(legacyExams);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -84,15 +85,28 @@ export default function StudentTakeExamPage({
     void upsertStudentExamAttempt({
       examId: exam.id,
       studentId,
-      studentName: "Сурагч",
+      studentName: resolvedStudentName,
       classId: studentClass,
       status: "in_progress",
       startedAt: new Date().toISOString(),
       submittedAt: null,
     });
-  }, [alreadySubmitted, exam, isOpenNow, schedule, studentClass, studentId]);
+  }, [
+    alreadySubmitted,
+    exam,
+    isOpenNow,
+    resolvedStudentName,
+    schedule,
+    studentClass,
+    studentId,
+  ]);
 
-  useExamIntegrityGuard({ examId: exam?.id, studentId });
+  useExamIntegrityGuard({
+    examId: exam?.id,
+    studentClass,
+    studentId,
+    studentName: resolvedStudentName,
+  });
 
   if (isLoading) {
     return (
@@ -132,7 +146,7 @@ export default function StudentTakeExamPage({
       exam={exam}
       schedule={schedule}
       studentClass={studentClass}
-      studentName="Demo Student"
+      studentName={resolvedStudentName}
       answers={answers}
       answeredCount={answeredCount}
       totalQuestions={totalQuestions}
@@ -150,7 +164,7 @@ export default function StudentTakeExamPage({
           exam,
           answers,
           studentId,
-          studentName: "Demo Student",
+          studentName: resolvedStudentName,
           studentClass,
         })
           .then(() => {

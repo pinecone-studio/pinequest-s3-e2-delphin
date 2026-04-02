@@ -2,31 +2,26 @@
 
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
-import { HistoryTab } from "@/app/teacher/exams/_components/history-tab";
+import { ExamsPageTabs } from "@/app/teacher/exams/_components/exams-page-tabs";
 import { ExamsPageHeader } from "@/app/teacher/exams/_components/exams-page-header";
-import { LaunchTab } from "@/app/teacher/exams/_components/launch-tab";
 import {
   MonitorHeaderUtilities,
-  MonitoringTab,
 } from "@/app/teacher/exams/_components/monitoring-tab";
 import {
   isExamLaunchReady,
   isExamLiveNow,
 } from "@/app/teacher/exams/exams-page-utils";
-import { TeacherExamPreparationFlow } from "@/components/teacher/teacher-exam-preparation-flow";
 import {
   TeacherPageShell,
   TeacherSurfaceCard,
 } from "@/components/teacher/teacher-page-primitives";
 import { Spinner } from "@/components/ui/spinner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCurrentTime } from "@/hooks/use-current-time";
 import {
   getLegacyTeacherExams,
   getTeacherExams,
   type TeacherExam,
 } from "@/lib/teacher-exams";
-import { cn } from "@/lib/utils";
 
 type ExamTabValue = "prepare" | "launch" | "monitor" | "history";
 
@@ -132,56 +127,18 @@ export default function ExamsPage() {
           </TeacherSurfaceCard>
         ) : null}
 
-        <Tabs
-          value={activeTab}
-          onValueChange={(value) => setActiveTab(value as ExamTabValue)}
-          className="gap-5"
-        >
-          <TabsList className="h-auto w-full flex-wrap justify-start gap-4 rounded-none border-0 bg-transparent p-0 shadow-none">
-            <TabsTrigger value="prepare" className={chipTriggerClassName}>
-              Шалгалт бэлтгэх
-            </TabsTrigger>
-            <TabsTrigger value="launch" className={chipTriggerClassName}>
-              Шалгалт эхлүүлэх
-            </TabsTrigger>
-            <TabsTrigger value="monitor" className={chipTriggerClassName}>
-              Шалгалтын хяналт
-            </TabsTrigger>
-            <TabsTrigger value="history" className={chipTriggerClassName}>
-              Шалгалтын түүх
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="prepare">
-            <TeacherExamPreparationFlow />
-          </TabsContent>
-
-          <TabsContent value="launch">
-            <LaunchTab
-              launchExams={launchQueueExams}
-              onScheduled={loadExams}
-              selectedExamId={requestedExamId}
-            />
-          </TabsContent>
-
-          <TabsContent value="monitor">
-            <MonitoringTab
-              liveExams={liveExams}
-              selectedExamId={selectedMonitorExamId}
-              onSelectedExamIdChange={setSelectedMonitorExamId}
-            />
-          </TabsContent>
-
-          <TabsContent value="history">
-            <HistoryTab exams={completedExams} />
-          </TabsContent>
-        </Tabs>
+        <ExamsPageTabs
+          activeTab={activeTab}
+          completedExams={completedExams}
+          launchQueueExams={launchQueueExams}
+          liveExams={liveExams}
+          loadExams={loadExams}
+          requestedExamId={requestedExamId}
+          selectedMonitorExamId={selectedMonitorExamId}
+          setActiveTab={setActiveTab}
+          setSelectedMonitorExamId={setSelectedMonitorExamId}
+        />
       </section>
     </TeacherPageShell>
   );
 }
-
-const chipTriggerClassName = cn(
-  "inline-flex h-9 flex-none items-center rounded-[24px] border border-[#f0f3f5] px-3.5 text-[14px] font-normal text-[#6f6c99] shadow-none transition-all",
-  "data-[state=active]:bg-white data-[state=active]:text-[#141a1f] data-[state=active]:shadow-[0_10px_22px_rgba(204,229,255,0.75)]",
-);

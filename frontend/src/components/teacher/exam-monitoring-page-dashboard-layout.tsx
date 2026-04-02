@@ -40,7 +40,7 @@ function MetadataRow({ items }: { items: MetadataItem[] }) {
 }
 
 export function MainDashboardGrid({ left, right }: { left: React.ReactNode; right: React.ReactNode }) {
-  return <div className="grid gap-5 xl:grid-cols-[minmax(0,1.62fr)_minmax(310px,0.9fr)]">{left}{right}</div>;
+  return <div className="grid gap-5 xl:grid-cols-[minmax(0,1.48fr)_minmax(320px,0.92fr)]">{left}{right}</div>;
 }
 
 export function MonitoringSidebar({ children }: { children: React.ReactNode }) {

@@ -10,7 +10,7 @@ export function StudentStatusCard({ metadataItems, students, title }: { metadata
   return (
     <section className="rounded-[30px] border border-[#edf2fa] bg-white/92 p-5 shadow-[0_18px_44px_rgba(205,220,241,0.34)] sm:p-6">
       <CardHeaderBlock metadataItems={metadataItems} title={title} />
-      <div className="mt-5"><div className="max-h-[470px] space-y-3 overflow-y-auto pr-1">{students.map((student) => <StudentRow key={student.id} {...student} />)}</div></div>
+      <div className="mt-5"><div className="max-h-[260px] space-y-3 overflow-y-auto pr-1">{students.map((student) => <StudentRow key={student.id} {...student} />)}</div></div>
     </section>
   );
 }
@@ -20,7 +20,7 @@ export function AlertsCard({ alertSummary, alerts, title }: { alertSummary: Aler
     <section className="rounded-[30px] border border-[#edf2fa] bg-white/92 p-5 shadow-[0_18px_44px_rgba(205,220,241,0.34)] sm:p-6">
       <CardHeaderBlock title={title} />
       <div className="mt-4"><div className="flex flex-wrap gap-2">{alertSummary.map((item) => <span key={item.key} className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium", item.tone === "success" && "bg-emerald-50 text-emerald-700", item.tone === "warning" && "bg-amber-50 text-amber-700", item.tone === "danger" && "bg-rose-50 text-rose-700", item.tone === "neutral" && "bg-slate-100 text-slate-600")}>{item.label}: {item.count}</span>)}</div></div>
-      <div className="mt-4"><div className="space-y-3">{alerts.map((alert) => <AlertRow key={alert.id} {...alert} />)}</div></div>
+      <div className="mt-4"><div className="max-h-[220px] space-y-3 overflow-y-auto pr-1">{alerts.map((alert) => <AlertRow key={alert.id} {...alert} />)}</div></div>
     </section>
   );
 }

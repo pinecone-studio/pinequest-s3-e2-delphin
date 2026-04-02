@@ -1,13 +1,10 @@
 import { getClassById } from "@/lib/mock-data-helpers";
-import { getAcademicWeekLabel } from "@/lib/teacher-dashboard-utils";
 import type { StudentAttempt } from "@/hooks/use-exam-monitoring";
 import type { CreatedExam } from "@/lib/exams-api";
-import { chartSeries, summaryStatIcons } from "./exam-monitoring-page-dashboard-constants";
+import { summaryStatIcons } from "./exam-monitoring-page-dashboard-constants";
 import type { AlertItem, AlertSummaryItem, ChartDatum, DashboardViewModel, StudentListItem, StudentStatusKey, SummaryStatItem } from "./exam-monitoring-page-dashboard-types";
 
 export function buildDashboardViewModel({ attempts, exam, joinedStudents, suspiciousActivities, totalStudents }: { attempts: StudentAttempt[]; exam: CreatedExam; joinedStudents: number; suspiciousActivities: number; totalStudents: number; }): DashboardViewModel {
-  const schedule = exam.schedules[0];
-  const scheduleDate = schedule ? new Date(`${schedule.date}T${schedule.time}:00`) : null;
   const scheduledClasses = Array.from(new Set(exam.schedules.map((item) => item.classId))).map((classId) => getClassById(classId)).filter((item): item is NonNullable<ReturnType<typeof getClassById>> => Boolean(item));
   const totalRosterStudents = scheduledClasses.flatMap((item) => item.students);
   const rosterMap = new Map(totalRosterStudents.map((student) => [student.id, student]));
@@ -18,17 +15,17 @@ export function buildDashboardViewModel({ attempts, exam, joinedStudents, suspic
   const absentStudents = students.filter((student) => student.status === "absent").length;
   const chartData = buildChartData(exam.questions.length, attempts, joinedStudents);
   const alerts = buildAlerts({ absentStudents, attempts, examQuestionCount: exam.questions.length, students });
+  const classLabel = scheduledClasses.length
+    ? scheduledClasses.map((item) => item.name).join(", ")
+    : "Анги сонгогдоогүй";
 
   return {
     alertSummaries: summarizeAlerts(alerts),
     alerts,
-    chartData,
-    chartSeries,
-    highlightRange: getHighlightedQuestionRange(attempts, exam.questions.length),
     rosterMetadata: [
-      { key: "schedule", label: schedule ? `${schedule.date} • ${schedule.time}` : "Хуваарьгүй", icon: summaryStatIcons.schedule },
-      { key: "students", label: `${joinedStudents}/${Math.max(totalStudents, rosterStudents.length)} оролцсон`, icon: summaryStatIcons.students },
-      { key: "exam", label: `${exam.questions.length} асуулт • ${scheduleDate ? getAcademicWeekLabel(scheduleDate) : "..."}`, icon: summaryStatIcons.exam },
+      { key: "classes", label: classLabel, icon: summaryStatIcons.schedule },
+      { key: "total-students", label: `Нийт ${Math.max(totalStudents, rosterStudents.length)} сурагч`, icon: summaryStatIcons.exam },
+      { key: "joined-students", label: `${joinedStudents} сурагч орсон`, icon: summaryStatIcons.students },
     ],
     students,
     summaryStats: buildSummaryStats({ absentStudents, attempts, chartData, exam, joinedStudents, suspiciousActivities, submittedStudents, totalStudents }),
@@ -38,7 +35,14 @@ export function buildDashboardViewModel({ attempts, exam, joinedStudents, suspic
 function buildStudentListItem({ attempt, examQuestionCount, student }: { attempt?: StudentAttempt; examQuestionCount: number; student: { classId: string; email: string; id: string; name: string; }; }): StudentListItem {
   const status = getStudentStatus(attempt);
   const className = getClassById(student.classId)?.name ?? student.classId;
-  return { id: student.id, fullName: student.name, avatar: student.name, secondaryInfo: `${className} • ${student.email}`, tertiaryInfo: attempt ? `${formatRelativeTimestamp(attempt.lastActivity)} шинэчлэгдсэн` : "Одоогоор нэвтрээгүй", status, trailingMeta: attempt ? `${Math.min(attempt.currentQuestion, examQuestionCount)}/${examQuestionCount} асуулт` : "Хүлээгдэж байна", badges: buildStudentBadges(attempt) };
+  const completedQuestions = attempt
+    ? Math.min(attempt.currentQuestion, examQuestionCount)
+    : 0;
+  const progressPercent =
+    examQuestionCount > 0
+      ? Math.round((completedQuestions / examQuestionCount) * 100)
+      : 0;
+  return { id: student.id, fullName: student.name, avatar: student.name, secondaryInfo: className, tertiaryInfo: attempt ? `${completedQuestions}/${examQuestionCount} асуулт • ${progressPercent}%` : "Одоогоор нэвтрээгүй", status, trailingMeta: attempt ? formatRelativeTimestamp(attempt.lastActivity) : "Хүлээгдэж байна", badges: buildStudentBadges(attempt) };
 }
 
 function buildSummaryStats({ absentStudents, attempts, chartData, exam, joinedStudents, suspiciousActivities, submittedStudents, totalStudents }: { absentStudents: number; attempts: StudentAttempt[]; chartData: ChartDatum[]; exam: CreatedExam; joinedStudents: number; submittedStudents: number; suspiciousActivities: number; totalStudents: number; }): SummaryStatItem[] {
@@ -103,13 +107,6 @@ function buildStudentBadges(attempt?: StudentAttempt) {
 
 function getStudentStatusPriority(status: StudentStatusKey) {
   return { suspicious: 0, idle: 1, active: 2, joined: 3, submitted: 4, absent: 5 }[status];
-}
-
-function getHighlightedQuestionRange(attempts: StudentAttempt[], questionCount: number) {
-  const activeAttempts = attempts.filter((attempt) => attempt.status !== "submitted");
-  if (activeAttempts.length === 0) return undefined;
-  const averageQuestion = Math.round(activeAttempts.reduce((sum, attempt) => sum + attempt.currentQuestion, 0) / activeAttempts.length);
-  return { start: Math.max(1, averageQuestion - 1), end: Math.min(questionCount, averageQuestion + 1) };
 }
 
 function formatRelativeTimestamp(value: string) {

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { HistoryTab } from "@/app/teacher/exams/_components/history-tab";
 import { ExamsPageHeader } from "@/app/teacher/exams/_components/exams-page-header";
 import { LaunchTab } from "@/app/teacher/exams/_components/launch-tab";
@@ -30,6 +31,7 @@ import { cn } from "@/lib/utils";
 type ExamTabValue = "prepare" | "launch" | "monitor" | "history";
 
 export default function ExamsPage() {
+  const searchParams = useSearchParams();
   const [backendExams, setBackendExams] = React.useState<TeacherExam[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const now = useCurrentTime();
@@ -64,11 +66,28 @@ export default function ExamsPage() {
   const launchQueueExams = exams.filter((exam) => isExamLaunchReady(exam));
   const completedExams = exams.filter((exam) => exam.status === "completed");
 
-  const defaultTab = liveExams.length > 0 ? "monitor" : "prepare";
-  const [activeTab, setActiveTab] = React.useState<ExamTabValue>(defaultTab);
+  const requestedTab = searchParams.get("tab");
+  const requestedExamId = searchParams.get("examId");
+  const defaultTab =
+    requestedTab === "prepare" ||
+    requestedTab === "launch" ||
+    requestedTab === "monitor" ||
+    requestedTab === "history"
+      ? requestedTab
+      : liveExams.length > 0
+        ? "monitor"
+        : "prepare";
+
+  const [activeTab, setActiveTab] = React.useState<ExamTabValue>(
+    defaultTab as ExamTabValue,
+  );
   const [selectedMonitorExamId, setSelectedMonitorExamId] = React.useState<
     string | null
   >(liveExams[0]?.id ?? null);
+
+  React.useEffect(() => {
+    setActiveTab(defaultTab as ExamTabValue);
+  }, [defaultTab]);
 
   React.useEffect(() => {
     if (activeTab === "monitor" && liveExams.length > 0) {
@@ -138,7 +157,11 @@ export default function ExamsPage() {
           </TabsContent>
 
           <TabsContent value="launch">
-            <LaunchTab launchExams={launchQueueExams} onScheduled={loadExams} />
+            <LaunchTab
+              launchExams={launchQueueExams}
+              onScheduled={loadExams}
+              selectedExamId={requestedExamId}
+            />
           </TabsContent>
 
           <TabsContent value="monitor">

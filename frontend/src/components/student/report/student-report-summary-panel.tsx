@@ -49,8 +49,18 @@ export function StudentReportSummaryPanel(props: StudentReportSummaryPanelProps)
         </div>
 
         <div className="grid gap-3 md:grid-cols-2">
-          <MiniInfoCard label="Хугацаа" value={`${props.duration} мин`} iconSrc="/report-time-icon.svg" />
-          <MiniInfoCard label="Огноо" value={props.scheduleLabel} iconSrc="/report-date-icon.svg" />
+          <MiniInfoCard
+            label="Хугацаа"
+            value={`${props.duration} мин`}
+            iconSrc="/report-time-icon.svg"
+            labelClassName="font-sans text-[12px] font-normal uppercase tracking-[0.14em] text-[#89939C]"
+          />
+          <MiniInfoCard
+            label="Огноо"
+            value={props.scheduleLabel}
+            iconSrc="/report-date-icon.svg"
+            labelClassName="font-sans text-[12px] font-normal uppercase tracking-[0.14em] text-[#89939C]"
+          />
         </div>
       </div>
 
@@ -77,10 +87,20 @@ export function StudentReportSummaryPanel(props: StudentReportSummaryPanelProps)
         </div>
 
         <div className="absolute left-[214px] top-[110px] w-[288px]">
-          <MiniInfoCard label="Хугацаа" value={`${props.duration} мин`} iconSrc="/report-time-icon.svg" />
+          <MiniInfoCard
+            label="Хугацаа"
+            value={`${props.duration} мин`}
+            iconSrc="/report-time-icon.svg"
+            labelClassName="font-sans text-[12px] font-normal uppercase tracking-[0.14em] text-[#89939C]"
+          />
         </div>
         <div className="absolute left-[514px] top-[110px] w-[288px]">
-          <MiniInfoCard label="Огноо" value={props.scheduleLabel} iconSrc="/report-date-icon.svg" />
+          <MiniInfoCard
+            label="Огноо"
+            value={props.scheduleLabel}
+            iconSrc="/report-date-icon.svg"
+            labelClassName="font-sans text-[12px] font-normal uppercase tracking-[0.14em] text-[#89939C]"
+          />
         </div>
       </div>
     </section>
@@ -104,7 +124,7 @@ function ResultStat(props: { color: string; count: number; label: string; total:
   )
 }
 
-function MiniInfoCard(props: { iconSrc: string; label: string; value: string }) {
+function MiniInfoCard(props: { iconSrc: string; label: string; labelClassName?: string; value: string }) {
   const resolvedIconSrc =
     props.iconSrc === "/report-time-icon.svg"
       ? "/report-date-icon.svg"
@@ -115,7 +135,9 @@ function MiniInfoCard(props: { iconSrc: string; label: string; value: string }) 
   return (
     <div className="flex min-h-[71px] items-center justify-between rounded-[14px] border border-[#E6F2FF] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(182,207,228,0.08)]">
       <div className="min-w-0">
-        <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-[#9aaabd]">{props.label}</p>
+        <p className={props.labelClassName ?? "font-sans text-[12px] font-normal uppercase tracking-[0.14em] text-[#89939C]"}>
+          {props.label}
+        </p>
         <p className="mt-2 text-[15px] font-semibold leading-[1.35] text-[#5a6f84]">{props.value}</p>
       </div>
       <Image src={resolvedIconSrc} alt="" width={30} height={30} className="ml-3 h-[30px] w-[30px] shrink-0" />

@@ -15,7 +15,7 @@ export function StudentReportQuestionList(props: StudentReportQuestionListProps)
     <section className="rounded-[28px] border border-[#edf5ff] bg-white px-5 py-5 shadow-[0_10px_20px_rgba(185,207,228,0.06)] md:px-6 md:py-6">
       <div className="flex items-start justify-between gap-5">
         <div>
-          <h2 className="text-[21px] font-bold tracking-[-0.03em] text-[#003366]">Хариултын задаргаа</h2>
+          <h2 className="text-[20px] font-medium tracking-[-0.03em] text-[#003366]">Хариултын задлан</h2>
           <p className="mt-2 text-[13px] text-[#728395]">Асуулт бүрийн хариулт, зөв эсэх болон үнэлгээний мэдээлэл</p>
         </div>
       </div>

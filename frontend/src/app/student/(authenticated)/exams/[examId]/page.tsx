@@ -127,6 +127,7 @@ export default function ExamDetailPage({ params }: { params: Promise<{ examId: s
       isFullscreen={isFullscreen}
       isReady={isReady}
       isTodayExam={isTodayExam}
+      onClose={() => router.push('/student/exams')}
       onExitFullscreen={() => setIsFullscreen(false)}
       onTakeExam={handleTakeExam}
       onViewFullscreen={() => setIsFullscreen(true)}

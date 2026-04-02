@@ -80,7 +80,7 @@ export function FinishedExamCard(props: {
                 Хоцорсон
               </span>
             </div>
-            <div className="flex flex-wrap items-center gap-3 text-[14px] font-medium leading-[17px] text-[#566069] dark:text-[#aab7cb]">
+            <div className="flex flex-wrap items-center gap-3 font-sans text-[12px] font-normal leading-[1.2] text-[#89939C] dark:text-[#89939C]">
               <span>{formatScheduleLabel(schedule?.date, schedule?.time)}</span>
               <span>|</span>
               <span>{item.exam.duration} мин</span>
@@ -117,9 +117,9 @@ export function FinishedExamCard(props: {
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 text-[14px] font-medium leading-[17px]">
-              <span className="text-[#566069] dark:text-[#aab7cb]">Илгээсэн: {new Date(item.result.submittedAt).toLocaleString("en-US")}</span>
-              <span className="text-[#566069] dark:text-[#aab7cb]">|</span>
+            <div className="flex flex-wrap items-center gap-3 font-sans text-[12px] font-normal leading-[1.2]">
+              <span className="text-[#89939C] dark:text-[#89939C]">Илгээсэн: {new Date(item.result.submittedAt).toLocaleString("en-US")}</span>
+              <span className="text-[#89939C] dark:text-[#89939C]">|</span>
               <span className="text-[#007FFF]">{item.result.score}/{item.result.totalPoints} оноо</span>
             </div>
           </div>

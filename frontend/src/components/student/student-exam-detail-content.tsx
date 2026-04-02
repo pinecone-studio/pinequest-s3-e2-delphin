@@ -1,9 +1,13 @@
 'use client'
 
-import Link from 'next/link'
+import { BadgeHelp, CalendarDays, Clock3, Globe, Hourglass, Monitor, WifiOff, X } from 'lucide-react'
 import { ExamCountdownDisplay } from '@/components/student/exam-countdown-display'
+import {
+  DetailInfoItem,
+  getExamDescription,
+  InstructionItem,
+} from '@/components/student/student-exam-detail-support'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Exam } from '@/lib/mock-data'
 
 export function StudentExamDetailContent({
@@ -12,6 +16,7 @@ export function StudentExamDetailContent({
   isFullscreen,
   isReady,
   isTodayExam,
+  onClose,
   onExitFullscreen,
   onTakeExam,
   onViewFullscreen,
@@ -23,6 +28,7 @@ export function StudentExamDetailContent({
   isFullscreen: boolean
   isReady: boolean
   isTodayExam: boolean
+  onClose: () => void
   onExitFullscreen: () => void
   onTakeExam: () => void
   onViewFullscreen: () => void
@@ -55,84 +61,82 @@ export function StudentExamDetailContent({
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <Link href="/student/exams" className="text-sm text-muted-foreground hover:underline">
-          &larr; Шалгалтууд руу буцах
-        </Link>
-        <h1 className="mt-2 text-2xl font-bold">{exam.title}</h1>
-      </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Шалгалтын мэдээлэл</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <div className="text-sm text-muted-foreground">Огноо</div>
-              <div className="font-medium">{scheduleDate}</div>
-            </div>
-            <div>
-              <div className="text-sm text-muted-foreground">Цаг</div>
-              <div className="font-medium">{scheduleTime}</div>
-            </div>
-            <div>
-              <div className="text-sm text-muted-foreground">Хугацаа</div>
-              <div className="font-medium">{exam.duration} минут</div>
-            </div>
-            <div>
-              <div className="text-sm text-muted-foreground">Асуулт</div>
-              <div className="font-medium">{exam.questions.length}</div>
-            </div>
+    <div className="min-h-screen bg-[#EAF4FF] px-4 py-8">
+      <div className="mx-auto w-full max-w-[900px] rounded-[28px] border border-[#D7E9FF] bg-[#F7FBFF] px-6 py-8 shadow-[0_24px_80px_rgba(24,100,251,0.08)] sm:px-10 sm:py-10">
+        <div className="flex items-start justify-between gap-6">
+          <div className="space-y-3">
+            <h1 className="text-[28px] font-bold leading-tight text-[#1F2937] sm:text-[38px]">
+              {exam.title}
+            </h1>
+            <p className="max-w-[720px] text-[16px] leading-[1.45] text-[#5F6E7C] sm:text-[18px]">
+              {getExamDescription(exam)}
+            </p>
           </div>
-        </CardContent>
-      </Card>
-      <Card className={isReady ? 'border-primary' : ''}>
-        <CardHeader>
-          <CardTitle>
-            {isTodayExam ? (isReady ? 'Шалгалт эхлэхэд бэлэн боллоо!' : 'Шалгалт эхлэх хүртэл') : 'Товлогдсон шалгалт'}
-          </CardTitle>
-          <CardDescription>
-            {isTodayExam
-              ? (isReady
-                ? 'Та одоо шалгалтаа эхлүүлэх боломжтой.'
-                : 'Тоолуур тэг болоход шалгалт эхлүүлэх товч идэвхжинэ.')
-              : 'Тоолуур зөвхөн товлосон өдөр харагдана.'}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isTodayExam ? (
-            <ExamCountdownDisplay
-              countdown={countdown}
-              duration={exam.duration}
-              isReady={isReady}
-              onFullscreen={onViewFullscreen}
-              onPrimaryAction={onTakeExam}
-            />
-          ) : (
-            <div className="space-y-4 text-sm">
-              <p className="text-muted-foreground">
-                Энэ шалгалт {scheduleDate}-ны {scheduleTime}-д товлогдсон байна.
-              </p>
-              <Button disabled>Шалгалт өгөх (түгжээтэй)</Button>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Хаах"
+            className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#1F2937] transition hover:bg-[#EAF4FF]"
+          >
+            <X className="h-7 w-7 stroke-[1.8]" />
+          </button>
+        </div>
+
+        <div className="mt-8 space-y-8">
+          <section className="rounded-[24px] border border-[#D7E9FF] bg-white px-6 py-8 shadow-[0_10px_30px_rgba(24,100,251,0.08)] sm:px-8">
+            <h2 className="text-[24px] font-bold text-[#1F2937]">Шалгалтын мэдээлэл</h2>
+            <div className="mt-8 grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
+              <DetailInfoItem icon={<CalendarDays className="h-7 w-7 stroke-[1.6]" />} label="Огноо" value={scheduleDate ?? '-'} />
+              <DetailInfoItem icon={<Clock3 className="h-7 w-7 stroke-[1.6]" />} label="Цаг" value={scheduleTime ?? '-'} />
+              <DetailInfoItem icon={<Hourglass className="h-7 w-7 stroke-[1.6]" />} label="Хугацаа" value={`${exam.duration} минут`} />
+              <DetailInfoItem icon={<BadgeHelp className="h-7 w-7 stroke-[1.6]" />} label="Асуулт" value={String(exam.questions.length)} />
             </div>
-          )}
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Заавар</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
-            <li>Интернэт холболт тогтвортой байгаа эсэхээ шалгана уу.</li>
-            <li>Асуулт бүрийг хариулахаасаа өмнө анхааралтай уншина уу.</li>
-            <li>Шалгалт эхэлсний дараа түр зогсоох боломжгүй.</li>
-            <li>Хугацаа дуусахад шалгалт автоматаар илгээгдэнэ.</li>
-            <li>Шалгалтын үеэр браузераа шинэчлэх эсвэл хааж болохгүй.</li>
-          </ul>
-        </CardContent>
-      </Card>
+          </section>
+
+          <section className="rounded-[24px] border border-[#D7E9FF] bg-white px-6 py-8 shadow-[0_10px_30px_rgba(24,100,251,0.08)] sm:px-8">
+            <h2 className="text-[24px] font-bold text-[#1F2937]">Товлогдсон шалгалт</h2>
+            <p className="mt-4 text-[16px] leading-[1.5] text-[#5F6E7C]">
+              {isTodayExam
+                ? (isReady
+                  ? 'Шалгалт эхлэхэд бэлэн боллоо. Доорх товчоор шалгалтаа эхлүүлнэ үү.'
+                  : 'Тоолуур дуусмагц шалгалт эхлүүлэх товч автоматаар идэвхжинэ.')
+                : 'Тоолуур зөвхөн товлосон өдөр харагдана.'}
+            </p>
+
+            {isTodayExam ? (
+              <div className="mt-8 rounded-[20px] border border-[#D7E9FF] bg-[#F7FBFF] p-6">
+                <ExamCountdownDisplay
+                  countdown={countdown}
+                  duration={exam.duration}
+                  isReady={isReady}
+                  onFullscreen={onViewFullscreen}
+                  onPrimaryAction={onTakeExam}
+                />
+              </div>
+            ) : (
+              <div className="mt-8">
+                <Button
+                  disabled
+                  className="h-[58px] w-full rounded-[18px] border-0 bg-[#DDE4EB] text-[16px] font-medium text-[#A4AFBB] shadow-[0_10px_24px_rgba(15,23,42,0.08)] hover:bg-[#DDE4EB]"
+                >
+                  Шалгалт өгөх
+                </Button>
+              </div>
+            )}
+          </section>
+
+          <section className="rounded-[24px] border border-[#D7E9FF] bg-white px-6 py-8 shadow-[0_10px_30px_rgba(24,100,251,0.08)] sm:px-8">
+            <h2 className="text-[24px] font-bold text-[#1F2937]">Заавар</h2>
+            <ul className="mt-8 space-y-4">
+              <InstructionItem icon={<Globe className="h-7 w-7 stroke-[1.8]" />} text="Интернэт холболт тогтвортой байгаа эсэхээ шалгана уу!" />
+              <InstructionItem icon={<Clock3 className="h-7 w-7 stroke-[1.8]" />} text="Шалгалт эхэлсний дараа түр зогсоох боломжгүй!" />
+              <InstructionItem icon={<Hourglass className="h-7 w-7 stroke-[1.8]" />} text="Хугацаа дуусахад шалгалт автоматаар илгээгдэнэ!" />
+              <InstructionItem icon={<Monitor className="h-7 w-7 stroke-[1.8]" />} text="Шалгалтын үеэр браузераа шинэчлэх эсвэл хааж болохгүй!" />
+              <InstructionItem icon={<WifiOff className="h-7 w-7 stroke-[1.8]" />} text="Интернэт холболт салсан үед шалгалт автоматаар илгээгдэнэ!" />
+            </ul>
+          </section>
+        </div>
+      </div>
     </div>
   )
 }

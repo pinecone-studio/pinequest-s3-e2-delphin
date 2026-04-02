@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo } from "react";
 import type { Exam } from "@/lib/mock-data";
 
@@ -71,9 +72,11 @@ export function StudentExamSvgInteractive(props: {
           className="relative mx-auto"
           style={{ width: `${SVG_WIDTH}px`, height: `${SVG_HEIGHT}px` }}
         >
-          <img
+          <Image
             src="/student-exam-final-light.svg"
             alt="Student exam final light"
+            width={SVG_WIDTH}
+            height={SVG_HEIGHT}
             style={{ width: `${SVG_WIDTH}px`, height: `${SVG_HEIGHT}px` }}
           />
           <div className="absolute inset-0">

@@ -46,10 +46,6 @@ export function StudentExamHtmlCanvas(props: {
   const [remainingSeconds, setRemainingSeconds] = useState(exam.duration * 60);
 
   useEffect(() => {
-    setRemainingSeconds(exam.duration * 60);
-  }, [exam.duration]);
-
-  useEffect(() => {
     const intervalId = window.setInterval(() => {
       setRemainingSeconds((current) => Math.max(current - 1, 0));
     }, 1000);

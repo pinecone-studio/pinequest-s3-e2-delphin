@@ -15,7 +15,7 @@ export const studentSeedData: Student[] = [
   { id: "judge1", name: "Бат-Оргил.Э", email: "bat-orgil.e@demo.local", password: "judge-demo", classId: "10A" },
   { id: "judge2", name: "Эрдэнэгомбо.М", email: "erdenegombo.m@demo.local", password: "judge-demo", classId: "10A" },
   { id: "judge3", name: "Анар.Т", email: "anar.t@demo.local", password: "judge-demo", classId: "10A" },
-  { id: "judge4", name: "Болор.Э", email: "bolor.e@demo.local", password: "judge-demo", classId: "10A" },
+  { id: "judge4", name: "Билгүүндөл.Б", email: "bilguundul.b@demo.local", password: "judge-demo", classId: "10A" },
   { id: "judge5", name: "Буяндэлгэр.Т", email: "buyndelger.t@demo.local", password: "judge-demo", classId: "10A" },
   { id: "judge6", name: "Өсөхбаяр.Ж", email: "usukhbayar.g@demo.local", password: "judge-demo", classId: "10A" },
   { id: "judge7", name: "Түвшин.О", email: "tuvshin.o@demo.local", password: "judge-demo", classId: "10A" },

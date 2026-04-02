@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggleButton } from "@/components/theme-toggle-button";
-import { notifyTeacherSessionChange, useTeacherSession } from "@/hooks/use-teacher-session";
+import { notifyTeacherSessionChange } from "@/hooks/use-teacher-session";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
@@ -29,7 +29,6 @@ export const teacherNavItems: NavItem[] = [
 export function TeacherHeader() {
   const pathname = usePathname();
   const router = useRouter();
-  const { teacherName, teacherSubject } = useTeacherSession();
 
   const handleLogout = () => {
     localStorage.removeItem("teacherId");
@@ -53,14 +52,6 @@ export function TeacherHeader() {
         })}
       </nav>
       <div className="flex items-center gap-3">
-        <div className="hidden rounded-full border border-[#dde7ff] bg-white/80 px-3 py-1.5 text-right shadow-[0_10px_24px_rgba(204,229,255,0.45)] lg:block dark:border-[rgba(224,225,226,0.08)] dark:bg-white/6 dark:shadow-none">
-          <p className="text-sm font-semibold text-[#1f2a37] dark:text-white">
-            {teacherName || "Багш"}
-          </p>
-          <p className="text-xs text-[#6b7893] dark:text-[#c2c9d0]">
-            {teacherSubject || "Хичээл"}
-          </p>
-        </div>
         <div className="flex items-center gap-3">
           <IconButton as="button" label="Notifications"><Bell className="h-[18px] w-[18px]" strokeWidth={1.85} /></IconButton>
           <IconButton as="button" label="Гарах" onClick={handleLogout}><LogOut className="h-[18px] w-[18px]" strokeWidth={1.8} /></IconButton>

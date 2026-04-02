@@ -31,10 +31,21 @@ function readStudentSession(): StudentSession {
     return EMPTY_SESSION
   }
 
+  const storedStudentId = localStorage.getItem('studentId') || ''
+  const storedStudentName = localStorage.getItem('studentName') || ''
+  const normalizedStudentName =
+    storedStudentId === 'judge4' && storedStudentName === 'Болор.Э'
+      ? 'Билгүүндөл.Б'
+      : storedStudentName
+
+  if (normalizedStudentName !== storedStudentName) {
+    localStorage.setItem('studentName', normalizedStudentName)
+  }
+
   const nextSession = {
-    studentId: localStorage.getItem('studentId') || '',
+    studentId: storedStudentId,
     studentClass: localStorage.getItem('studentClass') || '',
-    studentName: localStorage.getItem('studentName') || '',
+    studentName: normalizedStudentName,
   }
 
   if (

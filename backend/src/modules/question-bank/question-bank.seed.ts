@@ -4,8 +4,7 @@ import type {
 } from './question-bank.internal-types';
 import {
   DEFAULT_QUESTION_BANK_SEED,
-  LEGACY_DEFAULT_CATEGORY_NAME,
-  LEGACY_DEFAULT_TOPIC_NAMES,
+  LEGACY_DEFAULT_CATEGORY_NAMES,
   type QuestionSeed,
 } from './question-bank.seed-data';
 
@@ -48,28 +47,25 @@ export function ensureDefaultMathQuestionBank(store: LocalQuestionBankStore) {
 export function replaceLegacyDefaultQuestionBank(
   store: LocalQuestionBankStore,
 ) {
-  const legacyCategory = store.categories.find(
-    (category) =>
-      category.name.trim().toLowerCase() ===
-      LEGACY_DEFAULT_CATEGORY_NAME.toLowerCase(),
+  const legacyCategoryIds = new Set(
+    store.categories
+      .filter((category) =>
+        LEGACY_DEFAULT_CATEGORY_NAMES.some(
+          (legacyName) =>
+            category.name.trim().toLowerCase() === legacyName.toLowerCase(),
+        ),
+      )
+      .map((category) => category.id),
   );
-  if (!legacyCategory) return false;
+  if (legacyCategoryIds.size === 0) return false;
 
-  const legacyTopics = store.topics.filter(
-    (topic) => topic.categoryId === legacyCategory.id,
+  const legacyTopicIds = new Set(
+    store.topics
+      .filter((topic) => legacyCategoryIds.has(topic.categoryId))
+      .map((topic) => topic.id),
   );
-  const hasOnlyLegacyTopics =
-    legacyTopics.length === LEGACY_DEFAULT_TOPIC_NAMES.length &&
-    LEGACY_DEFAULT_TOPIC_NAMES.every((name) =>
-      legacyTopics.some(
-        (topic) => topic.name.trim().toLowerCase() === name.toLowerCase(),
-      ),
-    );
-  if (!hasOnlyLegacyTopics) return false;
-
-  const legacyTopicIds = new Set(legacyTopics.map((topic) => topic.id));
   store.categories = store.categories.filter(
-    (category) => category.id !== legacyCategory.id,
+    (category) => !legacyCategoryIds.has(category.id),
   );
   store.topics = store.topics.filter((topic) => !legacyTopicIds.has(topic.id));
   store.questions = store.questions.filter(

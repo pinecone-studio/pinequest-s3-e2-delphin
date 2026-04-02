@@ -1,23 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
+import { QuestionBankSourceFileList } from "@/components/teacher/question-bank-source-file-list";
 import { TeacherSurfaceCard } from "@/components/teacher/teacher-page-primitives";
 import { QuestionBankSourceUploadDialog } from "@/components/teacher/question-bank-source-upload-dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { getReadableUploadName, mergeSourceFiles } from "@/lib/source-files";
+import { mergeSourceFiles } from "@/lib/source-files";
 import { uploadFile, type UploadRecord } from "@/lib/uploads-api";
-import { FileText, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 
 const SOURCES_FOLDER = "sources";
-
-function formatFileSize(bytes: number) {
-  if (bytes === 0) return "0 Bytes";
-  const unit = Math.floor(Math.log(bytes) / Math.log(1024));
-  const sizes = ["Bytes", "KB", "MB", "GB"];
-  return `${parseFloat((bytes / 1024 ** unit).toFixed(2))} ${sizes[unit]}`;
-}
 
 type Props = {
   files: UploadRecord[];
@@ -135,47 +128,7 @@ export function QuestionBankSourcePanel({ files, setSourceFiles }: Props) {
           </Button>
         </div>
 
-        <div className="space-y-3">
-          {files.length === 0 ? (
-            <div className="rounded-[24px] border border-dashed border-[#d7e3ff] bg-[linear-gradient(180deg,#f9fbff_0%,#ffffff_100%)] px-4 py-8 text-center">
-              <FileText className="mx-auto mb-3 h-10 w-10 text-[#98a9ca]" />
-              <p className="font-medium text-[#344264]">
-                Эх сурвалж файл алга байна
-              </p>
-              <p className="mt-1 text-sm text-[#6f7898]">
-                Шинэ файл нэмээд AI-аар асуулт үүсгэхдээ ашиглаарай.
-              </p>
-            </div>
-          ) : (
-            files.slice(0, 6).map((file) => (
-              <div
-                key={file.id}
-                className="rounded-[24px] border border-[#dde7ff] bg-[linear-gradient(180deg,#f9fbff_0%,#ffffff_100%)] px-4 py-4"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="rounded-2xl bg-[#eef4ff] p-2 text-[#5b91fc]">
-                    <FileText className="h-4 w-4" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium text-[#344264]">
-                      {getReadableUploadName(file.originalName)}
-                    </p>
-                    <p className="mt-1 text-sm text-[#6f7898]">
-                      {formatFileSize(file.size)} •{" "}
-                      {new Date(file.uploadedAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        {files.length > 6 ? (
-          <Button variant="outline" asChild className="w-full">
-            <Link href="/teacher/sources">Бүх эх сурвалж харах</Link>
-          </Button>
-        ) : null}
+        <QuestionBankSourceFileList files={files} />
       </TeacherSurfaceCard>
 
       <QuestionBankSourceUploadDialog

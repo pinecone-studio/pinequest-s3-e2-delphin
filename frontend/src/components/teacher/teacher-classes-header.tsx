@@ -72,7 +72,7 @@ export function TeacherClassesHeader(props: {
                     height={18}
                     className="shrink-0 text-black"
                   />
-                  АУБ : {homeroomTeacher.name} "{homeroomTeacher.subject}"
+                  АУБ : {homeroomTeacher.name} &quot;{homeroomTeacher.subject}&quot;
                 </span>
                 <span>/</span>
                 <span className="inline-flex items-center gap-1.5">

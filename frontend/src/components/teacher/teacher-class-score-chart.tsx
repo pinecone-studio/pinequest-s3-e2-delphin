@@ -12,13 +12,12 @@ import {
 import { TeacherClassScoreChartSvg } from "@/components/teacher/teacher-class-score-chart-svg";
 import { TeacherClassScoreSummaryCard } from "@/components/teacher/teacher-class-score-summary-card";
 
-export function TeacherClassScoreChart({
-  exam,
-}: {
+export function TeacherClassScoreChart(props: {
   exam: TeacherExam | null;
   results: ExamResult[];
   students: Student[];
 }) {
+  void props;
   const now = useCurrentTime();
   const currentDateLabel = now ? formatIsoDate(now).replaceAll("-", ".") : "----.--.--";
   const currentTimeLabel = now ? formatTimeLabel(now) : "--:--";

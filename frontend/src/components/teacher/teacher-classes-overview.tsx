@@ -11,7 +11,7 @@ import { TeacherClassesSidePanels } from "@/components/teacher/teacher-classes-s
 import type { TeacherStudentRegistrationInput } from "@/lib/teacher-student-registry"
 
 export function TeacherClassesOverview(props: TeacherClassesOverviewProps) {
-  const { classData, classOptions, examResults, onAddStudent, onClassChange, onSemesterChange, selectedExam, selectedExamResults, selectedSemester, semesterOptions, visibleCompletedExams } = props
+  const { classData, classOptions, examResults, onClassChange, onSemesterChange, selectedExam, selectedExamResults, selectedSemester, semesterOptions, visibleCompletedExams } = props
   const now = useCurrentTime()
 
   const metrics = buildClassOverviewMetrics({ classData, exams: visibleCompletedExams, results: examResults })

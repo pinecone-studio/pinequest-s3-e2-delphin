@@ -74,6 +74,7 @@ export function StudentDashboardScheduleCard(props: { exams: Exam[]; studentClas
                 <div className="flex items-center gap-3"><span className="shrink-0 text-[14px] font-normal leading-none text-[#2388FF]">{schedule.time} - {endHours}:{endMinutes}</span><div className="h-px flex-1 border-t border-dashed border-[#CFE5FF]" /></div>
                 <div className="rounded-[8px] border border-[#DCE8F3] bg-white px-[16px] py-[12px] shadow-[0_6px_20px_rgba(114,144,179,0.10)]">
                   <div className="flex items-center gap-3"><span className={`h-[10px] w-[10px] shrink-0 rounded-full ${eventTone[index % eventTone.length]}`} /><span className="font-sans text-[14px] font-normal leading-none text-[#4A5565]">{exam.title}</span></div>
+                  <div className="flex items-center gap-3"><span className={`h-[10px] w-[10px] shrink-0 rounded-full ${eventTone[index % eventTone.length]}`} /><span className="font-sans text-[14px] font-normal leading-none text-[#4A5565]">{exam.title}</span></div>
                 </div>
               </div>
             )

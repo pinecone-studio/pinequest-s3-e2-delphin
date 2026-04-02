@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { Clock3 } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
@@ -90,7 +91,7 @@ export function StudentExamsOverviewPanel(props: { exams: Exam[]; results: ExamR
         <div className="mt-5 space-y-4">
           {resultCards.map((result) => (
             <Link key={result.examId} href={`/student/reports/${result.examId}`} className="flex cursor-pointer items-center justify-between rounded-[20px] border border-[#E6F2FF] bg-white px-4 py-4 shadow-[0_8px_26px_rgba(160,182,210,0.10)] transition hover:bg-[#f7fbff] dark:border-[rgba(72,94,149,0.24)] dark:bg-[linear-gradient(180deg,#0d163f_0%,#0a1236_100%)] dark:hover:bg-[linear-gradient(180deg,#122053_0%,#0d163f_100%)]">
-              <div className="flex min-w-0 items-center gap-3"><img src={getExamIcon(result.subject)} alt="" width={24} height={24} className="h-6 w-6 shrink-0 object-contain" /><div className="min-w-0"><p className="truncate text-[15px] font-semibold text-[#243445] dark:text-[#edf4ff]">{result.subject}</p><p className="mt-1 text-[13px] text-[#76879c] dark:text-[#b5c3da]">{result.score}/{result.totalPoints} оноо</p></div></div>
+              <div className="flex min-w-0 items-center gap-3"><Image src={getExamIcon(result.subject)} alt="" width={24} height={24} unoptimized className="h-6 w-6 shrink-0 object-contain" /><div className="min-w-0"><p className="truncate text-[15px] font-semibold text-[#243445] dark:text-[#edf4ff]">{result.subject}</p><p className="mt-1 text-[13px] text-[#76879c] dark:text-[#b5c3da]">{result.score}/{result.totalPoints} оноо</p></div></div>
               <span className={`rounded-full px-3 py-1 text-[12px] font-bold ${getResultTone(result.score, result.totalPoints)}`}>{result.grade}</span>
             </Link>
           ))}

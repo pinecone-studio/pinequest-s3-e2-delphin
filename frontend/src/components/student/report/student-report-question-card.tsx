@@ -35,7 +35,7 @@ export function StudentReportQuestionCard(props: StudentReportQuestionCardProps)
     <article
       className={cn(
         "relative overflow-hidden rounded-[24px] border bg-white px-6 pb-6 pt-6 shadow-[0_10px_18px_rgba(185,207,228,0.06)]",
-        "dark:border-white/10 dark:bg-[linear-gradient(180deg,#131c42_0%,#0f1737_100%)] dark:shadow-[0_18px_36px_rgba(2,6,23,0.34)]",
+        "dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)]",
         status.shellClassName,
       )}
     >

@@ -152,20 +152,20 @@ export function useStudentDashboardProfile(studentId: string, studentName: strin
 
     setIsUploadingImage(true)
     try {
+      const previousUploadId = profile.imageUploadId
       const nextUpload = await uploadFile({ file, fileName: file.name, folder: `student-avatars/${studentId}` })
       const nextProfile = { ...draft, image: buildAvatarContentUrl(nextUpload.id), imageUploadId: nextUpload.id }
 
       setDraft(nextProfile)
+      if (saveImmediately) persistProfile(nextProfile)
 
-      if (profile.imageUploadId && profile.imageUploadId !== nextUpload.id) {
+      if (previousUploadId && previousUploadId !== nextUpload.id) {
         try {
-          await deleteUpload(profile.imageUploadId)
+          await deleteUpload(previousUploadId)
         } catch (error) {
           console.warn("Failed to delete previous student avatar from R2.", error)
         }
       }
-
-      if (saveImmediately) persistProfile(nextProfile)
     } catch (error) {
       console.warn("Failed to upload student avatar to R2.", error)
     } finally {

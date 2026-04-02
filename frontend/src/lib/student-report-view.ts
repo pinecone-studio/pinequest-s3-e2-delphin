@@ -3,6 +3,7 @@ import type { Exam, ExamResult } from "@/lib/mock-data";
 export const questionTypeLabels = {
   "multiple-choice": "Сонгох хариулттай",
   "true-false": "Үнэн / худал",
+  fill: "Нөхөх",
   matching: "Харгалзуулах",
   ordering: "Дараалуулах",
   "short-answer": "Богино хариулт",
@@ -29,10 +30,7 @@ export function getAnswerReviewState(
 ) {
   const hasAnswer = Boolean(answer?.answer?.trim());
 
-  if (!hasAnswer) {
-    return "unanswered" as const;
-  }
-
+  if (!hasAnswer) return "unanswered" as const;
   if (isManualReviewQuestionType(question.type)) {
     return answer?.reviewStatus === "graded" ||
       typeof answer?.awardedPoints === "number" ||
@@ -55,26 +53,10 @@ export function getReportMetrics(exam: Exam, result: ExamResult) {
     const answer = answerMap.get(question.id);
     const reviewState = getAnswerReviewState(question, answer);
 
-    if (reviewState === "unanswered") {
-      unansweredCount += 1;
-      return;
-    }
-
-    if (reviewState === "pending") {
-      pendingReviewCount += 1;
-      return;
-    }
-
-    if (reviewState === "graded") {
-      return;
-    }
-
-    if (reviewState === "correct") {
-      correctCount += 1;
-      return;
-    }
-
-    wrongCount += 1;
+    if (reviewState === "unanswered") unansweredCount += 1;
+    else if (reviewState === "pending") pendingReviewCount += 1;
+    else if (reviewState === "correct") correctCount += 1;
+    else if (reviewState === "wrong") wrongCount += 1;
   });
 
   return {

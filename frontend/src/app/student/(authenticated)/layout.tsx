@@ -1,138 +1,43 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { useEffect } from "react"
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { StudentShellFrame } from "@/components/student/student-shell-frame";
 import {
-  Bell,
-  LayoutDashboard,
-  LogOut,
-} from "lucide-react"
-import { BrandLogo } from "@/components/brand-logo"
-import { ThemeToggleButton } from "@/components/theme-toggle-button"
-import { notifyStudentSessionChange, useStudentSession } from "@/hooks/use-student-session"
-import { cn } from "@/lib/utils"
-
-const navItems = [
-  { href: "/student/dashboard", label: "Хянах самбар", icon: LayoutDashboard },
-  { href: "/student/exams", label: "Шалгалтууд", iconPath: "/examsIcon.svg" },
-]
-
-function isStudentNavItemActive(pathname: string, href: string) {
-  if (pathname === href || pathname.startsWith(href + "/")) {
-    return true
-  }
-
-  if (href === "/student/exams" && pathname.startsWith("/student/reports/")) {
-    return true
-  }
-
-  return false
-}
+  notifyStudentSessionChange,
+  useStudentSession,
+} from "@/hooks/use-student-session";
 
 export default function StudentLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const { studentName } = useStudentSession()
+  const router = useRouter();
+  const pathname = usePathname();
+  const { studentName } = useStudentSession();
 
   useEffect(() => {
     if (!studentName) {
-      router.push("/student/login")
+      router.push("/student/login");
     }
-  }, [router, studentName])
+  }, [router, studentName]);
 
   const handleLogout = () => {
-    localStorage.removeItem("studentId")
-    localStorage.removeItem("studentName")
-    localStorage.removeItem("studentClass")
-    notifyStudentSessionChange()
-    router.push("/")
-  }
+    localStorage.removeItem("studentId");
+    localStorage.removeItem("studentName");
+    localStorage.removeItem("studentClass");
+    notifyStudentSessionChange();
+    router.push("/");
+  };
 
   if (!studentName) {
-    return null
+    return null;
   }
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#eef6ff_0%,#f7fbff_100%)] text-foreground student-dark-shell">
-      <div className="mx-auto min-h-screen w-full max-w-[1440px] shadow-[0_10px_35px_rgba(110,150,190,0.10)] dark:shadow-[0_20px_60px_rgba(2,6,23,0.38)]">
-        <header className="relative z-10">
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center px-10 py-4">
-            <Link
-              href="/student/dashboard"
-              className="inline-flex items-center justify-self-start font-semibold"
-            >
-              <BrandLogo className="gap-2.5" textClassName="text-left" />
-            </Link>
-
-            <nav className="flex h-[46px] items-center gap-1 rounded-full bg-[#FFFFFF] p-1 shadow-[0_12px_40px_rgba(90,143,203,0.18)] dark:border dark:border-white/10 student-dark-surface dark:shadow-[0_20px_44px_rgba(2,6,23,0.4)]">
-              {navItems.map((item) => {
-                const active = isStudentNavItemActive(pathname, item.href)
-                const Icon = "icon" in item ? item.icon : null
-                const iconPath = "iconPath" in item ? item.iconPath : null
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "flex h-[38px] items-center justify-center gap-2 rounded-full px-5 text-[14px] font-medium",
-                      active
-                        ? "bg-[linear-gradient(180deg,#5EB6FF_0%,#3CA6F5_100%)] text-white shadow-[0_8px_18px_rgba(76,170,242,0.35)] dark:bg-[linear-gradient(180deg,#3d8fff_0%,#2369e7_100%)]"
-                        : "text-[#697586] dark:text-[#b5c0d4]",
-                    )}
-                  >
-                    {Icon ? (
-                      <Icon className="h-4 w-4 shrink-0" />
-                    ) : (
-                      <Image
-                        src={iconPath ?? ""}
-                        alt=""
-                        width={16}
-                        height={16}
-                        className={cn("h-4 w-4 shrink-0 object-contain", active && "brightness-0 invert")}
-                      />
-                    )}
-                    <span>{item.label}</span>
-                  </Link>
-                )
-              })}
-            </nav>
-
-            <div className="isolate flex items-center justify-self-end gap-3">
-              <button
-                type="button"
-                className="flex h-7 w-7 items-center justify-center rounded-full border border-[#D6E2F0] bg-white text-[#7B8898] transition hover:text-[#2C3440] dark:border-white/10 dark:bg-white/6 dark:text-[#d0d8e6] dark:hover:text-white"
-                aria-label="Мэдэгдэл"
-              >
-                <Bell className="h-4 w-4 stroke-[1.75]" />
-              </button>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="flex h-7 w-7 items-center justify-center rounded-full border border-[#D6E2F0] bg-white text-[#7B8898] transition hover:text-[#2C3440] dark:border-white/10 dark:bg-white/6 dark:text-[#d0d8e6] dark:hover:text-white"
-                aria-label="Гарах"
-              >
-                <LogOut className="h-4 w-4 stroke-[1.75]" />
-              </button>
-              <ThemeToggleButton />
-            </div>
-          </div>
-        </header>
-
-        <main
-          className={cn(
-            "relative z-10 w-full min-h-[calc(100vh-82px)] overflow-visible",
-          )}
-        >
-          {children}
-        </main>
-      </div>
-    </div>
-  )
+    <StudentShellFrame pathname={pathname} onLogout={handleLogout}>
+      {children}
+    </StudentShellFrame>
+  );
 }

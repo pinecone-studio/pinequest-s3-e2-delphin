@@ -31,7 +31,13 @@ export interface MockTest {
 
 export interface ExamQuestion {
   id: string
-  type: "multiple-choice" | "true-false" | "matching" | "ordering" | "short-answer"
+  type:
+    | "multiple-choice"
+    | "true-false"
+    | "matching"
+    | "ordering"
+    | "short-answer"
+    | "fill"
   question: string
   options?: string[]
   correctAnswer?: string

@@ -43,9 +43,9 @@ export function MatchingQuestionContent(props: {
   return (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border border-dashed bg-slate-50/60 p-4">
-          <p className="text-sm font-semibold text-slate-700">Зүүн тал</p>
-          <div className="mt-3 space-y-2 text-sm text-slate-600">
+        <div className="rounded-2xl border border-dashed border-[#E6F2FF] bg-[#FCFCFF] p-4">
+          <p className="text-sm font-semibold text-[#293138]">Зүүн тал</p>
+          <div className="mt-3 space-y-2 text-sm text-[#6F7982]">
             {matchingPairs.map((pair, index) => (
               <button
                 key={`${question.id}-slot-${pair.leftLabel}`}
@@ -65,19 +65,19 @@ export function MatchingQuestionContent(props: {
                   next[index] = "";
                   onAnswerChange(question.id, buildMatchingAnswer(next.filter(Boolean).length ? next : []));
                 }}
-                className={cn("flex w-full items-center justify-between rounded-xl border px-3 py-3 text-left", assignedLetters[index] ? "border-sky-300 bg-sky-50" : "border-slate-200 bg-white")}
+                className={cn("flex w-full items-center justify-between rounded-xl border px-3 py-3 text-left", assignedLetters[index] ? "border-[#66B2FF] bg-[#F5FAFF]" : "border-[#E1E6EB] bg-white")}
               >
                 <span>{pair.leftLabel}. {pair.left}</span>
-                <span className="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700">{assignedLetters[index] || "Сонгоогүй"}</span>
+                <span className="rounded-md bg-[#E6F2FF] px-2 py-1 text-xs font-semibold text-[#007FFF]">{assignedLetters[index] || "Сонгоогүй"}</span>
               </button>
             ))}
           </div>
         </div>
-        <div className="rounded-2xl border border-dashed bg-slate-50/60 p-4">
-          <p className="text-sm font-semibold text-slate-700">Баруун тал</p>
-          <div className="mt-3 space-y-2 text-sm text-slate-600">
+        <div className="rounded-2xl border border-dashed border-[#E6F2FF] bg-[#FCFCFF] p-4">
+          <p className="text-sm font-semibold text-[#293138]">Баруун тал</p>
+          <div className="mt-3 space-y-2 text-sm text-[#6F7982]">
             {matchingPairs.map((pair) => (
-              <div key={`${question.id}-right-${pair.rightLabel}`} className="rounded-xl border border-slate-200 bg-white px-3 py-3">
+              <div key={`${question.id}-right-${pair.rightLabel}`} className="rounded-xl border border-[#E1E6EB] bg-white px-3 py-3">
                 {pair.rightLabel}. {pair.right}
               </div>
             ))}
@@ -85,7 +85,7 @@ export function MatchingQuestionContent(props: {
         </div>
       </div>
       <div className="space-y-2">
-        <Label className="text-sm font-semibold text-slate-700">Үсгээ сонгоод тохирох мөр дээр дарна уу</Label>
+        <Label className="text-sm font-semibold text-[#293138]">Үсгээ сонгоод тохирох мөр дээр дарна уу</Label>
         <div className="flex flex-wrap gap-2">
           {availableLetters.map((letter) => (
             <Button key={letter} type="button" variant={selectedLetter === letter ? "default" : "outline"} onClick={() => setSelectedLetter((current) => current === letter ? "" : letter)}>
@@ -97,3 +97,4 @@ export function MatchingQuestionContent(props: {
     </div>
   );
 }
+

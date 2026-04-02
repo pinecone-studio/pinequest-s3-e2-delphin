@@ -2,8 +2,12 @@
 
 import { use, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { StudentTakeExamClosed, StudentTakeExamNotFound, StudentTakeExamSubmitted } from "@/components/student/student-take-exam-states";
-import { StudentTakeExamContent } from "@/components/student/student-take-exam-content";
+import {
+  StudentTakeExamClosed,
+  StudentTakeExamNotFound,
+  StudentTakeExamSubmitted,
+} from "@/components/student/student-take-exam-states";
+import { StudentExamHtmlCanvas } from "@/components/student/student-exam-html-canvas";
 import { useExamIntegrityGuard } from "@/hooks/use-exam-integrity-guard";
 import { useStudentSession } from "@/hooks/use-student-session";
 import { exams as legacyExams, type Exam } from "@/lib/mock-data";
@@ -20,7 +24,7 @@ export default function StudentTakeExamPage({
 }) {
   const { examId } = use(params);
   const router = useRouter();
-  const { studentClass, studentId, studentName } = useStudentSession();
+  const { studentClass, studentId } = useStudentSession();
   const [allExams, setAllExams] = useState<Exam[]>(legacyExams);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -79,7 +83,7 @@ export default function StudentTakeExamPage({
     void upsertStudentExamAttempt({
       examId: exam.id,
       studentId,
-      studentName: studentName || "Ð¡ÑƒÑ€Ð°Ð³Ñ‡",
+      studentName: "Сурагч",
       classId: studentClass,
       status: "in_progress",
       startedAt: new Date().toISOString(),
@@ -92,22 +96,17 @@ export default function StudentTakeExamPage({
     schedule,
     studentClass,
     studentId,
-    studentName,
   ]);
 
   useExamIntegrityGuard({ examId: exam?.id, studentId });
 
-  const answeredCount = exam
-    ? exam.questions.filter(
-        (question) => (answers[question.id] ?? "").trim().length > 0,
-      ).length
-    : 0;
-  const totalQuestions = exam?.questions.length ?? 0;
-  const completionPercent =
-    totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
-  const unansweredCount = Math.max(totalQuestions - answeredCount, 0);
-
-  if (isLoading) return <p className="text-sm text-muted-foreground">Ð¨Ð°Ð»Ð³Ð°Ð»Ñ‚Ñ‹Ð³ Ð°Ñ‡Ð°Ð°Ð»Ð¶ Ð±Ð°Ð¹Ð½Ð°...</p>;
+  if (isLoading) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        Ð¨Ð°Ð»Ð³Ð°Ð»Ñ‚Ñ‹Ð³ Ð°Ñ‡Ð°Ð°Ð»Ð¶ Ð±Ð°Ð¹Ð½Ð°...
+      </p>
+    );
+  }
 
   if (!exam || !schedule) {
     return <StudentTakeExamNotFound onBack={() => router.push("/student/exams")} />;
@@ -130,43 +129,51 @@ export default function StudentTakeExamPage({
     );
   }
 
-  const handleAnswerChange = (questionId: string, value: string) => {
-    setAnswers((current) => ({ ...current, [questionId]: value }));
-  };
-
-  const handleSubmit = async () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-
-    try {
-      await submitStudentExam({
-        exam,
-        answers,
-        studentId,
-        studentName: studentName || "Ð¡ÑƒÑ€Ð°Ð³Ñ‡",
-        studentClass,
-      });
-      router.push(`/student/reports/${exam.id}`);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const answeredCount = Object.values(answers).filter((value) => value.trim().length > 0).length;
+  const totalQuestions = exam.questions.length;
+  const completionPercent = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+  const unansweredCount = Math.max(totalQuestions - answeredCount, 0);
 
   return (
-    <StudentTakeExamContent
+    <StudentExamHtmlCanvas
       exam={exam}
       schedule={schedule}
       studentClass={studentClass}
-      studentName={studentName || "Ð¡ÑƒÑ€Ð°Ð³Ñ‡"}
+      studentName="Demo Student"
       answers={answers}
       answeredCount={answeredCount}
       totalQuestions={totalQuestions}
       completionPercent={completionPercent}
       unansweredCount={unansweredCount}
       isSubmitting={isSubmitting}
-      onAnswerChange={handleAnswerChange}
-      onSubmit={() => void handleSubmit()}
-      onBack={() => router.push(`/student/exams/${exam.id}`)}
+      onAnswerChange={(questionId, value) =>
+        setAnswers((current) => ({ ...current, [questionId]: value }))
+      }
+      onSubmit={() => {
+        if (!studentId || isSubmitting) {
+          return;
+        }
+
+        setIsSubmitting(true);
+        void submitStudentExam({
+          exam,
+          answers,
+          studentId,
+          studentName: "Demo Student",
+          studentClass,
+        })
+          .then(() => {
+            setAlreadySubmitted(true);
+            router.push(`/student/reports/${examId}`);
+          })
+          .finally(() => setIsSubmitting(false));
+      }}
+      onBack={() => router.push(`/student/exams/${examId}`)}
     />
   );
 }
+
+
+
+
+

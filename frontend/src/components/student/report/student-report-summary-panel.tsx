@@ -29,7 +29,7 @@ export function StudentReportSummaryPanel(props: StudentReportSummaryPanelProps)
   }
 
   return (
-    <section className="mt-5 rounded-[20px] border border-[#E6F2FF] bg-white px-5 py-5 shadow-[0_10px_22px_rgba(185,207,228,0.08)] md:px-7 md:py-6">
+    <section className="mt-7 rounded-[28px] border border-[#E6F2FF] bg-white px-5 py-6 shadow-[0_10px_22px_rgba(185,207,228,0.08)] md:px-7 md:py-6">
       <div className="flex flex-col gap-5 lg:hidden">
         <div className="flex justify-center">
           <StudentReportPerformanceChart
@@ -49,18 +49,8 @@ export function StudentReportSummaryPanel(props: StudentReportSummaryPanelProps)
         </div>
 
         <div className="grid gap-3 md:grid-cols-2">
-          <MiniInfoCard
-            label="Хугацаа"
-            value={`${props.duration} мин`}
-            iconSrc="/report-time-icon.svg"
-            labelClassName="font-sans text-[12px] font-normal uppercase tracking-[0.14em] text-[#89939C]"
-          />
-          <MiniInfoCard
-            label="Огноо"
-            value={props.scheduleLabel}
-            iconSrc="/report-date-icon.svg"
-            labelClassName="font-sans text-[12px] font-normal uppercase tracking-[0.14em] text-[#89939C]"
-          />
+          <MiniInfoCard label="Хугацаа" value={`${props.duration} мин`} iconSrc="/report-time-icon.svg" />
+          <MiniInfoCard label="Огноо" value={props.scheduleLabel} iconSrc="/report-date-icon.svg" />
         </div>
       </div>
 
@@ -76,31 +66,21 @@ export function StudentReportSummaryPanel(props: StudentReportSummaryPanelProps)
           />
         </div>
 
-        <div className="absolute left-[218px] top-[26px] w-[150px]">
+        <div className="absolute left-[218px] top-[26px] w-[172px]">
           <ResultStat color="#73E77E" count={statMap.correctCount} label="Зөв хариулт" total={props.questionCount} />
         </div>
-        <div className="absolute left-[428px] top-[26px] w-[150px]">
+        <div className="absolute left-[469px] top-[26px] w-[172px]">
           <ResultStat color="#FF7A45" count={statMap.wrongCount} label="Алдсан хариулт" total={props.questionCount} />
         </div>
-        <div className="absolute left-[637px] top-[26px] w-[150px]">
+        <div className="absolute left-[717px] top-[26px] w-[172px]">
           <ResultStat color="#E8F7FF" count={statMap.unansweredCount} label="Хоосон хариулт" total={props.questionCount} />
         </div>
 
-        <div className="absolute left-[214px] top-[110px] w-[288px]">
-          <MiniInfoCard
-            label="Хугацаа"
-            value={`${props.duration} мин`}
-            iconSrc="/report-time-icon.svg"
-            labelClassName="font-sans text-[12px] font-normal uppercase tracking-[0.14em] text-[#89939C]"
-          />
+        <div className="absolute left-[214px] top-[110px] w-[346px]">
+          <MiniInfoCard label="Хугацаа" value={`${props.duration} мин`} iconSrc="/report-time-icon.svg" />
         </div>
-        <div className="absolute left-[514px] top-[110px] w-[288px]">
-          <MiniInfoCard
-            label="Огноо"
-            value={props.scheduleLabel}
-            iconSrc="/report-date-icon.svg"
-            labelClassName="font-sans text-[12px] font-normal uppercase tracking-[0.14em] text-[#89939C]"
-          />
+        <div className="absolute left-[572px] top-[110px] w-[346px]">
+          <MiniInfoCard label="Огноо" value={props.scheduleLabel} iconSrc="/report-date-icon.svg" />
         </div>
       </div>
     </section>
@@ -113,34 +93,25 @@ function ResultStat(props: { color: string; count: number; label: string; total:
   return (
     <div className="flex min-w-0 items-start gap-3">
       <span
-        className="mt-[6px] h-[15px] w-[15px] shrink-0 rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.06)]"
+        className="mt-[6px] h-[19px] w-[19px] shrink-0 rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.06)]"
         style={{ backgroundColor: props.color }}
       />
       <div className="min-w-0">
-        <p className="text-[13px] text-[#9aaabd]">{props.label}</p>
-        <p className="mt-1 text-[17px] font-semibold leading-none text-[#5a6f84]">{`${props.count} (${percent}%)`}</p>
+        <p className="text-[13px] text-[#96A9C2]">{props.label}</p>
+        <p className="mt-[6px] text-[17px] font-semibold leading-none text-[#596F87]">{`${props.count} (${percent}%)`}</p>
       </div>
     </div>
   )
 }
 
-function MiniInfoCard(props: { iconSrc: string; label: string; labelClassName?: string; value: string }) {
-  const resolvedIconSrc =
-    props.iconSrc === "/report-time-icon.svg"
-      ? "/report-date-icon.svg"
-      : props.iconSrc === "/report-date-icon.svg"
-        ? "/report-time-icon.svg"
-        : props.iconSrc
-
+function MiniInfoCard(props: { iconSrc: string; label: string; value: string }) {
   return (
-    <div className="flex min-h-[71px] items-center justify-between rounded-[14px] border border-[#E6F2FF] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(182,207,228,0.08)]">
+    <div className="flex min-h-[82px] items-center justify-between rounded-[18px] border border-[#D9EAFB] bg-white px-5 py-4 shadow-[0_6px_16px_rgba(182,207,228,0.08)]">
       <div className="min-w-0">
-        <p className={props.labelClassName ?? "font-sans text-[12px] font-normal uppercase tracking-[0.14em] text-[#89939C]"}>
-          {props.label}
-        </p>
-        <p className="mt-2 text-[15px] font-semibold leading-[1.35] text-[#5a6f84]">{props.value}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#9AAABD]">{props.label}</p>
+        <p className="mt-2 text-[16px] font-semibold leading-[1.35] text-[#5A6F84]">{props.value}</p>
       </div>
-      <Image src={resolvedIconSrc} alt="" width={30} height={30} className="ml-3 h-[30px] w-[30px] shrink-0" />
+      <Image src={props.iconSrc} alt="" width={34} height={34} className="ml-3 h-[34px] w-[34px] shrink-0" />
     </div>
   )
 }

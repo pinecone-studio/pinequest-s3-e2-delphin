@@ -4,6 +4,7 @@ export const examQuestionTypes = [
   'matching',
   'ordering',
   'short-answer',
+  'fill',
 ] as const;
 
 export const examStatuses = ['draft', 'scheduled', 'completed'] as const;

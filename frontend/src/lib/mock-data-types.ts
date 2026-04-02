@@ -49,6 +49,7 @@ export interface Exam {
   title: string
   questions: ExamQuestion[]
   duration: number
+  availableIndefinitely?: boolean
   reportReleaseMode: "after-all-classes-complete" | "immediately"
   scheduledClasses: {
     classId: string

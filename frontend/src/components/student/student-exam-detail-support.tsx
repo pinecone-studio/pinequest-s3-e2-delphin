@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import type { ReactNode } from 'react'
 import type { Exam } from '@/lib/mock-data'
 
@@ -22,22 +23,24 @@ export function getExamDescription(exam: Exam) {
 }
 
 export function DetailInfoItem({
-  icon,
+  iconSrc,
   label,
   value,
 }: {
-  icon: ReactNode
+  iconSrc: string
   label: string
   value: string
 }) {
   return (
-    <div className="flex items-center gap-4">
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#D7E9FF] bg-white text-[#7A2EF6] shadow-[0_10px_24px_rgba(24,100,251,0.08)]">
-        {icon}
+    <div className="flex min-h-[34px] items-center gap-4 md:w-[180px] xl:w-[184px]">
+      <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center">
+        <Image alt="" height={30} src={iconSrc} width={30} />
       </div>
-      <div className="space-y-1">
-        <p className="text-[15px] leading-none text-[#6B7785]">{label}</p>
-        <p className="text-[17px] font-semibold leading-none text-[#1F2937]">{value}</p>
+      <div className="space-y-[6px]">
+        <p className="text-[14px] leading-none text-[#72859A] dark:text-[#D7DFE7]">{label}</p>
+        <p className="text-[17px] font-semibold leading-none tracking-[-0.02em] text-[#1F2937] md:text-[18px] dark:text-[#F0F3F5]">
+          {value}
+        </p>
       </div>
     </div>
   )
@@ -51,8 +54,8 @@ export function InstructionItem({
   text: string
 }) {
   return (
-    <li className="flex items-start gap-4 text-[18px] leading-[1.45] text-[#1F2937]">
-      <span className="mt-1 text-[#1F2937]">{icon}</span>
+    <li className="flex items-start gap-3 text-[13px] leading-[1.55] text-[#1F2937] dark:text-[#D7E0ED]">
+      <span className="mt-0.5 shrink-0 text-[#1F2937] dark:text-[#D7E0ED]">{icon}</span>
       <span>{text}</span>
     </li>
   )

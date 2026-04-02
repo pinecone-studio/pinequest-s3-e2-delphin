@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import type { Exam } from "@/lib/mock-data";
-import { ForceLightTheme } from "@/components/student/force-light-theme";
 import { StudentExamProgressSidebar } from "@/components/student/student-exam-progress-sidebar";
 import { StudentExamQuestionList } from "@/components/student/student-exam-question-list";
 import { StudentExamTopSection } from "@/components/student/student-exam-top-section";
@@ -43,6 +42,10 @@ export function StudentExamHtmlCanvas(props: {
     onSubmit,
     onBack,
   } = props;
+  const orderedQuestions = getOrderedQuestions(exam);
+  const answeredQuestionNumbers = orderedQuestions
+    .map((question, index) => (answers[question.id]?.trim() ? index + 1 : null))
+    .filter((value): value is number => value !== null);
   const [remainingSeconds, setRemainingSeconds] = useState(exam.duration * 60);
 
   useEffect(() => {
@@ -54,20 +57,20 @@ export function StudentExamHtmlCanvas(props: {
   }, []);
 
   return (
-    <div className="min-h-screen px-10 pb-14 pt-6 text-[#293138]">
-      <ForceLightTheme />
+    <div className="min-h-screen px-10 pb-14 pt-6 text-[#293138] dark:text-[#edf4ff]">
       <div className="mx-auto w-full max-w-[1356px]">
-        <div className="mt-10 flex flex-col gap-8 xl:flex-row xl:items-start">
-          <div className="min-w-0 flex-1 space-y-10 xl:max-w-[1023px]">
+        <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_365px] lg:items-start lg:gap-x-16">
+          <div className="min-w-0 space-y-10 lg:max-w-[1023px]">
             <StudentExamTopSection exam={exam} schedule={schedule} onBack={onBack} />
             <StudentExamQuestionList
-              questions={getOrderedQuestions(exam)}
+              questions={orderedQuestions}
               answers={answers}
               onAnswerChange={onAnswerChange}
             />
           </div>
           <StudentExamProgressSidebar
             answeredCount={answeredCount}
+            answeredQuestionNumbers={answeredQuestionNumbers}
             totalQuestions={totalQuestions}
             completionPercent={completionPercent}
             unansweredCount={unansweredCount}
@@ -75,7 +78,7 @@ export function StudentExamHtmlCanvas(props: {
             isSubmitting={isSubmitting}
             onSubmit={onSubmit}
             onBack={onBack}
-            className="xl:mt-[113px]"
+            className="lg:col-start-2"
           />
         </div>
       </div>

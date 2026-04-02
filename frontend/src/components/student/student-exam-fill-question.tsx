@@ -37,30 +37,30 @@ export function StudentExamFillQuestion(props: {
 
   return (
     <section
-      className="rounded-[16px] border border-[#E6F2FF] bg-white px-6 pb-[21px] pt-6"
+      className="rounded-[16px] border border-[#E6F2FF] bg-white px-6 pb-[21px] pt-6 dark:border-white/10 student-dark-surface"
       style={{ boxShadow: cardShadow() }}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-center gap-4">
-          <div className="inline-flex h-[31px] items-center rounded-full bg-[#E6F2FF] px-4 text-[14px] font-semibold leading-[18px] text-[#007FFF]">
+          <div className="inline-flex h-[31px] items-center rounded-full bg-[#E6F2FF] px-4 text-[14px] font-semibold leading-[18px] text-[#007FFF] dark:bg-[#1B2959] dark:text-[#89C8FF]">
             Асуулт {index + 1}
           </div>
-          <p className="truncate text-[16px] font-medium leading-[20px] text-[#6F7982]">
+          <p className="truncate text-[16px] font-medium leading-[20px] text-[#6F7982] dark:text-[#9CADC7]">
             {`${QUESTION_HEADER_META_LABELS.fill} · ${question.points} оноо`}
           </p>
         </div>
-        <div className={`mt-1 inline-flex min-h-[31px] items-center gap-1.5 text-[14px] font-semibold ${value.trim() ? "text-[#00C853]" : "text-[#89939C]"}`}>
+        <div className={`mt-1 inline-flex min-h-[31px] items-center gap-1.5 text-[14px] font-semibold ${value.trim() ? "text-[#00C853] dark:text-[#62E28A]" : "text-[#89939C] dark:text-[#8FA0BB]"}`}>
           {value.trim() ? <StatusIcon /> : null}
           <span>{value.trim() ? "Хариулсан" : "Хариулаагүй"}</span>
         </div>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center gap-3 text-[20px] font-semibold leading-[28px] text-[#293138]">
+      <div className="mt-5 flex flex-wrap items-center gap-3 text-[20px] font-semibold leading-[28px] text-[#293138] dark:text-[#F3F8FF]">
         <span>{before}</span>
         <input
           value={value}
           onChange={(event) => onAnswerChange(question.id, event.target.value)}
-          className="h-[35px] w-[199px] rounded-[10px] border border-[#E6F2FF] bg-white px-4 text-[16px] font-medium leading-[20px] text-[#293138] outline-none focus:border-[#66B2FF]"
+          className="h-[35px] w-[199px] rounded-[10px] border border-[#E6F2FF] bg-white px-4 text-[16px] font-medium leading-[20px] text-[#293138] outline-none focus:border-[#66B2FF] dark:border-white/10 dark:bg-[#05080C] dark:text-[#EDF4FF] dark:focus:border-[#60A5FA]"
         />
         {after ? <span>{after}</span> : null}
       </div>

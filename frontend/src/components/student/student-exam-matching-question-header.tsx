@@ -33,21 +33,21 @@ export function PickQuestionHeader(props: {
     <div>
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-center gap-5">
-          <div className="inline-flex h-[22px] shrink-0 items-center rounded-full bg-[#E6F2FF] px-3 text-[14px] font-semibold leading-[18px] text-[#007FFF]">
+          <div className="inline-flex h-[22px] shrink-0 items-center rounded-full bg-[#E6F2FF] px-3 text-[14px] font-semibold leading-[18px] text-[#007FFF] dark:bg-[#1B2959] dark:text-[#89C8FF]">
             Асуулт {index + 1}
           </div>
-          <p className="truncate text-[16px] font-medium leading-[20px] text-[#566069]">
+          <p className="truncate text-[16px] font-medium leading-[20px] text-[#566069] dark:text-[#9CADC7]">
             {meta}
           </p>
         </div>
 
-        <div className={["mt-1 min-h-[22px] shrink-0 text-[14px] font-semibold leading-[18px]", answered ? "flex items-center gap-1.5 text-[#00C853]" : "inline-flex items-center text-[#89939C]"].join(" ")}>
+        <div className={["mt-1 min-h-[22px] shrink-0 text-[14px] font-semibold leading-[18px]", answered ? "flex items-center gap-1.5 text-[#00C853] dark:text-[#62E28A]" : "inline-flex items-center text-[#89939C] dark:text-[#8FA0BB]"].join(" ")}>
           {answered ? <QuestionStatusIcon /> : null}
           <span>{answered ? "Хариулсан" : "Хариулаагүй"}</span>
         </div>
       </div>
 
-      <h2 className="mt-[18px] text-[20px] font-semibold leading-[28px] text-[#293138]">
+      <h2 className="mt-[18px] text-[20px] font-semibold leading-[28px] text-[#293138] dark:text-[#F3F8FF]">
         {title}
       </h2>
     </div>

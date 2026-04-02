@@ -17,7 +17,7 @@ export function StudentExamShortAnswerQuestion(props: {
 
   return (
     <section
-      className="overflow-hidden rounded-[16px] border border-[#E6F2FF] bg-white"
+      className="overflow-hidden rounded-[16px] border border-[#E6F2FF] bg-white dark:border-white/10 student-dark-surface"
       style={{ boxShadow: cardShadow() }}
     >
       <div className="px-7 pb-6 pt-6">
@@ -34,7 +34,7 @@ export function StudentExamShortAnswerQuestion(props: {
           value={value}
           onChange={(event) => onAnswerChange(question.id, event.target.value)}
           placeholder="Энд дэлгэрэнгүй тайлбар болон бодолтын алхмуудаа бичнэ үү..."
-          className="min-h-[120px] w-full resize-none rounded-[14px] border border-[#E6F2FF] bg-[#F5FAFF] px-5 py-4 text-[18px] leading-[28px] text-[#001933] outline-none placeholder:text-[#89939C] focus:border-[#66B2FF]"
+          className="min-h-[120px] w-full resize-none rounded-[14px] border border-[#E6F2FF] bg-[#F5FAFF] px-5 py-4 text-[18px] leading-[28px] text-[#001933] outline-none placeholder:text-[#89939C] focus:border-[#66B2FF] dark:border-white/10 dark:bg-[#05080C] dark:text-[#EDF4FF] dark:placeholder:text-[#87A2B8] dark:focus:border-[#60A5FA]"
         />
       </div>
     </section>

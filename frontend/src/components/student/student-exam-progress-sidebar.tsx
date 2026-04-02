@@ -15,7 +15,7 @@ function LegendRow(props: { color: string; outline?: boolean; label: string }) {
   return (
     <div className="flex items-center gap-2">
       <span className={`h-[14px] w-[14px] rounded-[4px] ${outline ? "border-2 bg-white" : ""}`} style={outline ? { borderColor: color } : { backgroundColor: color }} />
-      <span className="text-[14px] leading-[17px] text-[#6F7982]">{label}</span>
+      <span className="text-[14px] leading-[17px] text-[#6F7982] dark:text-[#9CADC7]">{label}</span>
     </div>
   );
 }
@@ -26,8 +26,8 @@ function QuestionTile(props: { value: number; mode: "answered" | "current" | "em
     mode === "answered"
       ? "border-[#00C853] bg-[#00C853] text-white"
       : mode === "current"
-        ? "border-[#66AFFF] bg-[#EAF5FF] text-[#6F7982]"
-        : "border-[#D8E9FB] bg-[#EAF5FF] text-[#6F7982]";
+        ? "border-[#66AFFF] bg-[#EAF5FF] text-[#6F7982] dark:bg-[#122045] dark:text-[#EDF4FF]"
+        : "border-[#D8E9FB] bg-[#EAF5FF] text-[#6F7982] dark:border-white/10 dark:bg-[rgba(255,255,255,0.04)] dark:text-[#8FA0BB]";
 
   return (
     <button type="button" className={`h-[42px] w-[42px] rounded-[8px] border text-[14px] font-medium leading-[17px] ${styles}`}>
@@ -38,6 +38,7 @@ function QuestionTile(props: { value: number; mode: "answered" | "current" | "em
 
 export function StudentExamProgressSidebar(props: {
   answeredCount: number;
+  answeredQuestionNumbers: number[];
   totalQuestions: number;
   completionPercent: number;
   unansweredCount: number;
@@ -49,6 +50,7 @@ export function StudentExamProgressSidebar(props: {
 }) {
   const {
     answeredCount,
+    answeredQuestionNumbers,
     totalQuestions,
     completionPercent,
     timerLabel,
@@ -57,17 +59,18 @@ export function StudentExamProgressSidebar(props: {
     className,
   } = props;
   const percent = Math.max(0, Math.min(completionPercent, 100));
+  const answeredQuestionSet = new Set(answeredQuestionNumbers);
   const currentQuestion = Math.min(answeredCount + 1, totalQuestions || 1);
 
   return (
     <aside
       className={[
-        "w-[325px] max-w-full shrink-0 self-start xl:sticky xl:top-6 xl:max-h-[calc(100vh-48px)]",
+        "w-[325px] max-w-full shrink-0 self-start lg:justify-self-end lg:sticky lg:top-6 lg:max-h-[calc(100vh-24px)]",
         className ?? "",
       ].join(" ")}
     >
-      <div className="space-y-5 overflow-y-auto pr-1 xl:max-h-[calc(100vh-48px)]">
-        <div className="flex h-[51px] items-center justify-between rounded-[25.5px] border border-[#E6F2FF] bg-[#003366] px-5 shadow-[0_9px_4px_rgba(201,201,201,0.01),0_5px_3px_rgba(201,201,201,0.05),0_2px_2px_rgba(201,201,201,0.09),0_1px_1px_rgba(201,201,201,0.1)]">
+      <div className="space-y-5 overflow-y-auto pr-1 lg:max-h-[calc(100vh-24px)]">
+        <div className="flex h-[51px] items-center justify-between rounded-[25.5px] border border-[#E6F2FF] bg-[#003366] px-5 shadow-[0_9px_4px_rgba(201,201,201,0.01),0_5px_3px_rgba(201,201,201,0.05),0_2px_2px_rgba(201,201,201,0.09),0_1px_1px_rgba(201,201,201,0.1)] dark:border-white/15 dark:bg-[linear-gradient(180deg,#0F1941_0%,#0B1434_100%)]">
           <div className="flex items-center gap-3 text-[#00C853]">
             <StatusIcon />
             <span className="text-[14px] font-semibold leading-[17px]">Үлдсэн хугацаа</span>
@@ -75,30 +78,34 @@ export function StudentExamProgressSidebar(props: {
           <span className="text-[18px] font-semibold leading-[22px] text-[#00C853]">{timerLabel}</span>
         </div>
 
-        <div className="rounded-[12px] border border-[#E6F2FF] bg-white px-4 pb-6 pt-5 shadow-[0_9px_4px_rgba(201,201,201,0.01),0_5px_3px_rgba(201,201,201,0.05),0_2px_2px_rgba(201,201,201,0.09),0_1px_1px_rgba(201,201,201,0.1)]">
-          <h2 className="text-[20px] font-semibold leading-[24px] text-[#001933]">Асуултын жагсаалт</h2>
+        <div className="rounded-[12px] border border-[#E6F2FF] bg-white px-4 pb-6 pt-5 text-[#001933] shadow-[0_9px_4px_rgba(201,201,201,0.01),0_5px_3px_rgba(201,201,201,0.05),0_2px_2px_rgba(201,201,201,0.09),0_1px_1px_rgba(201,201,201,0.1)] dark:border-white/10 student-dark-surface dark:text-[#F3F8FF]">
+          <h2 className="text-[20px] font-semibold leading-[24px]">Асуултын жагсаалт</h2>
 
           <div className="mt-5 flex items-center justify-between text-[14px] leading-[17px]">
-            <span className="text-[#6F7982]">Хариулсан:</span>
+            <span className="text-[#6F7982] dark:text-[#9CADC7]">Хариулсан:</span>
             <div className="flex items-center gap-3">
-              <span className="font-semibold text-[#293138]">{answeredCount}/{totalQuestions}</span>
+              <span className="font-semibold text-[#293138] dark:text-[#EDF4FF]">{answeredCount}/{totalQuestions}</span>
               <span className="font-semibold text-[#007FFF]">{Math.round(percent)}%</span>
             </div>
           </div>
 
-          <div className="mt-3 h-[8px] w-[193px] rounded-full bg-[#E6F2FF]">
+          <div className="mt-3 h-[8px] w-[193px] rounded-full bg-[#E6F2FF] dark:bg-[rgba(255,255,255,0.08)]">
             <div className="h-full rounded-full bg-[#007FFF]" style={{ width: `${percent}%` }} />
           </div>
 
           <div className="mt-7 flex flex-wrap gap-[10px]">
             {Array.from({ length: totalQuestions }, (_, index) => {
               const value = index + 1;
-              const mode = value <= answeredCount ? "answered" : value === currentQuestion ? "current" : "empty";
+              const mode = answeredQuestionSet.has(value)
+                ? "answered"
+                : value === currentQuestion
+                  ? "current"
+                  : "empty";
               return <QuestionTile key={value} value={value} mode={mode} />;
             })}
           </div>
 
-          <div className="mt-6 h-px w-full bg-[#EAF2FB]" />
+          <div className="mt-6 h-px w-full bg-[#EAF2FB] dark:bg-white/10" />
 
           <div className="mt-5 space-y-3">
             <LegendRow color="#00C853" label="Хариулсан" />

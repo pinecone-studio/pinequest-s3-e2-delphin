@@ -14,8 +14,12 @@ const RATE_LIMIT_BUCKETS = new Map<string, RateLimitEntry>();
 
 const GENERAL_WINDOW_MS = 60_000;
 const GENERAL_MAX_REQUESTS = 120;
+const STUDENT_EXAM_READ_WINDOW_MS = 60_000;
+const STUDENT_EXAM_READ_MAX_REQUESTS = 1_500;
 const WRITE_WINDOW_MS = 60_000;
 const WRITE_MAX_REQUESTS = 30;
+const STUDENT_EXAM_WRITE_WINDOW_MS = 60_000;
+const STUDENT_EXAM_WRITE_MAX_REQUESTS = 800;
 const UPLOAD_WINDOW_MS = 60_000;
 const UPLOAD_MAX_REQUESTS = 10;
 
@@ -28,7 +32,47 @@ function getClientKey(request: Request) {
   return request.ip || request.socket.remoteAddress || 'unknown';
 }
 
+function isReadRequest(request: Request) {
+  return (
+    request.method === 'GET' ||
+    request.method === 'HEAD' ||
+    request.method === 'OPTIONS'
+  );
+}
+
+function isStudentExamReadRequest(request: Request) {
+  if (!isReadRequest(request)) {
+    return false;
+  }
+
+  return (
+    request.path.startsWith('/api/exams') ||
+    request.path.startsWith('/api/student-exam-attempts') ||
+    request.path.startsWith('/api/student-exam-results')
+  );
+}
+
 function getBucketConfig(request: Request) {
+  if (isStudentExamReadRequest(request)) {
+    return {
+      windowMs: STUDENT_EXAM_READ_WINDOW_MS,
+      maxRequests: STUDENT_EXAM_READ_MAX_REQUESTS,
+      scope: 'student-exam-read',
+    };
+  }
+
+  if (
+    request.method === 'POST' &&
+    (request.path.startsWith('/api/student-exam-attempts') ||
+      request.path.startsWith('/api/student-exam-results'))
+  ) {
+    return {
+      windowMs: STUDENT_EXAM_WRITE_WINDOW_MS,
+      maxRequests: STUDENT_EXAM_WRITE_MAX_REQUESTS,
+      scope: 'student-exam-write',
+    };
+  }
+
   if (request.path.startsWith('/api/uploads') && request.method === 'POST') {
     return {
       windowMs: UPLOAD_WINDOW_MS,
@@ -37,11 +81,7 @@ function getBucketConfig(request: Request) {
     };
   }
 
-  if (
-    request.method !== 'GET' &&
-    request.method !== 'HEAD' &&
-    request.method !== 'OPTIONS'
-  ) {
+  if (!isReadRequest(request)) {
     return {
       windowMs: WRITE_WINDOW_MS,
       maxRequests: WRITE_MAX_REQUESTS,

@@ -11,7 +11,7 @@ import { TeacherClassesSidePanels } from "@/components/teacher/teacher-classes-s
 import type { TeacherStudentRegistrationInput } from "@/lib/teacher-student-registry"
 
 export function TeacherClassesOverview(props: TeacherClassesOverviewProps) {
-  const { classData, classOptions, examResults, onClassChange, onSemesterChange, selectedExam, selectedExamResults, selectedSemester, semesterOptions, visibleCompletedExams } = props
+  const { allExamResults, classData, classOptions, examResults, onClassChange, onExamChange, onSemesterChange, selectedExam, selectedExamResults, selectedSemester, semesterOptions, visibleCompletedExams } = props
   const now = useCurrentTime()
 
   const metrics = buildClassOverviewMetrics({ classData, exams: visibleCompletedExams, results: examResults })
@@ -23,9 +23,12 @@ export function TeacherClassesOverview(props: TeacherClassesOverviewProps) {
       <TeacherClassesHeader
         classData={classData}
         classOptions={classOptions}
+        examOptions={visibleCompletedExams.map((exam) => ({ id: exam.id, title: exam.title }))}
         metrics={metrics}
         onClassChange={onClassChange}
+        onExamChange={onExamChange}
         onSemesterChange={onSemesterChange}
+        selectedExamId={selectedExam?.id ?? null}
         selectedSemester={selectedSemester}
         semesterOptions={semesterOptions}
       />
@@ -37,18 +40,28 @@ export function TeacherClassesOverview(props: TeacherClassesOverviewProps) {
           </div>
         </div>
 
-        <TeacherClassesSidePanels classData={classData} date={currentDateLabel} time={currentTimeLabel} />
+        <TeacherClassesSidePanels
+          classData={classData}
+          classOptions={classOptions}
+          date={currentDateLabel}
+          examResults={allExamResults}
+          selectedExamResults={selectedExamResults}
+          selectedExam={selectedExam}
+          time={currentTimeLabel}
+        />
       </section>
     </div>
   )
 }
 
 type TeacherClassesOverviewProps = {
+  allExamResults: ExamResult[]
   classData: Class
   classOptions: Class[]
   examResults: ExamResult[]
   onAddStudent: (input: TeacherStudentRegistrationInput) => Promise<void>
   onClassChange: (value: string) => void
+  onExamChange: (value: string) => void
   onSemesterChange: (value: string) => void
   selectedExam: TeacherExam | null
   selectedExamResults: ExamResult[]

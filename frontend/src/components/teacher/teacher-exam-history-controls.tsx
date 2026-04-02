@@ -28,7 +28,7 @@ export function TeacherExamHistoryControls({
   onNameQueryChange,
   selectedClass,
 }: {
-  classOptions: string[];
+  classOptions: Array<{ label: string; value: string }>;
   dateRange: DateRange | undefined;
   filteredExamCount: number;
   nameQuery: string;
@@ -85,9 +85,9 @@ export function TeacherExamHistoryControls({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Бүх анги</SelectItem>
-            {classOptions.map((classId) => (
-              <SelectItem key={classId} value={classId}>
-                {classId}
+            {classOptions.map((classOption) => (
+              <SelectItem key={classOption.value} value={classOption.value}>
+                {classOption.label}
               </SelectItem>
             ))}
           </SelectContent>

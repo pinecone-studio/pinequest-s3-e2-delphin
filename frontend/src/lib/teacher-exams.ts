@@ -1,6 +1,7 @@
 import { exams as legacyExams } from '@/lib/mock-data'
 import { fetchBackendJson } from '@/lib/backend-fetch'
 import type { CreatedExam } from '@/lib/exams-api'
+import type { Exam as LegacyExam } from '@/lib/mock-data'
 
 export type TeacherExam = {
   id: string
@@ -15,6 +16,10 @@ export type TeacherExam = {
     correctAnswer?: string
     points: number
     order: number
+    sourceQuestionId?: string
+    categoryName?: string
+    topicName?: string
+    difficulty?: 'easy' | 'medium' | 'hard'
   }>
   scheduledClasses: Array<{
     classId: string
@@ -75,7 +80,7 @@ function mapCreatedExamToTeacherExam(exam: CreatedExam): TeacherExam {
   }
 }
 
-function mapLegacyExamToTeacherExam(exam: (typeof legacyExams)[number]): TeacherExam {
+export function mapLegacyExamToTeacherExam(exam: LegacyExam): TeacherExam {
   return {
     id: exam.id,
     title: exam.title,

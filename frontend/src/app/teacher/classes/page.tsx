@@ -1,11 +1,19 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { TeacherClassesOverview } from "@/components/teacher/teacher-classes-overview"
 import { Spinner } from "@/components/ui/spinner"
 import { classes } from "@/lib/mock-data"
-import { getSemesterLabel, mergeTeacherExams } from "@/lib/teacher-class-detail"
+import {
+  getSemesterLabel,
+  isMatchingDemoClassId,
+  isTeacherExamValidForHistory,
+  mergeTeacherExams,
+  normalizeDemoClassId,
+} from "@/lib/teacher-class-detail"
 import { loadStudentExamResults } from "@/lib/student-exam-results"
+import { getPreferredClassId } from "@/lib/teacher-classes-page-utils"
 import {
   getTeacherManagedClasses,
   registerTeacherStudent,
@@ -15,16 +23,27 @@ import { getLegacyTeacherExams, getTeacherExams, type TeacherExam } from "@/lib/
 import type { Class, ExamResult } from "@/lib/mock-data-types"
 
 export default function ClassesPage() {
+  const searchParams = useSearchParams()
   const [classOptions, setClassOptions] = useState<Class[]>(() => classes)
-  const [selectedClassId, setSelectedClassId] = useState(classes[0]?.id ?? "")
+  const [selectedClassId, setSelectedClassId] = useState(() =>
+    getPreferredClassId(classes, getLegacyTeacherExams()),
+  )
   const [allExams, setAllExams] = useState<TeacherExam[]>(() => getLegacyTeacherExams())
   const [examResults, setExamResults] = useState<ExamResult[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedSemester, setSelectedSemester] = useState("all")
   const [selectedExamId, setSelectedExamId] = useState<string | null>(null)
+  const queryClassId = searchParams.get("classId")
+  const queryExamId = searchParams.get("examId")
 
   useEffect(() => {
-    setClassOptions(getTeacherManagedClasses())
+    const nextClassOptions = getTeacherManagedClasses()
+    setClassOptions(nextClassOptions)
+    setSelectedClassId((current) =>
+      nextClassOptions.some((item) => item.id === current)
+        ? current
+        : getPreferredClassId(nextClassOptions, getLegacyTeacherExams()),
+    )
   }, [])
 
   useEffect(() => {
@@ -51,6 +70,7 @@ export default function ClassesPage() {
   }, [])
 
   const classData = classOptions.find((item) => item.id === selectedClassId) ?? classOptions[0]
+  const normalizedClassId = normalizeDemoClassId(classData?.id)
   const classStudentIds = useMemo(
     () => new Set((classData?.students ?? []).map((student) => student.id)),
     [classData],
@@ -61,32 +81,47 @@ export default function ClassesPage() {
       allExams.filter(
         (exam) =>
           exam.status === "completed" &&
-          exam.scheduledClasses.some((schedule) => schedule.classId === classData?.id),
+          isTeacherExamValidForHistory(exam) &&
+          exam.scheduledClasses.some((schedule) => isMatchingDemoClassId(schedule.classId, normalizedClassId)),
       ),
-    [allExams, classData?.id],
+    [allExams, normalizedClassId],
   )
 
   const semesterOptions = useMemo(() => {
     const labels = completedExams
-      .map((exam) => exam.scheduledClasses.find((schedule) => schedule.classId === classData?.id)?.date)
+      .map((exam) => exam.scheduledClasses.find((schedule) => isMatchingDemoClassId(schedule.classId, normalizedClassId))?.date)
       .filter((date): date is string => Boolean(date))
       .map(getSemesterLabel)
 
     return Array.from(new Set(labels)).sort((left, right) => right.localeCompare(left))
-  }, [classData?.id, completedExams])
+  }, [completedExams, normalizedClassId])
 
   const visibleCompletedExams = useMemo(() => {
     if (selectedSemester === "all") return completedExams
 
     return completedExams.filter((exam) => {
-      const examDate = exam.scheduledClasses.find((schedule) => schedule.classId === classData?.id)?.date
+      const examDate = exam.scheduledClasses.find((schedule) => isMatchingDemoClassId(schedule.classId, normalizedClassId))?.date
       return examDate ? getSemesterLabel(examDate) === selectedSemester : false
     })
-  }, [classData?.id, completedExams, selectedSemester])
+  }, [completedExams, normalizedClassId, selectedSemester])
 
   useEffect(() => {
     setSelectedSemester("all")
   }, [selectedClassId])
+
+  useEffect(() => {
+    if (!queryClassId) return
+    if (classOptions.some((item) => item.id === queryClassId)) {
+      setSelectedClassId(queryClassId)
+    }
+  }, [classOptions, queryClassId])
+
+  useEffect(() => {
+    if (!queryExamId) return
+    if (visibleCompletedExams.some((exam) => exam.id === queryExamId)) {
+      setSelectedExamId(queryExamId)
+    }
+  }, [queryExamId, visibleCompletedExams])
 
   useEffect(() => {
     if (!visibleCompletedExams.some((exam) => exam.id === selectedExamId)) {
@@ -98,9 +133,9 @@ export default function ClassesPage() {
     () =>
       examResults.filter(
         (result) =>
-          result.classId === classData?.id || classStudentIds.has(result.studentId),
+          isMatchingDemoClassId(result.classId, normalizedClassId) || classStudentIds.has(result.studentId),
       ),
-    [classData?.id, classStudentIds, examResults],
+    [classStudentIds, examResults, normalizedClassId],
   )
 
   const selectedExamResults = useMemo(
@@ -126,11 +161,13 @@ export default function ClassesPage() {
 
   return (
     <TeacherClassesOverview
+      allExamResults={examResults}
       classData={classData}
       classOptions={classOptions}
       examResults={classExamResults}
       onAddStudent={handleAddStudent}
       onClassChange={setSelectedClassId}
+      onExamChange={setSelectedExamId}
       onSemesterChange={setSelectedSemester}
       selectedExam={selectedExam}
       selectedExamResults={selectedExamResults}

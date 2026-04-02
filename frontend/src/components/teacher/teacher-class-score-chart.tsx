@@ -5,19 +5,25 @@ import { useCurrentTime } from "@/hooks/use-current-time";
 import { formatIsoDate, formatTimeLabel } from "@/lib/teacher-dashboard-utils";
 import type { ExamResult, Student } from "@/lib/mock-data-types";
 import type { TeacherExam } from "@/lib/teacher-exams";
-import {
-  teacherClassDifficultyRows,
-  teacherClassTopicRows,
-} from "@/lib/teacher-class-score-chart-data";
+import { buildExamQualityChartModel } from "@/lib/teacher-class-score-chart-data";
 import { TeacherClassScoreChartSvg } from "@/components/teacher/teacher-class-score-chart-svg";
 import { TeacherClassScoreSummaryCard } from "@/components/teacher/teacher-class-score-summary-card";
+import { useMemo } from "react";
 
 export function TeacherClassScoreChart(props: {
   exam: TeacherExam | null;
   results: ExamResult[];
   students: Student[];
 }) {
-  void props;
+  const chartModel = useMemo(
+    () =>
+      buildExamQualityChartModel({
+        exam: props.exam,
+        results: props.results,
+        students: props.students,
+      }),
+    [props.exam, props.results, props.students],
+  );
   const now = useCurrentTime();
   const currentDateLabel = now ? formatIsoDate(now).replaceAll("-", ".") : "----.--.--";
   const currentTimeLabel = now ? formatTimeLabel(now) : "--:--";
@@ -41,18 +47,24 @@ export function TeacherClassScoreChart(props: {
       </div>
 
       <div className="-mt-2">
-        <TeacherClassScoreChartSvg />
+        <TeacherClassScoreChartSvg model={chartModel} />
       </div>
 
       <div className="mt-6 flex flex-col gap-3 md:flex-row">
         <TeacherClassScoreSummaryCard
           title="Асуултын чанар"
-          rows={teacherClassDifficultyRows}
+          headlineValue={chartModel.headlineValue}
+          rows={chartModel.difficultyRows}
+          sparklineValues={chartModel.difficultySparklineValues}
+          subtitle={`Хадгалсан ${chartModel.totalStudents} сурагчийн үр дүнгээс`}
           variant="difficulty"
         />
         <TeacherClassScoreSummaryCard
           title="Сэдвийн гүйцэтгэл"
-          rows={teacherClassTopicRows}
+          headlineValue={chartModel.bucketLabelText}
+          rows={chartModel.summaryRows}
+          sparklineValues={chartModel.topicSparklineValues}
+          subtitle={`${chartModel.bucketLabelText}-ээр нэгтгэсэн шалгалтын зураглал`}
           variant="topic"
         />
       </div>

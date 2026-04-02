@@ -40,7 +40,7 @@ export function TeacherDashboardBottomSection(props: {
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {exam.scheduledClasses.map((schedule) => (
-                    <Link key={`${exam.id}-${schedule.classId}-${schedule.date}-${schedule.time}`} href={`/teacher/classes/${schedule.classId}/exam/${exam.id}`} className="inline-flex items-center rounded-full border border-[#e2ebff] bg-[#fbfdff] px-3 py-1.5 text-xs font-medium text-[#627a9e] hover:border-[#cddfff] hover:bg-white">
+                    <Link key={`${exam.id}-${schedule.classId}-${schedule.date}-${schedule.time}`} href={`/teacher/classes?classId=${schedule.classId}&examId=${exam.id}`} className="inline-flex items-center rounded-full border border-[#e2ebff] bg-[#fbfdff] px-3 py-1.5 text-xs font-medium text-[#627a9e] hover:border-[#cddfff] hover:bg-white">
                       {schedule.classId} • {formatCompactDate(schedule.date)} • {schedule.time}
                     </Link>
                   ))}
@@ -62,7 +62,7 @@ export function TeacherDashboardBottomSection(props: {
           </div>
           <div className="mt-5 space-y-3">
             {classes.map((currentClass) => (
-              <Link key={currentClass.id} href={`/teacher/classes/${currentClass.id}`} className="flex items-center justify-between rounded-[1.35rem] border border-[#e4edff] bg-white p-4 transition-transform hover:-translate-y-0.5">
+              <Link key={currentClass.id} href={`/teacher/classes?classId=${currentClass.id}`} className="flex items-center justify-between rounded-[1.35rem] border border-[#e4edff] bg-white p-4 transition-transform hover:-translate-y-0.5">
                 <div>
                   <p className="font-semibold text-[#28416b]">{currentClass.name}</p>
                   <p className="text-sm text-[#7386a6]">{currentClass.students.length} сурагч</p>

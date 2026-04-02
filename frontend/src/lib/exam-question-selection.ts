@@ -23,6 +23,10 @@ function isSupportedQuestionType(
 
 export function toExamBuilderQuestion(
   question: QuestionBankQuestion,
+  metadata?: {
+    categoryName?: string;
+    topicName?: string;
+  },
 ): NewQuestion | null {
   if (!isSupportedQuestionType(question.type)) {
     return null;
@@ -35,6 +39,10 @@ export function toExamBuilderQuestion(
     options: question.options,
     correctAnswer: question.correctAnswer ?? "",
     points: question.points,
+    sourceQuestionId: question.id,
+    categoryName: metadata?.categoryName,
+    topicName: metadata?.topicName,
+    difficulty: question.difficulty === "standard" ? "medium" : question.difficulty,
   };
 }
 

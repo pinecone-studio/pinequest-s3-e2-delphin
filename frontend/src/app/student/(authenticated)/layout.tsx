@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { StudentShellFrame } from "@/components/student/student-shell-frame";
+import { useStudentExamNotifications } from "@/hooks/use-student-exam-notifications";
 import {
   notifyStudentSessionChange,
   useStudentSession,
@@ -15,7 +16,14 @@ export default function StudentLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { studentName } = useStudentSession();
+  const { studentClass, studentId, studentName } = useStudentSession();
+  const [refreshKey, setRefreshKey] = useState(0);
+  const {
+    hasNotifications,
+    markNotificationAsRead,
+    notificationItems,
+    notificationCount,
+  } = useStudentExamNotifications(studentId, studentClass);
 
   useEffect(() => {
     if (!studentName) {
@@ -36,8 +44,19 @@ export default function StudentLayout({
   }
 
   return (
-    <StudentShellFrame pathname={pathname} onLogout={handleLogout}>
-      {children}
+    <StudentShellFrame
+      hasNotifications={hasNotifications}
+      notificationItems={notificationItems}
+      notificationCount={notificationCount}
+      pathname={pathname}
+      onLogout={handleLogout}
+      onSelectNotification={(examId) => {
+        markNotificationAsRead(examId);
+        router.push(`/student/exams/${examId}`);
+      }}
+      onRefresh={() => setRefreshKey((current) => current + 1)}
+    >
+      <div key={`${pathname}-${refreshKey}`}>{children}</div>
     </StudentShellFrame>
   );
 }

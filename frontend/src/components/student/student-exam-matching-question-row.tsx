@@ -36,10 +36,10 @@ function RowConnectorArrow() {
 
 function RowChevron() {
   return (
-    <svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none">
+    <svg aria-hidden="true" className="text-[#89939C] dark:text-[#8FA0BB]" width="12" height="12" viewBox="0 0 12 12" fill="none">
       <path
         d="M3 4.5L6 7.5L9 4.5"
-        stroke="#89939C"
+        stroke="currentColor"
         strokeWidth="1.33333"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -64,7 +64,7 @@ export function MatchingQuestionRow(props: {
   const { optionIndex, row, rowKey, selectedValue } = props;
 
   return (
-    <div className="rounded-[12px] border border-[#E6F2FF] bg-[#F5FAFF] px-6 py-4 md:min-h-[66px] md:py-0">
+    <div className="rounded-[12px] border border-[#E6F2FF] bg-[#F5FAFF] px-6 py-4 md:min-h-[66px] md:py-0 dark:border-white/10 dark:bg-[rgba(255,255,255,0.04)]">
       <div className="flex min-h-[34px] items-center md:min-h-[66px]">
         <div className="space-y-3 sm:grid sm:w-[592px] sm:grid-cols-[34px_minmax(0,150px)_14px_340px] sm:items-center sm:gap-x-[18px] sm:gap-y-0 sm:space-y-0">
           <div className="flex min-w-0 items-center gap-[18px] sm:contents">
@@ -72,7 +72,7 @@ export function MatchingQuestionRow(props: {
               value={String(optionIndex + 1)}
               active={isAnswered}
             />
-            <span className="truncate text-[17px] font-medium leading-[21px] text-[#141A1F]">
+            <span className="truncate text-[17px] font-medium leading-[21px] text-[#141A1F] dark:text-[#F3F8FF]">
               {row.left}
             </span>
           </div>
@@ -91,13 +91,13 @@ export function MatchingQuestionRow(props: {
                 type="button"
                 aria-expanded={isOpen}
                 onClick={onToggle}
-                className="flex min-h-[35px] w-full items-start justify-between rounded-[10px] border border-[#E6F2FF] bg-white px-3 py-[7px] text-left"
+                className="flex min-h-[35px] w-full items-start justify-between rounded-[10px] border border-[#E6F2FF] bg-white px-3 py-[7px] text-left dark:border-white/10 dark:bg-[#05080C]"
               >
                 <span
                   title={choiceLabel || "Сонгох"}
                   className={[
                     "min-w-0 flex-1 whitespace-normal break-words pr-3 text-[15px] font-medium leading-[20px]",
-                    isAnswered ? "text-[#007FFF]" : "text-[#89939C]",
+                    isAnswered ? "text-[#007FFF] dark:text-[#89C8FF]" : "text-[#89939C] dark:text-[#8FA0BB]",
                   ].join(" ")}
                 >
                   {isAnswered ? choiceLabel : "Сонгох"}
@@ -108,7 +108,7 @@ export function MatchingQuestionRow(props: {
               </button>
 
               {isOpen ? (
-                <div className="absolute left-0 top-[calc(100%+8px)] z-20 w-full overflow-hidden rounded-[10px] border border-[#566069] bg-white shadow-[0_10px_24px_rgba(41,49,56,0.14)]">
+                <div className="absolute left-0 top-[calc(100%+8px)] z-20 w-full overflow-hidden rounded-[10px] border border-[#566069] bg-white shadow-[0_10px_24px_rgba(41,49,56,0.14)] dark:border-[#365F9D] dark:bg-[linear-gradient(180deg,rgba(17,29,68,0.98)_0%,rgba(14,24,56,0.98)_100%)]">
                   {choices.map((choice) => {
                     const isActive = selectedValue === choice.value;
 
@@ -119,7 +119,7 @@ export function MatchingQuestionRow(props: {
                         onClick={() => onSelect(choice.value)}
                         className={[
                           "block min-h-[43px] w-full px-3 py-2 text-left text-[15px] font-medium leading-[20px]",
-                          isActive ? "bg-[#2D6FD1] text-white" : "bg-white text-[#293138]",
+                          isActive ? "bg-[#2D6FD1] text-white" : "bg-white text-[#293138] dark:bg-transparent dark:text-[#D7E5FA]",
                         ].join(" ")}
                       >
                         <span className="block whitespace-normal break-words">

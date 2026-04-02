@@ -1,5 +1,6 @@
 import type { NewQuestion, ScheduleEntry } from '@/components/teacher/exam-builder-types'
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url'
+import { requestExam } from '@/lib/exams-api-request'
 import { classes } from '@/lib/mock-data'
 
 export const ALL_CLASSES_OPTION = '__all_classes__'
@@ -18,6 +19,10 @@ type CreateExamPayload = {
     correctAnswer?: string
     points: number
     order: number
+    sourceQuestionId?: string
+    categoryName?: string
+    topicName?: string
+    difficulty?: 'easy' | 'medium' | 'hard'
   }>
   schedules: Array<{
     classId: string
@@ -42,6 +47,10 @@ export type CreatedExam = {
     correctAnswer?: string
     points: number
     order: number
+    sourceQuestionId?: string
+    categoryName?: string
+    topicName?: string
+    difficulty?: 'easy' | 'medium' | 'hard'
   }>
   schedules: Array<{
     id: string
@@ -111,6 +120,10 @@ export function buildCreateExamPayload({
       correctAnswer: question.correctAnswer?.trim(),
       points: question.points,
       order: index + 1,
+      sourceQuestionId: question.sourceQuestionId,
+      categoryName: question.categoryName?.trim(),
+      topicName: question.topicName?.trim(),
+      difficulty: question.difficulty,
     })),
     schedules: dedupedSchedules,
   }
@@ -140,33 +153,4 @@ export async function deleteExam(id: string): Promise<CreatedExam> {
   return requestExam(`${getApiBaseUrl()}/exams/${id}`, {
     method: 'DELETE',
   })
-}
-
-async function requestExam(url: string, init: RequestInit): Promise<CreatedExam> {
-  const response = await fetch(url, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init.headers ?? {}),
-    },
-  })
-
-  if (!response.ok) {
-    let message = 'Шалгалтын хүсэлтийг backend дээр боловсруулах үед алдаа гарлаа.'
-
-    try {
-      const data = (await response.json()) as { message?: string | string[] }
-      if (Array.isArray(data.message)) {
-        message = data.message.join(' ')
-      } else if (data.message) {
-        message = data.message
-      }
-    } catch {
-      // Keep the fallback message when the response body is not JSON.
-    }
-
-    throw new Error(message)
-  }
-
-  return (await response.json()) as CreatedExam
 }

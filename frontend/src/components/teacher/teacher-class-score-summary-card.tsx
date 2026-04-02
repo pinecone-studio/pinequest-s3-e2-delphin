@@ -4,11 +4,14 @@ import Image from "next/image"
 import type { TeacherClassSummaryRow } from "@/lib/teacher-class-score-chart-data"
 
 export function TeacherClassScoreSummaryCard(props: {
+  headlineValue: string
   rows: TeacherClassSummaryRow[]
+  sparklineValues: number[]
+  subtitle: string
   title: string
   variant: "difficulty" | "topic"
 }) {
-  const { rows, title, variant } = props
+  const { headlineValue, rows, sparklineValues, subtitle, title, variant } = props
 
   return (
     <div className="flex-1 rounded-[18px] border border-[#edf1fa] bg-[linear-gradient(180deg,rgba(255,255,255,0.94)_0%,rgba(249,251,255,0.92)_100%)] px-4 py-3 shadow-[0_12px_32px_rgba(180,196,227,0.12)]">
@@ -25,13 +28,11 @@ export function TeacherClassScoreSummaryCard(props: {
             <p className="text-[13px] font-semibold text-[#687391]">{title}</p>
           </div>
           <p className="mt-0.5 text-[10px] text-[#a5aec4]">
-            {variant === "difficulty"
-              ? "Difficulty-based summary"
-              : "Chapter-based summary"}
+            {subtitle}
           </p>
         </div>
         <div className="text-[12px] font-semibold text-[#6d85ff]">
-          {variant === "difficulty" ? "+32%" : "+72%"}
+          {headlineValue}
         </div>
       </div>
 
@@ -49,17 +50,20 @@ export function TeacherClassScoreSummaryCard(props: {
             </div>
           ))}
         </div>
-        <MiniSparkline variant={variant} />
+        <MiniSparkline values={sparklineValues} variant={variant} />
       </div>
     </div>
   )
 }
 
-function MiniSparkline({ variant }: { variant: "difficulty" | "topic" }) {
-  const line =
-    variant === "difficulty"
-      ? "M 4 26 C 18 14, 28 10, 38 18 C 46 24, 56 29, 66 21 C 75 15, 83 12, 94 17"
-      : "M 4 28 C 15 24, 24 19, 33 17 C 43 15, 54 9, 63 12 C 74 15, 83 10, 94 6"
+function MiniSparkline({
+  values,
+  variant,
+}: {
+  values: number[]
+  variant: "difficulty" | "topic"
+}) {
+  const line = buildSparklinePath(values)
 
   return (
     <svg viewBox="0 0 98 34" className="h-[32px] w-[96px] shrink-0">
@@ -73,4 +77,23 @@ function MiniSparkline({ variant }: { variant: "difficulty" | "topic" }) {
       />
     </svg>
   )
+}
+
+function buildSparklinePath(values: number[]) {
+  if (values.length === 0) {
+    return "M 4 17 L 94 17"
+  }
+
+  const normalized = values.length === 1 ? [values[0], values[0]] : values
+  const max = Math.max(...normalized, 1)
+  const min = Math.min(...normalized, 0)
+  const range = Math.max(max - min, 1)
+
+  return normalized
+    .map((value, index) => {
+      const x = 4 + (90 / Math.max(normalized.length - 1, 1)) * index
+      const y = 28 - ((value - min) / range) * 20
+      return `${index === 0 ? "M" : "L"} ${x} ${y}`
+    })
+    .join(" ")
 }

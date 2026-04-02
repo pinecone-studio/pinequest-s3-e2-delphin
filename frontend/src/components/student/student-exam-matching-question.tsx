@@ -30,7 +30,7 @@ export function StudentExamMatchingQuestion(props: {
 
   return (
     <section
-      className="mx-auto w-full max-w-[983px] overflow-visible rounded-[16px] border border-[#E6F2FF] bg-white"
+      className="mx-auto w-full max-w-[983px] overflow-visible rounded-[16px] border border-[#E6F2FF] bg-white dark:border-white/10 student-dark-surface"
       style={{ boxShadow: cardShadow() }}
     >
       <div className="px-6 pb-5 pt-6">
@@ -42,7 +42,7 @@ export function StudentExamMatchingQuestion(props: {
         />
       </div>
 
-      <div className="border-t border-[#E6F2FF] px-6 pb-6 pt-5">
+      <div className="border-t border-[#E6F2FF] px-6 pb-6 pt-5 dark:border-white/10">
         <div className="space-y-[13px]">
           {rows.map((row, optionIndex) => {
             const rowKey = `${question.id}-${optionIndex}`;

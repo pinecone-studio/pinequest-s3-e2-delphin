@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { StudentReportPerformanceChart } from "@/components/student/report/student-report-performance-chart"
+import { studentReportPanelSurfaceClassName } from "@/components/student/report/student-report-panel-styles"
 import { useTheme } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 
@@ -29,7 +30,7 @@ export function StudentReportSummaryPanel(props: StudentReportSummaryPanelProps)
   const statMap = { correctCount: props.correctCount, unansweredCount: props.unansweredCount, wrongCount: props.wrongCount }
 
   return (
-    <section className={cn("mt-7 px-5 py-6 md:px-7", isDark ? "rounded-[16px] border border-white/10 bg-[linear-gradient(126.97deg,rgba(6,11,38,0.74)_28.26%,rgba(26,31,55,0.5)_91.2%)] shadow-[0_18px_40px_rgba(0,0,0,0.18)] backdrop-blur-[60px]" : "rounded-[28px] border border-[#E6F2FF] bg-white shadow-[0_10px_22px_rgba(185,207,228,0.08)]")}>
+    <section className={cn("mt-7 px-5 py-6 md:px-7", studentReportPanelSurfaceClassName)}>
       <div className="flex flex-col gap-5 lg:hidden">
         <div className="flex justify-center">
           <StudentReportPerformanceChart correctCount={props.correctCount} percentage={props.percentage} questionCount={props.questionCount} score={props.score} totalPoints={props.totalPoints} wrongCount={props.wrongCount} />
@@ -75,8 +76,8 @@ function ResultStat(props: { count: number; dotClass: string; isDark: boolean; l
     <div className="flex min-w-0 items-start gap-3">
       <span className={cn("mt-[2px] h-[15px] w-[15px] shrink-0 rounded-full", props.dotClass)} />
       <div className="min-w-0">
-        <p className={cn("text-[14px] leading-5", props.isDark ? "text-[#C2C9D0]/80" : "text-[#96A9C2]")}>{props.label}</p>
-        <p className={cn("mt-[6px] text-[16px] font-semibold leading-[19px]", props.isDark ? "text-[#C2C9D0]" : "text-[#596F87]")}>{`${props.count} (${percent}%)`}</p>
+        <p className={cn("text-[14px] leading-5", props.isDark ? "text-[#B7C0D4]/78" : "text-[#96A9C2]")}>{props.label}</p>
+        <p className={cn("mt-[6px] text-[16px] font-semibold leading-[19px]", props.isDark ? "text-[#DCE5F4]" : "text-[#596F87]")}>{`${props.count} (${percent}%)`}</p>
       </div>
     </div>
   )
@@ -84,10 +85,10 @@ function ResultStat(props: { count: number; dotClass: string; isDark: boolean; l
 
 function MiniInfoCard(props: { iconSrc: string; isDark: boolean; label: string; value: string }) {
   return (
-    <div className={cn("flex min-h-[71px] items-center justify-between gap-3 rounded-[16px] px-[17px] py-4", props.isDark ? "bg-[linear-gradient(126.97deg,#060C29_28.26%,rgba(4,12,48,0.5)_91.2%)] shadow-[0_8px_18px_rgba(0,0,0,0.16)] backdrop-blur-[60px]" : "border border-[#D9EAFB] bg-white shadow-[0_6px_16px_rgba(182,207,228,0.08)]")}>
+    <div className={cn("flex min-h-[71px] items-center justify-between gap-3 rounded-[18px] px-[17px] py-4", props.isDark ? "border border-[rgba(224,225,226,0.08)] student-dark-surface shadow-[0_12px_28px_rgba(2,6,23,0.26)]" : "border border-[#D9EAFB] bg-white shadow-[0_6px_16px_rgba(182,207,228,0.08)]")}>
       <div className="min-w-0">
-        <p className={cn("text-[12px] leading-[120%] uppercase tracking-[0.28em]", props.isDark ? "text-[#C2C9D0]" : "font-semibold text-[#9AAABD]")}>{props.label}</p>
-        <p className={cn("mt-[6px] text-[16px] leading-[19px]", props.isDark ? "font-medium text-[#E1E6EB]" : "font-semibold text-[#5A6F84]")}>{props.value}</p>
+        <p className={cn("text-[12px] leading-[120%] uppercase tracking-[0.28em]", props.isDark ? "text-[#C7D0DF]/90" : "font-semibold text-[#9AAABD]")}>{props.label}</p>
+        <p className={cn("mt-[6px] text-[16px] leading-[19px]", props.isDark ? "font-medium text-[#E7EDF7]" : "font-semibold text-[#5A6F84]")}>{props.value}</p>
       </div>
       <Image src={props.iconSrc} alt="" width={30} height={30} className="h-[30px] w-[30px] shrink-0" />
     </div>

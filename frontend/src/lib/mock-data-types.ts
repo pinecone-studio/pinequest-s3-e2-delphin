@@ -42,6 +42,10 @@ export interface ExamQuestion {
   options?: string[]
   correctAnswer?: string
   points: number
+  sourceQuestionId?: string
+  categoryName?: string
+  topicName?: string
+  difficulty?: "easy" | "medium" | "hard"
 }
 
 export interface Exam {
@@ -49,6 +53,7 @@ export interface Exam {
   title: string
   questions: ExamQuestion[]
   duration: number
+  availableIndefinitely?: boolean
   reportReleaseMode: "after-all-classes-complete" | "immediately"
   scheduledClasses: {
     classId: string

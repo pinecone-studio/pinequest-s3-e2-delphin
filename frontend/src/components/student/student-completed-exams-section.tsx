@@ -28,10 +28,20 @@ export function StudentCompletedExamsSection({
     const rightSchedule = right.scheduledClasses.find((entry) => entry.classId === studentClass)
 
     const leftEndTime = leftSchedule
-      ? getScheduleEnd(leftSchedule.date, leftSchedule.time, left.duration).getTime()
+      ? getScheduleEnd(
+          leftSchedule.date,
+          leftSchedule.time,
+          left.duration,
+          left.availableIndefinitely,
+        ).getTime()
       : 0
     const rightEndTime = rightSchedule
-      ? getScheduleEnd(rightSchedule.date, rightSchedule.time, right.duration).getTime()
+      ? getScheduleEnd(
+          rightSchedule.date,
+          rightSchedule.time,
+          right.duration,
+          right.availableIndefinitely,
+        ).getTime()
       : 0
 
     return rightEndTime - leftEndTime

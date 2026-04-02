@@ -7,6 +7,12 @@ import { classes } from "@/lib/mock-data";
 import type { TeacherExam } from "@/lib/teacher-exams";
 import type { DateRange } from "react-day-picker";
 import { TeacherExamHistoryControls } from "@/components/teacher/teacher-exam-history-controls";
+import {
+  buildHistoryReviewLink,
+  formatExamClassSummary,
+  formatExamDateSummary,
+  isDateWithinRange,
+} from "@/components/teacher/teacher-exam-history-utils";
 
 const ALL_CLASSES_VALUE = "all";
 
@@ -54,7 +60,10 @@ export function TeacherExamHistorySection({
       <h2 className="text-lg font-semibold text-slate-950">{title}</h2>
 
       <TeacherExamHistoryControls
-        classOptions={classOptions.map((classEntry) => classEntry.id)}
+        classOptions={classOptions.map((classEntry) => ({
+          label: classEntry.name.replace(" анги", ""),
+          value: classEntry.id,
+        }))}
         dateRange={dateRange}
         filteredExamCount={filteredExams.length}
         nameQuery={nameQuery}
@@ -99,80 +108,4 @@ export function TeacherExamHistorySection({
       )}
     </section>
   );
-}
-
-function buildHistoryReviewLink(exam: TeacherExam) {
-  const firstSchedule = exam.scheduledClasses[0];
-  return firstSchedule
-    ? `/teacher/classes/${firstSchedule.classId}/exam/${exam.id}`
-    : `/teacher/exams/${exam.id}/monitoring`;
-}
-
-function formatExamDateSummary(exam: TeacherExam) {
-  const timestamps = exam.scheduledClasses
-    .map((schedule) => new Date(`${schedule.date}T00:00:00`))
-    .filter((date) => !Number.isNaN(date.getTime()))
-    .sort((left, right) => left.getTime() - right.getTime());
-
-  if (timestamps.length === 0) {
-    return "Огноо байхгүй";
-  }
-
-  const first = timestamps[0];
-  const last = timestamps[timestamps.length - 1];
-
-  if (first.getTime() === last.getTime()) {
-    return formatDisplayDate(first);
-  }
-
-  return `${formatDisplayDate(first)} - ${formatDisplayDate(last)}`;
-}
-
-function formatExamClassSummary(exam: TeacherExam) {
-  const classIds = Array.from(
-    new Set(exam.scheduledClasses.map((schedule) => schedule.classId)),
-  );
-
-  return classIds.join(", ");
-}
-
-function isDateWithinRange(dateString: string, dateRange?: DateRange) {
-  if (!dateRange?.from && !dateRange?.to) {
-    return true;
-  }
-
-  const examDate = new Date(`${dateString}T00:00:00`);
-
-  if (Number.isNaN(examDate.getTime())) {
-    return false;
-  }
-
-  const from = dateRange.from ? startOfDay(dateRange.from) : null;
-  const to = dateRange.to ? endOfDay(dateRange.to) : null;
-
-  if (from && examDate < from) {
-    return false;
-  }
-
-  if (to && examDate > to) {
-    return false;
-  }
-
-  return true;
-}
-
-function startOfDay(date: Date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}
-
-function endOfDay(date: Date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
-}
-
-function formatDisplayDate(date: Date) {
-  return new Intl.DateTimeFormat("mn-MN", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(date);
 }

@@ -31,7 +31,7 @@ export function executeOrRethrow<T>(
 }
 
 export async function executeOrRethrowAsync<T>(
-  action: () => Promise<T>,
+  action: () => T | Promise<T>,
   fallbackMessage: string,
 ): Promise<T> {
   try {

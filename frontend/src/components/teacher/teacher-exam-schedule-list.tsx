@@ -57,7 +57,7 @@ export function TeacherExamScheduleList({
         </p>
         {primarySchedule ? (
           <Button asChild size="sm">
-            <Link href={`/teacher/classes/${primarySchedule.classId}/exam/${exam.id}`}>
+            <Link href={`/teacher/classes?classId=${primarySchedule.classId}&examId=${exam.id}`}>
               {actionLabelOverride ?? "Үр дүнг харах"}
             </Link>
           </Button>

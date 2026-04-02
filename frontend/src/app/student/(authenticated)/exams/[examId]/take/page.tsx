@@ -70,7 +70,12 @@ export default function StudentTakeExamPage({
   );
   const isOpenNow =
     schedule && exam
-      ? isScheduleOpenNow(schedule.date, schedule.time, exam.duration)
+      ? isScheduleOpenNow(
+          schedule.date,
+          schedule.time,
+          exam.duration,
+          exam.availableIndefinitely,
+        )
       : false;
 
   useEffect(() => {

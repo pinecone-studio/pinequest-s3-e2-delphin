@@ -71,7 +71,12 @@ export default function ExamDetailPage({ params }: { params: Promise<{ examId: s
   const schedule = exam?.scheduledClasses.find((entry) => entry.classId === studentClass)
   const isTodayExam = schedule?.date === getLocalDateString()
   const isScheduleStillVisible = schedule && exam
-    ? isScheduleVisible(schedule.date, schedule.time, exam.duration)
+    ? isScheduleVisible(
+        schedule.date,
+        schedule.time,
+        exam.duration,
+        exam.availableIndefinitely,
+      )
     : false
 
   useEffect(() => {
@@ -116,7 +121,12 @@ export default function ExamDetailPage({ params }: { params: Promise<{ examId: s
   }
 
   const isReady = schedule && exam
-    ? isScheduleOpenNow(schedule.date, schedule.time, exam.duration)
+    ? isScheduleOpenNow(
+        schedule.date,
+        schedule.time,
+        exam.duration,
+        exam.availableIndefinitely,
+      )
     : false
   const countdownParts = formatCountdownParts(countdown)
 
@@ -130,7 +140,6 @@ export default function ExamDetailPage({ params }: { params: Promise<{ examId: s
       onClose={() => router.push("/student/exams")}
       onExitFullscreen={() => setIsFullscreen(false)}
       onTakeExam={() => router.push(`/student/exams/${examId}/take`)}
-      onViewFullscreen={() => setIsFullscreen(true)}
       scheduleDate={schedule?.date}
       scheduleTime={schedule?.time}
     />

@@ -17,13 +17,44 @@ export type StudentExamResultApiRecord = {
   updatedAt: string
 }
 
+function mergeExamResultAnswers(
+  baseAnswers: ExamResult['answers'],
+  nextAnswers: ExamResult['answers'],
+) {
+  const merged = new Map(baseAnswers.map((answer) => [answer.questionId, answer]))
+  nextAnswers.forEach((answer) => {
+    const current = merged.get(answer.questionId)
+    merged.set(answer.questionId, current ? { ...current, ...answer } : answer)
+  })
+  return Array.from(merged.values())
+}
+
+function sumAwardedPoints(answers: ExamResult['answers']) {
+  return answers.reduce((sum, answer) => sum + (typeof answer.awardedPoints === 'number' ? answer.awardedPoints : 0), 0)
+}
+
+function mergeExamResult(baseResult: ExamResult, nextResult: ExamResult): ExamResult {
+  const answers = mergeExamResultAnswers(baseResult.answers, nextResult.answers)
+  return {
+    examId: nextResult.examId,
+    studentId: nextResult.studentId,
+    classId: nextResult.classId ?? baseResult.classId,
+    score: Math.max(baseResult.score, nextResult.score, sumAwardedPoints(answers)),
+    totalPoints: Math.max(baseResult.totalPoints, nextResult.totalPoints),
+    answers,
+    submittedAt: new Date(nextResult.submittedAt) > new Date(baseResult.submittedAt)
+      ? nextResult.submittedAt
+      : baseResult.submittedAt,
+  }
+}
+
 export function mergeResults(baseResults: ExamResult[], nextResults: ExamResult[]) {
   const merged = [...baseResults]
   nextResults.forEach((result) => {
     const existingIndex = merged.findIndex(
       (entry) => entry.examId === result.examId && entry.studentId === result.studentId,
     )
-    if (existingIndex >= 0) merged[existingIndex] = result
+    if (existingIndex >= 0) merged[existingIndex] = mergeExamResult(merged[existingIndex], result)
     else merged.push(result)
   })
   return merged.sort((left, right) => new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime())

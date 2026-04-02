@@ -49,7 +49,7 @@ export class UsersService {
       role: 'student',
       email: 'baterdene@school.com',
       password: 'baterdene123',
-      classId: '10A',
+      classId: '7A',
     },
     {
       id: 's2',
@@ -57,7 +57,7 @@ export class UsersService {
       role: 'student',
       email: 'sarangerel@school.com',
       password: 'sarangerel123',
-      classId: '10A',
+      classId: '7A',
     },
     {
       id: 's3',
@@ -65,7 +65,7 @@ export class UsersService {
       role: 'student',
       email: 'temuulen@school.com',
       password: 'temuulen123',
-      classId: '10A',
+      classId: '7A',
     },
     {
       id: 's4',
@@ -73,7 +73,7 @@ export class UsersService {
       role: 'student',
       email: 'nomin@school.com',
       password: 'nomin123',
-      classId: '10A',
+      classId: '7A',
     },
     {
       id: 's5',
@@ -81,7 +81,7 @@ export class UsersService {
       role: 'student',
       email: 'enkhjin@school.com',
       password: 'enkhjin123',
-      classId: '10A',
+      classId: '7A',
     },
     {
       id: 's16',
@@ -89,7 +89,7 @@ export class UsersService {
       role: 'student',
       email: 'nandin@school.com',
       password: 'nandin123',
-      classId: '10A',
+      classId: '7A',
     },
   ];
 

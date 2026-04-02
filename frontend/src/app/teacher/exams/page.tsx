@@ -46,6 +46,7 @@ import {
   formatHeaderDate,
   getAcademicWeekLabel,
 } from "@/lib/teacher-dashboard-utils";
+import { isTeacherExamValidForHistory } from "@/lib/teacher-class-detail";
 import {
   getLegacyTeacherExams,
   getTeacherExams,
@@ -863,6 +864,9 @@ function MonitorHeaderUtilities({ examId }: { examId: string }) {
       </div>
     );
   }
+  const completedExams = exams.filter(
+    (exam) => exam.status === "completed" && isTeacherExamValidForHistory(exam),
+  );
 
   return (
     <div className="flex shrink-0 items-center gap-3 self-start xl:ml-6">

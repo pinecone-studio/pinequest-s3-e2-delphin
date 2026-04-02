@@ -1,11 +1,11 @@
 "use client"
 
-import type { ClassAveragePoint } from "@/lib/teacher-classes-side-panel-data"
+import type { ClassDifficultyChartPoint } from "@/lib/teacher-classes-side-panel-data"
 
 export function TeacherClassesAverageChart(props: {
-  averages: ClassAveragePoint[]
+  data: ClassDifficultyChartPoint[]
 }) {
-  const { averages } = props
+  const { data } = props
   const width = 340
   const height = 190
   const left = 28
@@ -16,14 +16,14 @@ export function TeacherClassesAverageChart(props: {
   const chartHeight = height - top - bottom
 
   const buildX = (index: number) =>
-    left + (chartWidth / Math.max(averages.length - 1, 1)) * index
+    left + (chartWidth / Math.max(data.length - 1, 1)) * index
   const buildY = (value: number) =>
     top + chartHeight - (value / 100) * chartHeight
 
-  const helperSeries = [
-    { color: "#f3b2d2", offset: -6 },
-    { color: "#78d9e9", offset: 0 },
-    { color: "#f3c6a5", offset: 7 },
+  const series = [
+    { color: "#8ed8b9", key: "easyRatio", label: "Хөнгөн" },
+    { color: "#8cb2ff", key: "mediumRatio", label: "Дунд" },
+    { color: "#f3b2c7", key: "hardRatio", label: "Хүнд" },
   ] as const
 
   return (
@@ -41,18 +41,17 @@ export function TeacherClassesAverageChart(props: {
         </text>
       ))}
 
-      {helperSeries.map((series) => {
-        const path = averages
+      {series.map((seriesItem) => {
+        const path = data
           .map((point, index) => {
             const x = buildX(index)
-            const y = buildY(Math.max(24, Math.min(96, point.averageScore + series.offset)))
+            const value = point[seriesItem.key] ?? 0
+            const y = buildY(value)
             if (index === 0) return `M ${x} ${y}`
 
             const prevX = buildX(index - 1)
-            const prevPoint = averages[index - 1]
-            const prevY = buildY(
-              Math.max(24, Math.min(96, (prevPoint?.averageScore ?? point.averageScore) + series.offset)),
-            )
+            const prevPoint = data[index - 1]
+            const prevY = buildY(prevPoint?.[seriesItem.key] ?? value)
             const controlX = prevX + (x - prevX) / 2
             return `C ${controlX} ${prevY} ${controlX} ${y} ${x} ${y}`
           })
@@ -60,10 +59,10 @@ export function TeacherClassesAverageChart(props: {
 
         return (
           <path
-            key={series.color}
+            key={seriesItem.key}
             d={path}
             fill="none"
-            stroke={series.color}
+            stroke={seriesItem.color}
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth="2.4"
@@ -71,9 +70,9 @@ export function TeacherClassesAverageChart(props: {
         )
       })}
 
-      {averages.map((point, index) => (
+      {data.map((point, index) => (
         <text
-          key={point.className}
+          key={point.classId}
           x={buildX(index)}
           y={height - 4}
           textAnchor="middle"
@@ -81,15 +80,19 @@ export function TeacherClassesAverageChart(props: {
           fontSize="10.5"
           fontWeight="500"
         >
-          {point.className}
+          {point.classLabel}
         </text>
       ))}
 
-      {averages.slice(0, 2).map((point, index) => {
-        const x = buildX(index + 1)
-        const y = buildY(point.averageScore - 4)
+      {series.map((seriesItem, index) => {
+        const point = data[index]
+        if (!point) return null
+        const value = point[seriesItem.key]
+        if (typeof value !== "number") return null
+        const x = buildX(index)
+        const y = buildY(value)
         return (
-          <g key={`${point.className}-label`} transform={`translate(${x - 18}, ${y - 16})`}>
+          <g key={`${point.classId}-${seriesItem.key}`} transform={`translate(${x - 18}, ${y - 16})`}>
             <rect
               width="40"
               height="18"
@@ -105,7 +108,7 @@ export function TeacherClassesAverageChart(props: {
               fontSize="9.5"
               fontWeight="600"
             >
-              85.56%
+              {value}%
             </text>
           </g>
         )

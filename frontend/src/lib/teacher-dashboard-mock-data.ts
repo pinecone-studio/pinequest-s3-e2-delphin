@@ -25,7 +25,8 @@ export const teacherDashboardExams: Exam[] = [
       {
         id: "tdq3",
         type: "true-false",
-        question: "Пифагорын теорем зөвхөн тэгш өнцөгт гурвалжинд хэрэглэгддэг.",
+        question:
+          "Пифагорын теорем зөвхөн тэгш өнцөгт гурвалжинд хэрэглэгддэг.",
         correctAnswer: "Үнэн",
         points: 5,
       },

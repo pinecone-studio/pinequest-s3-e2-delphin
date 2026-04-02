@@ -67,7 +67,9 @@ export function useExamQuestionSelection({
   const supportedSelectedQuestions = React.useMemo(
     () =>
       selectedQuestions
-        .map(({ question }) => toExamBuilderQuestion(question))
+        .map(({ categoryName, question, topicName }) =>
+          toExamBuilderQuestion(question, { categoryName, topicName }),
+        )
         .filter((question): question is NonNullable<typeof question> => Boolean(question)),
     [selectedQuestions],
   );

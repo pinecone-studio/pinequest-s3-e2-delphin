@@ -1,13 +1,11 @@
 "use client"
 
+import Image from "next/image"
 import { Search } from "lucide-react"
-import {
-  FinishedExamCard,
-  UpcomingExamCard,
-} from "@/components/student/student-exams-page-cards"
+import { FinishedExamCard, UpcomingExamCard } from "@/components/student/student-exams-page-cards"
 import { SegmentedTab } from "@/components/student/student-exams-page-controls"
+import { useTheme } from "@/components/theme-provider"
 import { Input } from "@/components/ui/input"
-import { Spinner } from "@/components/ui/spinner"
 import {
   Select,
   SelectContent,
@@ -21,6 +19,7 @@ const sectionContainerClassName =
   "mx-auto flex w-full max-w-[900px] flex-col items-start gap-5 rounded-2xl border border-[#E6F2FF] bg-white px-5 py-5 shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:border-[rgba(82,146,237,0.24)] dark:bg-[#161F4F] dark:[background-image:linear-gradient(126.97deg,rgba(6,11,38,0.74)_28.26%,rgba(26,31,55,0.5)_91.2%)] dark:backdrop-blur-[60px] dark:shadow-[inset_0_0_0_1px_rgba(82,146,237,0.06)]"
 
 export default function StudentExamsPage() {
+  const { resolvedTheme } = useTheme()
   const {
     activeTab,
     categoryOptions,
@@ -34,6 +33,7 @@ export default function StudentExamsPage() {
     setSelectedCategory,
     studentClass,
   } = useStudentExamsPage()
+  const isDark = resolvedTheme === "dark"
 
   const allCount = filteredUpcomingExams.length + finishedItems.length
   const showUpcoming = activeTab === "all" || activeTab === "upcoming"
@@ -102,9 +102,16 @@ export default function StudentExamsPage() {
 
         <div className="mx-auto w-full max-w-[1080px] space-y-[34px]">
           {isLoading ? (
-            <div className="flex items-center gap-3 text-sm text-[#566069] dark:text-[#AAB7CB]">
-              <Spinner className="size-4" />
-              <p>Шалгалтуудыг ачаалж байна...</p>
+            <div className="flex min-h-[180px] items-center justify-center">
+              <div role="status" aria-label="Loading" className="flex h-[72px] w-[72px] items-center justify-center">
+                <Image
+                  src={isDark ? "/edulphin-mark-dark.svg" : "/edulphin-mark.svg"}
+                  alt=""
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 animate-pulse object-contain"
+                />
+              </div>
             </div>
           ) : null}
 

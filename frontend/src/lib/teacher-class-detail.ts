@@ -1,10 +1,7 @@
-import type { ExamResult, Student } from "@/lib/mock-data-types"
+import type { ExamResult } from "@/lib/mock-data-types"
 import type { TeacherExam } from "@/lib/teacher-exams"
 
-function getStudentLineColor(index: number, total: number) {
-  const lightness = 22 + Math.round((index / Math.max(total, 1)) * 46)
-  return `hsl(220 8% ${lightness}%)`
-}
+export type ExamDifficultyBucket = "easy" | "medium" | "hard"
 
 export function getSemesterLabel(date: string) {
   const [yearString, monthString] = date.split("-")
@@ -12,6 +9,57 @@ export function getSemesterLabel(date: string) {
   const month = Number(monthString)
   const semester = month >= 1 && month <= 6 ? 1 : 2
   return `${semester}-р улирал ${year}`
+}
+
+const DEMO_CLASS_ID_MAP: Record<string, string> = {
+  "7A": "10A",
+  "7Б": "10B",
+  "7В": "10C",
+  "7A анги": "10A",
+  "7Б анги": "10B",
+  "7В анги": "10C",
+}
+
+export function normalizeDemoClassId(classId: string | null | undefined) {
+  if (!classId) return ""
+  return DEMO_CLASS_ID_MAP[classId] ?? classId
+}
+
+export function isMatchingDemoClassId(left: string | null | undefined, right: string | null | undefined) {
+  return normalizeDemoClassId(left) === normalizeDemoClassId(right)
+}
+
+const DEMO_CLASS_LABEL_MAP: Record<string, string> = {
+  "10A": "7A",
+  "10B": "7Б",
+  "10C": "7В",
+}
+
+const INVALID_EXAM_TITLES = new Set(["test", "сорил", "text"])
+
+export function getDemoClassLabel(classId: string | null | undefined) {
+  const normalized = normalizeDemoClassId(classId)
+  return DEMO_CLASS_LABEL_MAP[normalized] ?? normalized
+}
+
+export function isTeacherExamValidForHistory(exam: TeacherExam) {
+  const normalizedTitle = exam.title.trim().toLowerCase()
+  const uniqueClassIds = new Set(
+    exam.scheduledClasses.map((schedule) => normalizeDemoClassId(schedule.classId)),
+  )
+  const hasAllClasses = ["10A", "10B", "10C"].every((classId) => uniqueClassIds.has(classId))
+  const hasEnoughQuestions = exam.questions.length >= 8
+  const hasQuestionContent = exam.questions.every(
+    (question) => question.question.trim() && question.difficulty,
+  )
+
+  return (
+    normalizedTitle.length >= 4 &&
+    !INVALID_EXAM_TITLES.has(normalizedTitle) &&
+    hasAllClasses &&
+    hasEnoughQuestions &&
+    hasQuestionContent
+  )
 }
 
 export function mergeTeacherExams(exams: TeacherExam[]) {
@@ -49,42 +97,38 @@ export function getQuestionAnswerPercent(
     return null
   }
 
-  const awardedPoints =
-    typeof answer.awardedPoints === "number"
-      ? answer.awardedPoints
-      : answer.isCorrect
-        ? question.points
-        : 0
+  const awardedPoints = getAwardedPoints(question.points, answer)
 
   return Math.round((awardedPoints / question.points) * 100)
 }
 
-export function buildClassScoreChart(
-  exam: TeacherExam,
-  results: ExamResult[],
-  students: Student[],
+export function getAwardedPoints(
+  questionPoints: number,
+  answer:
+    | ExamResult["answers"][number]
+    | undefined,
 ) {
-  const studentMap = new Map(students.map((student) => [student.id, student]))
-  const relevantResults = results.filter((result) => studentMap.has(result.studentId))
+  if (!answer) {
+    return 0
+  }
 
-  const chartData = exam.questions.map((question, index) => {
-    const row: Record<string, number | string | null> = {
-      label: `${index + 1}-р асуулт`,
-      questionLabel: `${index + 1}-р асуулт · ${question.points} оноо`,
-    }
+  if (typeof answer.awardedPoints === "number") {
+    return answer.awardedPoints
+  }
 
-    relevantResults.forEach((result) => {
-      row[result.studentId] = getQuestionAnswerPercent(exam, result, question.id)
-    })
+  return answer.isCorrect ? questionPoints : 0
+}
 
-    return row
-  })
+export function normalizeExamDifficulty(
+  difficulty: string | null | undefined,
+): ExamDifficultyBucket {
+  if (difficulty === "easy" || difficulty === "medium" || difficulty === "hard") {
+    return difficulty
+  }
 
-  const chartLines = relevantResults.map((result, index) => ({
-    color: getStudentLineColor(index, relevantResults.length),
-    dataKey: result.studentId,
-    name: studentMap.get(result.studentId)?.name ?? `Сурагч ${index + 1}`,
-  }))
+  if (difficulty === "standard") {
+    return "medium"
+  }
 
-  return { chartData, chartLines }
+  return "medium"
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRight, ChevronLeft } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
 import type { Class, ExamResult } from "@/lib/mock-data-types"
 import type { TeacherExam } from "@/lib/teacher-exams"
 import { Badge } from "@/components/ui/badge"
@@ -138,12 +138,6 @@ export function TeacherClassDetailView({
                       onClick={() => onExamSelect(exam.id)}
                     >
                       {isSelected ? "Сонгогдсон" : "Графикт харах"}
-                    </Button>
-                    <Button asChild className="rounded-full" variant="ghost">
-                      <Link href={`/teacher/classes/${classData.id}/exam/${exam.id}`}>
-                        Үр дүн, үнэлгээ
-                        <ArrowRight className="h-4 w-4" />
-                      </Link>
                     </Button>
                   </div>
                 </CardContent>

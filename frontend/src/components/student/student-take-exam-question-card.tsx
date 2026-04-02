@@ -34,18 +34,18 @@ export function StudentTakeExamQuestionCard(props: {
   const options = getChoiceOptions(question);
 
   return (
-    <Card className={cn("overflow-hidden rounded-[1.5rem] border-slate-200 bg-white/95 shadow-sm", isAnswered ? "ring-1 ring-emerald-200" : "")}>
-      <CardHeader className="border-b border-slate-100 pb-4">
+    <Card className={cn("overflow-hidden rounded-[18px] border-[#E6F2FF] bg-white shadow-[0_8px_24px_rgba(41,49,56,0.08)]", isAnswered ? "ring-1 ring-[#CCE5FF]" : "")}>
+      <CardHeader className="border-b border-[#E6F2FF] pb-4">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#89939C]">
               <span>Асуулт {index + 1}</span>
               <span>•</span>
               <span>{getQuestionTypeLabel(question)}</span>
             </div>
-            <CardTitle className="text-xl leading-7 text-slate-900">{question.question}</CardTitle>
+            <CardTitle className="text-xl leading-7 text-[#293138]">{question.question}</CardTitle>
           </div>
-          <div className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700">{question.points} оноо</div>
+          <div className="rounded-full bg-[#E6F2FF] px-3 py-1 text-sm font-semibold text-[#007FFF]">{question.points} оноо</div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4 pt-6">
@@ -60,14 +60,14 @@ export function StudentTakeExamQuestionCard(props: {
                   htmlFor={controlId}
                   className={cn(
                     "flex cursor-pointer items-center gap-4 rounded-2xl border px-4 py-4 transition-all",
-                    "hover:border-sky-300 hover:bg-sky-50/80 focus-within:ring-2 focus-within:ring-sky-200",
-                    isSelected ? "border-sky-500 bg-sky-50 text-slate-900 shadow-sm" : "border-slate-200 bg-white text-slate-700",
+                    "hover:border-[#66B2FF] hover:bg-[#F5FAFF] focus-within:ring-2 focus-within:ring-[#CCE5FF]",
+                    isSelected ? "border-[#007FFF] bg-[#F5FAFF] text-[#293138] shadow-[0_6px_16px_rgba(0,127,255,0.12)]" : "border-[#E1E6EB] bg-white text-[#3F4850]",
                   )}
                 >
-                  <RadioGroupItem value={option.value} id={controlId} className={cn("size-5 border-2 border-slate-400 bg-white shadow-none", isSelected ? "border-sky-600 text-sky-600" : "")} />
+                  <RadioGroupItem value={option.value} id={controlId} className={cn("size-5 border-2 border-[#89939C] bg-white shadow-none", isSelected ? "border-[#007FFF] text-[#007FFF]" : "")} />
                   <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
                     <span className="text-base font-medium leading-6">{option.label}</span>
-                    {isSelected ? <CheckCircle2 className="size-5 shrink-0 text-sky-600" /> : <Circle className="size-4 shrink-0 text-slate-300" />}
+                    {isSelected ? <CheckCircle2 className="size-5 shrink-0 text-[#007FFF]" /> : <Circle className="size-4 shrink-0 text-[#E1E6EB]" />}
                   </div>
                 </Label>
               );
@@ -75,12 +75,12 @@ export function StudentTakeExamQuestionCard(props: {
           </RadioGroup>
         ) : question.type === "short-answer" ? (
           <div className="space-y-2">
-            <Label htmlFor={question.id} className="text-sm font-semibold text-slate-700">Хариулт</Label>
+            <Label htmlFor={question.id} className="text-sm font-semibold text-[#293138]">Хариулт</Label>
             <Input
               id={question.id}
               value={value}
               onChange={(event) => onAnswerChange(question.id, event.target.value)}
-              className="h-12 rounded-xl border-slate-300 bg-white text-base"
+              className="h-12 rounded-xl border-[#E1E6EB] bg-white text-base"
               placeholder="Хариултаа энд бичнэ үү"
             />
           </div>
@@ -93,3 +93,4 @@ export function StudentTakeExamQuestionCard(props: {
     </Card>
   );
 }
+

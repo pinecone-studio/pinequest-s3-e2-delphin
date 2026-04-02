@@ -18,10 +18,9 @@ export const exams: Exam[] = [
       },
       {
         id: "q5",
-        type: "ordering",
-        question: "Write the correct order for solving x + 5 = 12.",
-        options: ["x = 7", "Subtract 5 from both sides", "x + 5 = 12", "x = 12 - 5"],
-        correctAnswer: "3,2,4,1",
+        type: "fill",
+        question: "2 + 5 = ___",
+        correctAnswer: "7",
         points: 10,
       },
     ],

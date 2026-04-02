@@ -37,6 +37,8 @@ export function getQuestionTypeLabel(question: ExamQuestion) {
       return "Сонгох хариулттай";
     case "true-false":
       return "Үнэн / худал";
+    case "fill":
+      return "Нөхөх";
     case "matching":
       return "Харгалзуулах";
     case "ordering":

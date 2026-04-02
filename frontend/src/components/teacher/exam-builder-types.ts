@@ -6,6 +6,7 @@ export type QuestionType =
   | 'matching'
   | 'ordering'
   | 'short-answer'
+  | 'fill'
 
 export interface NewQuestion extends Omit<ExamQuestion, 'id'> {
   id: string

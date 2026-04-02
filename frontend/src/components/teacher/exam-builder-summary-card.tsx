@@ -73,11 +73,17 @@ export function ExamBuilderSummaryCard({
         <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-3 xl:grid-cols-5">
           <SummaryStat label="Асуулт" value={questionTotal} />
           <SummaryStat label="Нийт оноо" value={totalPoints} />
-          <SummaryStat label="Сонгох хариулттай" value={questionCounts["multiple-choice"]} />
+          <SummaryStat
+            label="Сонгох хариулттай"
+            value={questionCounts["multiple-choice"]}
+          />
           <SummaryStat label="Үнэн / Худал" value={questionCounts["true-false"]} />
           <SummaryStat label="Харгалзуулах" value={questionCounts["matching"]} />
           <SummaryStat label="Дараалуулах" value={questionCounts["ordering"]} />
-          <SummaryStat label="Богино хариулт" value={questionCounts["short-answer"]} />
+          <SummaryStat
+            label="Богино хариулт"
+            value={questionCounts["short-answer"]}
+          />
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">

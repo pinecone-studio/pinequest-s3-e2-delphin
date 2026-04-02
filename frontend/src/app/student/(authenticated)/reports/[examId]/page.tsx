@@ -70,12 +70,12 @@ export default function StudentExamReportPage({
   if (isLoading) {
     return (
       <div className="flex min-h-[55vh] flex-col items-center justify-center gap-4 text-center">
-        <div className="rounded-full bg-sky-100 p-4 text-sky-700">
+        <div className="rounded-full bg-sky-100 p-4 text-sky-700 dark:bg-[#17305f] dark:text-[#8bc8ff]">
           <Spinner className="size-6" />
         </div>
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-slate-900">Тайланг бэлдэж байна</h1>
-          <p className="max-w-md text-sm leading-6 text-slate-600">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-[#f4f8ff]">Тайланг бэлдэж байна</h1>
+          <p className="max-w-md text-sm leading-6 text-slate-600 dark:text-[#a9b7ca]">
             Таны илгээсэн хариултыг шалгаж, тайлангийн хуудсанд шилжүүлж байна. Түр хүлээнэ үү.
           </p>
         </div>
@@ -86,8 +86,8 @@ export default function StudentExamReportPage({
   if (!exam || !result) {
     return (
       <div className="py-12 text-center">
-        <h1 className="text-2xl font-bold">Тайлан олдсонгүй</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-[#f4f8ff]">Тайлан олдсонгүй</h1>
+        <p className="mt-2 text-sm text-muted-foreground dark:text-[#a9b7ca]">
           Шалгалтын дүн хараахан бэлэн болоогүй эсвэл мэдээлэл татахад саатал гарсан байж магадгүй.
         </p>
         <Link href="/student/exams">
@@ -102,7 +102,7 @@ export default function StudentExamReportPage({
   const isAvailable = isStudentExamReportAvailable(exam)
   const releaseDate = getStudentExamReportReleaseDate(exam)
   const releaseMessage = isAvailable
-    ? "Мэдээлэл баталгаажсан тул та одоо бүрэн тайлан, хариултын задлангаа харах боломжтой."
+    ? "Мэдээлэл баталгаажсан тул та одоо бүрэн тайлан, хариултын задаргаагаа харах боломжтой."
     : releaseDate
       ? `Багш бүх ангийг дууссаны дараа тайланг нээнэ. Төлөвлөсөн огноо: ${releaseDate.toLocaleString("mn-MN")}.`
       : "Нээх нөхцөл биелмэгц энэ тайлан автоматаар харагдана."

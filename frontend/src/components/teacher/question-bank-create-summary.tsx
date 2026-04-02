@@ -22,6 +22,7 @@ type Props = {
 const emptyCounts = {
   "multiple-choice": 0,
   "true-false": 0,
+  fill: 0,
   matching: 0,
   ordering: 0,
   "short-answer": 0,
@@ -53,6 +54,7 @@ export function QuestionBankCreateSummary({
           <QuestionBankSummaryStat label="Нийт оноо" value={totalPoints} />
           <QuestionBankSummaryStat label={getQuestionTypeLabel("multiple-choice")} value={questionCounts["multiple-choice"]} />
           <QuestionBankSummaryStat label={getQuestionTypeLabel("true-false")} value={questionCounts["true-false"]} />
+          <QuestionBankSummaryStat label={getQuestionTypeLabel("fill")} value={questionCounts.fill} />
           <QuestionBankSummaryStat label={getQuestionTypeLabel("matching")} value={questionCounts.matching} />
           <QuestionBankSummaryStat label={getQuestionTypeLabel("ordering")} value={questionCounts.ordering} />
           <QuestionBankSummaryStat label={getQuestionTypeLabel("short-answer")} value={questionCounts["short-answer"]} />

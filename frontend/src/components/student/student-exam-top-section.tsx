@@ -13,12 +13,12 @@ function StatCard(props: {
   const { label, value, iconSrc, iconAlt, iconClassName } = props;
 
   return (
-    <div className="grid min-h-[79px] grid-cols-[minmax(0,1fr)_32px] items-center gap-4 rounded-[14px] border border-[#E6F2FF] bg-white px-7 py-5 shadow-[0_9px_4px_rgba(201,201,201,0.01),0_5px_3px_rgba(201,201,201,0.05),0_2px_2px_rgba(201,201,201,0.09),0_1px_1px_rgba(201,201,201,0.1)]">
+    <div className="grid min-h-[79px] grid-cols-[minmax(0,1fr)_32px] items-center gap-4 rounded-[14px] border border-[#E6F2FF] bg-white px-7 py-5 shadow-[0_9px_4px_rgba(201,201,201,0.01),0_5px_3px_rgba(201,201,201,0.05),0_2px_2px_rgba(201,201,201,0.09),0_1px_1px_rgba(201,201,201,0.1)] dark:border-white/10 student-dark-surface">
       <div className="flex min-w-0 flex-col justify-center gap-1.5">
-        <span className="text-[14px] font-medium leading-[17px] text-[#89939C]">
+        <span className="text-[14px] font-medium leading-[17px] text-[#89939C] dark:text-[#9CADC7]">
           {label}
         </span>
-        <span className="text-[18px] font-semibold leading-[22px] text-[#3F4850]">
+        <span className="text-[18px] font-semibold leading-[22px] text-[#3F4850] dark:text-[#F4F8FF]">
           {value}
         </span>
       </div>
@@ -47,7 +47,7 @@ export function StudentExamTopSection(props: {
       <button
         type="button"
         onClick={onBack}
-        className="mb-6 inline-flex items-center gap-2 text-[14px] font-medium text-[#007FFF]"
+        className="mb-6 inline-flex items-center gap-2 text-[14px] font-medium text-[#007FFF] dark:text-[#89C8FF]"
       >
         <span className="text-[18px] leading-none">←</span>
         <span>Буцах</span>
@@ -61,7 +61,7 @@ export function StudentExamTopSection(props: {
           height={40}
           className="h-10 w-10 shrink-0"
         />
-        <h1 className="text-[28px] font-semibold leading-[34px] text-[#293138]">
+        <h1 className="text-[28px] font-semibold leading-[34px] text-[#293138] dark:text-[#F4F8FF]">
           {exam.title}
         </h1>
       </div>

@@ -23,7 +23,7 @@ export function ThemeToggleButton({ className }: { className?: string }) {
       onClick={() => setTheme(isDark ? "light" : "dark")}
     >
       <span className="origin-center scale-[0.6486]">
-        {isDark ? <LightSwitchGraphic /> : <DarkSwitchGraphic />}
+        {isDark ? <DarkSwitchGraphic /> : <LightSwitchGraphic />}
       </span>
     </button>
   )

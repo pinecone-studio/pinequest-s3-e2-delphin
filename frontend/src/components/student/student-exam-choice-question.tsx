@@ -22,7 +22,7 @@ export function StudentExamChoiceQuestion(props: {
 
   return (
     <section
-      className="overflow-hidden rounded-[16px] border border-[#E6F2FF] bg-white"
+      className="overflow-hidden rounded-[16px] border border-[#E6F2FF] bg-white dark:border-white/10 student-dark-surface"
       style={{ boxShadow: cardShadow() }}
     >
       <div className="px-7 pb-5 pt-6">
@@ -34,7 +34,7 @@ export function StudentExamChoiceQuestion(props: {
         />
       </div>
 
-      <div className="border-t border-[#EAF2FB] px-7 pb-4 pt-[22px]">
+      <div className="border-t border-[#EAF2FB] px-7 pb-4 pt-[22px] dark:border-white/10">
         <div className="grid gap-[20px_12px] md:grid-cols-2">
           {options.map((option, optionIndex) => {
             const selected = value === option;
@@ -45,13 +45,13 @@ export function StudentExamChoiceQuestion(props: {
                 type="button"
                 onClick={() => onAnswerChange(question.id, option)}
                 className={[
-                  "flex h-[66px] w-full items-center rounded-[12px] bg-[#F5FAFF] px-6 text-left",
-                  selected ? "border-2 border-[#66B2FF]" : "border border-[#E6F2FF]",
+                  "flex h-[66px] w-full items-center rounded-[12px] bg-[#F5FAFF] px-6 text-left dark:bg-[rgba(255,255,255,0.04)]",
+                  selected ? "border-2 border-[#66B2FF] dark:bg-[rgba(79,156,249,0.16)]" : "border border-[#E6F2FF] dark:border-white/10",
                 ].join(" ")}
               >
                 <div className="flex items-center gap-[18px]">
                   <StudentExamOptionBadge value={String(optionIndex + 1)} active={selected} />
-                  <span className="text-[18px] font-medium leading-[24px] text-[#001933]">
+                  <span className="text-[18px] font-medium leading-[24px] text-[#001933] dark:text-[#F3F8FF]">
                     {option}
                   </span>
                 </div>

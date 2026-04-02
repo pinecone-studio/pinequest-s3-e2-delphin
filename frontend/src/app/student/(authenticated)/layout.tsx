@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { StudentShellFrame } from "@/components/student/student-shell-frame";
 import {
@@ -16,6 +16,7 @@ export default function StudentLayout({
   const router = useRouter();
   const pathname = usePathname();
   const { studentName } = useStudentSession();
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     if (!studentName) {
@@ -36,8 +37,12 @@ export default function StudentLayout({
   }
 
   return (
-    <StudentShellFrame pathname={pathname} onLogout={handleLogout}>
-      {children}
+    <StudentShellFrame
+      pathname={pathname}
+      onLogout={handleLogout}
+      onRefresh={() => setRefreshKey((current) => current + 1)}
+    >
+      <div key={`${pathname}-${refreshKey}`}>{children}</div>
     </StudentShellFrame>
   );
 }

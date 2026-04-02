@@ -27,21 +27,21 @@ export function StudentExamCardHeader(props: {
     <div>
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-center gap-4">
-          <div className="inline-flex h-[31px] shrink-0 items-center rounded-full bg-[#E6F2FF] px-4 text-[14px] font-semibold leading-[18px] text-[#007FFF]">
+          <div className="inline-flex h-[31px] shrink-0 items-center rounded-full bg-[#E6F2FF] px-4 text-[14px] font-semibold leading-[18px] text-[#007FFF] dark:bg-[#1B2959] dark:text-[#89C8FF]">
             Асуулт {index + 1}
           </div>
-          <p className="truncate text-[16px] font-medium leading-[20px] text-[#6F7982]">
+          <p className="truncate text-[16px] font-medium leading-[20px] text-[#6F7982] dark:text-[#9CADC7]">
             {meta}
           </p>
         </div>
 
-        <div className={answered ? "mt-1 inline-flex min-h-[31px] shrink-0 items-center gap-1.5 text-[14px] font-semibold text-[#00C853]" : "mt-1 inline-flex min-h-[31px] shrink-0 items-center text-[14px] font-semibold text-[#89939C]"}>
+        <div className={answered ? "mt-1 inline-flex min-h-[31px] shrink-0 items-center gap-1.5 text-[14px] font-semibold text-[#00C853] dark:text-[#62E28A]" : "mt-1 inline-flex min-h-[31px] shrink-0 items-center text-[14px] font-semibold text-[#89939C] dark:text-[#8FA0BB]"}>
           {answered ? <LeadingStatusIcon /> : null}
           <span>{answered ? "Хариулсан" : "Хариулаагүй"}</span>
         </div>
       </div>
 
-      <h2 className="mt-5 text-[20px] font-semibold leading-[28px] text-[#293138]">
+      <h2 className="mt-5 text-[20px] font-semibold leading-[28px] text-[#293138] dark:text-[#F3F8FF]">
         {title}
       </h2>
     </div>
@@ -60,13 +60,13 @@ export function StudentExamCard(props: {
 
   return (
     <section
-      className="overflow-hidden rounded-[16px] border border-[#E6F2FF] bg-white"
+      className="overflow-hidden rounded-[16px] border border-[#E6F2FF] bg-white dark:border-white/10 student-dark-surface"
       style={{ boxShadow: cardShadow() }}
     >
       <div className="px-7 pb-5 pt-6">
         <StudentExamCardHeader index={index} meta={meta} title={title} answered={answered} />
       </div>
-      <div className="border-t border-[#EAF2FB] px-6 pb-6 pt-5">{children}</div>
+      <div className="border-t border-[#EAF2FB] px-6 pb-6 pt-5 dark:border-white/10">{children}</div>
     </section>
   );
 }
@@ -78,7 +78,7 @@ export function StudentExamOptionBadge(props: { value: string; active?: boolean 
     <span
       className={[
         "inline-flex h-[34px] w-[34px] items-center justify-center rounded-[8px] border text-[14px] font-medium",
-        active ? "border-[#007FFF] bg-[#007FFF] text-[#E6F2FF]" : "border-[#F0F3F5] bg-white text-[#566069]",
+        active ? "border-[#007FFF] bg-[#007FFF] text-[#E6F2FF]" : "border-[#F0F3F5] bg-white text-[#566069] dark:border-white/10 dark:bg-[rgba(255,255,255,0.04)] dark:text-[#D7E5FA]",
       ].join(" ")}
     >
       {value}

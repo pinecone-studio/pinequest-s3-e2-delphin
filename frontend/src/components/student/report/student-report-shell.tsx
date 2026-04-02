@@ -43,7 +43,7 @@ export function StudentReportShell(props: StudentReportShellProps) {
   return (
     <div
       className={cn(
-        "min-h-screen px-4 py-4 md:px-8 md:py-6",
+        "min-h-screen px-4 py-4 md:px-4 md:py-4",
         isDark
           ? "bg-transparent"
           : "bg-[radial-gradient(circle_at_top,#eef7ff_0%,#edf6ff_38%,#f5f9ff_100%)]",
@@ -52,16 +52,16 @@ export function StudentReportShell(props: StudentReportShellProps) {
       <div className={cn("mx-auto", isDark ? "max-w-[1692px]" : "max-w-[1380px]")}>
         <section
           className={cn(
-            "relative overflow-hidden rounded-[34px] px-5 py-5 md:px-8 md:py-6",
+            "relative overflow-hidden rounded-[34px] px-5 py-6 md:px-7 md:py-7",
             isDark
-              ? "border border-white/10 bg-[linear-gradient(180deg,#0a122d_0%,#091126_100%)] shadow-[0_24px_70px_rgba(2,6,23,0.36)]"
+              ? "border border-[rgba(148,176,255,0.12)] bg-[linear-gradient(180deg,rgba(11,19,48,0.86)_0%,rgba(8,14,35,0.76)_100%)] shadow-[inset_0_1px_0_rgba(138,165,255,0.08)] backdrop-blur-[14px]"
               : "border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.64)_0%,rgba(244,250,255,0.54)_100%)] shadow-[0_16px_34px_rgba(181,205,229,0.16)] backdrop-blur-[12px]",
           )}
         >
           {isDark ? (
             <>
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(31,63,152,0.14)_0%,rgba(31,63,152,0)_100%)]" />
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-[linear-gradient(90deg,rgba(20,42,96,0.14)_0%,rgba(20,42,96,0)_100%)]" />
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(42,83,191,0.16)_0%,rgba(42,83,191,0)_100%)]" />
+              <div className="pointer-events-none absolute right-[-120px] top-[-140px] h-[320px] w-[320px] rounded-full bg-[radial-gradient(circle,rgba(49,110,255,0.16)_0%,rgba(49,110,255,0)_70%)] blur-3xl" />
             </>
           ) : null}
 
@@ -82,9 +82,9 @@ export function StudentReportShell(props: StudentReportShellProps) {
                 <div className="mt-5 flex items-start gap-3">
                   <div
                     className={cn(
-                      "flex h-12 w-12 items-center justify-center rounded-[12px]",
+                      "flex h-12 w-12 items-center justify-center rounded-[14px]",
                       isDark
-                        ? "bg-[#202455] shadow-[0_8px_16px_rgba(8,12,28,0.42)]"
+                        ? "border border-[rgba(151,168,255,0.12)] bg-[linear-gradient(180deg,#232a63_0%,#1d2354_100%)] shadow-[0_10px_22px_rgba(8,12,28,0.28)]"
                         : "bg-[#f3ebff] shadow-[0_4px_10px_rgba(159,107,255,0.12)]",
                     )}
                   >
@@ -114,9 +114,9 @@ export function StudentReportShell(props: StudentReportShellProps) {
               <Button
                 asChild
                 className={cn(
-                  "mt-8 h-11 rounded-[14px] px-6 text-[13px] font-semibold",
+                  "mt-6 h-11 min-w-[80px] rounded-[14px] px-5 text-[13px] font-semibold",
                   isDark
-                    ? "bg-[linear-gradient(180deg,#2c67c0_0%,#2254a9_100%)] text-white shadow-[0_18px_38px_rgba(24,64,148,0.34)] hover:brightness-110"
+                    ? "bg-[linear-gradient(180deg,#3d7fe6_0%,#2d68c9_100%)] text-white shadow-[0_16px_30px_rgba(28,73,165,0.28)] hover:brightness-110"
                     : "bg-[#48a8ff] text-white shadow-[0_10px_22px_rgba(72,168,255,0.22)] hover:bg-[#349cff]",
                 )}
               >

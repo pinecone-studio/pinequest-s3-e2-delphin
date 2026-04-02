@@ -83,4 +83,38 @@ export const exams: Exam[] = [
     createdAt: "2026-03-20",
     status: "scheduled",
   },
+  {
+    id: "e4",
+    title: "Codex test",
+    questions: [
+      {
+        id: "q11",
+        type: "multiple-choice",
+        question: "Which tool did we use to update this project?",
+        options: ["Codex", "Spreadsheet", "Slide deck", "Email"],
+        correctAnswer: "Codex",
+        points: 10,
+      },
+      {
+        id: "q12",
+        type: "short-answer",
+        question: "Write the class name this test is scheduled for.",
+        correctAnswer: "10B",
+        points: 10,
+      },
+      {
+        id: "q13",
+        type: "true-false",
+        question: "This test is available for class 10B students.",
+        correctAnswer: "True",
+        points: 5,
+      },
+    ],
+    duration: 25,
+    availableIndefinitely: true,
+    reportReleaseMode: "after-all-classes-complete",
+    scheduledClasses: [{ classId: "10B", date: "2026-04-03", time: "00:00" }],
+    createdAt: "2026-04-03",
+    status: "scheduled",
+  },
 ];

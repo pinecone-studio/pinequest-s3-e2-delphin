@@ -11,7 +11,6 @@ import { exams as legacyExams, type Exam, type ExamResult } from "@/lib/mock-dat
 import { getCachedStudentExamResults, loadStudentExamResults } from "@/lib/student-exam-results"
 import { getScheduleEnd } from "@/lib/student-exam-time"
 import { getStudentExams } from "@/lib/student-exams"
-
 export function useStudentExamsPage() {
   const { studentClass, studentId } = useStudentSession()
   const [searchQuery, setSearchQuery] = useState("")
@@ -20,7 +19,6 @@ export function useStudentExamsPage() {
   const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
   const [allResults, setAllResults] = useState<ExamResult[]>(() => getCachedStudentExamResults())
   const [isLoading, setIsLoading] = useState(true)
-
   useEffect(() => {
     let isMounted = true
 
@@ -45,7 +43,6 @@ export function useStudentExamsPage() {
       isMounted = false
     }
   }, [studentId])
-
   const myExams = useMemo(
     () =>
       allExams.filter((exam) =>
@@ -53,17 +50,14 @@ export function useStudentExamsPage() {
       ),
     [allExams, studentClass],
   )
-
   const myResults = useMemo(
     () => allResults.filter((result) => result.studentId === studentId),
     [allResults, studentId],
   )
-
   const completedExamIds = useMemo(
     () => new Set(myResults.map((result) => result.examId)),
     [myResults],
   )
-
   const scheduledExams = useMemo(
     () => myExams.filter((exam) => exam.status === "scheduled"),
     [myExams],
@@ -75,7 +69,12 @@ export function useStudentExamsPage() {
         if (completedExamIds.has(exam.id)) return false
         const schedule = getStudentSchedule(exam, studentClass)
         if (!schedule) return false
-        return getScheduleEnd(schedule.date, schedule.time, exam.duration) > new Date()
+        return getScheduleEnd(
+          schedule.date,
+          schedule.time,
+          exam.duration,
+          exam.availableIndefinitely,
+        ) > new Date()
       }),
     [completedExamIds, scheduledExams, studentClass],
   )
@@ -86,7 +85,12 @@ export function useStudentExamsPage() {
         if (completedExamIds.has(exam.id)) return false
         const schedule = getStudentSchedule(exam, studentClass)
         if (!schedule) return false
-        return getScheduleEnd(schedule.date, schedule.time, exam.duration) <= new Date()
+        return getScheduleEnd(
+          schedule.date,
+          schedule.time,
+          exam.duration,
+          exam.availableIndefinitely,
+        ) <= new Date()
       }),
     [completedExamIds, scheduledExams, studentClass],
   )
@@ -144,6 +148,7 @@ export function useStudentExamsPage() {
                   getStudentSchedule(left.exam, studentClass)?.date || "",
                   getStudentSchedule(left.exam, studentClass)?.time || "00:00",
                   left.exam.duration,
+                  left.exam.availableIndefinitely,
                 ).getTime()
           const rightTime =
             right.kind === "result"
@@ -152,6 +157,7 @@ export function useStudentExamsPage() {
                   getStudentSchedule(right.exam, studentClass)?.date || "",
                   getStudentSchedule(right.exam, studentClass)?.time || "00:00",
                   right.exam.duration,
+                  right.exam.availableIndefinitely,
                 ).getTime()
           return rightTime - leftTime
         }),

@@ -4,8 +4,15 @@ export function getScheduleStart(date: string, time: string) {
   return new Date(`${date}T${time}:00`)
 }
 
-export function getScheduleEnd(date: string, time: string, duration: number) {
+function getIndefiniteScheduleEnd() {
+  return new Date('2999-12-31T23:59:59')
+}
+
+export function getScheduleEnd(date: string, time: string, duration: number, availableIndefinitely = false) {
   const start = getScheduleStart(date, time)
+  if (availableIndefinitely) {
+    return getIndefiniteScheduleEnd()
+  }
   return new Date(start.getTime() + duration * 60 * 1000)
 }
 
@@ -24,14 +31,14 @@ export function getLocalDateString() {
   return `${year}-${month}-${day}`
 }
 
-export function isScheduleVisible(date: string, time: string, duration: number) {
-  return getScheduleEnd(date, time, duration) > new Date()
+export function isScheduleVisible(date: string, time: string, duration: number, availableIndefinitely = false) {
+  return getScheduleEnd(date, time, duration, availableIndefinitely) > new Date()
 }
 
-export function isScheduleOpenNow(date: string, time: string, duration: number) {
+export function isScheduleOpenNow(date: string, time: string, duration: number, availableIndefinitely = false) {
   const now = new Date()
   const start = getScheduleStart(date, time)
-  const end = getScheduleEnd(date, time, duration)
+  const end = getScheduleEnd(date, time, duration, availableIndefinitely)
   return now >= start && now < end
 }
 

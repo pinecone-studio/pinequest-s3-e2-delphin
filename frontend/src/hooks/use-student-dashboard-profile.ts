@@ -6,7 +6,7 @@ import { deleteUpload, listUploads, uploadFile } from "@/lib/uploads-api"
 
 const fallbackBio = "Би ирээдүйд Дизайнер болно."
 
-const studentDefaultBios: Record<string, string> = {
+const legacyJudgeDefaultBios: Record<string, string> = {
   "Бат-Оргил.Э": "Шалгалтын урсгал, интерфэйсийг нягталж буй шүүгчийн дэмо хэрэглэгч.",
   "Эрдэнэгомбо.М": "Хариу өгөх явц болон тайлангийн туршлагыг шалгаж буй шүүгчийн профайл.",
   "Анар.Т": "Сурагчийн нэвтрэлт, шалгалт эхлүүлэх алхмуудыг турших шүүгч.",
@@ -15,6 +15,17 @@ const studentDefaultBios: Record<string, string> = {
   "Өсөхбаяр.Ж": "Оноо, тайлан, сурагчийн туршлагыг үнэлэхэд ашиглах дэмо хэрэглэгч.",
   "Түвшин.О": "Шалгалтын тогтвортой байдал, навигацыг шалгах шүүгчийн профайл.",
   "Өгөөмөр.Л": "Презентацын үеэр сурагчийн дүрээр шалгалт өгөх шүүгчийн профайл.",
+}
+
+const studentDefaultBios: Record<string, string> = {
+  "Бат-Оргил.Э": "Би ирээдүйд Deputy Director Officer болмоор байна.",
+  "Эрдэнэгомбо.М": "Би ирээдүйд CTO for Education болмоор байна.",
+  "Анар.Т": "Би ирээдүйд Business Development Manager болмоор байна.",
+  "Билгүүндөл.Б": "Би ирээдүйд Software Engineer болмоор байна.",
+  "Буяндэлгэр.Т": "Би ирээдүйд Digital Product Development Manager болмоор байна.",
+  "Өсөхбаяр.Ж": "Би ирээдүйд Chief Product Officer болмоор байна.",
+  "Түвшин.О": "Би ирээдүйд Chief Technology Officer болмоор байна.",
+  "Өгөөмөр.Л": "Би ирээдүйд Engineering Manager болмоор байна.",
 }
 
 export type StudentProfileState = {
@@ -44,6 +55,10 @@ function getDefaultBio(studentName: string) {
   return studentDefaultBios[studentName] || fallbackBio
 }
 
+function getLegacyDefaultBio(studentName: string) {
+  return legacyJudgeDefaultBios[studentName] || ""
+}
+
 function getStoredProfile(studentId: string, studentName: string): StudentProfileState {
   const defaultBio = getDefaultBio(studentName)
 
@@ -52,8 +67,15 @@ function getStoredProfile(studentId: string, studentName: string): StudentProfil
   }
 
   const imageUploadId = studentId ? localStorage.getItem(getAvatarStorageKey(studentId)) || "" : ""
-  const storedName = studentId ? localStorage.getItem(getNameStorageKey(studentId)) || "" : ""
-  const storedBio = studentId ? localStorage.getItem(getBioStorageKey(studentId)) || "" : ""
+  const rawStoredName = studentId ? localStorage.getItem(getNameStorageKey(studentId)) || "" : ""
+  const rawStoredBio = studentId ? localStorage.getItem(getBioStorageKey(studentId)) || "" : ""
+  const legacyDefaultBio = getLegacyDefaultBio(studentName)
+  const storedName =
+    studentId === "judge4" && rawStoredName === "Болор.Э" ? studentName : rawStoredName
+  const storedBio =
+    rawStoredBio === legacyDefaultBio || rawStoredBio === legacyJudgeDefaultBios["Болор.Э"]
+      ? defaultBio
+      : rawStoredBio
 
   return {
     name: storedName || studentName,

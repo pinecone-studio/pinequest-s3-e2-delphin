@@ -20,76 +20,86 @@ export function TeacherExamScheduleList({
 }) {
   if (exam.status === "draft") {
     return (
-      <Link href={`/teacher/exams/${exam.id}/edit`}>
-        <Button variant="outline" size="sm">
-          Засварыг үргэлжлүүлэх
-        </Button>
-      </Link>
+      <div className="flex justify-start xl:justify-end">
+        <Link href={`/teacher/exams/${exam.id}/edit`}>
+          <Button variant="outline" size="sm">
+            Засварыг үргэлжлүүлэх
+          </Button>
+        </Link>
+      </div>
     );
   }
 
-  if (reviewMode) {
+  const schedules = getDisplaySchedules(exam, reviewMode);
+
+  if (reviewMode === "live") {
     return (
-      <div className="space-y-3">
-        {getDisplaySchedules(exam, reviewMode).map((schedule) => (
-          <div
-            key={`${exam.id}-${schedule.classId}-${schedule.date}-${schedule.time}`}
-            className="rounded-xl border border-slate-200 bg-slate-50 p-3"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="font-medium text-slate-900">{schedule.classId}</p>
-                <p className="text-sm text-muted-foreground">
-                  {schedule.date} {schedule.time}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <Button asChild size="sm">
-                  <Link href={`/teacher/classes/${schedule.classId}/exam/${exam.id}`}>
-                    {reviewMode === "live"
-                      ? (actionLabelOverride ?? "Явцыг харах")
-                      : (actionLabelOverride ?? "Үр дүнг харах")}
-                  </Link>
-                </Button>
-                {reviewMode === "live" && (
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={`/teacher/exams/${exam.id}/monitoring`}>
-                      Хяналтын самбар
-                    </Link>
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className="flex flex-col gap-3 xl:items-end">
+        <p className="text-sm text-slate-500">
+          {formatScheduleSummary(schedules)}
+        </p>
+        <Button asChild size="sm">
+          <Link href={`/teacher/exams/${exam.id}/monitoring`}>
+            {actionLabelOverride ?? "Шалгалт хянах"}
+          </Link>
+        </Button>
+      </div>
+    );
+  }
+
+  if (reviewMode === "completed") {
+    const primarySchedule = schedules[0];
+
+    return (
+      <div className="flex flex-col gap-3 xl:items-end">
+        <p className="text-sm text-slate-500">
+          {formatScheduleSummary(schedules)}
+        </p>
+        {primarySchedule ? (
+          <Button asChild size="sm">
+            <Link href={`/teacher/classes/${primarySchedule.classId}/exam/${exam.id}`}>
+              {actionLabelOverride ?? "Үр дүнг харах"}
+            </Link>
+          </Button>
+        ) : null}
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {getDisplaySchedules(exam).map((schedule) => (
-        <div
-          key={`${exam.id}-${schedule.classId}-${schedule.date}-${schedule.time}`}
-          className="flex justify-between text-sm"
-        >
-          <span className="font-medium">{schedule.classId}</span>
-          <span className="text-muted-foreground">
-            {schedule.date} {schedule.time}
-          </span>
-        </div>
-      ))}
+    <div className="flex flex-col gap-3 xl:items-end">
+      <p className="text-sm text-slate-500">{formatScheduleSummary(schedules)}</p>
       {exam.status === "scheduled" ? (
-        <div className="flex gap-2 pt-2">
-          <Link href={`/teacher/exams/${exam.id}/edit`}>
-            <Button variant="outline" size="sm">
-              {actionLabelOverride ?? "Засах"}
-            </Button>
-          </Link>
-        </div>
+        <Link href={`/teacher/exams/${exam.id}/edit`}>
+          <Button variant="outline" size="sm">
+            {actionLabelOverride ?? "Засах"}
+          </Button>
+        </Link>
       ) : null}
     </div>
   );
+}
+
+function formatScheduleSummary(
+  schedules: Array<{ classId: string; date: string; time: string }>,
+) {
+  if (schedules.length === 0) {
+    return "Хуваарь оруулаагүй байна";
+  }
+
+  const uniqueClasses = Array.from(
+    new Set(schedules.map((schedule) => schedule.classId)),
+  );
+  const uniqueSlots = Array.from(
+    new Set(schedules.map((schedule) => `${schedule.date} ${schedule.time}`)),
+  );
+
+  const slotLabel =
+    uniqueSlots.length === 1
+      ? uniqueSlots[0]
+      : `${uniqueSlots[0]} +${uniqueSlots.length - 1}`;
+
+  return `${uniqueClasses.join(", ")} • ${slotLabel}`;
 }
 
 function getDisplaySchedules(exam: TeacherExam, reviewMode?: ReviewMode) {

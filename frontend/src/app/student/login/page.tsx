@@ -42,7 +42,15 @@ export default function StudentLoginPage() {
       localStorage.setItem("studentName", student.name);
       localStorage.setItem("studentClass", student.classId);
       notifyStudentSessionChange();
-      router.push("/student/dashboard");
+      const redirectQuery =
+        typeof window !== "undefined"
+          ? new URLSearchParams(window.location.search).get("redirect")
+          : null;
+      const redirectTo =
+        redirectQuery && redirectQuery.startsWith("/student/")
+          ? redirectQuery
+          : "/student/dashboard";
+      router.push(redirectTo);
     } else {
       setError("Имэйл эсвэл нууц үг буруу байна");
     }

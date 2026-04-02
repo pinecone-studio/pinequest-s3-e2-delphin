@@ -6,6 +6,7 @@ import { ExamMonitoringDashboard } from "@/components/teacher/exam-monitoring-da
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useExamMonitoring } from "@/hooks/use-exam-monitoring";
+import { ArrowLeft } from "lucide-react";
 
 export default function ExamMonitoringPage({
   params,
@@ -43,18 +44,41 @@ export default function ExamMonitoringPage({
     );
   }
 
-  const examUrl = `${window.location.origin}/student/exams/${examId}/join`;
+  const examUrl = `${window.location.origin}/student/login?redirect=${encodeURIComponent(
+    `/student/exams/${examId}/join`,
+  )}`;
+  const firstClassId = exam.schedules[0]?.classId;
+  const isCompleted = timeRemaining <= 0;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Шалгалтын хяналт</h1>
-          <p className="text-muted-foreground">{exam.title}</p>
-        </div>
-        <Button variant="outline" onClick={() => router.back()}>
+      <div className="space-y-4">
+        <button
+          type="button"
+          onClick={() => router.push("/teacher/exams")}
+          className="inline-flex items-center gap-2 text-[18px] font-medium text-[#36527a] transition hover:text-[#1f3556]"
+        >
+          <ArrowLeft className="h-5 w-5" />
           Шалгалтууд руу буцах
-        </Button>
+        </button>
+
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-[2.3rem] font-semibold tracking-[-0.03em] text-[#1f3b63]">
+              Шалгалтын хяналт
+            </h1>
+            <p className="mt-1 text-sm text-slate-500">{exam.title}</p>
+          </div>
+          <div className="flex gap-2">
+            {isCompleted && firstClassId ? (
+              <Button
+                onClick={() => router.push(`/teacher/classes/${firstClassId}/exam/${examId}`)}
+              >
+                Үр дүн харах
+              </Button>
+            ) : null}
+          </div>
+        </div>
       </div>
 
       <ExamMonitoringDashboard

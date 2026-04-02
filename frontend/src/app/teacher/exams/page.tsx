@@ -2,11 +2,9 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
+import { TeacherExamHistorySection } from "@/components/teacher/teacher-exam-history-section";
 import { TeacherExamsSection } from "@/components/teacher/teacher-exams-section";
-import {
-  TeacherPageHeader,
-  TeacherPageShell,
-} from "@/components/teacher/teacher-page-primitives";
+import { TeacherPageShell } from "@/components/teacher/teacher-page-primitives";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -14,7 +12,6 @@ import {
   getTeacherExams,
   type TeacherExam,
 } from "@/lib/teacher-exams";
-import { ClipboardList } from "lucide-react";
 
 export default function ExamsPage() {
   const router = useRouter();
@@ -58,20 +55,27 @@ export default function ExamsPage() {
   }, [backendExams]);
 
   const draftExams = exams.filter((exam) => exam.status === "draft");
-  const readyExams = exams.filter((exam) => exam.status === "scheduled");
+  const liveExams = exams.filter((exam) => isExamLiveNow(exam));
+  const readyExams = exams.filter(
+    (exam) => exam.status === "scheduled" && !isExamLiveNow(exam),
+  );
   const completedExams = exams.filter((exam) => exam.status === "completed");
 
   return (
     <TeacherPageShell>
-      <TeacherPageHeader
-        title="Шалгалтууд"
-        icon={ClipboardList}
-        actions={
-          <Button onClick={() => router.push("/teacher/exams/create")}>
-            Шинэ шалгалт үүсгэх
-          </Button>
-        }
-      />
+      <section className="flex flex-col gap-4 border-b border-slate-200/80 pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-[2rem] font-semibold tracking-[-0.03em] text-[#384161]">
+            Шалгалтууд
+          </h1>
+          <p className="mt-1 text-sm text-[#6f7898]">
+            Шалгалтын драфт, товлолт, явц, түүхээ эндээс хянаарай.
+          </p>
+        </div>
+        <Button onClick={() => router.push("/teacher/exams/create")}>
+          Шинэ шалгалт үүсгэх
+        </Button>
+      </section>
 
       {isLoading ? (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -81,23 +85,53 @@ export default function ExamsPage() {
       ) : null}
 
       <TeacherExamsSection
-        emptyLabel="Ноорог шалгалт алга"
+        actionLabelOverride="Шалгалт хянах"
+        emptyLabel="Одоогоор явагдаж байгаа шалгалт алга"
+        exams={liveExams}
+        hideWhenEmpty
+        reviewMode="live"
+        statusLabelOverride="Явагдаж байна"
+        title="Явагдаж байна"
+      />
+      <TeacherExamsSection
+        emptyLabel="Шалгалтын драфт алга"
         exams={draftExams}
-        title="Ноорог шалгалтууд"
+        title="Шалгалтын драфт"
       />
       <TeacherExamsSection
         emptyLabel="Бэлэн болсон шалгалт алга"
         exams={readyExams}
-        statusLabelOverride="Бэлэн болсон"
         title="Бэлэн болсон шалгалтууд"
+        statusLabelResolver={getScheduledSectionStatusLabel}
       />
-      <TeacherExamsSection
-        actionLabelOverride="Үр дүн, үнэлгээ"
-        emptyLabel="Дууссан шалгалт алга"
+      <TeacherExamHistorySection
+        emptyLabel="Шалгалтын түүх хоосон байна"
         exams={completedExams}
-        reviewMode="completed"
-        title="Дууссан шалгалтууд"
+        title="Шалгалтын түүх"
       />
     </TeacherPageShell>
   );
+}
+
+function isExamLiveNow(exam: TeacherExam, now = new Date()) {
+  if (exam.status !== "scheduled") {
+    return false;
+  }
+
+  const currentTime = now.getTime();
+
+  return exam.scheduledClasses.some((schedule) => {
+    const start = new Date(`${schedule.date}T${schedule.time}:00`).getTime();
+
+    if (Number.isNaN(start)) {
+      return false;
+    }
+
+    const end = start + exam.duration * 60 * 1000;
+    return start <= currentTime && currentTime < end;
+  });
+}
+
+function getScheduledSectionStatusLabel(exam: TeacherExam) {
+  return exam.scheduledClasses.length > 0 ? "Товлогдсон" : "Бэлэн болсон";
 }

@@ -1,15 +1,9 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { TeacherExamScheduleList } from "@/components/teacher/teacher-exam-schedule-list";
 import type { TeacherExam } from "@/lib/teacher-exams";
+import { cn } from "@/lib/utils";
 
 type ReviewMode = "completed" | "live";
 
@@ -17,57 +11,78 @@ export function TeacherExamsSection({
   actionLabelOverride,
   emptyLabel,
   exams,
+  hideWhenEmpty = false,
   reviewMode,
+  sectionClassName,
+  statusLabelResolver,
   statusLabelOverride,
   title,
 }: {
   actionLabelOverride?: string;
   emptyLabel: string;
   exams: TeacherExam[];
+  hideWhenEmpty?: boolean;
   reviewMode?: ReviewMode;
+  sectionClassName?: string;
+  statusLabelResolver?: (exam: TeacherExam) => string;
   statusLabelOverride?: string;
   title: string;
 }) {
+  if (hideWhenEmpty && exams.length === 0) {
+    return null;
+  }
+
   return (
-    <div>
-      <h2 className="mb-3 text-lg font-semibold">{title}</h2>
+    <section className={cn("space-y-4", sectionClassName)}>
+      <h2 className="text-lg font-semibold text-slate-950">{title}</h2>
       {exams.length === 0 ? (
-        <Card>
-          <CardContent className="py-6 text-center text-muted-foreground">
-            {emptyLabel}
-          </CardContent>
-        </Card>
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 px-6 py-8 text-center text-sm text-muted-foreground">
+          {emptyLabel}
+        </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {exams.map((exam) => (
-            <Card key={exam.id}>
-              <CardHeader>
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <CardTitle className="text-base">{exam.title}</CardTitle>
-                    <CardDescription>
+        <div className="space-y-3">
+          {exams.map((exam) => {
+            const statusLabel =
+              statusLabelResolver?.(exam) ??
+              statusLabelOverride ??
+              formatStatus(exam.status);
+
+            return (
+              <article
+                key={exam.id}
+                className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-[0_8px_30px_rgba(15,23,42,0.05)]"
+              >
+                <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h3 className="truncate text-base font-semibold text-slate-950">
+                        {exam.title}
+                      </h3>
+                      <Badge
+                        variant={getBadgeVariant(exam.status, statusLabel)}
+                        className="w-fit"
+                      >
+                        {statusLabel}
+                      </Badge>
+                    </div>
+                    <p className="mt-1 text-sm text-slate-500">
                       {exam.questions.length} асуулт, {exam.duration} мин
-                    </CardDescription>
+                    </p>
                   </div>
-                  <Badge
-                    variant={getBadgeVariant(exam.status, statusLabelOverride)}
-                  >
-                    {statusLabelOverride ?? formatStatus(exam.status)}
-                  </Badge>
+                  <div className="xl:min-w-[320px]">
+                    <TeacherExamScheduleList
+                      actionLabelOverride={actionLabelOverride}
+                      exam={exam}
+                      reviewMode={reviewMode}
+                    />
+                  </div>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <TeacherExamScheduleList
-                  actionLabelOverride={actionLabelOverride}
-                  exam={exam}
-                  reviewMode={reviewMode}
-                />
-              </CardContent>
-            </Card>
-          ))}
+              </article>
+            );
+          })}
         </div>
       )}
-    </div>
+    </section>
   );
 }
 
@@ -79,9 +94,12 @@ function formatStatus(status: TeacherExam["status"]) {
 
 function getBadgeVariant(
   status: TeacherExam["status"],
-  statusLabelOverride?: string,
+  statusLabel?: string,
 ) {
-  if (statusLabelOverride === "Явагдаж байна") return "default";
+  if (statusLabel === "Явагдаж байна" || statusLabel === "Товлогдсон") {
+    return "default";
+  }
+  if (statusLabel === "Бэлэн болсон") return "secondary";
   if (status === "completed") return "secondary";
   if (status === "draft") return "outline";
   return "default";

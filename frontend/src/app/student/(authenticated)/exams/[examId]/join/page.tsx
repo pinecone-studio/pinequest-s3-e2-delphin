@@ -42,6 +42,16 @@ export default function StudentExamJoinPage({
     loadExam();
   }, []);
 
+  useEffect(() => {
+    if (!isLoading && !studentClass) {
+      router.replace(
+        `/student/login?redirect=${encodeURIComponent(
+          `/student/exams/${examId}/join`,
+        )}`,
+      );
+    }
+  }, [examId, isLoading, router, studentClass]);
+
   const exam = allExams.find((entry) => entry.id === examId);
   const schedule = exam?.scheduledClasses.find(
     (entry) => entry.classId === studentClass,
@@ -62,6 +72,15 @@ export default function StudentExamJoinPage({
       <div className="flex min-h-[50vh] items-center justify-center gap-3 text-sm text-muted-foreground">
         <Spinner />
         Шалгалтыг ачааллаж байна...
+      </div>
+    );
+  }
+
+  if (!studentClass) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center gap-3 text-sm text-muted-foreground">
+        <Spinner />
+        Нэвтрэх хуудас руу шилжүүлж байна...
       </div>
     );
   }

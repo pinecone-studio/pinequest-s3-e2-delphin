@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Bell, LayoutDashboard, LogOut, RefreshCw } from "lucide-react";
+import { LayoutDashboard, LogOut, RefreshCw } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
+import { StudentNotificationMenu } from "@/components/student/student-notification-menu";
 import { useTheme } from "@/components/theme-provider";
 import { ThemeToggleButton } from "@/components/theme-toggle-button";
 import { cn } from "@/lib/utils";
@@ -21,10 +22,23 @@ function isStudentNavItemActive(pathname: string, href: string) {
 export function StudentShellFrame(props: {
   pathname: string;
   children: React.ReactNode;
+  hasNotifications?: boolean;
+  notificationItems?: { examId: string; title: string; date: string; time: string }[];
+  notificationCount?: number;
   onLogout?: () => void;
+  onSelectNotification?: (examId: string) => void;
   onRefresh?: () => void;
 }) {
-  const { pathname, children, onLogout, onRefresh } = props;
+  const {
+    pathname,
+    children,
+    hasNotifications = false,
+    notificationItems = [],
+    notificationCount = 0,
+    onLogout,
+    onSelectNotification,
+    onRefresh,
+  } = props;
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
@@ -55,7 +69,6 @@ export function StudentShellFrame(props: {
               <Link href="/student/dashboard" className="inline-flex items-center justify-self-start font-semibold">
                 <BrandLogo className="gap-2.5" textClassName="text-left" />
               </Link>
-
               <nav
                 className={cn(
                   "flex h-[46px] items-center gap-1 rounded-full p-1",
@@ -100,7 +113,6 @@ export function StudentShellFrame(props: {
                   );
                 })}
               </nav>
-
               <div className="isolate flex items-center justify-self-end gap-3">
                 <button
                   type="button"
@@ -116,17 +128,13 @@ export function StudentShellFrame(props: {
                 >
                   <RefreshCw className="h-4 w-4 stroke-[1.75]" />
                 </button>
-                <button
-                  type="button"
-                  className={cn(
-                    "flex h-7 w-7 items-center justify-center rounded-full border",
-                    isDark
-                      ? "border-white/12 bg-[linear-gradient(180deg,#121d43_0%,#0d1737_100%)] text-[#d5def0]"
-                      : "border-[#D6E2F0] bg-white text-[#7B8898]",
-                  )}
-                >
-                  <Bell className="h-4 w-4 stroke-[1.75]" />
-                </button>
+                <StudentNotificationMenu
+                  hasNotifications={hasNotifications}
+                  isDark={isDark}
+                  items={notificationItems}
+                  notificationCount={notificationCount}
+                  onSelect={(examId) => onSelectNotification?.(examId)}
+                />
                 <button
                   type="button"
                   onClick={onLogout}
@@ -145,9 +153,7 @@ export function StudentShellFrame(props: {
           </div>
         </header>
 
-        <main className="relative z-10 min-h-[calc(100vh-82px)] w-full overflow-visible">
-          {children}
-        </main>
+        <main className="relative z-10 min-h-[calc(100vh-82px)] w-full overflow-visible">{children}</main>
       </div>
     </div>
   );

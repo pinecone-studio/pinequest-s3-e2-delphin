@@ -1,38 +1,63 @@
 import type { Exam } from "@/lib/mock-data-types";
-import { examE1 } from "@/lib/mock-exams-seed/exam-e1";
-import { examE2 } from "@/lib/mock-exams-seed/exam-e2";
-import { examE3 } from "@/lib/mock-exams-seed/exam-e3";
-import { examE4 } from "@/lib/mock-exams-seed/exam-e4";
-import { examE5 } from "@/lib/mock-exams-seed/exam-e5";
-import { examE6 } from "@/lib/mock-exams-seed/exam-e6";
 
-const scheduledMathExams: Exam[] = [
+function getRelativeDate(daysFromToday: number) {
+  const date = new Date()
+  date.setDate(date.getDate() + daysFromToday)
+  return date.toISOString().split("T")[0]!
+}
+
+export const exams: Exam[] = [
   {
-    id: "e7",
-    title: "Тэнцэтгэл бишийн давтлага",
+    id: "e1",
+    title: "Mathematikiin dund shalgalt",
+    questions: [
+      { id: "q1", type: "multiple-choice", question: "2 + 3 × 4 = ?", options: ["20", "14", "24", "10"], correctAnswer: "14", points: 10 },
+      { id: "q2", type: "true-false", question: "√16 = 5.", correctAnswer: "False", points: 5 },
+      { id: "q3", type: "short-answer", question: "x + 5 = 12 bol x = ?", correctAnswer: "7", points: 10 },
+      {
+        id: "q4",
+        type: "matching",
+        question: "Match each term to the correct description.",
+        options: ["HTML", "CSS", "SQL", "Git"],
+        correctAnswer: "A-2, B-3, C-1, D-4",
+        points: 10,
+      },
+      {
+        id: "q5",
+        type: "fill",
+        question: "2 + 5 = ___",
+        correctAnswer: "7",
+        points: 10,
+      },
+    ],
+    duration: 45,
+    reportReleaseMode: "after-all-classes-complete",
+    scheduledClasses: [
+      { classId: "10A", date: "2026-03-20", time: "09:00" },
+      { classId: "10B", date: "2026-03-20", time: "14:00" },
+    ],
+    createdAt: "2026-03-15",
+    status: "completed",
+  },
+  {
+    id: "e2",
+    title: "Niigmiin uhaany soril",
     questions: [
       {
-        id: "e7q1",
+        id: "q6",
         type: "multiple-choice",
-        question: "x + 3 > 7 бол x ямар тоо байх вэ?",
-        options: ["4-өөс их", "3-аас бага", "7-той тэнцүү", "1-ээс бага"],
-        correctAnswer: "4-өөс их",
-        points: 6,
+        question: "Ardchilal gej yu ve?",
+        options: [
+          "Neg huni zasaglal",
+          "Ard tumnii oroltsootoi zasaglal",
+          "Tsergiin zasaglal",
+          "Haant zasaglal",
+        ],
+        correctAnswer: "Ard tumnii oroltsootoi zasaglal",
+        points: 10,
       },
-      {
-        id: "e7q2",
-        type: "true-false",
-        question: "x < 5 гэдэг нь 5-аас бага бүх тоог илэрхийлнэ.",
-        correctAnswer: "True",
-        points: 4,
-      },
-      {
-        id: "e7q3",
-        type: "short-answer",
-        question: "2x > 10 бол x-ийн хамгийн бага бүхэл шийд хэд вэ?",
-        correctAnswer: "6",
-        points: 8,
-      },
+      { id: "q7", type: "true-false", question: "Mongol uls haant zasaglaltai.", correctAnswer: "False", points: 5 },
+      { id: "q8", type: "short-answer", question: "Mongol Ulsyn niislel аль hot ve?", correctAnswer: "Ulaanbaatar", points: 10 },
     ],
     duration: 30,
     reportReleaseMode: "after-all-classes-complete",
@@ -41,24 +66,18 @@ const scheduledMathExams: Exam[] = [
     status: "scheduled",
   },
   {
-    id: "e8",
-    title: "Координатын хавтгайн сорил",
+    id: "e3",
+    title: "Fizikiin shalgalt",
     questions: [
       {
-        id: "e8q1",
+        id: "q9",
         type: "multiple-choice",
-        question: "(0, 4) цэг ямар тэнхлэг дээр байрлах вэ?",
-        options: ["x-тэнхлэг", "y-тэнхлэг", "I квадрант", "II квадрант"],
-        correctAnswer: "y-тэнхлэг",
-        points: 6,
+        question: "Hurd = ?",
+        options: ["Zam / hugatsaa", "Hugatsaa / zam", "Mass × hurdatgal", "Huch / талбай"],
+        correctAnswer: "Zam / hugatsaa",
+        points: 10,
       },
-      {
-        id: "e8q2",
-        type: "true-false",
-        question: "(-2, 3) цэг II квадрантад оршино.",
-        correctAnswer: "True",
-        points: 4,
-      },
+      { id: "q10", type: "true-false", question: "Huchnii negj ni Newton.", correctAnswer: "True", points: 5 },
     ],
     duration: 60,
     reportReleaseMode: "after-all-classes-complete",
@@ -104,14 +123,24 @@ const scheduledMathExams: Exam[] = [
     createdAt: "2026-04-03",
     status: "scheduled",
   },
-];
-
-export const exams: Exam[] = [
-  examE1,
-  examE2,
-  examE3,
-  examE4,
-  examE5,
-  examE6,
-  ...scheduledMathExams,
+  {
+    id: "notification-test",
+    title: "Notification test",
+    questions: [
+      {
+        id: "q14",
+        type: "multiple-choice",
+        question: "This exam exists to test the student notification bell.",
+        options: ["True", "False"],
+        correctAnswer: "True",
+        points: 5,
+      },
+    ],
+    duration: 15,
+    availableIndefinitely: true,
+    reportReleaseMode: "immediately",
+    scheduledClasses: [{ classId: "10B", date: getRelativeDate(1), time: "16:00" }],
+    createdAt: new Date().toISOString(),
+    status: "scheduled",
+  },
 ];

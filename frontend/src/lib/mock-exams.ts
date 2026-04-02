@@ -1,5 +1,11 @@
 import type { Exam } from "@/lib/mock-data-types";
 
+function getRelativeDate(daysFromToday: number) {
+  const date = new Date()
+  date.setDate(date.getDate() + daysFromToday)
+  return date.toISOString().split("T")[0]!
+}
+
 export const exams: Exam[] = [
   {
     id: "e1",
@@ -115,6 +121,26 @@ export const exams: Exam[] = [
     reportReleaseMode: "after-all-classes-complete",
     scheduledClasses: [{ classId: "10B", date: "2026-04-03", time: "00:00" }],
     createdAt: "2026-04-03",
+    status: "scheduled",
+  },
+  {
+    id: "notification-test",
+    title: "Notification test",
+    questions: [
+      {
+        id: "q14",
+        type: "multiple-choice",
+        question: "This exam exists to test the student notification bell.",
+        options: ["True", "False"],
+        correctAnswer: "True",
+        points: 5,
+      },
+    ],
+    duration: 15,
+    availableIndefinitely: true,
+    reportReleaseMode: "immediately",
+    scheduledClasses: [{ classId: "10B", date: getRelativeDate(1), time: "16:00" }],
+    createdAt: new Date().toISOString(),
     status: "scheduled",
   },
 ];

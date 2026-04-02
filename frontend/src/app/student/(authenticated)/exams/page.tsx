@@ -7,6 +7,7 @@ import {
 } from "@/components/student/student-exams-page-cards"
 import { SegmentedTab } from "@/components/student/student-exams-page-controls"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
 import {
   Select,
   SelectContent,
@@ -101,9 +102,10 @@ export default function StudentExamsPage() {
 
         <div className="mx-auto w-full max-w-[1080px] space-y-[34px]">
           {isLoading ? (
-            <p className="text-sm text-[#566069] dark:text-[#AAB7CB]">
-              Шалгалтуудыг ачаалж байна...
-            </p>
+            <div className="flex items-center gap-3 text-sm text-[#566069] dark:text-[#AAB7CB]">
+              <Spinner className="size-4" />
+              <p>Шалгалтуудыг ачаалж байна...</p>
+            </div>
           ) : null}
 
           {showUpcoming && filteredUpcomingExams.length > 0 ? (

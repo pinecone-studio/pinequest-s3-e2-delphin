@@ -2,16 +2,17 @@
 
 import { use, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { StudentExamHtmlCanvas } from "@/components/student/student-exam-html-canvas";
 import {
   StudentTakeExamClosed,
   StudentTakeExamNotFound,
   StudentTakeExamSubmitted,
 } from "@/components/student/student-take-exam-states";
-import { StudentExamHtmlCanvas } from "@/components/student/student-exam-html-canvas";
+import { Spinner } from "@/components/ui/spinner";
 import { useExamIntegrityGuard } from "@/hooks/use-exam-integrity-guard";
 import { useStudentSession } from "@/hooks/use-student-session";
-import { exams as legacyExams, type Exam } from "@/lib/mock-data";
 import { upsertStudentExamAttempt } from "@/lib/student-exam-attempts";
+import { exams as legacyExams, type Exam } from "@/lib/mock-data";
 import { loadStudentExamResults } from "@/lib/student-exam-results";
 import { isScheduleOpenNow } from "@/lib/student-exam-time";
 import { getStudentExams } from "@/lib/student-exams";
@@ -44,14 +45,11 @@ export default function StudentTakeExamPage({
         setAllExams(nextExams);
         setAlreadySubmitted(
           nextResults.some(
-            (result) =>
-              result.examId === examId && result.studentId === studentId,
+            (result) => result.examId === examId && result.studentId === studentId,
           ),
         );
       } catch (error) {
-        if (isMounted) {
-          console.warn("Failed to load the exam-taking page.", error);
-        }
+        if (isMounted) console.warn("Failed to load the exam-taking page.", error);
       } finally {
         if (isMounted) setIsLoading(false);
       }
@@ -76,9 +74,7 @@ export default function StudentTakeExamPage({
       : false;
 
   useEffect(() => {
-    if (!exam || !schedule || !isOpenNow || alreadySubmitted || !studentId) {
-      return;
-    }
+    if (!exam || !schedule || !isOpenNow || alreadySubmitted || !studentId) return;
 
     void upsertStudentExamAttempt({
       examId: exam.id,
@@ -89,22 +85,16 @@ export default function StudentTakeExamPage({
       startedAt: new Date().toISOString(),
       submittedAt: null,
     });
-  }, [
-    alreadySubmitted,
-    exam,
-    isOpenNow,
-    schedule,
-    studentClass,
-    studentId,
-  ]);
+  }, [alreadySubmitted, exam, isOpenNow, schedule, studentClass, studentId]);
 
   useExamIntegrityGuard({ examId: exam?.id, studentId });
 
   if (isLoading) {
     return (
-      <p className="text-sm text-muted-foreground">
-        Ð¨Ð°Ð»Ð³Ð°Ð»Ñ‚Ñ‹Ð³ Ð°Ñ‡Ð°Ð°Ð»Ð¶ Ð±Ð°Ð¹Ð½Ð°...
-      </p>
+      <div className="flex min-h-[50vh] items-center justify-center gap-3 text-sm text-muted-foreground">
+        <Spinner className="size-4" />
+        <p>Шалгалтыг ачаалж байна...</p>
+      </div>
     );
   }
 
@@ -122,14 +112,12 @@ export default function StudentTakeExamPage({
   }
 
   if (!isOpenNow) {
-    return (
-      <StudentTakeExamClosed
-        onBack={() => router.push(`/student/exams/${examId}`)}
-      />
-    );
+    return <StudentTakeExamClosed onBack={() => router.push(`/student/exams/${examId}`)} />;
   }
 
-  const answeredCount = Object.values(answers).filter((value) => value.trim().length > 0).length;
+  const answeredCount = Object.values(answers).filter(
+    (value) => value.trim().length > 0,
+  ).length;
   const totalQuestions = exam.questions.length;
   const completionPercent = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
   const unansweredCount = Math.max(totalQuestions - answeredCount, 0);
@@ -150,9 +138,7 @@ export default function StudentTakeExamPage({
         setAnswers((current) => ({ ...current, [questionId]: value }))
       }
       onSubmit={() => {
-        if (!studentId || isSubmitting) {
-          return;
-        }
+        if (!studentId || isSubmitting) return;
 
         setIsSubmitting(true);
         void submitStudentExam({
@@ -172,8 +158,3 @@ export default function StudentTakeExamPage({
     />
   );
 }
-
-
-
-
-

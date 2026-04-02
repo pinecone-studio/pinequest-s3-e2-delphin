@@ -45,7 +45,7 @@ export function StudentReportShell(props: StudentReportShellProps) {
       className={cn(
         "min-h-screen px-4 py-4 md:px-8 md:py-6",
         isDark
-          ? "bg-[radial-gradient(circle_at_top,#101a44_0%,#0a122c_36%,#060b16_100%)]"
+          ? "bg-transparent"
           : "bg-[radial-gradient(circle_at_top,#eef7ff_0%,#edf6ff_38%,#f5f9ff_100%)]",
       )}
     >

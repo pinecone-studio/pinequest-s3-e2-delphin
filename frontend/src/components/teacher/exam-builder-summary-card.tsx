@@ -22,6 +22,9 @@ type QuestionCounts = Record<
 export function ExamBuilderSummaryCard({
   duration,
   examTitle,
+  hideExamTitleField = false,
+  hideScheduleEditor = false,
+  hideSettingsControls = false,
   onAddScheduleEntry,
   onDurationChange,
   onRemoveScheduleEntry,
@@ -36,6 +39,9 @@ export function ExamBuilderSummaryCard({
 }: {
   duration: number;
   examTitle: string;
+  hideExamTitleField?: boolean;
+  hideScheduleEditor?: boolean;
+  hideSettingsControls?: boolean;
   onAddScheduleEntry: () => void;
   onDurationChange: (value: number) => void;
   onExamTitleChange: (value: string) => void;
@@ -58,17 +64,19 @@ export function ExamBuilderSummaryCard({
         <CardTitle>Шалгалтын хураангуй</CardTitle>
       </CardHeader>
       <CardContent className="space-y-5">
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-foreground">
-            Шалгалтын нэр
-          </Label>
-          <Input
-            placeholder="Шалгалтын нэр"
-            value={examTitle}
-            onChange={(event) => onExamTitleChange(event.target.value)}
-            className="h-11 w-full md:max-w-[420px]"
-          />
-        </div>
+        {hideExamTitleField ? null : (
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-foreground">
+              Шалгалтын нэр
+            </Label>
+            <Input
+              placeholder="Шалгалтын нэр"
+              value={examTitle}
+              onChange={(event) => onExamTitleChange(event.target.value)}
+              className="h-11 w-full md:max-w-[420px]"
+            />
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-3 xl:grid-cols-5">
           <SummaryStat label="Асуулт" value={questionTotal} />
@@ -86,49 +94,53 @@ export function ExamBuilderSummaryCard({
           />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-foreground">
-              Хугацаа (минут)
-            </Label>
-            <Input
-              type="number"
-              value={duration}
-              onChange={(e) => onDurationChange(parseInt(e.target.value) || 60)}
-              className="h-11 w-full md:max-w-[220px]"
-            />
-          </div>
+        {hideSettingsControls ? null : (
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-foreground">
+                Хугацаа (минут)
+              </Label>
+              <Input
+                type="number"
+                value={duration}
+                onChange={(e) => onDurationChange(parseInt(e.target.value) || 60)}
+                className="h-11 w-full md:max-w-[220px]"
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-foreground">
-              Сурагчдад дүн харагдах хугацаа
-            </Label>
-            <Select
-              value={reportReleaseMode}
-              onValueChange={(value) =>
-                onReportReleaseModeChange(value as Exam["reportReleaseMode"])
-              }
-            >
-              <SelectTrigger className="h-11">
-                <SelectValue placeholder="Дүн харагдах хугацааг сонгоно уу" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="after-all-classes-complete">
-                  Товлогдсон бүх анги дууссаны дараа
-                </SelectItem>
-                <SelectItem value="immediately">
-                  Сурагч илгээмэгц шууд
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-foreground">
+                Сурагчдад дүн харагдах хугацаа
+              </Label>
+              <Select
+                value={reportReleaseMode}
+                onValueChange={(value) =>
+                  onReportReleaseModeChange(value as Exam["reportReleaseMode"])
+                }
+              >
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Дүн харагдах хугацааг сонгоно уу" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="after-all-classes-complete">
+                    Товлогдсон бүх анги дууссаны дараа
+                  </SelectItem>
+                  <SelectItem value="immediately">
+                    Сурагч илгээмэгц шууд
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </div>
-        <ExamBuilderScheduleEditor
-          onAddScheduleEntry={onAddScheduleEntry}
-          onRemoveScheduleEntry={onRemoveScheduleEntry}
-          onScheduleEntryChange={onScheduleEntryChange}
-          scheduleEntries={scheduleEntries}
-        />
+        )}
+        {hideScheduleEditor ? null : (
+          <ExamBuilderScheduleEditor
+            onAddScheduleEntry={onAddScheduleEntry}
+            onRemoveScheduleEntry={onRemoveScheduleEntry}
+            onScheduleEntryChange={onScheduleEntryChange}
+            scheduleEntries={scheduleEntries}
+          />
+        )}
       </CardContent>
     </Card>
   );

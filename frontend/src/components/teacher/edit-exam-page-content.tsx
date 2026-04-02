@@ -64,7 +64,7 @@ export function EditExamPageContent({
     updateScheduleEntry,
   } = builder;
   const {
-    canSaveDraft,
+    canMarkReady,
     canScheduleExam,
     submissionError,
     submitExam,
@@ -120,12 +120,12 @@ export function EditExamPageContent({
       />
       <div className="flex justify-end gap-3">
         <Button
-          variant="outline"
-          onClick={() => void submitExam("draft")}
-          disabled={!canSaveDraft || isLoading}
+          variant="secondary"
+          onClick={() => void submitExam("ready")}
+          disabled={!canMarkReady || isLoading}
         >
-          {submitMode === "draft" ? <Spinner className="mr-2" /> : null}
-          Ноорог болгон хадгалах
+          {submitMode === "ready" ? <Spinner className="mr-2" /> : null}
+          Бэлэн төлөвт хадгалах
         </Button>
         <Button
           onClick={() => void submitExam("scheduled")}

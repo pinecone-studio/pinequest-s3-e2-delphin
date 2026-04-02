@@ -120,7 +120,7 @@ export function StudentDashboardScheduleCard({
               return (
                 <div
                   key={`${entry.key}-${time}`}
-                  className="min-h-[64px] rounded-[10px] border border-[#E8EEF5] bg-white px-2 py-2 dark:border-[rgba(72,94,149,0.24)] dark:bg-[radial-gradient(72%_3px_at_50%_0%,rgba(154,184,255,0.34)_0%,rgba(154,184,255,0.16)_30%,rgba(154,184,255,0)_78%),radial-gradient(72%_3px_at_50%_100%,rgba(154,184,255,0.3)_0%,rgba(154,184,255,0.14)_30%,rgba(154,184,255,0)_78%),linear-gradient(180deg,#060C29_0%,#060C29_100%)] dark:shadow-[inset_0_1px_0_rgba(122,154,235,0.12),inset_0_-1px_0_rgba(122,154,235,0.1),inset_0_0_10px_rgba(55,82,138,0.08)]"
+                  className="min-h-[64px] rounded-[10px] border border-[#E8EEF5] bg-white px-2 py-2 dark:border-[rgba(72,94,149,0.24)] dark:bg-[radial-gradient(62%_1.5px_at_50%_0%,rgba(167,182,214,0.22)_0%,rgba(167,182,214,0.09)_42%,rgba(167,182,214,0)_100%),radial-gradient(62%_1.5px_at_50%_100%,rgba(167,182,214,0.18)_0%,rgba(167,182,214,0.08)_42%,rgba(167,182,214,0)_100%),linear-gradient(180deg,#0d163f_0%,#0a1236_100%)] dark:shadow-[inset_0_0_8px_rgba(55,82,138,0.05)]"
                 >
                   {event ? (
                     <div className="flex items-start gap-1.5 text-[11px] leading-4 text-[#4A5565] dark:text-[#d0d8e6]">

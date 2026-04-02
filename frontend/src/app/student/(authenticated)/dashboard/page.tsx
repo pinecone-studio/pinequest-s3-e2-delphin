@@ -60,7 +60,7 @@ export default function StudentDashboard() {
           {statCards.map((item) => {
             return (
               <div key={item.label} className="flex items-center gap-3">
-                <div className="flex h-[56px] w-[56px] items-center justify-center rounded-xl border border-[#D9E8F4] bg-[#F3F9FF] text-[#39424E] dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(156deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#edf4ff]">
+                <div className="flex h-[56px] w-[56px] items-center justify-center rounded-xl border border-[#D9E8F4] bg-[#F3F9FF] text-[#39424E] dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(127deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#edf4ff]">
                   <Image
                     src={item.iconPath}
                     alt=""

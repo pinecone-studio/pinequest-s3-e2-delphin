@@ -6,6 +6,7 @@ import { TeacherSurfaceCard } from "@/components/teacher/teacher-page-primitives
 import { QuestionBankSourceUploadDialog } from "@/components/teacher/question-bank-source-upload-dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { getReadableUploadName, mergeSourceFiles } from "@/lib/source-files";
 import { uploadFile, type UploadRecord } from "@/lib/uploads-api";
 import { FileText, Upload } from "lucide-react";
 
@@ -31,13 +32,54 @@ export function QuestionBankSourcePanel({ files, setSourceFiles }: Props) {
     null,
   );
 
+  const resetSourceDialog = () => {
+    setNewSourceName("");
+    setSelectedSourceFile(null);
+  };
+
   const handleSourceFileSelect = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
     setSelectedSourceFile(file);
-    setNewSourceName(file.name);
+  };
+
+  const handleDialogOpenChange = (open: boolean) => {
+    setIsDialogOpen(open);
+    if (!open) {
+      resetSourceDialog();
+    }
+  };
+
+  const handleDialogOpen = () => {
+    resetSourceDialog();
+    setIsDialogOpen(true);
+  };
+
+  const handleDemoFill = async () => {
+    try {
+      const response = await fetch("/question-bank-demo-source.pdf");
+      if (!response.ok) {
+        throw new Error("Demo PDF файлыг ачаалж чадсангүй.");
+      }
+
+      const blob = await response.blob();
+      const file = new File([blob], "matematik-7r-angi-demo.pdf", {
+        type: "application/pdf",
+      });
+      setNewSourceName("Математик 7-р анги");
+      setSelectedSourceFile(file);
+    } catch (error) {
+      toast({
+        title: "Алдаа",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Demo PDF файлыг бэлдэж чадсангүй.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSourceUpload = async () => {
@@ -57,9 +99,8 @@ export function QuestionBankSourcePanel({ files, setSourceFiles }: Props) {
         fileName: newSourceName.trim(),
         folder: SOURCES_FOLDER,
       });
-      setSourceFiles((current) => [createdFile, ...current]);
-      setSelectedSourceFile(null);
-      setNewSourceName("");
+      setSourceFiles((current) => mergeSourceFiles([createdFile, ...current]));
+      resetSourceDialog();
       setIsDialogOpen(false);
       toast({ title: "Амжилттай", description: "Эх сурвалж файл нэмэгдлээ." });
     } catch (error) {
@@ -86,11 +127,11 @@ export function QuestionBankSourcePanel({ files, setSourceFiles }: Props) {
             </h2>
           </div>
           <Button
-            className="rounded-2xl bg-[#f3e7f7] text-[#7a3f75] shadow-none hover:bg-[#eddcf3]"
-            onClick={() => setIsDialogOpen(true)}
+            className="rounded-2xl bg-[#eaf2ff] text-[#2458d3] shadow-none hover:bg-[#dce8ff]"
+            onClick={handleDialogOpen}
           >
             <Upload className="mr-2 h-4 w-4" />
-            New source file
+            Шинэ эх сурвалж нэмэх
           </Button>
         </div>
 
@@ -117,7 +158,7 @@ export function QuestionBankSourcePanel({ files, setSourceFiles }: Props) {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium text-[#344264]">
-                      {file.originalName}
+                      {getReadableUploadName(file.originalName)}
                     </p>
                     <p className="mt-1 text-sm text-[#6f7898]">
                       {formatFileSize(file.size)} •{" "}
@@ -141,9 +182,10 @@ export function QuestionBankSourcePanel({ files, setSourceFiles }: Props) {
         isOpen={isDialogOpen}
         isUploading={isUploading}
         newSourceName={newSourceName}
+        onDemo={handleDemoFill}
         onFileSelect={handleSourceFileSelect}
         onNameChange={setNewSourceName}
-        onOpenChange={setIsDialogOpen}
+        onOpenChange={handleDialogOpenChange}
         onUpload={() => void handleSourceUpload()}
         selectedSourceFile={selectedSourceFile}
       />

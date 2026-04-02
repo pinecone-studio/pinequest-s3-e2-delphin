@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { filterQuestionBank } from "@/components/teacher/question-bank-filter";
 import { toast } from "@/hooks/use-toast";
 import { getQuestionBank, type QuestionBankCategory } from "@/lib/question-bank-api";
+import { mergeSourceFiles } from "@/lib/source-files";
 import { listUploads, type UploadRecord } from "@/lib/uploads-api";
 
 export function useQuestionBankData({
@@ -29,7 +30,7 @@ export function useQuestionBankData({
         ]);
         if (!isMounted) return;
         setQuestionBank(questionBankData);
-        setSourceFiles(sourceFileData);
+        setSourceFiles(mergeSourceFiles(sourceFileData));
       } catch (error) {
         if (!isMounted) return;
         toast({

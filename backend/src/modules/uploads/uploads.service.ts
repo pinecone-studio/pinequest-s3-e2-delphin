@@ -154,6 +154,20 @@ export class UploadsService {
     return fileName.replace(/[^a-zA-Z0-9._-]/g, '-');
   }
 
+  private normalizeOriginalName(fileName: string): string {
+    const trimmed = fileName.trim();
+    if (!trimmed) {
+      return 'upload.pdf';
+    }
+
+    try {
+      const decoded = Buffer.from(trimmed, 'latin1').toString('utf8');
+      return decoded.includes('�') ? trimmed : decoded;
+    } catch {
+      return trimmed;
+    }
+  }
+
   private buildObjectKey(originalName: string, folder?: string): string {
     const safeName = this.sanitizeFileName(originalName);
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -421,7 +435,13 @@ export class UploadsService {
 
         const bucket = this.getBucketName();
         const normalizedFolder = this.normalizeFolder(folder);
-        const key = this.buildObjectKey(file.originalname, normalizedFolder);
+        const normalizedOriginalName = this.normalizeOriginalName(
+          file.originalname,
+        );
+        const key = this.buildObjectKey(
+          normalizedOriginalName,
+          normalizedFolder,
+        );
 
         await this.sendStorageCommand(
           new PutObjectCommand({
@@ -438,7 +458,7 @@ export class UploadsService {
           key,
           bucket,
           folder: normalizedFolder,
-          originalName: file.originalname,
+          originalName: normalizedOriginalName,
           contentType: file.mimetype || 'application/octet-stream',
           size: file.size,
           uploadedAt: new Date().toISOString(),

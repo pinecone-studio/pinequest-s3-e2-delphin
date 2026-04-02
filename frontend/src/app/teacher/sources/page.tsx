@@ -10,6 +10,7 @@ import {
 import { SourcesFileListCard } from "@/components/teacher/sources-file-list-card";
 import { SourcesUploadCard } from "@/components/teacher/sources-upload-card";
 import { toast } from "@/hooks/use-toast";
+import { mergeSourceFiles } from "@/lib/source-files";
 import {
   deleteUpload,
   listUploads,
@@ -40,7 +41,7 @@ export default function SourcesPage() {
     const loadFiles = async () => {
       try {
         const uploadedFiles = await listUploads(SOURCES_FOLDER);
-        if (isMounted) setFiles(uploadedFiles);
+        if (isMounted) setFiles(mergeSourceFiles(uploadedFiles));
       } catch (error) {
         if (!isMounted) return;
         toast({
@@ -86,7 +87,7 @@ export default function SourcesPage() {
         fileName: newFileName.trim(),
         folder: SOURCES_FOLDER,
       });
-      setFiles((current) => [createdFile, ...current]);
+      setFiles((current) => mergeSourceFiles([createdFile, ...current]));
       setSelectedFile(null);
       setNewFileName("");
       toast({

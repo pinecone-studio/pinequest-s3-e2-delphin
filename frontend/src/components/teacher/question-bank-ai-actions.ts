@@ -8,6 +8,7 @@ import type {
   QuestionBankCategory,
   QuestionBankDifficulty,
 } from "@/lib/question-bank-api";
+import { getReadableUploadName } from "@/lib/source-files";
 import type { UploadRecord } from "@/lib/uploads-api";
 
 export async function generateQuestionBankAIQuestions({
@@ -67,7 +68,11 @@ export async function generateQuestionBankAIQuestions({
       method: "POST",
       body: {
         sourceFiles: [
-          ...selectedUploads.map((file) => ({ name: file.originalName, startPage: 1, endPage: 10 })),
+          ...selectedUploads.map((file) => ({
+            name: getReadableUploadName(file.originalName),
+            startPage: 1,
+            endPage: 10,
+          })),
           ...payload.sourceFilesWithPages.map((item) => ({
             name: item.file.name,
             startPage: item.startPage,

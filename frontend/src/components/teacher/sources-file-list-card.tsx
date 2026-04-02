@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getReadableUploadName } from "@/lib/source-files";
 import type { UploadRecord } from "@/lib/uploads-api";
 import { FileText, Loader2, X } from "lucide-react";
 
@@ -53,21 +54,29 @@ export function SourcesFileListCard({
                 <div className="flex items-center gap-3">
                   <FileText className="h-8 w-8 text-muted-foreground" />
                   <div>
-                    <p className="font-medium">{file.originalName}</p>
+                    <p className="font-medium">
+                      {getReadableUploadName(file.originalName)}
+                    </p>
                     <p className="text-sm text-muted-foreground">
                       {formatFileSize(file.size)} • Хуулсан:{" "}
                       {new Date(file.uploadedAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onDelete(file.id)}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+                {file.bucket === "mock" ? (
+                  <span className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
+                    Demo source
+                  </span>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onDelete(file.id)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
             ))}
           </div>

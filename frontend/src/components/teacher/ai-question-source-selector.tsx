@@ -8,6 +8,7 @@ import { AIQuestionUploadDropzone } from "@/components/teacher/ai-question-uploa
 import type { SourceFileWithPages } from "@/components/teacher/ai-question-generator-dialog-types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { getReadableUploadName } from "@/lib/source-files";
 import type { UploadRecord } from "@/lib/uploads-api";
 
 type AIQuestionSourceSelectorProps = {
@@ -72,7 +73,7 @@ export function AIQuestionSourceSelector({
                 />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">
-                    {source.originalName}
+                    {getReadableUploadName(source.originalName)}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {new Date(source.uploadedAt).toLocaleDateString()}

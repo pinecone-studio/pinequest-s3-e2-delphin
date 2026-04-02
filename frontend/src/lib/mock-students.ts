@@ -1,5 +1,14 @@
 import type { Class, Student } from "@/lib/mock-data-types"
 
+export const classHomeroomTeachers: Record<
+  string,
+  { name: string; subject: string }
+> = {
+  "10A": { name: "Э. Наранцацралт", subject: "Математикийн багш" },
+  "10B": { name: "Б. Тэмүүлэн", subject: "Физикийн багш" },
+  "10C": { name: "С. Оюунгэрэл", subject: "Монгол хэлний багш" },
+}
+
 export const students: Student[] = [
   { id: "s1", name: "Бат-Эрдэнэ", email: "baterdene@school.com", password: "baterdene123", classId: "10B" },
   { id: "s2", name: "Сарангэрэл", email: "sarangerel@school.com", password: "sarangerel123", classId: "10B" },

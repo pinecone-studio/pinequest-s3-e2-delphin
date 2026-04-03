@@ -24,7 +24,7 @@ export default function TeacherDashboard() {
   return (
     <div className="space-y-7 pt-[25px]">
       <TeacherDashboardHero academicWeekLabel={now ? getAcademicWeekLabel(now) : "..." } classes={classes} currentGreeting={now ? getGreetingLabel(now) : "Сайн байна уу"} headerDate={now ? formatHeaderDate(now) : "Огноо ачаалж байна"} metrics={metrics} selectedClassId={selectedClassId} teacherName={teacherName || "Багш"} onClassChange={setSelectedClassId} />
-      <section className="grid gap-5 xl:grid-cols-[minmax(0,900px)_minmax(360px,440px)]">
+      <section className="grid gap-5 xl:items-stretch xl:grid-cols-[minmax(0,900px)_minmax(360px,440px)]">
         <TeacherDashboardScheduleSection calendarTitle={`${activeWeekDate.getMonth() + 1}-р сар ${activeWeekDate.getFullYear()} он`} onNextWeek={() => setWeekOffset((current) => current + 1)} onPreviousWeek={() => setWeekOffset((current) => current - 1)} selectedClassId={selectedClassId} todayDate={now ? formatIsoDate(now) : ""} weekDates={getTeacherWeekDates(activeWeekDate)} />
         <TeacherDashboardSidePanels selectedClassId={selectedClassId} />
       </section>

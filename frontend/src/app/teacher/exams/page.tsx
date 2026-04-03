@@ -85,16 +85,6 @@ export default function ExamsPage() {
   }, [defaultTab]);
 
   React.useEffect(() => {
-    if (activeTab === "monitor" && liveExams.length > 0) {
-      return;
-    }
-    if (activeTab !== "monitor") {
-      return;
-    }
-    setActiveTab("prepare");
-  }, [activeTab, liveExams.length]);
-
-  React.useEffect(() => {
     if (liveExams.length === 0) {
       setSelectedMonitorExamId(null);
       return;

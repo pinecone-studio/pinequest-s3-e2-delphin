@@ -1,6 +1,7 @@
 import type { NewQuestion, QuestionType } from "@/components/teacher/exam-builder-types";
 import { pickQuestionIconKey } from "@/lib/question-icons";
-import { createQuestion, matchingSeparator } from "@/hooks/ai-question-builder";
+import { matchingSeparator } from "@/lib/matching-separator";
+import { createQuestion } from "@/hooks/ai-question-builder";
 
 type PreparedQuestionSeed = {
   type: QuestionType;

@@ -9,8 +9,7 @@ import {
   buildAiQuestion,
   createPreparedAiQuestions as createPreparedAiQuestionPresets,
 } from "@/hooks/ai-question-builder-presets";
-
-export const matchingSeparator = "|||";
+import { matchingSeparator } from "@/lib/matching-separator";
 
 const PREPARED_AI_QUESTION_TYPES = {
   multipleChoice: 1,

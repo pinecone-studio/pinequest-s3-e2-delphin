@@ -13,6 +13,7 @@ import {
 import { getAIQuestionCount } from "@/hooks/ai-question-builder";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Spinner } from "@/components/ui/spinner";
 
 const createSourceFileEntry = (file: File): SourceFileWithPages => ({ file, startPage: 1, endPage: 10 });
 
@@ -102,6 +103,7 @@ export function AIQuestionGeneratorDialog(props: AIQuestionGeneratorDialogProps)
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Болих</Button>
           <Button onClick={submit} disabled={isGenerating || !hasSource || totalQuestionCount === 0}>
+            {isGenerating ? <Spinner className="mr-2" /> : null}
             {isGenerating ? "Бэлдэж байна..." : `${totalQuestionCount * variants} асуулт бэлдүүлэх`}
           </Button>
         </DialogFooter>

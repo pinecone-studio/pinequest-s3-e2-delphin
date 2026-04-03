@@ -100,8 +100,8 @@ export function FinishedExamCard(props: {
           subtitle={<div className="flex flex-wrap items-center gap-3 text-[14px] font-medium leading-[17px]"><span className="text-[#566069] dark:text-[#E1E6EB]">{formatFinishedSubmittedAt(item.result.submittedAt)}</span><span className="ml-auto text-right text-[#007FFF] dark:text-[#007FFF]">{item.result.score}/{item.result.totalPoints} оноо</span></div>}
           action={<div className="hidden sm:block">{reportAction}</div>}
         />
-        <div className="flex items-center gap-4 pl-[72px]">
-          <div className="h-[12px] w-full max-w-[700px] overflow-hidden rounded-full bg-[#E6F2FF] shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:bg-[#2A4F97]">
+        <div className="flex items-center gap-3 pl-0 sm:pl-[72px]">
+          <div className="h-[12px] w-full overflow-hidden rounded-full bg-[#E6F2FF] shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:bg-[#2A4F97]">
             <div className="h-full rounded-full bg-[#007FFF] dark:bg-[#5CB7FF]" style={{ width: `${percentage}%` }} />
           </div>
           <span className="w-[44px] shrink-0 text-right text-[14px] font-medium leading-[17px] text-[#007FFF] dark:text-[#5CB7FF]">

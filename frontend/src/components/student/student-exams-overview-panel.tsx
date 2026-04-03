@@ -90,8 +90,8 @@ export function StudentExamsOverviewPanel(props: { exams: Exam[]; results: ExamR
 
   const noticeCards = useMemo(() => {
     const homeroomTeacher = classHomeroomTeachers[studentClass]
-    const dynamicNotice = latestAnnouncement ? { id: latestAnnouncement.id, source: latestAnnouncement.authorName || homeroomTeacher?.name || "EDULPHIN", sourceMeta: latestAnnouncement.authorSubject || homeroomTeacher?.subject || "", minutesAgo: getMinutesAgoFromIso(latestAnnouncement.createdAt), ...getNoticeParts(latestAnnouncement.message) } : null
-    return [dynamicNotice, ...fallbackNotices].filter(Boolean).map((notice) => ({ ...notice, likes: notice?.id ? announcementLikes[notice.id] ?? 0 : 0 })) as Array<{ id: string; lead: string; body: string; source: string; sourceMeta: string; minutesAgo: number; likes: number }>
+    const dynamicNotice = latestAnnouncement ? { authorImage: latestAnnouncement.authorImage || "", id: latestAnnouncement.id, source: latestAnnouncement.authorName || homeroomTeacher?.name || "EDULPHIN", sourceMeta: latestAnnouncement.authorSubject || homeroomTeacher?.subject || "", minutesAgo: getMinutesAgoFromIso(latestAnnouncement.createdAt), ...getNoticeParts(latestAnnouncement.message) } : null
+    return [dynamicNotice, ...fallbackNotices].filter(Boolean).map((notice) => ({ ...notice, likes: notice?.id ? announcementLikes[notice.id] ?? 0 : 0 })) as Array<{ authorImage?: string; id: string; lead: string; body: string; source: string; sourceMeta: string; minutesAgo: number; likes: number }>
   }, [announcementLikes, latestAnnouncement, studentClass])
 
   const toggleNoticeLike = (noticeId: string) => {

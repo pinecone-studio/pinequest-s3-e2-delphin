@@ -87,9 +87,6 @@ export type AlertItem = {
 export type DashboardViewModel = {
   alertSummaries: AlertSummaryItem[];
   alerts: AlertItem[];
-  chartData: ChartDatum[];
-  chartSeries: ChartSeries[];
-  highlightRange?: { end: number; start: number };
   rosterMetadata: MetadataItem[];
   students: StudentListItem[];
   summaryStats: SummaryStatItem[];

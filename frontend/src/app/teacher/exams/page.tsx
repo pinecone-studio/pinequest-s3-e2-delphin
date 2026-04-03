@@ -23,15 +23,12 @@ import {
 } from "@/lib/teacher-exams";
 
 type ExamTabValue = "prepare" | "launch" | "monitor" | "history";
-const launchMockTitles = [
-  "Явцийн шалгалт",
-  "Геометр сорил",
-  "Энгийн бутархайн сорил",
-] as const;
 
 export default function ExamsPage() {
   const searchParams = useSearchParams();
   const [backendExams, setBackendExams] = React.useState<TeacherExam[]>([]);
+  const [shouldUseLegacyFallback, setShouldUseLegacyFallback] =
+    React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const now = useCurrentTime();
 
@@ -39,11 +36,13 @@ export default function ExamsPage() {
     try {
       const exams = await getTeacherExams();
       setBackendExams(exams);
+      setShouldUseLegacyFallback(false);
     } catch (loadError) {
       console.warn(
         "Backend-ээс багшийн шалгалтуудыг сэргээж чадсангүй.",
         loadError,
       );
+      setShouldUseLegacyFallback(true);
     } finally {
       setIsLoading(false);
     }
@@ -54,31 +53,12 @@ export default function ExamsPage() {
   }, [loadExams]);
 
   const exams = React.useMemo(() => {
-    const merged = [...getLegacyTeacherExams(), ...backendExams];
-    return merged.filter(
-      (exam, index, collection) =>
-        collection.findIndex((entry) => entry.id === exam.id) === index,
-    );
-  }, [backendExams]);
+    return shouldUseLegacyFallback ? getLegacyTeacherExams() : backendExams;
+  }, [backendExams, shouldUseLegacyFallback]);
 
   const liveExams = exams.filter((exam) => isExamLiveNow(exam));
   const launchQueueExams = React.useMemo(() => {
-    const unscheduledDrafts = exams.filter(
-      (exam) => exam.status === "draft" && exam.scheduledClasses.length === 0,
-    );
-    const fallbackDrafts = getLegacyTeacherExams().map((exam) => ({
-      ...exam,
-      scheduledClasses: [],
-      status: "draft" as const,
-    }));
-    const source = unscheduledDrafts.length > 0 ? unscheduledDrafts : fallbackDrafts;
-
-    return source.slice(0, launchMockTitles.length).map((exam, index) => ({
-      ...exam,
-      scheduledClasses: [],
-      status: "draft" as const,
-      title: launchMockTitles[index] ?? exam.title,
-    }));
+    return exams.filter((exam) => exam.status !== "completed");
   }, [exams]);
   const completedExams = exams.filter((exam) => exam.status === "completed");
 

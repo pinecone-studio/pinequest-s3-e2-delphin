@@ -16,10 +16,10 @@ export function createMockQuestions(dto: {
     id: crypto.randomUUID(),
     type,
     question: `AI-generated ${type} question #${index} (category: ${dto.category || 'General'})`,
-    options: type === 'multiple-choice' ? ['Ð', 'Ð‘', 'Ð’', 'Ð“'] : undefined,
+    options: type === 'multiple-choice' ? ['А', 'Б', 'В', 'Г'] : undefined,
     correctAnswer:
       type === 'multiple-choice'
-        ? 'Ð'
+        ? 'А'
         : type === 'true-false'
           ? 'true'
           : undefined,
@@ -44,7 +44,7 @@ export function getMockLiveAttempts() {
     {
       id: 'attempt-1',
       studentId: 'student-1',
-      studentName: 'Ð‘Ð°Ñ‚-Ð­Ñ€Ð´ÑÐ½Ñ',
+      studentName: 'Бат-Эрдэнэ',
       classId: '10A',
       status: 'in_progress',
       currentQuestion: 3,
@@ -55,7 +55,7 @@ export function getMockLiveAttempts() {
     {
       id: 'attempt-2',
       studentId: 'student-2',
-      studentName: 'Ð¡Ð°Ñ€Ð°Ð°',
+      studentName: 'Сараа',
       classId: '10A',
       status: 'tab_switched',
       currentQuestion: 5,
@@ -71,7 +71,7 @@ export function getMockLiveAttempts() {
     {
       id: 'attempt-3',
       studentId: 'student-3',
-      studentName: 'Ð”Ð¾Ñ€Ð¶',
+      studentName: 'Дорж',
       classId: '10B',
       status: 'submitted',
       currentQuestion: 10,

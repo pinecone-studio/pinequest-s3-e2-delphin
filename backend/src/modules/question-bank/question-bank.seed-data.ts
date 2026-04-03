@@ -167,5 +167,4 @@ export const DEFAULT_QUESTION_BANK_SEED: CategorySeed[] = [
 
 export const LEGACY_DEFAULT_CATEGORY_NAMES = [
   'Математик',
-  'ÐœÐ°Ñ‚ÐµÐ¼Ð°Ñ‚Ð¸Ðº',
 ];

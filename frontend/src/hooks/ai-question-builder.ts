@@ -9,6 +9,14 @@ import {
 
 export const matchingSeparator = "|||";
 
+const PREPARED_AI_QUESTION_TYPES = {
+  multipleChoice: 1,
+  trueFalse: 1,
+  matching: 1,
+  ordering: 0,
+  shortAnswer: 1,
+} satisfies AIQuestionTypeCounts;
+
 function createDefaultOptions(type: QuestionType) {
   if (type === "multiple-choice" || type === "ordering") return ["", "", "", ""];
   if (type === "matching") return Array.from({ length: 4 }, () => `${matchingSeparator}`);
@@ -71,6 +79,71 @@ export function alignAIQuestionCounts(
     ...counts,
     multipleChoice: counts.multipleChoice + (safeTarget - currentTotal),
   };
+}
+
+export function getPreparedAIQuestionTypeCounts(): AIQuestionTypeCounts {
+  return { ...PREPARED_AI_QUESTION_TYPES };
+}
+
+export function createPreparedAiQuestions() {
+  const seed = Date.now();
+  const questions: Array<{
+    type: QuestionType;
+    question: string;
+    options?: string[];
+    correctAnswer?: string;
+    points: number;
+  }> = [
+    {
+      type: "multiple-choice",
+      question: "−5 + 8 = ?",
+      options: ["3", "-3", "13", "-13"],
+      correctAnswer: "3",
+      points: 1,
+    },
+    {
+      type: "true-false",
+      question: "Хоёр сөрөг бүхэл тоог үржүүлэхэд эерэг тоо гарна.",
+      correctAnswer: "True",
+      points: 1,
+    },
+    {
+      type: "matching",
+      question: "Match the expressions with their results",
+      options: [
+        `6 ÷ (-2)${matchingSeparator}-3`,
+        `-3 × -2${matchingSeparator}6`,
+        `-7 + 2${matchingSeparator}-5`,
+      ],
+      correctAnswer: "1-A,2-C,3-B",
+      points: 1,
+    },
+    {
+      type: "short-answer",
+      question:
+        "Бүхэл тоо (эерэг ба сөрөг тоо) ашигласан илэрхийлэл бодит жишээг бич.",
+      correctAnswer:
+        "Жишээ: Агаарын температур 3°C байснаа 8°C-аар өсөхөд 11°C болно.",
+      points: 1,
+    },
+  ];
+
+  return questions.map((entry, index) => {
+    const question = createQuestion(entry.type, `ai-prepared-${seed}-${index}`);
+    const iconKey = pickQuestionIconKey({
+      question: entry.question,
+      type: entry.type,
+    });
+
+    return {
+      ...question,
+      question: entry.question,
+      options: entry.options,
+      correctAnswer: entry.correctAnswer,
+      points: entry.points,
+      iconKey,
+    };
+  });
 }
 
 export function createAiQuestions(counts: AIQuestionTypeCounts) {

@@ -63,19 +63,19 @@ export function QuestionBankSourceUploadDialog({
   };
 
   const handleDemo = async () => {
-    onNameChange("Математик 7-р анги");
+    onNameChange("Математик - II энгийн бутархай");
     setSubject("Математик");
     setGrade("7-р анги");
-    setUnit("1-р бүлэг - Бүхэл тоо");
-    setTopic("1.1 сэдэв - Нэмэх, хасах үйлдэл");
+    setUnit("2-р бүлэг - Бутархай");
+    setTopic("2.1 сэдэв - Бутархай нэмэх, хасах");
     await onDemo();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="h-[400px] w-[764px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-[34px] border border-[#dbe6ff] bg-white p-0 shadow-[0_28px_72px_rgba(99,131,196,0.22)] sm:max-w-[764px]">
-        <div className="grid h-full gap-4 overflow-hidden p-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <div className="min-h-0 space-y-1 overflow-y-auto">
+      <DialogContent className="w-[764px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-[34px] border border-[#dbe6ff] bg-white p-0 shadow-[0_28px_72px_rgba(99,131,196,0.22)] sm:max-w-[764px]">
+        <div className="grid gap-4 overflow-hidden p-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="space-y-1">
             <div className="space-y-1">
               <DialogTitle className="text-[24px] font-semibold tracking-[-0.03em] text-[#4b4f72]">
                 Эх сурвалж бүртгэх
@@ -99,7 +99,7 @@ export function QuestionBankSourceUploadDialog({
             />
           </div>
 
-          <div className="relative flex min-h-0 pt-8">
+          <div className="flex flex-col pt-8">
             <QuestionBankSourceUploadSummary
               grade={grade}
               isUploading={isUploading}
@@ -113,7 +113,7 @@ export function QuestionBankSourceUploadDialog({
             <button
               type="button"
               onClick={() => void handleDemo()}
-              className="absolute bottom-0 right-1 text-[12px] text-[#8b92ac] transition hover:text-[#4f5f87]"
+              className="mt-3 self-end pr-1 text-[12px] text-[#8b92ac] transition hover:text-[#4f5f87]"
             >
               Demo
             </button>

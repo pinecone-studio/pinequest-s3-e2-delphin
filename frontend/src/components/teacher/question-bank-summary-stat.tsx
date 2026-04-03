@@ -6,7 +6,7 @@ export function getQuestionTypeLabel(type: QuestionType) {
   if (type === "multiple-choice") return "Сонгох хариулттай";
   if (type === "true-false") return "Үнэн / худал";
   if (type === "matching") return "Харгалзуулах";
-  if (type === "ordering") return "Дараалуулах";
+  if (type === "fill") return "Нөхөх";
   return "Богино хариулт";
 }
 

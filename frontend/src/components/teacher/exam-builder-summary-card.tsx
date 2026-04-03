@@ -15,7 +15,7 @@ import type { ScheduleEntry } from "@/components/teacher/exam-builder-types";
 import { type Exam } from "@/lib/mock-data";
 
 type QuestionCounts = Record<
-  "multiple-choice" | "true-false" | "matching" | "ordering" | "short-answer",
+  "multiple-choice" | "true-false" | "matching" | "short-answer",
   number
 >;
 
@@ -87,7 +87,6 @@ export function ExamBuilderSummaryCard({
           />
           <SummaryStat label="Үнэн / Худал" value={questionCounts["true-false"]} />
           <SummaryStat label="Харгалзуулах" value={questionCounts["matching"]} />
-          <SummaryStat label="Дараалуулах" value={questionCounts["ordering"]} />
           <SummaryStat
             label="Богино хариулт"
             value={questionCounts["short-answer"]}

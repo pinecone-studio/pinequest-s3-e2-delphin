@@ -34,7 +34,6 @@ const questionTypeOptions: Array<{
   { key: "multipleChoice", label: "Сонгох хариулттай" },
   { key: "trueFalse", label: "Үнэн / худал" },
   { key: "matching", label: "Харгалзуулах" },
-  { key: "ordering", label: "Дараалуулах" },
   { key: "shortAnswer", label: "Богино хариулт" },
 ];
 

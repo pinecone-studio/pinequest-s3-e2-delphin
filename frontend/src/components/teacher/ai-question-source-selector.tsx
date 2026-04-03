@@ -82,12 +82,29 @@ export function AIQuestionSourceSelector({
     }
   }, [availableSourceFiles, isBuilderDialog, onToggleTest, selectedMockTests]);
 
+  useEffect(() => {
+    if (!selectedSource) return;
+    const meta = getSourceDisplayMeta(selectedSource);
+    if (!selectedGrade) {
+      setSelectedGrade(meta.leftSecondary);
+    }
+    if (!selectedUnit) {
+      setSelectedUnit(meta.rightPrimary);
+    }
+    if (!selectedTopic) {
+      setSelectedTopic(meta.rightSecondary);
+    }
+  }, [selectedGrade, selectedSource, selectedTopic, selectedUnit]);
+
   const handleSourceChange = (nextId: string) => {
     selectedMockTests.forEach((id) => {
       if (id !== nextId) onToggleTest(id, false);
     });
-    setSelectedUnit("");
-    setSelectedTopic("");
+    const nextSource = availableSourceFiles.find((file) => file.id === nextId);
+    const nextMeta = nextSource ? getSourceDisplayMeta(nextSource) : null;
+    setSelectedGrade(nextMeta?.leftSecondary ?? "");
+    setSelectedUnit(nextMeta?.rightPrimary ?? "");
+    setSelectedTopic(nextMeta?.rightSecondary ?? "");
     onToggleTest(nextId, true);
   };
 

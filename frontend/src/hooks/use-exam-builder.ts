@@ -7,7 +7,11 @@ import {
   defaultAIQuestionTypeCounts,
   type AIQuestionTypeCounts,
 } from '@/components/teacher/ai-question-generator-dialog-types'
-import { createAiQuestions, createQuestion } from '@/hooks/ai-question-builder'
+import {
+  createPreparedAiQuestions,
+  createQuestion,
+  getPreparedAIQuestionTypeCounts,
+} from '@/hooks/ai-question-builder'
 import { useAiSourceFiles } from '@/hooks/use-ai-source-files'
 
 export function useExamBuilder() {
@@ -45,8 +49,9 @@ export function useExamBuilder() {
   }
   const generateAIQuestions = async () => {
     setIsGenerating(true)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setQuestions((current) => [...current, ...createAiQuestions(aiQuestionTypeCounts)])
+    await new Promise((resolve) => setTimeout(resolve, 3200))
+    setAiQuestionTypeCounts(getPreparedAIQuestionTypeCounts())
+    setQuestions((current) => [...current, ...createPreparedAiQuestions()])
     setIsGenerating(false)
     setShowAIDialog(false)
   }

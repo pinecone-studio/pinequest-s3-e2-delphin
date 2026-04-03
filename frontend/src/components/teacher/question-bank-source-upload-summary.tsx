@@ -46,8 +46,8 @@ export function QuestionBankSourceUploadSummary({
         <SummaryRow label="Нэр:" value={newSourceName.trim() || "Оруулаагүй"} />
         <SummaryRow label="Хичээл:" value={subject || "Оруулаагүй"} />
         <SummaryRow label="Анги:" value={grade || "Оруулаагүй"} />
-        <SummaryRow label="I бүлэг:" value={unit || "Оруулаагүй"} />
-        <SummaryRow label="1.1 сэдэв:" value={topic || "Оруулаагүй"} />
+        <SummaryRow label="Бүлэг:" value={unit || "Оруулаагүй"} />
+        <SummaryRow label="Сэдэв:" value={topic || "Оруулаагүй"} />
       </div>
 
       <div className="mt-auto border-t border-[#dbe6ff] pt-2">

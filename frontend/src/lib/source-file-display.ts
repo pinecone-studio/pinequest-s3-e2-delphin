@@ -9,29 +9,17 @@ type SourceDisplayMeta = {
 };
 
 const SOURCE_DISPLAY_MAP: Record<string, SourceDisplayMeta> = {
-  "Математик 7-р анги": {
-    leftPrimary: "Математик",
-    leftSecondary: "7-р анги",
-    rightPrimary: "I-Бүхэл тоо",
-    rightSecondary: "1.1 Нэмэх, хасах үйлдэл",
-  },
-  "Математик 6-р анги - Тоо ба бодлого": {
-    leftPrimary: "Математик",
-    leftSecondary: "7-р анги",
-    rightPrimary: "I-Бүхэл тоо",
-    rightSecondary: "1.1 Үржүүлэх, хуваах үйлдэл",
-  },
-  "Алгебр - Сурагчийн гарын авлага": {
+  "Математик - II энгийн бутархай": {
     leftPrimary: "Математик",
     leftSecondary: "7-р анги",
     rightPrimary: "II-Энгийн бутархай",
-    rightSecondary: "2.1 Тоог тоймлох",
+    rightSecondary: "2.1 Бутархай нэмэх, хасах",
   },
-  "ЭЕШ математик - Бодлогын эмхэтгэл": {
-    leftPrimary: "Математик",
+  "Геометр - Дасгал ажлын дэвтэр": {
+    leftPrimary: "Геометр",
     leftSecondary: "7-р анги",
-    rightPrimary: "II-Энгийн бутархай",
-    rightSecondary: "2.1 Тоо жиших",
+    rightPrimary: "Дасгал ажлын дэвтэр",
+    rightSecondary: "Шинэ эх сурвалж",
   },
 };
 
@@ -41,8 +29,8 @@ export function getSourceDisplayMeta(file: UploadRecord): SourceDisplayMeta {
     SOURCE_DISPLAY_MAP[readableName] ?? {
       leftPrimary: readableName.split(" - ")[0] || "Математик",
       leftSecondary: "7-р анги",
-      rightPrimary: readableName.split(" - ")[1] || "I-Бүхэл тоо",
-      rightSecondary: "1.1 Нэмэх, хасах үйлдэл",
+      rightPrimary: readableName.split(" - ")[1] || "Шинэ эх сурвалж",
+      rightSecondary: "Сэдэв тодорхойгүй",
     }
   );
 }

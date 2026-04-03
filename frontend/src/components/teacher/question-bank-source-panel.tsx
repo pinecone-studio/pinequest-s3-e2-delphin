@@ -62,7 +62,7 @@ export function QuestionBankSourcePanel({ className, files, setSourceFiles }: Pr
       const file = new File([blob], "matematik-7r-angi-demo.pdf", {
         type: "application/pdf",
       });
-      setNewSourceName("Математик 7-р анги");
+      setNewSourceName("Математик - II энгийн бутархай");
       setSelectedSourceFile(file);
     } catch (error) {
       toast({

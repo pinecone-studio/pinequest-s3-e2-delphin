@@ -1,9 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import type { NewQuestion } from "@/components/teacher/exam-builder-types";
-import type { GeneratedQuestion } from "@/components/teacher/question-bank-page-types";
-import { toBuilderQuestion } from "@/components/teacher/question-bank-page-types";
+import { createPreparedAiQuestions } from "@/hooks/ai-question-builder";
 import { toast } from "@/hooks/use-toast";
-import { requestBackendJson } from "@/lib/backend-fetch";
 import type {
   QuestionBankCategory,
   QuestionBankDifficulty,
@@ -66,35 +64,12 @@ export async function generateQuestionBankAIQuestions({
 
   setIsGenerating(true);
   try {
-    const generatedQuestions = await requestBackendJson<GeneratedQuestion[]>("exams/ai/generate", {
-      method: "POST",
-      body: {
-        sourceFiles: [
-          ...selectedUploads.map((file) => ({
-            name: getReadableUploadName(file.originalName),
-            startPage: 1,
-            endPage: 10,
-          })),
-          ...payload.sourceFilesWithPages.map((item) => ({
-            name: item.file.name,
-            startPage: item.startPage,
-            endPage: item.endPage,
-          })),
-        ],
-        mcCount: payload.questionTypeCounts.multipleChoice,
-        tfCount: payload.questionTypeCounts.trueFalse,
-        matchingCount: payload.questionTypeCounts.matching,
-        orderingCount: payload.questionTypeCounts.ordering,
-        shortAnswerCount: payload.questionTypeCounts.shortAnswer,
-        variants: payload.variants,
-        difficulty: payload.difficulty,
-        category:
-          questionBank.find((item) => item.id === builderCategoryId)?.name ||
-          "Ерөнхий",
-      },
-      fallbackMessage: "AI асуулт үүсгэхэд алдаа гарлаа.",
-    });
-    setBuilderQuestions((current) => [...current, ...generatedQuestions.map(toBuilderQuestion)]);
+    void builderCategoryId;
+    void questionBank;
+    void selectedUploads.map((file) => getReadableUploadName(file.originalName));
+    await new Promise((resolve) => setTimeout(resolve, 3200));
+    const generatedQuestions = createPreparedAiQuestions();
+    setBuilderQuestions((current) => [...current, ...generatedQuestions]);
     setBuilderDifficulty(payload.difficulty);
     onComplete();
     toast({

@@ -20,40 +20,6 @@ export const DEFAULT_QUESTION_BANK_SEED: CategorySeed[] = [
     name: '1-р бүлэг - Бүхэл тоо',
     topics: [
       {
-        name: '1.1 сэдэв - Нэмэх, хасах үйлдэл',
-        questions: [
-          {
-            type: 'multiple-choice',
-            question: '(-8) + 13 илэрхийллийн утгыг ол.',
-            options: ['5', '-5', '21', '-21'],
-            correctAnswer: '5',
-            points: 8,
-            difficulty: 'easy',
-          },
-          {
-            type: 'true-false',
-            question: '7 - 12 = -5 тэнцэтгэл зөв.',
-            correctAnswer: 'true',
-            points: 6,
-            difficulty: 'easy',
-          },
-          {
-            type: 'short-answer',
-            question: '15 + (-9) - 4 илэрхийллийг бод.',
-            correctAnswer: '2',
-            points: 10,
-            difficulty: 'standard',
-          },
-          {
-            type: 'short-answer',
-            question: '(-18) - (-7) ялгаврыг олж, бодолтоо бич.',
-            correctAnswer: '-11',
-            points: 12,
-            difficulty: 'hard',
-          },
-        ],
-      },
-      {
         name: '1.2 сэдэв - Үржих, хуваах үйлдэл',
         questions: [
           {

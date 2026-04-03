@@ -38,13 +38,6 @@ export function ExamBuilderAddQuestionCard({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => onAddQuestion("ordering")}
-        >
-          Дараалуулах
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
           onClick={() => onAddQuestion("short-answer")}
         >
           Богино хариулт

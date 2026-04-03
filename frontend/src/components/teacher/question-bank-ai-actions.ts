@@ -32,6 +32,7 @@ export async function generateQuestionBankAIQuestions({
       ordering: number;
       shortAnswer: number;
     };
+    totalQuestionTarget?: number;
     variants: number;
     difficulty: "easy" | "standard" | "hard";
     selectedMockTests: string[];
@@ -42,12 +43,13 @@ export async function generateQuestionBankAIQuestions({
   setIsGenerating: (value: boolean) => void;
   sourceFiles: UploadRecord[];
 }) {
-  const totalQuestionCount =
+  const totalQuestionCount = payload.totalQuestionTarget ?? (
     payload.questionTypeCounts.multipleChoice +
     payload.questionTypeCounts.trueFalse +
     payload.questionTypeCounts.matching +
     payload.questionTypeCounts.ordering +
-    payload.questionTypeCounts.shortAnswer;
+    payload.questionTypeCounts.shortAnswer
+  );
 
   if (totalQuestionCount === 0) {
     toast({ title: "Алдаа", description: "Асуултын тоо оруулна уу.", variant: "destructive" });

@@ -25,7 +25,7 @@ export function ExamBuilderQuestionList({
   questions,
 }: ExamBuilderQuestionListProps) {
   return (
-    <>
+    <div className="space-y-6">
       {questions.map((question, index) => (
         <ExamBuilderQuestionCard
           key={question.id}
@@ -39,6 +39,6 @@ export function ExamBuilderQuestionList({
       {allowAddQuestion ? (
         <ExamBuilderAddQuestionCard onAddQuestion={onAddQuestion} />
       ) : null}
-    </>
+    </div>
   );
 }

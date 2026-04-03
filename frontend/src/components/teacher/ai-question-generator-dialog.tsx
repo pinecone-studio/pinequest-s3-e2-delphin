@@ -22,6 +22,7 @@ export function AIQuestionGeneratorDialog(props: AIQuestionGeneratorDialogProps)
   const [sourceFilesWithPages, setSourceFilesWithPages] = useState<SourceFileWithPages[]>([]);
   const [localQuestionTypeCounts, setLocalQuestionTypeCounts] = useState<AIQuestionTypeCounts>(defaultAIQuestionTypeCounts);
   const [variants, setVariants] = useState(1);
+  const [totalPoints, setTotalPoints] = useState(0);
   const [difficulty, setDifficulty] = useState<"easy" | "standard" | "hard">("standard");
   const [localIsDragging, setLocalIsDragging] = useState(false);
   const questionTypeCounts = isBuilderDialog ? props.aiQuestionTypeCounts : localQuestionTypeCounts;
@@ -90,9 +91,11 @@ export function AIQuestionGeneratorDialog(props: AIQuestionGeneratorDialogProps)
             difficulty={difficulty}
             onDifficultyChange={setDifficulty}
             onQuestionTypeCountChange={updateQuestionTypeCount}
+            onTotalPointsChange={setTotalPoints}
             onVariantsChange={setVariants}
             questionTypeCounts={questionTypeCounts}
             totalQuestionCount={totalQuestionCount}
+            totalPoints={totalPoints}
             variants={variants}
           />
         </div>

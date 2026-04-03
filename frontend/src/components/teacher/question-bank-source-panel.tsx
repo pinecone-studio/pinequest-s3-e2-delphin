@@ -96,7 +96,10 @@ export function QuestionBankSourcePanel({ className, files, setSourceFiles }: Pr
       setSourceFiles((current) => mergeSourceFiles([createdFile, ...current]));
       resetSourceDialog();
       setIsDialogOpen(false);
-      toast({ title: "Амжилттай", description: "Эх сурвалж файл нэмэгдлээ." });
+      toast({
+        title: "Амжилттай",
+        description: "Эх сурвалжийг амжилттай бүртгэлээ.",
+      });
     } catch (error) {
       toast({
         title: "Алдаа",

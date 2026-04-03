@@ -20,6 +20,7 @@ export function useAiQuestionGeneratorCard(selectedMockTests: string[]) {
     defaultAIQuestionTypeCounts,
   );
   const [variants, setVariants] = useState(1);
+  const [totalPoints, setTotalPoints] = useState(0);
   const [difficulty, setDifficulty] = useState<"easy" | "standard" | "hard">("standard");
   const [isDragging, setIsDragging] = useState(false);
 
@@ -70,7 +71,30 @@ export function useAiQuestionGeneratorCard(selectedMockTests: string[]) {
       current.filter((item) => item.file.name !== fileName),
     );
 
+  const applyDemoPreset = () => {
+    const demoCounts = {
+      multipleChoice: 2,
+      trueFalse: 1,
+      matching: 0,
+      ordering: 0,
+      shortAnswer: 0,
+    };
+    setQuestionTypeCounts({
+      ...demoCounts,
+    });
+    setTotalPoints(
+      demoCounts.multipleChoice +
+        demoCounts.trueFalse +
+        demoCounts.matching +
+        demoCounts.ordering +
+        demoCounts.shortAnswer,
+    );
+    setVariants(1);
+    setDifficulty("standard");
+  };
+
   return {
+    applyDemoPreset,
     difficulty,
     handleDragLeave,
     handleDragOver,
@@ -81,9 +105,11 @@ export function useAiQuestionGeneratorCard(selectedMockTests: string[]) {
     questionTypeCounts,
     removeSourceFile,
     setDifficulty,
+    setTotalPoints,
     setVariants,
     sourceFilesWithPages,
     totalQuestionCount,
+    totalPoints,
     updatePageRange,
     updateQuestionTypeCount,
     variants,

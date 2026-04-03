@@ -2,13 +2,11 @@
 
 import { AIQuestionSettingsPanel } from "@/components/teacher/ai-question-settings-panel";
 import { AIQuestionSourceSelector } from "@/components/teacher/ai-question-source-selector";
-import {
-  type QuestionGeneratorPayload,
-} from "@/components/teacher/ai-question-generator-dialog-types";
+import { type QuestionGeneratorPayload } from "@/components/teacher/ai-question-generator-dialog-types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { alignAIQuestionCounts } from "@/hooks/ai-question-builder";
 import { useAiQuestionGeneratorCard } from "@/hooks/use-ai-question-generator-card";
-import { FileStack, Sparkles } from "lucide-react";
 import type { UploadRecord } from "@/lib/uploads-api";
 import { cn } from "@/lib/utils";
 
@@ -30,48 +28,44 @@ export function AIQuestionGeneratorCard({
   selectedMockTests,
 }: Props) {
   const card = useAiQuestionGeneratorCard(selectedMockTests);
+  const handleDemo = () => {
+    const firstSourceId = availableSourceFiles[0]?.id;
+    if (firstSourceId) {
+      selectedMockTests.forEach((id) => {
+        if (id !== firstSourceId) onToggleTest(id, false);
+      });
+      onToggleTest(firstSourceId, true);
+    }
+    card.applyDemoPreset();
+  };
+  const handleGenerate = () =>
+    void onGenerate({
+      difficulty: card.difficulty,
+      questionTypeCounts: alignAIQuestionCounts(
+        card.questionTypeCounts,
+        card.totalPoints,
+      ),
+      totalQuestionTarget: card.totalPoints,
+      selectedMockTests,
+      sourceFilesWithPages: card.sourceFilesWithPages,
+      variants: card.variants,
+    });
 
   return (
     <Card
       className={cn(
-        "border-[#d7e3ff] bg-[linear-gradient(180deg,#ffffff_0%,#f7fbff_100%)] shadow-[0_24px_80px_rgba(77,123,255,0.12)]",
+        "h-[806px] w-[440px] rounded-[32px] border border-[#DDE7FF] bg-white shadow-[0_20px_48px_rgba(168,196,235,0.16)]",
         className,
       )}
     >
-      <CardHeader className="space-y-4 rounded-t-[inherit] border-b border-[#dfe9ff] bg-[radial-gradient(circle_at_top_left,rgba(116,156,255,0.18),transparent_42%),linear-gradient(180deg,rgba(245,249,255,0.96)_0%,rgba(255,255,255,0.96)_100%)]">
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-3">
-            <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#edf4ff] text-[#4b83f5] shadow-inner">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle className="text-2xl text-[#20335f]">
-                AI асуулт үүсгэх
-              </CardTitle>
-              <p className="mt-2 max-w-sm text-sm leading-6 text-[#64748b]">
-                Мэдлэгийн сан дээр тулгуурлаад асуултуудыг шууд ноорог руу
-                үүсгэнэ. Үүссэн асуулт бүр баруун талд бүрэн засварлагдана.
-              </p>
-            </div>
-          </div>
-          <div className="hidden rounded-2xl border border-white/80 bg-white/80 px-4 py-3 text-right shadow-sm lg:block">
-            <div className="text-xs uppercase tracking-[0.18em] text-[#8aa0d2]">
-              AI draft
-            </div>
-            <div className="mt-1 text-2xl font-semibold text-[#20335f]">
-              {card.totalQuestionCount * card.variants}
-            </div>
-            <div className="text-xs text-[#7b8bb1]">үүсэх асуулт</div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 rounded-2xl border border-[#dbe7ff] bg-white/80 px-4 py-3 text-sm text-[#4a5f8f]">
-          <FileStack className="h-4 w-4 text-[#5b91fc]" />
-          Эх сурвалж болон тохиргоогоо сонгоод AI-аар шууд асуулт бэлдүүлээрэй.
-        </div>
+      <CardHeader className="space-y-[5px] p-0 px-5 pb-[5px] pt-0">
+        <CardTitle className="text-[24px] font-semibold tracking-[-0.02em] pt-2 text-[#4b4f72]">
+          AI асуулт үүсгэх
+        </CardTitle>
+        <p className="text-[16px] text-[#4b4f72]">Эх сурвалж сонгох</p>
       </CardHeader>
 
-      <CardContent className="space-y-6 p-6">
+      <CardContent className="flex h-[calc(100%-89px)] flex-col gap-[5px] p-0 px-5 pb-5 pt-0">
         <AIQuestionSourceSelector
           availableSourceFiles={availableSourceFiles}
           isBuilderDialog={false}
@@ -94,30 +88,33 @@ export function AIQuestionGeneratorCard({
           difficulty={card.difficulty}
           onDifficultyChange={card.setDifficulty}
           onQuestionTypeCountChange={card.updateQuestionTypeCount}
+          onTotalPointsChange={card.setTotalPoints}
           onVariantsChange={card.setVariants}
           questionTypeCounts={card.questionTypeCounts}
           totalQuestionCount={card.totalQuestionCount}
+          totalPoints={card.totalPoints}
           variants={card.variants}
         />
 
-        <Button
-          className="h-12 w-full rounded-2xl text-base"
-          disabled={isGenerating || !card.hasSource || card.totalQuestionCount === 0}
-          onClick={() =>
-            void onGenerate({
-              difficulty: card.difficulty,
-              questionTypeCounts: card.questionTypeCounts,
-              selectedMockTests,
-              sourceFilesWithPages: card.sourceFilesWithPages,
-              variants: card.variants,
-            })
-          }
-        >
-          <Sparkles className="mr-2 h-4 w-4" />
-          {isGenerating
-            ? "AI асуулт бэлдэж байна..."
-            : `${card.totalQuestionCount * card.variants} асуулт бэлдүүлэх`}
-        </Button>
+        <div className="mt-auto flex items-center justify-end gap-2">
+          <Button
+            className="h-[38px] rounded-[14px] border border-[#dce7ff] bg-white px-4 text-[12px] font-medium text-[#5f6b8a] shadow-none hover:bg-[#f6f9ff]"
+            onClick={handleDemo}
+            type="button"
+            variant="outline"
+          >
+            Demo
+          </Button>
+          <Button
+            className="h-[38px] w-[153px] rounded-[14px] bg-[#315df3] px-4 text-[12px] font-medium text-white shadow-[0_12px_24px_rgba(49,93,243,0.24)] hover:bg-[#254fe4]"
+            disabled={
+              isGenerating || !card.hasSource || card.totalQuestionCount === 0
+            }
+            onClick={handleGenerate}
+          >
+            {isGenerating ? "Бэлтгэж байна..." : "AI Асуулт бэлтгэх"}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

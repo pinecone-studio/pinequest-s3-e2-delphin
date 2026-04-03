@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { getQuestionTypeLabel, QuestionBankSummaryStat } from "@/components/teacher/question-bank-summary-stat";
+import { getQuestionTypeLabel } from "@/components/teacher/question-bank-summary-stat";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { NewQuestion, QuestionType } from "@/components/teacher/exam-builder-types";
@@ -44,45 +43,48 @@ export function QuestionBankCreateSummary({
   const totalPoints = builderQuestions.reduce((sum, question) => sum + question.points, 0);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Хураангуй</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-7">
-          <QuestionBankSummaryStat label="Нийт асуулт" value={builderQuestions.length} />
-          <QuestionBankSummaryStat label="Нийт оноо" value={totalPoints} />
-          <QuestionBankSummaryStat label={getQuestionTypeLabel("multiple-choice")} value={questionCounts["multiple-choice"]} />
-          <QuestionBankSummaryStat label={getQuestionTypeLabel("true-false")} value={questionCounts["true-false"]} />
-          <QuestionBankSummaryStat label={getQuestionTypeLabel("fill")} value={questionCounts.fill} />
-          <QuestionBankSummaryStat label={getQuestionTypeLabel("matching")} value={questionCounts.matching} />
-          <QuestionBankSummaryStat label={getQuestionTypeLabel("ordering")} value={questionCounts.ordering} />
-          <QuestionBankSummaryStat label={getQuestionTypeLabel("short-answer")} value={questionCounts["short-answer"]} />
-        </div>
+    <section className="space-y-6 border-t border-[#edf2ff] pt-6">
+      <div className="text-[24px] text-[#4b4f72]">Хураангуй</div>
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-7">
+        <SummaryTextStat label="Нийт асуулт" value={builderQuestions.length} />
+        <SummaryTextStat label="Нийт оноо" value={totalPoints} />
+        <SummaryTextStat label={getQuestionTypeLabel("multiple-choice")} value={questionCounts["multiple-choice"]} />
+        <SummaryTextStat label={getQuestionTypeLabel("true-false")} value={questionCounts["true-false"]} />
+        <SummaryTextStat label={getQuestionTypeLabel("fill")} value={questionCounts.fill} />
+        <SummaryTextStat label={getQuestionTypeLabel("matching")} value={questionCounts.matching} />
+        <SummaryTextStat label={getQuestionTypeLabel("ordering")} value={questionCounts.ordering} />
+        <SummaryTextStat label={getQuestionTypeLabel("short-answer")} value={questionCounts["short-answer"]} />
+      </div>
+      <div className="space-y-2">
+        <Label>Түвшин</Label>
+        <Select value={builderDifficulty} onValueChange={(value) => onBuilderDifficultyChange(value as QuestionBankDifficulty)}>
+          <SelectTrigger className="rounded-[14px] border-[#dce7ff] bg-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="easy">Хөнгөн</SelectItem>
+            <SelectItem value="standard">Дунд</SelectItem>
+            <SelectItem value="hard">Хэцүү</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="flex flex-wrap justify-end gap-2">
+        <Button variant="outline" asChild>
+          <Link href="/teacher/question-bank" onClick={onCancel}>Болих</Link>
+        </Button>
+        <Button onClick={onSave} disabled={isSaving || !builderTopicName.trim()}>
+          {isSaving ? "Хадгалж байна..." : "Асуултуудыг хадгалах"}
+        </Button>
+      </div>
+    </section>
+  );
+}
 
-        <div className="space-y-2">
-          <Label>Түвшин</Label>
-          <Select value={builderDifficulty} onValueChange={(value) => onBuilderDifficultyChange(value as QuestionBankDifficulty)}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="easy">Хөнгөн</SelectItem>
-              <SelectItem value="standard">Дунд</SelectItem>
-              <SelectItem value="hard">Хэцүү</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex flex-wrap justify-end gap-2">
-          <Button variant="outline" asChild>
-            <Link href="/teacher/question-bank" onClick={onCancel}>Болих</Link>
-          </Button>
-          <Button onClick={onSave} disabled={isSaving || !builderTopicName.trim()}>
-            {isSaving ? "Хадгалж байна..." : "Асуултуудыг хадгалах"}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+function SummaryTextStat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="space-y-1">
+      <div className="text-2xl font-bold text-[#23345d]">{value}</div>
+      <div className="text-sm text-muted-foreground">{label}</div>
+    </div>
   );
 }

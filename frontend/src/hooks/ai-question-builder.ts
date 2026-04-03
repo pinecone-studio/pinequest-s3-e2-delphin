@@ -47,6 +47,19 @@ export function getAIQuestionCount(counts: AIQuestionTypeCounts) {
   );
 }
 
+export function alignAIQuestionCounts(
+  counts: AIQuestionTypeCounts,
+  targetCount: number,
+): AIQuestionTypeCounts {
+  const safeTarget = Math.max(0, targetCount);
+  const currentTotal = getAIQuestionCount(counts);
+  if (currentTotal >= safeTarget) return counts;
+  return {
+    ...counts,
+    multipleChoice: counts.multipleChoice + (safeTarget - currentTotal),
+  };
+}
+
 export function createAiQuestions(counts: AIQuestionTypeCounts) {
   const seed = Date.now();
   return expandQuestionTypes(counts).map((type, index) => {

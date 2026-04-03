@@ -16,16 +16,17 @@ export type AIQuestionTypeCounts = {
 };
 
 export const defaultAIQuestionTypeCounts: AIQuestionTypeCounts = {
-  multipleChoice: 1,
-  trueFalse: 1,
-  matching: 1,
-  ordering: 1,
-  shortAnswer: 1,
+  multipleChoice: 0,
+  trueFalse: 0,
+  matching: 0,
+  ordering: 0,
+  shortAnswer: 0,
 };
 
 export type QuestionGeneratorPayload = {
   sourceFilesWithPages: SourceFileWithPages[];
   questionTypeCounts: AIQuestionTypeCounts;
+  totalQuestionTarget?: number;
   variants: number;
   difficulty: "easy" | "standard" | "hard";
   selectedMockTests: string[];

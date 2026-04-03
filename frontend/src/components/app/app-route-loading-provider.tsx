@@ -36,11 +36,8 @@ function useAppRouteLoadingContext() {
 export function AppRouteLoadingProvider(props: { children: ReactNode }) {
   const { children } = props;
   const pathname = usePathname();
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, [pathname]);
+  const [loadingPathname, setLoadingPathname] = useState<string | null>(null);
+  const isLoading = loadingPathname === pathname;
 
   useEffect(() => {
     if (!isLoading) {
@@ -61,10 +58,10 @@ export function AppRouteLoadingProvider(props: { children: ReactNode }) {
   const value = useMemo<AppRouteLoadingContextValue>(
     () => ({
       isLoading,
-      startLoading: () => setIsLoading(true),
-      stopLoading: () => setIsLoading(false),
+      startLoading: () => setLoadingPathname(pathname),
+      stopLoading: () => setLoadingPathname(null),
     }),
-    [isLoading],
+    [isLoading, pathname],
   );
 
   return (

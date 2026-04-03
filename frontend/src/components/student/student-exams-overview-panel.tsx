@@ -45,17 +45,6 @@ function getMinutesAgoFromIso(value: string) {
   if (Number.isNaN(createdAt)) return 1
   return Math.max(1, Math.round((Date.now() - createdAt) / 60000))
 }
-function isEdulphinSource(value: string) {
-  return value.trim().toUpperCase() === "EDULPHIN"
-}
-function getSourceInitials(value: string) {
-  return value
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("")
-}
 function readStoredMap<T extends Record<string, number | boolean>>(key: string) {
   if (typeof window === "undefined") return {} as T
   try {

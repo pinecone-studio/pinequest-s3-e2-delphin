@@ -92,7 +92,6 @@ export function TeacherExamPreparationFlow({
       .length,
     "true-false": questions.filter((q) => q.type === "true-false").length,
     matching: questions.filter((q) => q.type === "matching").length,
-    ordering: questions.filter((q) => q.type === "ordering").length,
     "short-answer": questions.filter((q) => q.type === "short-answer").length,
   };
   const totalPoints = questions.reduce((sum, q) => sum + q.points, 0);

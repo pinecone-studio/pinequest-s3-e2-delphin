@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   getExamQuestionIconAlt,
   getExamQuestionIconSrc,
@@ -55,9 +56,12 @@ export function PickQuestionHeader(props: {
 
       <div className="mt-[18px] flex items-start gap-4">
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#E6F2FF] bg-[#F7FBFF] dark:border-white/10 dark:bg-[rgba(255,255,255,0.04)]">
-          <img
+          <Image
             src={getExamQuestionIconSrc(iconKey)}
             alt={getExamQuestionIconAlt(iconKey)}
+            width={36}
+            height={36}
+            unoptimized
             className="h-9 w-9 object-contain"
           />
         </div>

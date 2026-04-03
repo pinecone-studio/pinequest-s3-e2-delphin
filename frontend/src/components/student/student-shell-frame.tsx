@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import { LayoutDashboard, LogOut, RefreshCw } from "lucide-react";
+import { AppLoadingLink } from "@/components/app/app-route-loading-provider";
 import { BrandLogo } from "@/components/brand-logo";
 import { StudentMobileMenu } from "@/components/student/student-mobile-menu";
 import { StudentNotificationMenu } from "@/components/student/student-notification-menu";
@@ -42,20 +42,20 @@ export function StudentShellFrame(props: {
       <div className={cn("relative min-h-screen w-full", !isDark && "shadow-[0_10px_35px_rgba(110,150,190,0.10)]")}>
         <header className="relative z-[70]">
           <div className="flex items-center justify-between px-4 pb-0 pt-4 sm:px-6 lg:hidden">
-            <Link href="/student/dashboard" className="inline-flex items-center font-semibold"><BrandLogo className="h-[34px] w-[132px]" /></Link>
+            <AppLoadingLink href="/student/dashboard" className="inline-flex items-center font-semibold"><BrandLogo className="h-[34px] w-[132px]" /></AppLoadingLink>
             <button type="button" onClick={() => setIsMenuOpen(true)} className={cn("flex h-10 w-10 items-center justify-center rounded-full", isDark ? "text-[#C2C9D0]" : "text-[#2D3642]")} aria-label="Цэс"><Image src="/menu.svg" alt="" width={24} height={24} className={cn("h-6 w-6 object-contain", isDark && "brightness-0 saturate-100 invert-[88%] sepia-[7%] saturate-[243%] hue-rotate-[174deg] brightness-[90%] contrast-[86%]")} /></button>
           </div>
           <StudentMobileMenu isDark={isDark} isOpen={isMenuOpen} items={navItems} onClose={() => setIsMenuOpen(false)} onLogout={onLogout} pathname={pathname} />
 
           <div className="mx-auto hidden max-w-[1440px] px-10 py-4 lg:block">
             <div className="grid grid-cols-[1fr_auto_1fr] items-center">
-              <Link href="/student/dashboard" className="inline-flex items-center justify-self-start font-semibold"><BrandLogo className="gap-2.5" textClassName="text-left" /></Link>
+              <AppLoadingLink href="/student/dashboard" className="inline-flex items-center justify-self-start font-semibold"><BrandLogo className="gap-2.5" textClassName="text-left" /></AppLoadingLink>
               <nav className={cn("flex h-[46px] items-center gap-1 rounded-full p-1", isDark ? "border border-white/10 bg-[linear-gradient(180deg,rgba(14,25,58,0.98)_0%,rgba(11,20,46,0.96)_100%)] shadow-[0_18px_44px_rgba(2,6,23,0.42)]" : "bg-[#FFFFFF] shadow-[0_12px_40px_rgba(90,143,203,0.18)]")}>
                 {navItems.map((item) => {
                   const active = isStudentNavItemActive(pathname, item.href);
                   const Icon = "icon" in item ? item.icon : null;
                   const iconPath = "iconPath" in item ? item.iconPath : null;
-                  return <Link key={item.href} href={item.href} className={cn("flex h-[38px] items-center justify-center gap-2 rounded-full px-5 text-[14px] font-medium", isDark ? active ? "border border-[rgba(224,225,226,0.18)] bg-[#001933] text-[#F5FAFF] shadow-[0_6px_16px_rgba(0,0,0,0.22)]" : "text-[#6F7982]" : active ? "bg-[linear-gradient(180deg,#5EB6FF_0%,#3CA6F5_100%)] text-white shadow-[0_8px_18px_rgba(76,170,242,0.35)]" : "text-[#697586]")}>{Icon ? <Icon className="h-4 w-4 shrink-0" /> : <Image src={iconPath ?? ""} alt="" width={16} height={16} className={cn("h-4 w-4 shrink-0 object-contain", active && "brightness-0 invert")} />}<span>{item.label}</span></Link>;
+                  return <AppLoadingLink key={item.href} href={item.href} className={cn("flex h-[38px] items-center justify-center gap-2 rounded-full px-5 text-[14px] font-medium", isDark ? active ? "border border-[rgba(224,225,226,0.18)] bg-[#001933] text-[#F5FAFF] shadow-[0_6px_16px_rgba(0,0,0,0.22)]" : "text-[#6F7982]" : active ? "bg-[linear-gradient(180deg,#5EB6FF_0%,#3CA6F5_100%)] text-white shadow-[0_8px_18px_rgba(76,170,242,0.35)]" : "text-[#697586]")}>{Icon ? <Icon className="h-4 w-4 shrink-0" /> : <Image src={iconPath ?? ""} alt="" width={16} height={16} className={cn("h-4 w-4 shrink-0 object-contain", active && "brightness-0 invert")} />}<span>{item.label}</span></AppLoadingLink>;
                 })}
               </nav>
               <div className="isolate flex items-center justify-self-end gap-3">

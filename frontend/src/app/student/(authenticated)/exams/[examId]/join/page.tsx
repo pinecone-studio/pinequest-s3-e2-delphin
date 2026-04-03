@@ -30,7 +30,7 @@ export default function StudentExamJoinPage({
   useEffect(() => {
     const loadExam = async () => {
       try {
-        const exams = await getStudentExams();
+        const exams = await getStudentExams(studentClass);
         setAllExams(exams);
       } catch (err) {
         console.warn("Failed to load exams:", err);
@@ -40,7 +40,7 @@ export default function StudentExamJoinPage({
     };
 
     loadExam();
-  }, []);
+  }, [studentClass]);
 
   useEffect(() => {
     if (!isLoading && !studentClass) {

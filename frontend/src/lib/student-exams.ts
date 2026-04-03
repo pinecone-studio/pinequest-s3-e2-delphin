@@ -5,6 +5,16 @@ import {
 import { fetchBackendJson } from '@/lib/backend-fetch'
 import type { CreatedExam } from '@/lib/exams-api'
 
+const bannedTitlePatterns = [
+  /^monitor$/i,
+  /test to see if i return back to the exam/i,
+  /tab block test2/i,
+]
+
+function isAllowedExamTitle(title: string) {
+  return !bannedTitlePatterns.some((pattern) => pattern.test(title))
+}
+
 function mapCreatedExamToStudentExam(exam: CreatedExam): LegacyExam {
   return {
     id: exam.id,
@@ -30,12 +40,15 @@ function mapCreatedExamToStudentExam(exam: CreatedExam): LegacyExam {
   }
 }
 
-export async function getStudentExams(): Promise<LegacyExam[]> {
+export async function getStudentExams(studentClass?: string): Promise<LegacyExam[]> {
+  void studentClass
   const backendExams = await fetchBackendJson<CreatedExam[]>(
     '/exams',
     'Шалгалтын мэдээллийг backend-ээс уншиж чадсангүй. Cloudflare D1 эсвэл backend үйлчилгээ одоогоор асуудалтай байж магадгүй.',
   )
-  const mergedExams = [...legacyExams, ...backendExams.map(mapCreatedExamToStudentExam)]
+  const mergedExams = [...legacyExams, ...backendExams.map(mapCreatedExamToStudentExam)].filter(
+    (exam) => isAllowedExamTitle(exam.title),
+  )
 
   return mergedExams.filter(
     (exam, index, collection) => collection.findIndex((entry) => entry.id === exam.id) === index,

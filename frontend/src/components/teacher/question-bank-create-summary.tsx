@@ -52,7 +52,6 @@ export function QuestionBankCreateSummary({
         <SummaryTextStat label={getQuestionTypeLabel("true-false")} value={questionCounts["true-false"]} />
         <SummaryTextStat label={getQuestionTypeLabel("fill")} value={questionCounts.fill} />
         <SummaryTextStat label={getQuestionTypeLabel("matching")} value={questionCounts.matching} />
-        <SummaryTextStat label={getQuestionTypeLabel("ordering")} value={questionCounts.ordering} />
         <SummaryTextStat label={getQuestionTypeLabel("short-answer")} value={questionCounts["short-answer"]} />
       </div>
       <div className="space-y-2">

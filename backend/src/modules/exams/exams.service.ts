@@ -129,7 +129,11 @@ export class ExamsService {
               [id],
             );
 
-          return this.mapExamRecord(examRecord, questionRecords, scheduleRecords);
+          return this.mapExamRecord(
+            examRecord,
+            questionRecords,
+            scheduleRecords,
+          );
         } catch (error) {
           if (!this.shouldUseLocalReadFallback(error)) {
             throw error;

@@ -24,7 +24,7 @@ export default function StudentDashboard() {
     let isMounted = true
     const loadData = async () => {
       try {
-        const [nextExams, nextResults] = await Promise.all([getStudentExams(), loadStudentExamResults({ studentId })])
+        const [nextExams, nextResults] = await Promise.all([getStudentExams(studentClass), loadStudentExamResults({ studentId })])
         if (!isMounted) return
         setAllExams(nextExams)
         setAllResults(nextResults)
@@ -36,7 +36,7 @@ export default function StudentDashboard() {
     return () => {
       isMounted = false
     }
-  }, [studentId])
+  }, [studentClass, studentId])
 
   const myExams = useMemo(() => allExams.filter((exam) => exam.scheduledClasses.some((schedule) => schedule.classId === studentClass)), [allExams, studentClass])
   const studentResults = useMemo(() => allResults.filter((result) => result.studentId === studentId), [allResults, studentId])

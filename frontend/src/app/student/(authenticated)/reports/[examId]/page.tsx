@@ -36,7 +36,7 @@ export default function StudentExamReportPage({
     const loadReport = async () => {
       try {
         const [nextExams, nextResults] = await Promise.all([
-          getStudentExams(),
+          getStudentExams(studentClass),
           loadStudentExamResults({ studentId }),
         ])
 
@@ -62,7 +62,7 @@ export default function StudentExamReportPage({
     return () => {
       isMounted = false
     }
-  }, [studentId])
+  }, [studentClass, studentId])
 
   const exam = useMemo(() => allExams.find((entry) => entry.id === examId), [allExams, examId])
   const result = allResults.find((entry) => entry.examId === examId && entry.studentId === studentId)

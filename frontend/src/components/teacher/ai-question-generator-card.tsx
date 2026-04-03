@@ -5,6 +5,7 @@ import { AIQuestionSourceSelector } from "@/components/teacher/ai-question-sourc
 import { type QuestionGeneratorPayload } from "@/components/teacher/ai-question-generator-dialog-types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import { alignAIQuestionCounts } from "@/hooks/ai-question-builder";
 import { useAiQuestionGeneratorCard } from "@/hooks/use-ai-question-generator-card";
 import type { UploadRecord } from "@/lib/uploads-api";
@@ -112,6 +113,7 @@ export function AIQuestionGeneratorCard({
             }
             onClick={handleGenerate}
           >
+            {isGenerating ? <Spinner className="mr-2 size-3.5" /> : null}
             {isGenerating ? "Бэлтгэж байна..." : "AI Асуулт бэлтгэх"}
           </Button>
         </div>

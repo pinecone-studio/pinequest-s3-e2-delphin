@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,9 +50,12 @@ export function ExamBuilderQuestionCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#E6F2FF] bg-[#F7FBFF] dark:border-white/10 dark:bg-[rgba(255,255,255,0.04)]">
-              <img
+              <Image
                 src={getExamQuestionIconSrc(question.iconKey)}
                 alt={getExamQuestionIconAlt(question.iconKey)}
+                width={32}
+                height={32}
+                unoptimized
                 className="h-8 w-8 object-contain"
               />
             </div>

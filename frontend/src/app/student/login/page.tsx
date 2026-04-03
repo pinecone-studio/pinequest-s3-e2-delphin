@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -10,12 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LoginField, StudentLoginIntro } from "@/components/student/student-login-parts";
+import { StudentLoginSubmitBlock } from "@/components/student/student-login-submit-block";
 import { ThemeToggleButton } from "@/components/theme-toggle-button";
-import { StudentLoginDemoButtons } from "@/components/student/student-login-demo-buttons";
 import { notifyStudentSessionChange } from "@/hooks/use-student-session";
 import { students } from "@/lib/mock-data";
 import { findResumableExamPath } from "@/lib/student-exam-resume";
@@ -28,6 +25,7 @@ export default function StudentLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const studentId = localStorage.getItem("studentId");
@@ -42,32 +40,36 @@ export default function StudentLoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsSubmitting(true);
 
     const student = students.find(
       (s) => s.email === email && s.password === password,
     );
 
-    if (student) {
-      // Store student info in localStorage for demo purposes
-      localStorage.setItem("studentId", student.id);
-      localStorage.setItem("studentName", student.name);
-      localStorage.setItem("studentClass", student.classId);
-      notifyStudentSessionChange();
-      const redirectQuery =
-        typeof window !== "undefined"
-          ? new URLSearchParams(window.location.search).get("redirect")
-          : null;
-      const redirectTo =
-        redirectQuery && redirectQuery.startsWith("/student/")
-          ? redirectQuery
-          : (await findResumableExamPath({
-              studentId: student.id,
-              studentClass: student.classId,
-            })) ?? "/student/dashboard";
-      router.replace(redirectTo);
-    } else {
+    if (!student) {
+      setIsSubmitting(false);
       setError("Имэйл эсвэл нууц үг буруу байна");
+      return;
     }
+
+    localStorage.setItem("studentId", student.id);
+    localStorage.setItem("studentName", student.name);
+    localStorage.setItem("studentClass", student.classId);
+    notifyStudentSessionChange();
+
+    const redirectQuery =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("redirect")
+        : null;
+    const redirectTo =
+      redirectQuery && redirectQuery.startsWith("/student/")
+        ? redirectQuery
+        : (await findResumableExamPath({
+            studentId: student.id,
+            studentClass: student.classId,
+          })) ?? "/student/dashboard";
+
+    router.replace(redirectTo);
   };
 
   const handleDemoFill = () => {
@@ -95,18 +97,7 @@ export default function StudentLoginPage() {
 
       <div className="relative flex min-h-[calc(100vh-2rem)] items-center justify-center">
         <div className="content-surface w-full max-w-md rounded-[2rem] p-4 md:p-5">
-          <div className="text-center mb-6">
-            <Link href="/" className="muted-text text-sm hover:underline">
-              &larr; Нүүр хуудас руу буцах
-            </Link>
-            <h1 className="mt-4 text-2xl font-bold text-foreground">
-              Сурагчийн нэвтрэх хэсэг
-            </h1>
-            <p className="secondary-text">
-              Шалгалтуудаа үзэхийн тулд нэвтэрнэ үү
-            </p>
-          </div>
-
+          <StudentLoginIntro />
           <div className="relative">
             <Card className="panel-surface relative rounded-[1.5rem] border-white/70 bg-white/80 shadow-xl shadow-sky-200/25 backdrop-blur-md">
               <CardHeader>
@@ -117,48 +108,14 @@ export default function StudentLoginPage() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleLogin} className="space-y-4">
-                  {error && (
+                  {error ? (
                     <Alert variant="destructive">
                       <AlertDescription>{error}</AlertDescription>
                     </Alert>
-                  )}
-
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Имэйл</Label>
-                    <Input
-                      className="input-surface"
-                      id="email"
-                      type="email"
-                      placeholder="your@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Нууц үг</Label>
-                    <Input
-                      className="input-surface"
-                      id="password"
-                      type="password"
-                      placeholder="Нууц үгээ оруулна уу"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="ocean-cta w-full border-0 font-semibold"
-                  >
-                    Нэвтрэх
-                  </Button>
-                  <StudentLoginDemoButtons
-                    onDemoFill={handleDemoFill}
-                    onJudgeDemoFill={handleJudgeDemoFill}
-                  />
+                  ) : null}
+                  <LoginField id="email" label="Имэйл" placeholder="your@email.com" type="email" value={email} onChange={setEmail} />
+                  <LoginField id="password" label="Нууц үг" placeholder="Нууц үгээ оруулна уу" type="password" value={password} onChange={setPassword} />
+                  <StudentLoginSubmitBlock isSubmitting={isSubmitting} onDemoFill={handleDemoFill} onJudgeDemoFill={handleJudgeDemoFill} />
                 </form>
               </CardContent>
             </Card>

@@ -1,10 +1,5 @@
 import type { ExamResult } from "@/lib/mock-data-types";
-import { examE1 } from "@/lib/mock-exams-seed/exam-e1";
-import { examE2 } from "@/lib/mock-exams-seed/exam-e2";
-import { examE3 } from "@/lib/mock-exams-seed/exam-e3";
-import { examE4 } from "@/lib/mock-exams-seed/exam-e4";
-import { examE5 } from "@/lib/mock-exams-seed/exam-e5";
-import { examE6 } from "@/lib/mock-exams-seed/exam-e6";
+import { exams as analyticsExams } from "@/lib/mock-exams";
 import { students } from "@/lib/mock-students";
 import { mapLegacyExamToTeacherExam, type TeacherExam } from "@/lib/teacher-exams";
 import {
@@ -17,7 +12,6 @@ import {
   getStudentProfile,
 } from "@/lib/teacher-class-analytics-mock-helpers";
 
-const analyticsExams = [examE1, examE2, examE3, examE4, examE5, examE6];
 const analyticsStudents = students.filter((student) =>
   analyticsExams.some((exam) =>
     exam.scheduledClasses.some(

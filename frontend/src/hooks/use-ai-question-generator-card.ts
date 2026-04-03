@@ -6,7 +6,10 @@ import {
   type AIQuestionTypeCounts,
   type SourceFileWithPages,
 } from "@/components/teacher/ai-question-generator-dialog-types";
-import { getAIQuestionCount } from "@/hooks/ai-question-builder";
+import {
+  getAIQuestionCount,
+  getPreparedAIQuestionTypeCounts,
+} from "@/hooks/ai-question-builder";
 
 const createSourceFileEntry = (file: File): SourceFileWithPages => ({
   file,
@@ -72,16 +75,8 @@ export function useAiQuestionGeneratorCard(selectedMockTests: string[]) {
     );
 
   const applyDemoPreset = () => {
-    const demoCounts = {
-      multipleChoice: 2,
-      trueFalse: 1,
-      matching: 0,
-      ordering: 0,
-      shortAnswer: 0,
-    };
-    setQuestionTypeCounts({
-      ...demoCounts,
-    });
+    const demoCounts = getPreparedAIQuestionTypeCounts();
+    setQuestionTypeCounts(demoCounts);
     setTotalPoints(
       demoCounts.multipleChoice +
         demoCounts.trueFalse +

@@ -43,7 +43,7 @@ export function StudentShellFrame(props: {
         <header className="relative z-[70]">
           <div className="flex items-center justify-between px-4 pb-0 pt-4 sm:px-6 lg:hidden">
             <Link href="/student/dashboard" className="inline-flex items-center font-semibold"><BrandLogo className="h-[34px] w-[132px]" /></Link>
-            <button type="button" onClick={() => setIsMenuOpen(true)} className={cn("flex h-10 w-10 items-center justify-center rounded-full", isDark ? "text-[#d5def0]" : "text-[#2D3642]")} aria-label="Цэс"><Image src="/menu.svg" alt="" width={24} height={24} className="h-6 w-6 object-contain" /></button>
+            <button type="button" onClick={() => setIsMenuOpen(true)} className={cn("flex h-10 w-10 items-center justify-center rounded-full", isDark ? "text-[#C2C9D0]" : "text-[#2D3642]")} aria-label="Цэс"><Image src="/menu.svg" alt="" width={24} height={24} className={cn("h-6 w-6 object-contain", isDark && "brightness-0 saturate-100 invert-[88%] sepia-[7%] saturate-[243%] hue-rotate-[174deg] brightness-[90%] contrast-[86%]")} /></button>
           </div>
           <StudentMobileMenu isDark={isDark} isOpen={isMenuOpen} items={navItems} onClose={() => setIsMenuOpen(false)} onLogout={onLogout} pathname={pathname} />
 

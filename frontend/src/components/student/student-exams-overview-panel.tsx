@@ -20,12 +20,50 @@ const fallbackNotices = [
   { id: "fallback-4", lead: "Баяр хүргэе!:", body: "Та Физикийн түвшин тогтоох шалгалтаа 95%-тай өглөө.", source: "EDULPHIN", sourceMeta: "", minutesAgo: 60 * 24 },
 ] as const
 
-const formatExamDate = (date: string, time: string, today: string) => date === today ? `Өнөөдөр · ${time}` : `${date} · ${time}`
-const getNoticeParts = (value: string) => { const dividerIndex = value.indexOf(":"); return dividerIndex < 0 ? { lead: "", body: value } : { lead: value.slice(0, dividerIndex + 1), body: value.slice(dividerIndex + 1).trim() } }
-const formatNoticeAge = (minutesAgo: number) => minutesAgo < 60 ? `${minutesAgo} мин` : minutesAgo < 1440 ? `${Math.floor(minutesAgo / 60)} ц` : `${Math.floor(minutesAgo / 1440)} ө`
-const getMinutesAgoFromIso = (value: string) => { const createdAt = new Date(value).getTime(); return Number.isNaN(createdAt) ? 1 : Math.max(1, Math.round((Date.now() - createdAt) / 60000)) }
-function getResultTone(score: number, totalPoints: number) { const ratio = totalPoints === 0 ? 0 : score / totalPoints; if (ratio >= 0.9) return "bg-[#dff5e5] text-[#188b43] dark:bg-[#00C853] dark:text-[#E8F5E9]"; if (ratio >= 0.8) return "bg-[#e7f0ff] text-[#246bff] dark:bg-[#1864FB] dark:text-[#F5FAFF]"; if (ratio >= 0.6) return "bg-[#fff1d8] text-[#cc8a00] dark:bg-[#FF9500] dark:text-[#FFF3E0]"; return "bg-[#FEE2E2] text-[#DC2626] dark:bg-[#FF5A53] dark:text-[#FFF1EF]" }
-function readStoredMap<T extends Record<string, number | boolean>>(key: string) { if (typeof window === "undefined") return {} as T; try { return JSON.parse(localStorage.getItem(key) ?? "{}") as T } catch { return {} as T } }
+function formatExamDate(date: string, time: string, today: string) {
+  return date === today ? `Өнөөдөр · ${time}` : `${date} · ${time}`
+}
+function getResultTone(score: number, totalPoints: number) {
+  const ratio = totalPoints === 0 ? 0 : score / totalPoints
+  if (ratio >= 0.9) return "bg-[#dff5e5] text-[#188b43] dark:bg-[#00C853] dark:text-[#E8F5E9]"
+  if (ratio >= 0.8) return "bg-[#e7f0ff] text-[#246bff] dark:bg-[#1864FB] dark:text-[#F5FAFF]"
+  if (ratio >= 0.6) return "bg-[#fff1d8] text-[#cc8a00] dark:bg-[#FF9500] dark:text-[#FFF3E0]"
+  return "bg-[#FEE2E2] text-[#DC2626] dark:bg-[#FF5A53] dark:text-[#FFF1EF]"
+}
+function getNoticeParts(value: string) {
+  const dividerIndex = value.indexOf(":")
+  if (dividerIndex < 0) return { lead: "", body: value }
+  return { lead: value.slice(0, dividerIndex + 1), body: value.slice(dividerIndex + 1).trim() }
+}
+function formatNoticeAge(minutesAgo: number) {
+  if (minutesAgo < 60) return `${minutesAgo} мин`
+  if (minutesAgo < 1440) return `${Math.floor(minutesAgo / 60)} ц`
+  return `${Math.floor(minutesAgo / 1440)} ө`
+}
+function getMinutesAgoFromIso(value: string) {
+  const createdAt = new Date(value).getTime()
+  if (Number.isNaN(createdAt)) return 1
+  return Math.max(1, Math.round((Date.now() - createdAt) / 60000))
+}
+function isEdulphinSource(value: string) {
+  return value.trim().toUpperCase() === "EDULPHIN"
+}
+function getSourceInitials(value: string) {
+  return value
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("")
+}
+function readStoredMap<T extends Record<string, number | boolean>>(key: string) {
+  if (typeof window === "undefined") return {} as T
+  try {
+    return JSON.parse(localStorage.getItem(key) ?? "{}") as T
+  } catch {
+    return {} as T
+  }
+}
 
 export function StudentExamsOverviewPanel(props: { exams: Exam[]; results: ExamResult[]; studentClass: string; today: string }) {
   const { exams, results, studentClass, today } = props

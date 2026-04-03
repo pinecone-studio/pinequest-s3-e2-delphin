@@ -4,11 +4,7 @@ import Image from 'next/image'
 import { Globe, Monitor, WifiOff, X } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { ExamCountdownDisplay } from '@/components/student/exam-countdown-display'
-import {
-  DetailInfoItem,
-  getExamDescription,
-  InstructionItem,
-} from '@/components/student/student-exam-detail-support'
+import { DetailInfoItem, getExamDescription, InstructionItem } from '@/components/student/student-exam-detail-support'
 import { Button } from '@/components/ui/button'
 import type { Exam } from '@/lib/mock-data'
 import { cn } from '@/lib/utils'
@@ -112,9 +108,17 @@ export function StudentExamDetailContent({
   return (
     <div className="min-h-screen bg-[#EAF4FF] px-4 py-8 dark:bg-transparent">
       <div className="mx-auto w-full max-w-[904px] rounded-[16px] border border-[#E6F2FF] bg-[#F5FAFF] px-6 py-7 shadow-[0_9px_24px_rgba(24,100,251,0.05)] sm:px-8 dark:border-[rgba(82,146,237,0.24)] dark:bg-[linear-gradient(127deg,#060B26_18%,#0B1230_58%,#1A1F37_100%)] dark:shadow-[0_24px_70px_rgba(2,6,23,0.42)]">
+        <button
+          className="mb-6 inline-flex items-center gap-2 text-[14px] font-medium text-[#007FFF] dark:text-[#89C8FF]"
+          onClick={onClose}
+          type="button"
+        >
+          <span className="text-[18px] leading-none">←</span><span>Буцах</span>
+        </button>
+
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-[22px] font-bold leading-[1.2] text-[#1F2937] sm:text-[24px] dark:text-[#F5FAFF]">
+            <h1 className="text-[20px] font-bold leading-[1.2] text-[#1F2937] sm:text-[24px] dark:text-[#F5FAFF]">
               {exam.title}
             </h1>
             <p className="mt-2 max-w-[640px] text-[11px] leading-[1.55] text-[#72859A] dark:text-[#8FA0BB]">
@@ -133,15 +137,13 @@ export function StudentExamDetailContent({
 
         <div className="mt-7 space-y-4">
           <PopupSection
-            className="border-[#D7E9FF] bg-white px-6 py-[24px] shadow-[0_9px_24px_rgba(24,100,251,0.05)] dark:border-[#233566] dark:bg-[linear-gradient(90deg,#0B1237_0%,#10163D_54%,#1A2047_100%)] dark:shadow-[0_24px_60px_rgba(2,6,23,0.34)]"
+            className="border-[#D7E9FF] bg-white px-6 py-4 shadow-[0_9px_24px_rgba(24,100,251,0.05)] dark:border-[#233566] dark:bg-[linear-gradient(90deg,#0B1237_0%,#10163D_54%,#1A2047_100%)] dark:shadow-[0_24px_60px_rgba(2,6,23,0.34)]"
             title="Шалгалтын мэдээлэл"
-            titleClassName="text-[19px] font-semibold tracking-[-0.02em] text-[#1F2937] dark:text-[#F0F3F5]"
+            titleClassName="text-[16px] font-semibold tracking-[-0.02em] text-[#1F2937] dark:text-[#F0F3F5]"
           >
-            <div className="mt-[22px] flex flex-wrap gap-y-6 md:justify-between">
-              <DetailInfoItem iconSrc="/student-exam-card-questions.svg" label="Огноо" value={scheduleDate ?? '-'} />
-              <DetailInfoItem iconSrc="/student-exam-card-time.svg" label="Цаг" value={scheduleTime ?? '-'} />
-              <DetailInfoItem iconSrc="/student-exam-card-duration.svg" label="Хугацаа" value={`${exam.duration} минут`} />
-              <DetailInfoItem iconSrc="/student-exam-card-date.svg" label="Асуулт" value={String(exam.questions.length)} />
+            <div className="mt-[20px] grid grid-cols-2 gap-x-10 gap-y-6">
+              <DetailInfoItem iconSrc="/student-exam-card-date.svg" label="Огноо" value={scheduleDate ?? '-'} /><DetailInfoItem iconSrc="/student-exam-card-time.svg" label="Цаг" value={scheduleTime ?? '-'} />
+              <DetailInfoItem iconSrc="/student-exam-card-duration.svg" label="Хугацаа" value={`${exam.duration} минут`} /><DetailInfoItem iconSrc="/student-exam-card-questions.svg" label="Асуулт" value={String(exam.questions.length)} />
             </div>
           </PopupSection>
 
@@ -164,10 +166,8 @@ export function StudentExamDetailContent({
 
           <PopupSection title="Заавар">
             <ul className="mt-4 space-y-3">
-              <InstructionItem icon={<Globe className="h-4 w-4 stroke-[1.8]" />} text="Интернет холболт тогтвортой байгаа эсэхээ шалгана уу!" />
-              <InstructionItem icon={<ThemedInstructionIcon darkSrc="/student-exam-instruction-pause.svg" height={16} lightSrc="/student-exam-instruction-pause-light.svg" width={16} />} text="Шалгалт эхэлсний дараа түр зогсоох боломжгүй!" />
-              <InstructionItem icon={<ThemedInstructionIcon darkSrc="/student-exam-instruction-timer.svg" height={18} lightSrc="/student-exam-instruction-timer-light.svg" width={15} />} text="Хугацаа дуусахад шалгалт автоматаар илгээгдэнэ!" />
-              <InstructionItem icon={<Monitor className="h-4 w-4 stroke-[1.8]" />} text="Шалгалтын үеэр браузераа шинэчлэх эсвэл хааж болохгүй!" />
+              <InstructionItem icon={<Globe className="h-4 w-4 stroke-[1.8]" />} text="Интернет холболт тогтвортой байгаа эсэхээ шалгана уу!" /><InstructionItem icon={<ThemedInstructionIcon darkSrc="/student-exam-instruction-pause.svg" height={16} lightSrc="/student-exam-instruction-pause-light.svg" width={16} />} text="Шалгалт эхэлсний дараа түр зогсоох боломжгүй!" />
+              <InstructionItem icon={<ThemedInstructionIcon darkSrc="/student-exam-instruction-timer.svg" height={18} lightSrc="/student-exam-instruction-timer-light.svg" width={15} />} text="Хугацаа дуусахад шалгалт автоматаар илгээгдэнэ!" /><InstructionItem icon={<Monitor className="h-4 w-4 stroke-[1.8]" />} text="Шалгалтын үеэр браузераа шинэчлэх эсвэл хааж болохгүй!" />
               <InstructionItem icon={<WifiOff className="h-4 w-4 stroke-[1.8]" />} text="Интернет холболт салсан үед шалгалт автоматаар илгээгдэнэ!" />
             </ul>
           </PopupSection>

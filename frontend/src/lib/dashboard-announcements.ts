@@ -1,6 +1,7 @@
 "use client"
 
 export type DashboardAnnouncement = {
+  authorImage?: string
   authorName?: string
   authorSubject?: string
   id: string
@@ -44,6 +45,11 @@ export function subscribeDashboardAnnouncements(onChange: () => void) {
 export function saveDashboardAnnouncement(input: { classId: string; message: string }) {
   if (typeof window === "undefined") return
   const nextItem: DashboardAnnouncement = {
+    authorImage:
+      localStorage.getItem("teacherProfileImage") ||
+      localStorage.getItem("teacherAvatar") ||
+      localStorage.getItem("teacherImage") ||
+      "",
     authorName: localStorage.getItem("teacherName") || "",
     authorSubject: localStorage.getItem("teacherSubject") || "",
     id: crypto.randomUUID(),

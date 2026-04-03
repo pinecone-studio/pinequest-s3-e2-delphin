@@ -117,17 +117,32 @@ function QuestionBankQuestionCard({
   selectedQuestionIds: string[];
 }) {
   const isSelectable = isQuestionSelectable ? isQuestionSelectable(question.type) : true;
+  const isSelected = selectedQuestionIds.includes(question.id);
+  const isCardClickable = Boolean(onToggleQuestion) && isSelectable;
+
+  const handleCardClick = () => {
+    if (!isCardClickable || !onToggleQuestion) return;
+    onToggleQuestion(question.id, !isSelected);
+  };
 
   return (
-    <div className="rounded-[22px] border border-[#e7edfb] bg-white px-4 py-4 shadow-[0_8px_24px_rgba(177,198,232,0.08)]">
+    <div
+      className={cn(
+        "rounded-[22px] border border-[#e7edfb] bg-white px-4 py-4 shadow-[0_8px_24px_rgba(177,198,232,0.08)]",
+        isCardClickable ? "cursor-pointer" : "",
+      )}
+      onClick={handleCardClick}
+    >
       <div className="flex items-start gap-3">
         {onToggleQuestion ? (
-          <Checkbox
-            checked={selectedQuestionIds.includes(question.id)}
-            disabled={!isSelectable}
-            onCheckedChange={(checked) => onToggleQuestion(question.id, checked === true)}
-            className="mt-1"
-          />
+          <div onClick={(event) => event.stopPropagation()}>
+            <Checkbox
+              checked={isSelected}
+              disabled={!isSelectable}
+              onCheckedChange={(checked) => onToggleQuestion(question.id, checked === true)}
+              className="mt-1"
+            />
+          </div>
         ) : null}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-3 text-sm text-[#7080a0]">

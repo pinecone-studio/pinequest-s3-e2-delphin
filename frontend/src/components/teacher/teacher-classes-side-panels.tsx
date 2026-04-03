@@ -22,6 +22,7 @@ export function TeacherClassesSidePanels(props: {
   const { classData, classOptions, date, examResults, selectedExam, selectedExamResults, time } = props
   const studentResults = buildMockStudentExamResults({
     className: classData.name,
+    exam: selectedExam,
     results: selectedExamResults,
     students: classData.students,
   })
@@ -37,6 +38,7 @@ export function TeacherClassesSidePanels(props: {
       <TeacherClassesStudentResultsCard
         className={classData.name}
         date={date}
+        selectedExam={selectedExam}
         results={studentResults}
         time={time}
       />

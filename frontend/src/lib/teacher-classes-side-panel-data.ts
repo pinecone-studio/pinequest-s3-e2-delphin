@@ -1,11 +1,18 @@
 import type { Class, ExamResult } from "@/lib/mock-data-types";
-import type { TeacherExam } from "@/lib/teacher-exams";
 import {
   getAwardedPoints,
   isMatchingDemoClassId,
   normalizeDemoClassId,
   normalizeExamDifficulty,
 } from "@/lib/teacher-class-detail";
+import { getExamLetterGrade } from "@/lib/student-report-view";
+import {
+  buildPerformanceLabel,
+  buildTeacherNote,
+  getAiScorePercent,
+  getTeacherScorePercent,
+} from "@/lib/teacher-student-exam-result-details";
+import type { TeacherExam } from "@/lib/teacher-exams";
 
 export type ClassDifficultyChartPoint = {
   classId: string;
@@ -27,6 +34,14 @@ export type StudentExamResult = {
   className: string;
   studentId: string;
   email: string;
+  submittedAt: string;
+  aiScore: number;
+  teacherScore: number;
+  finalGrade: string;
+  examTitle: string;
+  examLabel: string;
+  performanceLabel: string;
+  teacherNote: string;
 };
 
 type DifficultyTotals = Record<"easy" | "medium" | "hard", { earned: number; possible: number }>;
@@ -58,20 +73,14 @@ export function buildClassDifficultyChartData(args: {
     const classResults = examResults.filter(
       (result) =>
         result.examId === exam.id &&
-        (isMatchingDemoClassId(result.classId, classItem.id) ||
-          classStudentIds.has(result.studentId)),
+        (isMatchingDemoClassId(result.classId, classItem.id) || classStudentIds.has(result.studentId)),
     );
 
     classResults.forEach((result) => {
-      const answerMap = new Map(
-        result.answers.map((answer) => [answer.questionId, answer]),
-      );
+      const answerMap = new Map(result.answers.map((answer) => [answer.questionId, answer]));
       exam.questions.forEach((question) => {
         const difficulty = normalizeExamDifficulty(question.difficulty);
-        const awardedPoints = getAwardedPoints(
-          question.points,
-          answerMap.get(question.id),
-        );
+        const awardedPoints = getAwardedPoints(question.points, answerMap.get(question.id));
         totals[difficulty].earned += awardedPoints;
         totals[difficulty].possible += question.points;
       });
@@ -95,27 +104,32 @@ export function buildClassDifficultyChartData(args: {
 
 export function buildMockStudentExamResults(args: {
   className: string;
+  exam: TeacherExam | null;
   results: ExamResult[];
   students: Array<{ email: string; id: string; name: string }>;
 }) {
-  const { className, results, students } = args;
-  const studentLookup = new Map(
-    students.map((student) => [student.id, student]),
-  );
+  const { className, exam, results, students } = args;
+  const studentLookup = new Map(students.map((student) => [student.id, student]));
 
   return results
     .map((result) => {
       const student = studentLookup.get(result.studentId);
       if (!student) return null;
+      const scorePercent = result.totalPoints > 0 ? Math.round((result.score / result.totalPoints) * 100) : 0;
       return {
+        aiScore: getAiScorePercent(exam, result),
         className,
         email: student.email,
-        scorePercent:
-          result.totalPoints > 0
-            ? Math.round((result.score / result.totalPoints) * 100)
-            : 0,
+        examLabel: exam?.title ?? "Шалгалт",
+        examTitle: exam?.title ?? "Шалгалт",
+        finalGrade: getExamLetterGrade(scorePercent),
+        performanceLabel: buildPerformanceLabel(exam),
+        scorePercent,
         studentId: student.id,
         studentName: student.name,
+        submittedAt: result.submittedAt,
+        teacherNote: buildTeacherNote(exam, result),
+        teacherScore: getTeacherScorePercent(exam, result),
       } satisfies StudentExamResult;
     })
     .filter((result): result is StudentExamResult => Boolean(result))

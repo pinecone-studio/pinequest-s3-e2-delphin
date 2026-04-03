@@ -49,15 +49,11 @@ export default function StudentDashboard() {
     const now = new Date()
     const nextWeek = new Date(now)
     nextWeek.setDate(nextWeek.getDate() + 7)
-    const upcomingThisWeek = myExams.filter((exam) => exam.status === "scheduled" && exam.scheduledClasses.some((schedule) => {
-      if (schedule.classId !== studentClass) return false
-      const startsAt = new Date(`${schedule.date}T${schedule.time}:00`)
-      return startsAt >= now && startsAt <= nextWeek
-    })).length
+    const upcomingThisWeek = myExams.filter((exam) => exam.status === "scheduled" && exam.scheduledClasses.some((schedule) => schedule.classId === studentClass && new Date(`${schedule.date}T${schedule.time}:00`) >= now && new Date(`${schedule.date}T${schedule.time}:00`) <= nextWeek)).length
     return [
-      { label: "Нийт амжилт", value: `${averagePercentage}%`, detail: `${studentResults.length} шалгалт`, iconPath: isDark ? "/student-dashboard-dark-achievement.svg" : "/trophyIcon.svg" },
-      { label: latestExam?.title ?? "Сүүлийн шалгалт", value: latestResult ? `${latestPercentage}% ${getExamLetterGrade(latestPercentage)}` : "-", detail: "Сүүлийн дүн", iconPath: isDark ? "/student-dashboard-dark-score.svg" : "/dunIcon.svg" },
-      { label: "Энэ 7 хоногт", value: String(upcomingThisWeek), detail: "Өгөх шалгалт", iconPath: isDark ? "/student-dashboard-dark-calendar.svg" : "/calendarIcon.svg" },
+      { label: "Нийт амжилт", value: `${averagePercentage}%`, detail: `${studentResults.length} шалгалт`, iconPath: isDark ? "/student-dashboard-dark-achievement.svg" : "/student-dashboard-light-achievement.svg" },
+      { label: latestExam?.title ?? "Сүүлийн шалгалт", value: latestResult ? `${latestPercentage}% ${getExamLetterGrade(latestPercentage)}` : "-", detail: "Сүүлийн дүн", iconPath: isDark ? "/student-dashboard-dark-score.svg" : "/student-dashboard-light-score.svg" },
+      { label: "Энэ 7 хоногт", value: String(upcomingThisWeek), detail: "Өгөх шалгалт", iconPath: isDark ? "/student-dashboard-dark-calendar.svg" : "/student-dashboard-light-calendar.svg" },
     ] as const
   }, [allExams, isDark, myExams, studentClass, studentResults])
   const mobileStatCards = [statCards[0], statCards[2], statCards[1]]
@@ -69,25 +65,10 @@ export default function StudentDashboard() {
           <h1 className="font-sans text-[18px] font-semibold leading-[1.1] tracking-[-0.03em] text-[#2D3642] dark:text-[#edf4ff] sm:text-[33px]">Сайн уу, {studentName}!</h1>
           <p className="mt-[6px] font-sans text-[12px] font-normal leading-4 text-[#606C80] dark:text-[#aab7cb] sm:text-[16px] sm:leading-5">Өнөөдөр чиний гялалзах өдөр ✨</p>
         </div>
-        <div className="hidden gap-[10px] sm:grid sm:grid-cols-2 sm:gap-5 xl:grid-cols-3 xl:gap-8">
-          {statCards.map((item) => (
-            <div
-              key={item.label}
-              className="flex min-h-[88px] items-center gap-3 rounded-[20px] border border-[#DCE8F3] bg-white px-4 py-3 shadow-[0_6px_24px_rgba(114,144,179,0.10)] dark:border-transparent dark:bg-transparent dark:shadow-none"
-            >
-              <Image src={item.iconPath} alt="" width={56} height={56} className="h-[56px] w-[56px] shrink-0 object-contain" />
-              <div>
-                <p className="text-[14px] leading-5 text-[#7A8698] dark:text-[#9eacc3]">{item.label}</p>
-                <div className="mt-1 flex items-end gap-1.5">
-                  <p className="text-[24px] font-semibold leading-none tracking-[-0.03em] text-[#39424E] dark:text-[#edf4ff]">{item.value}</p>
-                  <p className="text-[12px] font-medium text-[#4A9DFF]">{item.detail}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="hidden items-center gap-4 sm:grid sm:grid-cols-2 sm:gap-6 xl:grid-cols-3 xl:gap-10">
+          {statCards.map((item) => <div key={item.label} className="flex items-center gap-2.5"><Image src={item.iconPath} alt="" width={56} height={56} className="h-[56px] w-[56px] shrink-0 object-contain" /><div><p className="text-[11px] leading-4 text-[#7A8698] dark:text-[#9eacc3]">{item.label}</p><div className="mt-0.5 flex items-end gap-1"><p className="text-[14px] font-semibold leading-none tracking-[-0.03em] text-[#39424E] dark:text-[#edf4ff]">{item.value}</p><p className="text-[10px] font-medium text-[#4A9DFF]">{item.detail}</p></div></div></div>)}
         </div>
       </div>
-
       <div className="grid gap-[10px] sm:gap-5 xl:grid-cols-[900px_440px] xl:items-stretch xl:gap-[20px]">
         <div className="flex h-full flex-col gap-[10px] sm:gap-[20px] xl:w-[900px]">
           <StudentDashboardProfileCard mobileStats={mobileStatCards} studentId={studentId} studentName={studentName} />

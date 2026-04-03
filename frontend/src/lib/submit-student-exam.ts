@@ -47,6 +47,7 @@ export async function submitStudentExam(props: {
     studentName,
     classId: studentClass,
     status: "submitted",
+    answeredCount: scoredAnswers.filter((entry) => entry.answer.trim().length > 0).length,
     startedAt: submittedAt,
     submittedAt,
   })

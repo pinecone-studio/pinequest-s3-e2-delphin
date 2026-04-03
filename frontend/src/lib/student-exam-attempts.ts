@@ -15,6 +15,7 @@ export type StudentExamAttempt = {
   studentName: string
   classId: string
   status: StudentExamAttemptStatus
+  answeredCount?: number
   startedAt: string
   submittedAt?: string | null
   createdAt: string

@@ -75,6 +75,7 @@ export class StudentExamAttemptsService {
         studentName: payload.studentName.trim(),
         classId: payload.classId.trim(),
         status: payload.status,
+        answeredCount: payload.answeredCount ?? existing?.answeredCount ?? 0,
         startedAt: existing?.startedAt ?? payload.startedAt,
         submittedAt:
           payload.status === 'submitted'

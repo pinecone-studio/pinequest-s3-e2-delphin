@@ -48,7 +48,8 @@ export function useStudentExamsPage() {
     return () => { isMounted = false }
   }, [studentClass, studentId])
   const myExams = useMemo(() => allExams.filter((exam) => exam.scheduledClasses.some((schedule) => schedule.classId === studentClass)), [allExams, studentClass])
-  const myResults = useMemo(() => allResults.filter((result) => result.studentId === studentId), [allResults, studentId])
+  const myExamIds = useMemo(() => new Set(myExams.map((exam) => exam.id)), [myExams])
+  const myResults = useMemo(() => allResults.filter((result) => result.studentId === studentId && myExamIds.has(result.examId)), [allResults, myExamIds, studentId])
   const completedExamIds = useMemo(() => new Set(myResults.map((result) => result.examId)), [myResults])
   const latestResultsByExamId = useMemo(
     () =>
@@ -64,11 +65,11 @@ export function useStudentExamsPage() {
       ),
     [myResults],
   )
-  const scheduledExams = useMemo(() => myExams.filter((exam) => exam.status === "scheduled"), [myExams])
+  const availableExams = useMemo(() => myExams.filter((exam) => exam.status !== "draft"), [myExams])
 
   const activeScheduledExams = useMemo(
     () =>
-      scheduledExams.filter((exam) => {
+      availableExams.filter((exam) => {
         if (completedExamIds.has(exam.id)) return false
         const schedule = getStudentSchedule(exam, studentClass)
         if (!schedule) return false
@@ -79,12 +80,12 @@ export function useStudentExamsPage() {
           exam.availableIndefinitely,
         ) > new Date()
       }),
-    [completedExamIds, scheduledExams, studentClass],
+    [availableExams, completedExamIds, studentClass],
   )
 
   const missedExams = useMemo(
     () =>
-      scheduledExams.filter((exam) => {
+      availableExams.filter((exam) => {
         if (completedExamIds.has(exam.id)) return false
         const schedule = getStudentSchedule(exam, studentClass)
         if (!schedule) return false
@@ -95,7 +96,7 @@ export function useStudentExamsPage() {
           exam.availableIndefinitely,
         ) <= new Date()
       }),
-    [completedExamIds, scheduledExams, studentClass],
+    [availableExams, completedExamIds, studentClass],
   )
 
   const categoryOptions = useMemo(() => {

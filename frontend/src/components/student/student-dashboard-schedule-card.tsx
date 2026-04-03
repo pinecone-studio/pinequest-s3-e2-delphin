@@ -9,11 +9,6 @@ import { getScheduleEnd } from "@/lib/student-exam-time"
 
 const weekdays = ["Да", "Мя", "Лх", "Пү", "Ба", "Бя", "Ня"]
 const timeSlots = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00"]
-const eventTone = [
-  { dot: "bg-[#1E88FF]", darkBadge: "dark:bg-[#1E88FF]" },
-  { dot: "bg-[#FF9800]", darkBadge: "dark:bg-[#FF9800]" },
-  { dot: "bg-[#F04FC2]", darkBadge: "dark:bg-[#F04FC2]" },
-]
 const calendarBadgeStyles = {
   completed: {
     badge:
@@ -56,6 +51,20 @@ function getWeekEvents(exams: Exam[], studentClass: string, keys: Set<string>) {
   return exams.flatMap((exam) => exam.scheduledClasses.filter((schedule) => schedule.classId === studentClass && keys.has(schedule.date)).map((schedule) => ({ exam, schedule }))).sort((a, b) => `${a.schedule.date}${a.schedule.time}`.localeCompare(`${b.schedule.date}${b.schedule.time}`))
 }
 
+function getEventDotTone(args: { isCompleted: boolean; isMissed: boolean }) {
+  if (args.isCompleted) return "bg-[#1E88FF]"
+  if (args.isMissed) return "bg-[#F04FC2]"
+  return "bg-[#FF9800]"
+}
+
+function getEventState(args: { completedExamIds: Set<string>; end: Date; examId: string; now: Date }) {
+  const isUpcoming = args.end > args.now
+  return {
+    isCompleted: !isUpcoming && args.completedExamIds.has(args.examId),
+    isMissed: !isUpcoming && !args.completedExamIds.has(args.examId),
+  }
+}
+
 export function StudentDashboardScheduleCard(props: { completedExamIds: Set<string>; exams: Exam[]; studentClass: string }) {
   const { completedExamIds, exams, studentClass } = props
   const today = new Date()
@@ -66,7 +75,10 @@ export function StudentDashboardScheduleCard(props: { completedExamIds: Set<stri
   const monthDate = weekDates.find((entry) => entry.date.getMonth() === anchorDate.getMonth())?.date ?? anchorDate
   const monthLabel = `${monthDate.getMonth() + 1}-р сар ${monthDate.getFullYear()} он`
   const now = new Date()
-  const desktopCells = new Map(weekEvents.map(({ exam, schedule }, index) => [`${schedule.date}-${schedule.time.slice(0, 2)}`, { examId: exam.id, isCompleted: completedExamIds.has(exam.id), isMissed: getScheduleEnd(schedule.date, schedule.time, exam.duration, exam.availableIndefinitely) <= now, title: exam.title, tone: eventTone[index % eventTone.length] }]))
+  const desktopCells = new Map(weekEvents.map(({ exam, schedule }) => {
+    const end = getScheduleEnd(schedule.date, schedule.time, exam.duration, exam.availableIndefinitely)
+    return [`${schedule.date}-${schedule.time.slice(0, 2)}`, { examId: exam.id, ...getEventState({ completedExamIds, end, examId: exam.id, now }), title: exam.title }]
+  }))
 
   return (
     <section className="font-sans mx-auto h-auto w-[358px] max-w-full rounded-[20px] border border-[#DCE8F3] bg-white p-5 shadow-[0_6px_24px_rgba(114,144,179,0.10)] dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)] sm:h-[659px] sm:w-full sm:overflow-y-auto sm:p-[18px] xl:max-w-[900px]">
@@ -76,11 +88,12 @@ export function StudentDashboardScheduleCard(props: { completedExamIds: Set<stri
           {weekDates.map((entry, index) => <div key={entry.key} className="flex flex-col items-center gap-2"><span className={`text-[14px] font-normal leading-none ${index >= 5 ? "text-[#97A3B2]" : "text-[#2D3642] dark:text-[#edf4ff]"}`}>{entry.label}</span><span className={`flex h-11 w-11 items-center justify-center rounded-full text-[16px] font-semibold leading-none ${entry.key === todayKey ? "bg-[#409CFF] text-white" : index >= 5 ? "text-[#97A3B2] dark:text-[#97A3B2]" : "text-[#2D3642] dark:text-[#edf4ff]"}`}>{entry.number}</span></div>)}
         </div>
         <div className="mt-5 space-y-5">
-          {weekEvents.map(({ exam, schedule }, index) => {
+          {weekEvents.map(({ exam, schedule }) => {
             const end = getScheduleEnd(schedule.date, schedule.time, exam.duration, exam.availableIndefinitely)
             const endHours = `${end.getHours()}`.padStart(2, "0")
             const endMinutes = `${end.getMinutes()}`.padStart(2, "0")
-            return <div key={`${schedule.date}-${schedule.time}-${exam.id}`} className="space-y-3"><div className="flex items-center gap-3"><span className="shrink-0 text-[14px] font-normal leading-none text-[#2388FF]">{schedule.time} - {endHours}:{endMinutes}</span><div className="h-px flex-1 border-t border-dashed border-[#CFE5FF]" /></div><div className={`${cardClassName} h-auto items-center rounded-[28px] px-[16px] py-[18px] sm:rounded-2xl sm:p-[17px]`}><div className="flex items-center gap-3"><span className={`h-[10px] w-[10px] shrink-0 rounded-full ${eventTone[index % eventTone.length].dot}`} /><span className="font-sans text-[14px] font-normal leading-none text-[#566069] dark:text-[#E1E6EB]">{exam.title}</span></div></div></div>
+            const { isCompleted, isMissed } = getEventState({ completedExamIds, end, examId: exam.id, now })
+            return <div key={`${schedule.date}-${schedule.time}-${exam.id}`} className="space-y-3"><div className="flex items-center gap-3"><span className="shrink-0 text-[14px] font-normal leading-none text-[#2388FF]">{schedule.time} - {endHours}:{endMinutes}</span><div className="h-px flex-1 border-t border-dashed border-[#CFE5FF]" /></div><div className={`${cardClassName} h-auto items-center rounded-[28px] px-[16px] py-[18px] sm:rounded-2xl sm:p-[17px]`}><div className="flex items-center gap-3"><span className={`h-[10px] w-[10px] shrink-0 rounded-full ${getEventDotTone({ isCompleted, isMissed })}`} /><span className="font-sans text-[14px] font-normal leading-none text-[#566069] dark:text-[#E1E6EB]">{exam.title}</span></div></div></div>
           })}
         </div>
       </div>
@@ -92,7 +105,8 @@ export function StudentDashboardScheduleCard(props: { completedExamIds: Set<stri
           <button type="button" onClick={() => setAnchorDate((current) => shiftDate(current, 7))} className={navButtonClassName}><Image src="/chev-right.svg" alt="" width={6} height={11} className="h-[11px] w-[6px] object-contain dark:brightness-[3]" /></button>
         </div>
       </div>
-      <div className="mt-4 hidden grid-cols-[92px_repeat(7,minmax(0,1fr))] gap-2 sm:grid">
+      <div className="mt-4 hidden overflow-x-auto sm:block">
+        <div className="grid min-w-[864px] grid-cols-[92px_repeat(7,minmax(96px,1fr))] gap-2">
         <div />
         {weekDates.map((entry, index) => {
           const isToday = entry.key === todayKey
@@ -100,8 +114,9 @@ export function StudentDashboardScheduleCard(props: { completedExamIds: Set<stri
         })}
         {timeSlots.map((time) => <div key={time} className="contents"><div className="font-sans flex min-h-[64px] items-start justify-center pt-5 text-center text-[14px] font-medium text-[#007FFF] dark:text-[#5cb7ff]">{time}</div>{weekDates.map((entry) => {
           const event = desktopCells.get(`${entry.key}-${time.slice(0, 2)}`)
-          return <div key={`${entry.key}-${time}`} className={gridCellClassName}>{event ? event.isCompleted ? <AppLoadingLink href={`/student/reports/${event.examId}`} className={`inline-flex max-w-full items-center gap-[7px] rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none line-through transition hover:brightness-[0.98] ${calendarBadgeStyles.completed.badge}`}><span className={`h-[7px] w-[7px] shrink-0 rounded-full ${calendarBadgeStyles.completed.dot}`} /><span className="truncate">{event.title}</span></AppLoadingLink> : event.isMissed ? <span className={`inline-flex max-w-full cursor-not-allowed items-center gap-[7px] rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none line-through ${calendarBadgeStyles.missed.badge}`}><span className={`h-[7px] w-[7px] shrink-0 rounded-full ${calendarBadgeStyles.missed.dot}`} /><span className="truncate">{event.title}</span></span> : <AppLoadingLink href={`/student/exams/${event.examId}`} className={`inline-flex max-w-full items-center gap-1.5 rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none transition hover:brightness-[0.98] ${calendarBadgeStyles.upcoming.badge}`}><span className={`h-[6px] w-[6px] shrink-0 rounded-full ${calendarBadgeStyles.upcoming.dot}`} /><span className="truncate">{event.title}</span></AppLoadingLink> : null}</div>
+          return <div key={`${entry.key}-${time}`} className={gridCellClassName}>{event ? event.isCompleted ? <AppLoadingLink href={`/student/reports/${event.examId}`} className={`inline-flex max-w-full items-center gap-[7px] rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none line-through transition hover:brightness-[0.98] ${calendarBadgeStyles.completed.badge}`}><span className={`h-[7px] w-[7px] shrink-0 rounded-full ${calendarBadgeStyles.completed.dot}`} /><span className="truncate">{event.title}</span></AppLoadingLink> : event.isMissed ? <span title={event.title} className={`inline-flex max-w-full cursor-not-allowed items-center gap-[7px] rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none line-through ${calendarBadgeStyles.missed.badge}`}><span className={`h-[7px] w-[7px] shrink-0 rounded-full ${calendarBadgeStyles.missed.dot}`} /><span className="truncate">Хоцорсон</span></span> : <AppLoadingLink href={`/student/exams/${event.examId}`} className={`inline-flex max-w-full items-center gap-1.5 rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none transition hover:brightness-[0.98] ${calendarBadgeStyles.upcoming.badge}`}><span className={`h-[6px] w-[6px] shrink-0 rounded-full ${calendarBadgeStyles.upcoming.dot}`} /><span className="truncate">{event.title}</span></AppLoadingLink> : null}</div>
         })}</div>)}
+        </div>
       </div>
     </section>
   )

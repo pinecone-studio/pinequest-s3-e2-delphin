@@ -20,6 +20,17 @@ export function getResultPercentage(result: ExamResult) {
   return Math.round((result.score / result.totalPoints) * 100);
 }
 
+function isFullyCorrectByPoints(
+  question: Exam["questions"][number],
+  answer: ExamResult["answers"][number] | undefined,
+) {
+  if (answer?.isCorrect === true) return true;
+  if (typeof answer?.awardedPoints === "number") {
+    return answer.awardedPoints >= question.points;
+  }
+  return false;
+}
+
 export function isManualReviewQuestionType(type: Exam["questions"][number]["type"]) {
   return type === "short-answer";
 }
@@ -52,24 +63,41 @@ export function getReportMetrics(exam: Exam, result: ExamResult) {
   let wrongCount = 0;
   let unansweredCount = 0;
   let pendingReviewCount = 0;
+  let unansweredPoints = 0;
 
   exam.questions.forEach((question) => {
     const answer = answerMap.get(question.id);
     const reviewState = getAnswerReviewState(question, answer);
 
-    if (reviewState === "unanswered") unansweredCount += 1;
+    if (reviewState === "unanswered") {
+      unansweredCount += 1;
+      unansweredPoints += question.points;
+    }
     else if (reviewState === "pending") pendingReviewCount += 1;
     else if (reviewState === "correct") correctCount += 1;
     else if (reviewState === "wrong") wrongCount += 1;
+    else if (reviewState === "graded") {
+      if (isFullyCorrectByPoints(question, answer)) correctCount += 1;
+      else wrongCount += 1;
+    }
   });
+
+  const totalPoints = result.totalPoints;
+  const score = result.score;
+  const missedPoints = Math.max(totalPoints - score - unansweredPoints, 0);
 
   return {
     totalQuestions: exam.questions.length,
     correctCount,
     wrongCount,
     unansweredCount,
+    unansweredPoints,
     pendingReviewCount,
     percentage: getResultPercentage(result),
+    score,
+    totalPoints,
+    earnedPoints: score,
+    missedPoints,
   };
 }
 

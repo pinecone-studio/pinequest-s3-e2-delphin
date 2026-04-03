@@ -11,9 +11,11 @@ import type { Exam, ExamResult } from "@/lib/mock-data"
 
 type StudentReportShellProps = {
   correctCount: number
+  earnedPoints: number
   exam: Exam
   examTitle: string
   isAvailable: boolean
+  missedPoints: number
   pendingReviewCount: number
   percentage: number
   questionCount: number
@@ -26,6 +28,7 @@ type StudentReportShellProps = {
   submittedLabel: string
   totalPoints: number
   unansweredCount: number
+  unansweredPoints: number
   wrongCount: number
 }
 
@@ -80,15 +83,14 @@ export function StudentReportShell(props: StudentReportShellProps) {
             </header>
 
             <StudentReportSummaryPanel
-              correctCount={props.correctCount}
               duration={props.exam.duration}
+              earnedPoints={props.earnedPoints}
+              missedPoints={props.missedPoints}
               percentage={props.percentage}
-              questionCount={props.questionCount}
               scheduleLabel={props.scheduleLabel}
-              score={props.result.score}
+              score={props.earnedPoints}
               totalPoints={props.totalPoints}
-              unansweredCount={props.unansweredCount}
-              wrongCount={props.wrongCount}
+              unansweredPoints={props.unansweredPoints}
             />
 
             <div className="mt-4">

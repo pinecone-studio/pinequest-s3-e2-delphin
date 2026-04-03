@@ -48,7 +48,7 @@ export default function StudentExamReportPage({
         setAllResults(nextResults)
       } catch (error) {
         if (isMounted) {
-          console.warn("Шалгалтын тайлангийн мэдээллийг backend-ээс сэргээж чадсангүй.", error)
+          console.warn("Failed to refresh student report data from backend.", error)
         }
       } finally {
         if (isMounted) {
@@ -81,8 +81,7 @@ export default function StudentExamReportPage({
                   Тайланг бэлдэж байна
                 </h1>
                 <p className="max-w-[260px] text-sm leading-6 text-slate-600 sm:max-w-md dark:text-[#a9b7ca]">
-                  Таны илгээсэн хариултыг шалгаж, тайлангийн хуудсанд шилжүүлж байна. Түр
-                  хүлээнэ үү.
+                  Таны илгээсэн хариултыг шалгаж, тайлангийн хуудсанд шилжүүлж байна. Түр хүлээнэ үү.
                 </p>
               </div>
             </div>
@@ -119,21 +118,24 @@ export default function StudentExamReportPage({
   return (
     <StudentReportShell
       correctCount={metrics.correctCount}
+      earnedPoints={metrics.earnedPoints}
       exam={exam}
       examTitle={exam.title}
       isAvailable={isAvailable}
+      missedPoints={metrics.missedPoints}
       pendingReviewCount={metrics.pendingReviewCount}
       percentage={metrics.percentage}
       questionCount={metrics.totalQuestions}
       releaseMessage={releaseMessage}
       result={result}
-      scoreLabel={`${result.score}/${result.totalPoints} • ${getExamLetterGrade(metrics.percentage)}`}
+      scoreLabel={`${metrics.score}/${metrics.totalPoints} • ${getExamLetterGrade(metrics.percentage)}`}
       scheduleLabel={schedule ? `${schedule.date} ${schedule.time}` : "Тов гараагүй"}
       studentClass={studentClass}
       studentName={studentName || "Сурагч"}
       submittedLabel={new Date(result.submittedAt).toLocaleString("mn-MN")}
-      totalPoints={result.totalPoints}
+      totalPoints={metrics.totalPoints}
       unansweredCount={metrics.unansweredCount}
+      unansweredPoints={metrics.unansweredPoints}
       wrongCount={metrics.wrongCount}
     />
   )

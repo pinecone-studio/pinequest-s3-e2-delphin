@@ -5,12 +5,12 @@ import { useId } from "react"
 import { useTheme } from "@/components/theme-provider"
 
 type StudentReportPerformanceChartProps = {
-  correctCount: number
+  earnedPoints: number
+  missedPoints: number
   percentage: number
-  questionCount: number
   score: number
   totalPoints: number
-  wrongCount: number
+  unansweredPoints: number
 }
 
 const CENTER_X = 93.0121
@@ -56,13 +56,13 @@ const buildDonutPath = (startAngle: number, endAngle: number, outerRadius: numbe
 }
 
 export function StudentReportPerformanceChart(props: StudentReportPerformanceChartProps) {
-  const { correctCount, percentage, questionCount, score, totalPoints, wrongCount } = props
+  const { earnedPoints, missedPoints, percentage, score, totalPoints, unansweredPoints } = props
   const { resolvedTheme } = useTheme()
   const safePercentage = Math.max(0, Math.min(100, percentage))
-  const safeQuestionCount = Math.max(questionCount, 1)
-  const correctRatio = Math.max(0, Math.min(correctCount / safeQuestionCount, 1))
-  const wrongRatio = Math.max(0, Math.min(wrongCount / safeQuestionCount, 1 - correctRatio))
-  const unansweredRatio = Math.max(0, 1 - correctRatio - wrongRatio)
+  const safeTotalPoints = Math.max(totalPoints, 1)
+  const correctRatio = Math.max(0, Math.min(earnedPoints / safeTotalPoints, 1))
+  const unansweredRatio = Math.max(0, Math.min(unansweredPoints / safeTotalPoints, 1 - correctRatio))
+  const wrongRatio = Math.max(0, Math.min(missedPoints / safeTotalPoints, 1 - correctRatio - unansweredRatio))
   const correctEnd = START_ANGLE + correctRatio * 360
   const wrongEnd = correctEnd + wrongRatio * 360
   const unansweredEnd = wrongEnd + unansweredRatio * 360

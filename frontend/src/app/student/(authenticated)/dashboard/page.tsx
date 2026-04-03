@@ -8,7 +8,7 @@ import { StudentExamsOverviewPanel } from "@/components/student/student-exams-ov
 import { useStudentSession } from "@/hooks/use-student-session"
 import { exams as legacyExams, type Exam, type ExamResult } from "@/lib/mock-data"
 import { getCachedStudentExamResults, loadStudentExamResults } from "@/lib/student-exam-results"
-import { getLocalDateString } from "@/lib/student-exam-time"
+import { getLocalDateString, getScheduleEnd } from "@/lib/student-exam-time"
 import { getStudentExams } from "@/lib/student-exams"
 import { getExamLetterGrade } from "@/lib/student-report-view"
 import { useTheme } from "@/components/theme-provider"
@@ -39,17 +39,24 @@ export default function StudentDashboard() {
   }, [studentClass, studentId])
 
   const myExams = useMemo(() => allExams.filter((exam) => exam.scheduledClasses.some((schedule) => schedule.classId === studentClass)), [allExams, studentClass])
-  const studentResults = useMemo(() => allResults.filter((result) => result.studentId === studentId), [allResults, studentId])
+  const myExamIds = useMemo(() => new Set(myExams.map((exam) => exam.id)), [myExams])
+  const studentResults = useMemo(() => allResults.filter((result) => result.studentId === studentId && myExamIds.has(result.examId)), [allResults, myExamIds, studentId])
   const completedExamIds = useMemo(() => new Set(studentResults.map((result) => result.examId)), [studentResults])
   const statCards = useMemo(() => {
     const averagePercentage = studentResults.length ? Math.round(studentResults.reduce((sum, result) => sum + (result.score / Math.max(result.totalPoints, 1)) * 100, 0) / studentResults.length) : 0
     const latestResult = [...studentResults].sort((left, right) => new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime())[0]
     const latestExam = latestResult ? allExams.find((exam) => exam.id === latestResult.examId) : null
     const latestPercentage = latestResult ? Math.round((latestResult.score / Math.max(latestResult.totalPoints, 1)) * 100) : 0
-    const now = new Date()
-    const nextWeek = new Date(now)
-    nextWeek.setDate(nextWeek.getDate() + 7)
-    const upcomingThisWeek = myExams.filter((exam) => exam.status === "scheduled" && exam.scheduledClasses.some((schedule) => schedule.classId === studentClass && new Date(`${schedule.date}T${schedule.time}:00`) >= now && new Date(`${schedule.date}T${schedule.time}:00`) <= nextWeek)).length
+    const startOfToday = new Date()
+    startOfToday.setHours(0, 0, 0, 0)
+    const endOfWindow = new Date(startOfToday)
+    endOfWindow.setDate(endOfWindow.getDate() + 6)
+    endOfWindow.setHours(23, 59, 59, 999)
+    const upcomingThisWeek = myExams.filter((exam) => exam.status !== "draft" && exam.scheduledClasses.some((schedule) => {
+      if (schedule.classId !== studentClass) return false
+      const scheduledAt = new Date(`${schedule.date}T${schedule.time}:00`)
+      return scheduledAt >= startOfToday && scheduledAt <= endOfWindow && getScheduleEnd(schedule.date, schedule.time, exam.duration, exam.availableIndefinitely) > new Date()
+    })).length
     return [
       { label: "Нийт амжилт", value: `${averagePercentage}%`, detail: `${studentResults.length} шалгалт`, iconPath: isDark ? "/student-dashboard-dark-achievement.svg" : "/student-dashboard-light-achievement.svg" },
       { label: latestExam?.title ?? "Сүүлийн шалгалт", value: latestResult ? `${latestPercentage}% ${getExamLetterGrade(latestPercentage)}` : "-", detail: "Сүүлийн дүн", iconPath: isDark ? "/student-dashboard-dark-score.svg" : "/student-dashboard-light-score.svg" },

@@ -7,58 +7,66 @@ import { useTheme } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 
 type StudentReportSummaryPanelProps = {
-  correctCount: number
   duration: number
+  earnedPoints: number
+  missedPoints: number
   percentage: number
-  questionCount: number
   scheduleLabel: string
   score: number
   totalPoints: number
-  unansweredCount: number
-  wrongCount: number
+  unansweredPoints: number
 }
 
 const resultStats = [
-  { dotClass: "bg-[linear-gradient(180deg,#99FFA3_0%,#68EE76_100%)] shadow-[0_5px_12px_rgba(135,246,147,0.2)]", key: "correctCount", label: "Зөв хариулт" },
-  { dotClass: "bg-[linear-gradient(180deg,#FF9364_0%,#F25F33_100%)] shadow-[0_5px_12px_rgba(251,204,100,0.2)]", key: "wrongCount", label: "Алдсан хариулт" },
-  { dotClass: "bg-[linear-gradient(180deg,#7AD3FF_0%,#4FBAF0_100%)] opacity-15 shadow-[0_5px_12px_rgba(237,247,252,0.3)]", key: "unansweredCount", label: "Хоосон хариулт" },
+  ["earnedPoints", "Авсан оноо", "bg-[linear-gradient(180deg,#99FFA3_0%,#68EE76_100%)] shadow-[0_5px_12px_rgba(135,246,147,0.2)]"],
+  ["missedPoints", "Алдсан оноо", "bg-[linear-gradient(180deg,#FF9364_0%,#F25F33_100%)] shadow-[0_5px_12px_rgba(251,204,100,0.2)]"],
+  ["unansweredPoints", "Хоосон оноо", "bg-[linear-gradient(180deg,#7AD3FF_0%,#4FBAF0_100%)] opacity-15 shadow-[0_5px_12px_rgba(237,247,252,0.3)]"],
 ] as const
 
 export function StudentReportSummaryPanel(props: StudentReportSummaryPanelProps) {
   const { resolvedTheme } = useTheme()
   const isDark = resolvedTheme === "dark"
-  const statMap = { correctCount: props.correctCount, unansweredCount: props.unansweredCount, wrongCount: props.wrongCount }
+  const statMap = {
+    earnedPoints: props.earnedPoints,
+    missedPoints: props.missedPoints,
+    unansweredPoints: props.unansweredPoints,
+  }
+  const chart = (
+    <StudentReportPerformanceChart
+      earnedPoints={props.earnedPoints}
+      missedPoints={props.missedPoints}
+      percentage={props.percentage}
+      score={props.score}
+      totalPoints={props.totalPoints}
+      unansweredPoints={props.unansweredPoints}
+    />
+  )
+  const infoCards = (
+    <>
+      <MiniInfoCard iconSrc="/report-time-icon.svg" isDark={isDark} label="Хугацаа" value={`${props.duration} мин`} />
+      <MiniInfoCard iconSrc="/report-date-icon.svg" isDark={isDark} label="Огноо" value={props.scheduleLabel} />
+    </>
+  )
 
   return (
     <section className={cn("mt-7 px-5 py-6 md:px-7", studentReportPanelSurfaceClassName)}>
       <div className="flex flex-col gap-5 lg:hidden">
-        <div className="flex justify-center">
-          <StudentReportPerformanceChart correctCount={props.correctCount} percentage={props.percentage} questionCount={props.questionCount} score={props.score} totalPoints={props.totalPoints} wrongCount={props.wrongCount} />
-        </div>
+        <div className="flex justify-center">{chart}</div>
         <div className="grid gap-4 sm:grid-cols-3">
-          {resultStats.map((item) => (
-            <ResultStat key={item.key} count={statMap[item.key]} dotClass={item.dotClass} isDark={isDark} label={item.label} total={props.questionCount} />
+          {resultStats.map(([key, label, dotClass]) => (
+            <ResultStat key={key} count={statMap[key]} dotClass={dotClass} isDark={isDark} label={label} total={props.totalPoints} />
           ))}
         </div>
-        <div className="grid gap-3 md:grid-cols-2">
-          <MiniInfoCard iconSrc="/report-time-icon.svg" isDark={isDark} label="Хугацаа" value={`${props.duration} мин`} />
-          <MiniInfoCard iconSrc="/report-date-icon.svg" isDark={isDark} label="Огноо" value={props.scheduleLabel} />
-        </div>
+        <div className="grid gap-3 md:grid-cols-2">{infoCards}</div>
       </div>
 
       <div className="relative hidden h-[229px] lg:block">
-        <div className="absolute left-[18px] top-[6px]">
-          <StudentReportPerformanceChart correctCount={props.correctCount} percentage={props.percentage} questionCount={props.questionCount} score={props.score} totalPoints={props.totalPoints} wrongCount={props.wrongCount} />
-        </div>
-        <div className="absolute left-[218px] top-[26px] w-[182px]">
-          <ResultStat count={statMap.correctCount} dotClass={resultStats[0].dotClass} isDark={isDark} label="Зөв хариулт" total={props.questionCount} />
-        </div>
-        <div className="absolute left-[469px] top-[26px] w-[182px]">
-          <ResultStat count={statMap.wrongCount} dotClass={resultStats[1].dotClass} isDark={isDark} label="Алдсан хариулт" total={props.questionCount} />
-        </div>
-        <div className="absolute left-[717px] top-[26px] w-[182px]">
-          <ResultStat count={statMap.unansweredCount} dotClass={resultStats[2].dotClass} isDark={isDark} label="Хоосон хариулт" total={props.questionCount} />
-        </div>
+        <div className="absolute left-[18px] top-[6px]">{chart}</div>
+        {resultStats.map(([key, label, dotClass], index) => (
+          <div key={key} className={index === 0 ? "absolute left-[218px] top-[26px] w-[182px]" : index === 1 ? "absolute left-[469px] top-[26px] w-[182px]" : "absolute left-[717px] top-[26px] w-[182px]"}>
+            <ResultStat count={statMap[key]} dotClass={dotClass} isDark={isDark} label={label} total={props.totalPoints} />
+          </div>
+        ))}
         <div className="absolute left-[214px] top-[110px] w-[303px]">
           <MiniInfoCard iconSrc="/report-time-icon.svg" isDark={isDark} label="Хугацаа" value={`${props.duration} мин`} />
         </div>

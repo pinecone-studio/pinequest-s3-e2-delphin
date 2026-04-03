@@ -2,9 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
-import { useTheme } from "@/components/theme-provider";
 import {
   Card,
   CardContent,
@@ -12,20 +9,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LoginField, StudentLoginIntro } from "@/components/student/student-login-parts";
+import { StudentLoginSubmitBlock } from "@/components/student/student-login-submit-block";
 import { ThemeToggleButton } from "@/components/theme-toggle-button";
-import { StudentLoginDemoButtons } from "@/components/student/student-login-demo-buttons";
 import { notifyStudentSessionChange } from "@/hooks/use-student-session";
 import { students } from "@/lib/mock-data";
 import { findResumableExamPath } from "@/lib/student-exam-resume";
 
 export default function StudentLoginPage() {
   const router = useRouter();
-  const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
   const demoStudent =
     students.find((student) => student.email === "nandin@school.com") ??
     students[0];
@@ -104,18 +97,7 @@ export default function StudentLoginPage() {
 
       <div className="relative flex min-h-[calc(100vh-2rem)] items-center justify-center">
         <div className="content-surface w-full max-w-md rounded-[2rem] p-4 md:p-5">
-          <div className="mb-6 text-center">
-            <Link href="/" className="muted-text text-sm hover:underline">
-              &larr; Нүүр хуудас руу буцах
-            </Link>
-            <h1 className="mt-4 text-2xl font-bold text-foreground">
-              Сурагчийн нэвтрэх хэсэг
-            </h1>
-            <p className="secondary-text">
-              Шалгалтуудаа үзэхийн тулд нэвтэрнэ үү
-            </p>
-          </div>
-
+          <StudentLoginIntro />
           <div className="relative">
             <Card className="panel-surface relative rounded-[1.5rem] border-white/70 bg-white/80 shadow-xl shadow-sky-200/25 backdrop-blur-md">
               <CardHeader>
@@ -126,64 +108,14 @@ export default function StudentLoginPage() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleLogin} className="space-y-4">
-                  {error && (
+                  {error ? (
                     <Alert variant="destructive">
                       <AlertDescription>{error}</AlertDescription>
                     </Alert>
-                  )}
-
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Имэйл</Label>
-                    <Input
-                      className="input-surface"
-                      id="email"
-                      type="email"
-                      placeholder="your@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Нууц үг</Label>
-                    <Input
-                      className="input-surface"
-                      id="password"
-                      type="password"
-                      placeholder="Нууц үгээ оруулна уу"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  {isSubmitting ? (
-                    <div className="flex w-full items-center justify-center py-2">
-                      <Image
-                      src={isDark ? "/edulphin-mark-dark.svg" : "/edulphin-mark.svg"}
-                      alt="Loading"
-                      width={48}
-                      height={48}
-                      priority
-                      className={`h-12 w-12 animate-spin object-contain drop-shadow-[0_0_10px_rgba(64,156,255,0.45)] ${isDark ? "brightness-150 saturate-150 contrast-125" : "brightness-150 saturate-200 contrast-125"}`}
-                    />
-                  </div>
-                  ) : (
-                    <>
-                      <Button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="ocean-cta w-full border-0 font-semibold"
-                      >
-                        Нэвтрэх
-                      </Button>
-                      <StudentLoginDemoButtons
-                        onDemoFill={handleDemoFill}
-                        onJudgeDemoFill={handleJudgeDemoFill}
-                      />
-                    </>
-                  )}
+                  ) : null}
+                  <LoginField id="email" label="Имэйл" placeholder="your@email.com" type="email" value={email} onChange={setEmail} />
+                  <LoginField id="password" label="Нууц үг" placeholder="Нууц үгээ оруулна уу" type="password" value={password} onChange={setPassword} />
+                  <StudentLoginSubmitBlock isSubmitting={isSubmitting} onDemoFill={handleDemoFill} onJudgeDemoFill={handleJudgeDemoFill} />
                 </form>
               </CardContent>
             </Card>

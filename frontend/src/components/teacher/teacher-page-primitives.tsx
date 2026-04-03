@@ -21,7 +21,6 @@ export function TeacherPageHeader({
   className,
   description,
   eyebrow,
-  icon: _icon,
   surface = "card",
   title,
 }: {

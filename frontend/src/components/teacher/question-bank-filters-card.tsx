@@ -30,6 +30,8 @@ export function QuestionBankFiltersCard({
   selectedCategoryFilter,
   selectedDifficulty = "all",
 }: QuestionBankFiltersCardProps) {
+  void onSelectedDifficultyChange;
+  void selectedDifficulty;
   const [categoryInputValue, setCategoryInputValue] = useState("");
   const [isCategoryFocused, setIsCategoryFocused] = useState(false);
   const selectedCategoryName =

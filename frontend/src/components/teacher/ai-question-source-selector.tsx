@@ -64,19 +64,17 @@ export function AIQuestionSourceSelector({
   );
   const selectedSource = availableSourceFiles.find((file) => file.id === selectedSourceId);
   const defaultUnit = selectedSource ? getSourceDisplayMeta(selectedSource).rightPrimary : "";
-  const topicOptions = useMemo(
-    () =>
-      [
-        ...new Set(
-          availableSourceFiles
-            .map((file) => getSourceDisplayMeta(file))
-            .filter((meta) => !selectedUnit || meta.rightPrimary === selectedUnit)
-            .map((meta) => meta.rightSecondary),
-        ),
-      ],
-    [availableSourceFiles, selectedUnit],
-  );
+  const effectiveSelectedUnit = selectedUnit || defaultUnit;
+  const topicOptions = [
+    ...new Set(
+      availableSourceFiles
+        .map((file) => getSourceDisplayMeta(file))
+        .filter((meta) => !effectiveSelectedUnit || meta.rightPrimary === effectiveSelectedUnit)
+        .map((meta) => meta.rightSecondary),
+    ),
+  ];
   const defaultTopic = selectedSource ? getSourceDisplayMeta(selectedSource).rightSecondary : "";
+  const effectiveSelectedTopic = selectedTopic || defaultTopic;
 
   useEffect(() => {
     if (!isBuilderDialog && !selectedMockTests.length && availableSourceFiles[0]) {
@@ -84,19 +82,18 @@ export function AIQuestionSourceSelector({
     }
   }, [availableSourceFiles, isBuilderDialog, onToggleTest, selectedMockTests]);
 
-  useEffect(() => {
-    if (!selectedUnit && defaultUnit) setSelectedUnit(defaultUnit);
-  }, [defaultUnit, selectedUnit]);
-
-  useEffect(() => {
-    if (!selectedTopic && defaultTopic) setSelectedTopic(defaultTopic);
-  }, [defaultTopic, selectedTopic]);
-
   const handleSourceChange = (nextId: string) => {
     selectedMockTests.forEach((id) => {
       if (id !== nextId) onToggleTest(id, false);
     });
+    setSelectedUnit("");
+    setSelectedTopic("");
     onToggleTest(nextId, true);
+  };
+
+  const handleUnitChange = (value: string) => {
+    setSelectedUnit(value);
+    setSelectedTopic("");
   };
 
   if (!isBuilderDialog) {
@@ -107,11 +104,11 @@ export function AIQuestionSourceSelector({
         onGradeChange={setSelectedGrade}
         onSourceChange={handleSourceChange}
         onTopicChange={setSelectedTopic}
-        onUnitChange={setSelectedUnit}
+        onUnitChange={handleUnitChange}
         selectedGrade={selectedGrade}
         selectedSourceId={selectedSourceId}
-        selectedTopic={selectedTopic || defaultTopic}
-        selectedUnit={selectedUnit || defaultUnit}
+        selectedTopic={effectiveSelectedTopic}
+        selectedUnit={effectiveSelectedUnit}
         topicOptions={topicOptions}
         unitOptions={unitOptions}
       />

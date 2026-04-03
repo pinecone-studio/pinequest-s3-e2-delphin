@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
@@ -104,37 +105,40 @@ export class ExamsService {
   async findOne(id: string): Promise<Exam> {
     return executeOrRethrowAsync(async () => {
       if (this.databaseService.isConfigured()) {
-        const examRecord = await this.databaseService.queryFirst<ExamRecord>(
-          `SELECT id, title, duration_minutes as durationMinutes, report_release_mode as reportReleaseMode,
-           status, created_at as createdAt, updated_at as updatedAt
-           FROM exams
-           WHERE id = ?
-           LIMIT 1`,
-          [id],
-        );
+        try {
+          const examRecord = await this.databaseService.queryFirst<ExamRecord>(
+            `SELECT id, title, duration_minutes as durationMinutes, report_release_mode as reportReleaseMode,
+             status, created_at as createdAt, updated_at as updatedAt
+             FROM exams
+             WHERE id = ?
+             LIMIT 1`,
+            [id],
+          );
 
-        if (!examRecord) {
-          throw new NotFoundException(`Exam ${id} not found`);
+          if (!examRecord) {
+            throw new NotFoundException(`Exam ${id} not found`);
+          }
+
+          const questionRecords = await this.queryExamQuestionRecords(id);
+          const scheduleRecords =
+            await this.databaseService.query<ExamScheduleRecord>(
+              `SELECT id, exam_id as examId, class_id as classId, scheduled_date as scheduledDate,
+             scheduled_time as scheduledTime
+             FROM exam_schedules
+             WHERE exam_id = ?`,
+              [id],
+            );
+
+          return this.mapExamRecord(examRecord, questionRecords, scheduleRecords);
+        } catch (error) {
+          if (!this.shouldUseLocalReadFallback(error)) {
+            throw error;
+          }
+
+          console.warn(
+            `Falling back to local exam store for GET /exams/${id} because Cloudflare D1 is unavailable.`,
+          );
         }
-
-        const questionRecords =
-          await this.databaseService.query<ExamQuestionRecord>(
-            `SELECT id, exam_id as examId, type, prompt, options_json as optionsJson,
-           correct_answer as correctAnswer, icon_key as iconKey, points, display_order as displayOrder
-           FROM exam_questions
-           WHERE exam_id = ?`,
-            [id],
-          );
-        const scheduleRecords =
-          await this.databaseService.query<ExamScheduleRecord>(
-            `SELECT id, exam_id as examId, class_id as classId, scheduled_date as scheduledDate,
-           scheduled_time as scheduledTime
-           FROM exam_schedules
-           WHERE exam_id = ?`,
-            [id],
-          );
-
-        return this.mapExamRecord(examRecord, questionRecords, scheduleRecords);
       }
 
       await this.ensureLocalStoreLoaded();
@@ -505,27 +509,32 @@ export class ExamsService {
     scheduleRecords: ExamScheduleRecord[];
   }> {
     if (this.databaseService.isConfigured()) {
-      const [examRecords, questionRecords, scheduleRecords] = await Promise.all(
-        [
-          this.databaseService.query<ExamRecord>(
-            `SELECT id, title, duration_minutes as durationMinutes, report_release_mode as reportReleaseMode,
-           status, created_at as createdAt, updated_at as updatedAt
-           FROM exams`,
-          ),
-          this.databaseService.query<ExamQuestionRecord>(
-            `SELECT id, exam_id as examId, type, prompt, options_json as optionsJson,
-           correct_answer as correctAnswer, icon_key as iconKey, points, display_order as displayOrder
-           FROM exam_questions`,
-          ),
-          this.databaseService.query<ExamScheduleRecord>(
-            `SELECT id, exam_id as examId, class_id as classId, scheduled_date as scheduledDate,
-           scheduled_time as scheduledTime
-           FROM exam_schedules`,
-          ),
-        ],
-      );
+      try {
+        const [examRecords, questionRecords, scheduleRecords] =
+          await Promise.all([
+            this.databaseService.query<ExamRecord>(
+              `SELECT id, title, duration_minutes as durationMinutes, report_release_mode as reportReleaseMode,
+             status, created_at as createdAt, updated_at as updatedAt
+             FROM exams`,
+            ),
+            this.queryAllExamQuestionRecords(),
+            this.databaseService.query<ExamScheduleRecord>(
+              `SELECT id, exam_id as examId, class_id as classId, scheduled_date as scheduledDate,
+             scheduled_time as scheduledTime
+             FROM exam_schedules`,
+            ),
+          ]);
 
-      return { examRecords, questionRecords, scheduleRecords };
+        return { examRecords, questionRecords, scheduleRecords };
+      } catch (error) {
+        if (!this.shouldUseLocalReadFallback(error)) {
+          throw error;
+        }
+
+        console.warn(
+          'Falling back to local exam store for GET /exams because Cloudflare D1 is unavailable.',
+        );
+      }
     }
 
     await this.ensureLocalStoreLoaded();
@@ -793,5 +802,62 @@ export class ExamsService {
 
   private toReportReleaseMode(value: string): ReportReleaseMode {
     return value as ReportReleaseMode;
+  }
+
+  private shouldUseLocalReadFallback(error: unknown) {
+    return error instanceof ServiceUnavailableException;
+  }
+
+  private async queryAllExamQuestionRecords(): Promise<ExamQuestionRecord[]> {
+    try {
+      return await this.databaseService.query<ExamQuestionRecord>(
+        `SELECT id, exam_id as examId, type, prompt, options_json as optionsJson,
+         correct_answer as correctAnswer, icon_key as iconKey, points, display_order as displayOrder
+         FROM exam_questions`,
+      );
+    } catch (error) {
+      if (!this.isMissingIconKeyColumnError(error)) {
+        throw error;
+      }
+
+      return this.databaseService.query<ExamQuestionRecord>(
+        `SELECT id, exam_id as examId, type, prompt, options_json as optionsJson,
+         correct_answer as correctAnswer, null as iconKey, points, display_order as displayOrder
+         FROM exam_questions`,
+      );
+    }
+  }
+
+  private async queryExamQuestionRecords(
+    examId: string,
+  ): Promise<ExamQuestionRecord[]> {
+    try {
+      return await this.databaseService.query<ExamQuestionRecord>(
+        `SELECT id, exam_id as examId, type, prompt, options_json as optionsJson,
+         correct_answer as correctAnswer, icon_key as iconKey, points, display_order as displayOrder
+         FROM exam_questions
+         WHERE exam_id = ?`,
+        [examId],
+      );
+    } catch (error) {
+      if (!this.isMissingIconKeyColumnError(error)) {
+        throw error;
+      }
+
+      return this.databaseService.query<ExamQuestionRecord>(
+        `SELECT id, exam_id as examId, type, prompt, options_json as optionsJson,
+         correct_answer as correctAnswer, null as iconKey, points, display_order as displayOrder
+         FROM exam_questions
+         WHERE exam_id = ?`,
+        [examId],
+      );
+    }
+  }
+
+  private isMissingIconKeyColumnError(error: unknown) {
+    return (
+      error instanceof ServiceUnavailableException &&
+      error.message.includes('no such column: icon_key')
+    );
   }
 }

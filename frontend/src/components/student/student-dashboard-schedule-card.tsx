@@ -3,7 +3,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
-import { Check } from "lucide-react"
 import type { Exam } from "@/lib/mock-data"
 import { getScheduleEnd } from "@/lib/student-exam-time"
 
@@ -14,6 +13,23 @@ const eventTone = [
   { dot: "bg-[#FF9800]", darkBadge: "dark:bg-[#FF9800]" },
   { dot: "bg-[#F04FC2]", darkBadge: "dark:bg-[#F04FC2]" },
 ]
+const calendarBadgeStyles = {
+  completed: {
+    badge:
+      "bg-[#E8F2FF] text-[#1E88FF] dark:bg-[#1E88FF] dark:text-white",
+    dot: "bg-current dark:bg-white",
+  },
+  missed: {
+    badge:
+      "bg-[#FFE7F6] text-[#F04FC2] dark:bg-[#F04FC2] dark:text-white",
+    dot: "bg-current dark:bg-white",
+  },
+  upcoming: {
+    badge:
+      "bg-[#FFF3E0] text-[#FF9800] dark:bg-[#FF9800] dark:text-white",
+    dot: "bg-current dark:bg-white",
+  },
+} as const
 const navButtonClassName = "flex h-6 w-6 items-center justify-center rounded-full border-[0.5px] border-[#E6F2FF] bg-transparent dark:border-[rgba(224,225,226,0.72)] dark:bg-transparent"
 const gridCellClassName = "min-h-[64px] rounded-[10px] border border-[#E8EEF5] bg-white px-2 py-2 dark:border-[rgba(224,225,226,0.14)] dark:bg-[radial-gradient(62%_1.5px_at_50%_0%,rgba(167,182,214,0.22)_0%,rgba(167,182,214,0.09)_42%,rgba(167,182,214,0)_100%),radial-gradient(62%_1.5px_at_50%_100%,rgba(167,182,214,0.18)_0%,rgba(167,182,214,0.08)_42%,rgba(167,182,214,0)_100%),linear-gradient(180deg,#0d163f_0%,#0a1236_100%)] dark:shadow-[inset_0_0_8px_rgba(55,82,138,0.05)]"
 
@@ -83,7 +99,7 @@ export function StudentDashboardScheduleCard(props: { completedExamIds: Set<stri
         })}
         {timeSlots.map((time) => <div key={time} className="contents"><div className="font-sans flex min-h-[64px] items-start justify-center pt-5 text-center text-[14px] font-medium text-[#007FFF] dark:text-[#5cb7ff]">{time}</div>{weekDates.map((entry) => {
           const event = desktopCells.get(`${entry.key}-${time.slice(0, 2)}`)
-          return <div key={`${entry.key}-${time}`} className={gridCellClassName}>{event ? event.isCompleted ? <Link href={`/student/reports/${event.examId}`} className={`inline-flex max-w-full items-center gap-[7px] rounded-full bg-[#E8F5E9] px-[10px] py-1 text-[11px] font-semibold leading-none text-[#00C853] line-through transition hover:brightness-[0.98] dark:text-white ${event.tone.darkBadge}`}><Check className="h-[12px] w-[12px] shrink-0 dark:text-white" /><span className="truncate">{event.title}</span></Link> : event.isMissed ? <span className={`inline-flex max-w-full cursor-not-allowed items-center gap-[7px] rounded-full bg-[#FEE2E2] px-[10px] py-1 text-[11px] font-semibold leading-none text-[#DC2626] line-through dark:text-white ${event.tone.darkBadge}`}><span className="h-[7px] w-[7px] shrink-0 rounded-full bg-current dark:bg-white" /><span className="truncate">{event.title}</span></span> : <Link href={`/student/exams/${event.examId}`} className={`inline-flex max-w-full items-center gap-1.5 rounded-full bg-[#FFF3E0] px-[10px] py-1 text-[11px] font-semibold leading-none text-[#FF9500] transition hover:brightness-[0.98] dark:text-white ${event.tone.darkBadge}`}><span className="h-[6px] w-[6px] shrink-0 rounded-full bg-current dark:bg-white" /><span className="truncate">{event.title}</span></Link> : null}</div>
+          return <div key={`${entry.key}-${time}`} className={gridCellClassName}>{event ? event.isCompleted ? <Link href={`/student/reports/${event.examId}`} className={`inline-flex max-w-full items-center gap-[7px] rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none line-through transition hover:brightness-[0.98] ${calendarBadgeStyles.completed.badge}`}><span className={`h-[7px] w-[7px] shrink-0 rounded-full ${calendarBadgeStyles.completed.dot}`} /><span className="truncate">{event.title}</span></Link> : event.isMissed ? <span className={`inline-flex max-w-full cursor-not-allowed items-center gap-[7px] rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none line-through ${calendarBadgeStyles.missed.badge}`}><span className={`h-[7px] w-[7px] shrink-0 rounded-full ${calendarBadgeStyles.missed.dot}`} /><span className="truncate">{event.title}</span></span> : <Link href={`/student/exams/${event.examId}`} className={`inline-flex max-w-full items-center gap-1.5 rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none transition hover:brightness-[0.98] ${calendarBadgeStyles.upcoming.badge}`}><span className={`h-[6px] w-[6px] shrink-0 rounded-full ${calendarBadgeStyles.upcoming.dot}`} /><span className="truncate">{event.title}</span></Link> : null}</div>
         })}</div>)}
       </div>
     </section>

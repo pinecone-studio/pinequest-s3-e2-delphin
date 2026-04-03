@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Clock3, Heart } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import { getExamIcon } from "@/components/student/student-exams-page-utils"
+import { useTheme } from "@/components/theme-provider"
 import { getDashboardAnnouncements, subscribeDashboardAnnouncements } from "@/lib/dashboard-announcements"
 import type { Exam, ExamResult } from "@/lib/mock-data"
 import { classHomeroomTeachers } from "@/lib/mock-students"
@@ -66,26 +67,26 @@ function readStoredMap<T extends Record<string, number | boolean>>(key: string) 
 
 export function StudentExamsOverviewPanel(props: { exams: Exam[]; results: ExamResult[]; studentClass: string; today: string }) {
   const { exams, results, studentClass, today } = props
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === "dark"
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]["id"]>("info")
   const [latestAnnouncement, setLatestAnnouncement] = useState<ReturnType<typeof getDashboardAnnouncements>[number] | null>(null)
   const [announcementLikes, setAnnouncementLikes] = useState<Record<string, number>>(() => readStoredMap<Record<string, number>>("studentDashboardAnnouncementLikes"))
   const [likedAnnouncements, setLikedAnnouncements] = useState<Record<string, boolean>>(() => readStoredMap<Record<string, boolean>>("studentDashboardAnnouncementLiked"))
+
   const examCards = useMemo(() => exams.filter((exam) => exam.status === "scheduled").map((exam) => {
     const schedule = exam.scheduledClasses.find((item) => item.classId === studentClass) ?? exam.scheduledClasses[0]
     const isUnavailable = !schedule || getScheduleEnd(schedule.date, schedule.time, exam.duration, exam.availableIndefinitely) <= new Date()
     return { exam, isToday: schedule?.date === today, isUnavailable, schedule }
   }).sort((left, right) => new Date(`${left.schedule?.date ?? "9999-12-31"}T${left.schedule?.time ?? "23:59"}:00`).getTime() - new Date(`${right.schedule?.date ?? "9999-12-31"}T${right.schedule?.time ?? "23:59"}:00`).getTime()), [exams, studentClass, today])
+
   const resultCards = useMemo(() => results.map((result) => {
     const exam = exams.find((item) => item.id === result.examId)
     const percentage = Math.round((result.score / Math.max(result.totalPoints, 1)) * 100)
     return exam ? { examId: exam.id, grade: getExamLetterGrade(percentage), score: result.score, subject: exam.title, submittedAt: result.submittedAt, totalPoints: result.totalPoints } : null
   }).filter((item): item is { examId: string; grade: string; score: number; subject: string; submittedAt: string; totalPoints: number } => Boolean(item)).sort((left, right) => new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime()).slice(0, 4), [exams, results])
 
-  useEffect(() => {
-    const sync = () => setLatestAnnouncement(getDashboardAnnouncements(studentClass)[0] ?? null)
-    sync()
-    return subscribeDashboardAnnouncements(sync)
-  }, [studentClass])
+  useEffect(() => { const sync = () => setLatestAnnouncement(getDashboardAnnouncements(studentClass)[0] ?? null); sync(); return subscribeDashboardAnnouncements(sync) }, [studentClass])
 
   const noticeCards = useMemo(() => {
     const homeroomTeacher = classHomeroomTeachers[studentClass]
@@ -103,6 +104,11 @@ export function StudentExamsOverviewPanel(props: { exams: Exam[]; results: ExamR
     localStorage.setItem("studentDashboardAnnouncementLiked", JSON.stringify(nextLikedState))
     localStorage.setItem("studentDashboardAnnouncementLikes", JSON.stringify(nextLikeState))
   }
+
+  const tabsContainerClassName = isDark ? "mt-6 rounded-full border border-[rgba(224,225,226,0.14)] bg-[#001933] p-[4px] shadow-[0_14px_28px_rgba(2,6,23,0.34)]" : "mt-6 rounded-full border border-[#E6F2FF] bg-[#003366] p-[4px] shadow-[0_1px_1px_rgba(201,201,201,0.10),0_2px_2px_rgba(201,201,201,0.09),0_5px_3px_rgba(201,201,201,0.05),0_9px_4px_rgba(201,201,201,0.01)]"
+  const activeTabClassName = isDark ? "border-[rgba(224,225,226,0.28)] bg-[#1864FB] text-[#F9FAFB] shadow-[0_1px_1px_rgba(201,201,201,0.10),0_2px_2px_rgba(201,201,201,0.09),0_5px_3px_rgba(201,201,201,0.05),0_9px_4px_rgba(201,201,201,0.01)]" : "border-[#E6F2FF] bg-[radial-gradient(circle_at_top,white_0%,#FEFEFF_100%)] text-[#141A1F] shadow-[0_1px_1px_rgba(201,201,201,0.10),0_2px_2px_rgba(201,201,201,0.09),0_5px_3px_rgba(201,201,201,0.05),0_9px_4px_rgba(201,201,201,0.01)]"
+  const inactiveTabClassName = isDark ? "border-transparent text-[#E1E6EB]" : "border-transparent text-[#F9FAFB]"
+  const readyActionClassName = isDark ? "mt-4 flex h-[44px] w-full cursor-pointer items-center justify-center rounded-[12px] border border-[rgba(224,225,226,0.28)] bg-[#1864FB] text-[14px] font-semibold text-[#F9FAFB] shadow-[0_1px_1px_rgba(201,201,201,0.10),0_2px_2px_rgba(201,201,201,0.09),0_5px_3px_rgba(201,201,201,0.05),0_9px_4px_rgba(201,201,201,0.01)] transition hover:bg-[#1864FB]" : "mt-4 flex h-[44px] w-full cursor-pointer items-center justify-center rounded-[12px] border border-[#E6F2FF] bg-[#E6F2FF] text-[14px] font-semibold text-[#007FFF] shadow-[0_1px_1px_rgba(201,201,201,0.10),0_2px_2px_rgba(201,201,201,0.09),0_5px_3px_rgba(201,201,201,0.05),0_9px_4px_rgba(201,201,201,0.01)] transition hover:bg-[#DDECFF]"
 
   return (
     <aside className="h-auto w-full overflow-y-auto rounded-[20px] border border-[#E6F2FF] bg-white px-[18px] py-[16px] shadow-[0_12px_38px_rgba(120,141,171,0.14)] dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)] xl:h-[781px] xl:w-[440px]">

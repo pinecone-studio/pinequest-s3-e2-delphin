@@ -30,15 +30,6 @@ export type CreateStudentExamResultDto = Omit<
   'id' | 'createdAt' | 'updatedAt' | 'status'
 > & { status?: 'submitted' };
 
-export type GradeStudentExamResultDto = {
-  examId: string;
-  studentId: string;
-  studentName: string;
-  classId: string;
-  answers: Record<string, string>;
-  submittedAt: string;
-};
-
 export type StudentExamResultFilters = {
   examId?: string;
   studentId?: string;

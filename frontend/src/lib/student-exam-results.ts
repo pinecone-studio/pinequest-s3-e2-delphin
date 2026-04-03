@@ -23,15 +23,6 @@ type SubmitStudentExamResultPayload = {
   submittedAt: string
 }
 
-type GradeStudentExamResultPayload = {
-  answers: Record<string, string>
-  classId: string
-  examId: string
-  studentId: string
-  studentName: string
-  submittedAt: string
-}
-
 export { getCachedStudentExamResults }
 
 export async function loadStudentExamResults(filters?: {
@@ -81,16 +72,4 @@ export async function submitStudentExamResult(payload: SubmitStudentExamResultPa
   } catch {
     return optimisticResult
   }
-}
-
-export async function gradeStudentExamResult(payload: GradeStudentExamResultPayload) {
-  const record = await requestBackendJson<StudentExamResultApiRecord>('/student-exam-results/grade', {
-    method: 'POST',
-    body: payload,
-    timeoutMs: 45_000,
-    fallbackMessage: 'Шалгалтын AI үнэлгээтэй дүнг backend дээр хадгалж чадсангүй.',
-  })
-  const savedResult = toExamResult(record)
-  writeStoredResults(mergeResults(readStoredResults(), [savedResult]))
-  return savedResult
 }

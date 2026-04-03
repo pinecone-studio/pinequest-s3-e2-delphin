@@ -29,6 +29,11 @@ type UpsertStudentExamAttemptPayload = Omit<
   'id' | 'createdAt' | 'updatedAt'
 >
 
+type RemoteStudentExamAttemptPayload = Omit<
+  UpsertStudentExamAttemptPayload,
+  'answers' | 'currentQuestion'
+>
+
 const STUDENT_EXAM_ATTEMPTS_STORAGE_KEY = 'studentExamAttempts'
 
 function readStoredAttempts() {
@@ -132,6 +137,16 @@ export async function upsertStudentExamAttempt(payload: UpsertStudentExamAttempt
     createdAt: payload.startedAt,
     updatedAt: new Date().toISOString(),
   }
+  const remotePayload: RemoteStudentExamAttemptPayload = {
+    examId: payload.examId,
+    studentId: payload.studentId,
+    studentName: payload.studentName,
+    classId: payload.classId,
+    status: payload.status,
+    answeredCount: payload.answeredCount,
+    startedAt: payload.startedAt,
+    submittedAt: payload.submittedAt,
+  }
 
   writeStoredAttempts(mergeAttempts(readStoredAttempts(), [optimisticAttempt]))
 
@@ -140,7 +155,7 @@ export async function upsertStudentExamAttempt(payload: UpsertStudentExamAttempt
       '/student-exam-attempts',
       {
         method: 'POST',
-        body: payload,
+        body: remotePayload,
         fallbackMessage:
           'Шалгалтын явцын төлөвийг backend дээр хадгалж чадсангүй. Cloudflare D1 одоогоор бичих боломжгүй эсвэл student_exam_attempts хүснэгт үүсээгүй байж магадгүй.',
       },

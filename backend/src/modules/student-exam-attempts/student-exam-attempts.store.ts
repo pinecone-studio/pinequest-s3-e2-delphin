@@ -44,8 +44,6 @@ export async function writeStudentExamAttemptRecord(
         record.studentName,
         record.classId,
         record.status,
-        record.answersJson ?? '{}',
-        record.currentQuestion ?? 0,
         record.answeredCount ?? 0,
         record.startedAt,
         record.submittedAt ?? null,
@@ -85,10 +83,6 @@ export function mapStudentExamAttemptRecord(
     studentName: record.studentName,
     classId: record.classId,
     status: record.status,
-    answers: record.answersJson
-      ? (JSON.parse(record.answersJson) as Record<string, string>)
-      : {},
-    currentQuestion: record.currentQuestion ?? 0,
     answeredCount: record.answeredCount ?? 0,
     startedAt: record.startedAt,
     submittedAt: record.submittedAt ?? null,
@@ -143,7 +137,7 @@ function buildAttemptSelectQuery(filters?: StudentExamAttemptFilters) {
     filters?.status ? 'status = ?' : '',
   ].filter(Boolean);
   const whereSql = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
-  return `SELECT id, exam_id as examId, student_id as studentId, student_name as studentName, class_id as classId, status, answers_json as answersJson, current_question as currentQuestion, answered_count as answeredCount, started_at as startedAt, submitted_at as submittedAt, created_at as createdAt, updated_at as updatedAt FROM student_exam_attempts ${whereSql} ORDER BY started_at DESC`;
+  return `SELECT id, exam_id as examId, student_id as studentId, student_name as studentName, class_id as classId, status, answered_count as answeredCount, started_at as startedAt, submitted_at as submittedAt, created_at as createdAt, updated_at as updatedAt FROM student_exam_attempts ${whereSql} ORDER BY started_at DESC`;
 }
 
 function buildAttemptParams(filters?: StudentExamAttemptFilters) {
@@ -156,7 +150,7 @@ function buildAttemptParams(filters?: StudentExamAttemptFilters) {
 }
 
 function buildAttemptUpsertQuery() {
-  return `INSERT INTO student_exam_attempts (id, exam_id, student_id, student_name, class_id, status, answers_json, current_question, answered_count, started_at, submitted_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET student_name = excluded.student_name, class_id = excluded.class_id, status = excluded.status, answers_json = excluded.answers_json, current_question = excluded.current_question, answered_count = excluded.answered_count, started_at = student_exam_attempts.started_at, submitted_at = CASE WHEN excluded.status = 'submitted' THEN COALESCE(excluded.submitted_at, student_exam_attempts.submitted_at) ELSE COALESCE(student_exam_attempts.submitted_at, excluded.submitted_at) END, updated_at = excluded.updated_at`;
+  return `INSERT INTO student_exam_attempts (id, exam_id, student_id, student_name, class_id, status, answered_count, started_at, submitted_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET student_name = excluded.student_name, class_id = excluded.class_id, status = excluded.status, answered_count = excluded.answered_count, started_at = student_exam_attempts.started_at, submitted_at = CASE WHEN excluded.status = 'submitted' THEN COALESCE(excluded.submitted_at, student_exam_attempts.submitted_at) ELSE COALESCE(student_exam_attempts.submitted_at, excluded.submitted_at) END, updated_at = excluded.updated_at`;
 }
 
 function matchesAttemptFilters(

@@ -5,6 +5,7 @@ import { DatabaseService } from '../src/database/database.service'
 
 const database = new DatabaseService()
 const bannedTitlePatterns = [
+  /^test$/i,
   /^monitor$/i,
   /test to see if i return back to the exam/i,
   /tab block test2/i,

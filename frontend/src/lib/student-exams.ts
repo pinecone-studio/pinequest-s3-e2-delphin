@@ -6,6 +6,7 @@ import { fetchBackendJson } from '@/lib/backend-fetch'
 import type { CreatedExam } from '@/lib/exams-api'
 
 const bannedTitlePatterns = [
+  /^test$/i,
   /^monitor$/i,
   /test to see if i return back to the exam/i,
   /tab block test2/i,

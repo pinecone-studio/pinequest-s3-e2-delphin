@@ -64,6 +64,20 @@ export function getTeacherWeekDates(baseDate: Date) {
 
 export const getFilteredTeacherExams = (exams: Exam[], selectedClassId: string) => selectedClassId === "all" ? exams : exams.filter((exam) => exam.scheduledClasses.some((schedule) => schedule.classId === selectedClassId))
 
+const dashboardMockAverageByClass: Record<string, number> = {
+  all: 84,
+  "10A": 85,
+  "10B": 79,
+  "10C": 88,
+}
+
+const dashboardMockAverageTrendByClass: Record<string, number[]> = {
+  all: [80, 82, 83, 84, 84, 85, 84],
+  "10A": [81, 83, 84, 85, 85, 86, 85],
+  "10B": [74, 76, 77, 79, 79, 80, 79],
+  "10C": [83, 85, 86, 88, 88, 89, 88],
+}
+
 export function buildTeacherDashboardMetrics(args: { classes: Class[]; exams: Exam[]; results: ExamResult[]; selectedClassId: string }) {
   const { classes, exams, results, selectedClassId } = args
   const filteredExams = getFilteredTeacherExams(exams, selectedClassId)
@@ -76,7 +90,15 @@ export function buildTeacherDashboardMetrics(args: { classes: Class[]; exams: Ex
     const totalPossible = examResults.reduce((sum, result) => sum + result.totalPoints, 0)
     return totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0
   })
-  return { averageScore: buildMetricCard("Дундаж оноо", averageTrend), totalExams: buildMetricCard("Нийт шалгалт", buildRecentDayCounts(filteredExams.map((exam) => exam.createdAt)), filteredExams.length), totalStudents: buildMetricCard("Нийт сурагчид", normalizeTrend(finishedExams.slice(-7).map((exam) => filteredResults.filter((result) => result.examId === exam.id).length)), studentIds.size) }
+  const hasAverageData = averageTrend.some((value) => value > 0)
+  const fallbackAverage = dashboardMockAverageByClass[selectedClassId] ?? dashboardMockAverageByClass.all
+  const fallbackTrend = dashboardMockAverageTrendByClass[selectedClassId] ?? dashboardMockAverageTrendByClass.all
+
+  return {
+    averageScore: buildMetricCard("Дундаж оноо", hasAverageData ? averageTrend : fallbackTrend, hasAverageData ? undefined : fallbackAverage),
+    totalExams: buildMetricCard("Нийт шалгалт", buildRecentDayCounts(filteredExams.map((exam) => exam.createdAt)), filteredExams.length),
+    totalStudents: buildMetricCard("Нийт сурагчид", normalizeTrend(finishedExams.slice(-7).map((exam) => filteredResults.filter((result) => result.examId === exam.id).length)), studentIds.size),
+  }
 }
 
 function buildRecentDayCounts(dateStrings: string[]) {

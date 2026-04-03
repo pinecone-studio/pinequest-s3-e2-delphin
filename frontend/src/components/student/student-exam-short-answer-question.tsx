@@ -26,6 +26,7 @@ export function StudentExamShortAnswerQuestion(props: {
           meta={`${QUESTION_HEADER_META_LABELS[question.type]} · ${question.points} оноо`}
           title={question.question}
           answered={Boolean(value.trim())}
+          iconKey={question.iconKey}
         />
       </div>
 

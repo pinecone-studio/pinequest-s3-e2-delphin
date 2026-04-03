@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -18,6 +18,7 @@ import { ThemeToggleButton } from "@/components/theme-toggle-button";
 import { StudentLoginDemoButtons } from "@/components/student/student-login-demo-buttons";
 import { notifyStudentSessionChange } from "@/hooks/use-student-session";
 import { students } from "@/lib/mock-data";
+import { findResumableExamPath } from "@/lib/student-exam-resume";
 
 export default function StudentLoginPage() {
   const router = useRouter();
@@ -28,7 +29,17 @@ export default function StudentLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    const studentId = localStorage.getItem("studentId");
+    const studentClass = localStorage.getItem("studentClass");
+    if (!studentId || !studentClass) return;
+
+    void findResumableExamPath({ studentId, studentClass }).then((resumePath) => {
+      if (resumePath) router.replace(resumePath);
+    });
+  }, [router]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -49,8 +60,11 @@ export default function StudentLoginPage() {
       const redirectTo =
         redirectQuery && redirectQuery.startsWith("/student/")
           ? redirectQuery
-          : "/student/dashboard";
-      router.push(redirectTo);
+          : (await findResumableExamPath({
+              studentId: student.id,
+              studentClass: student.classId,
+            })) ?? "/student/dashboard";
+      router.replace(redirectTo);
     } else {
       setError("Имэйл эсвэл нууц үг буруу байна");
     }

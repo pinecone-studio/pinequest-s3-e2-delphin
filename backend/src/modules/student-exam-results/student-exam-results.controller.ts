@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { executeOrRethrowAsync } from '../../common/error-handling';
 import {
   type CreateStudentExamResultDto,
+  type GradeStudentExamResultDto,
   StudentExamResultsService,
   type StudentExamResult,
 } from './student-exam-results.service';
@@ -44,6 +45,16 @@ export class StudentExamResultsController {
     return executeOrRethrowAsync(
       () => this.studentExamResultsService.upsert(payload),
       `Failed to handle POST /student-exam-results for ${payload.studentId}`,
+    );
+  }
+
+  @Post('grade')
+  async gradeAndUpsert(
+    @Body() payload: GradeStudentExamResultDto,
+  ): Promise<StudentExamResult> {
+    return executeOrRethrowAsync(
+      () => this.studentExamResultsService.gradeAndUpsert(payload),
+      `Failed to handle POST /student-exam-results/grade for ${payload.studentId}`,
     );
   }
 }

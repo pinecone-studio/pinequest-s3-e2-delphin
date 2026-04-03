@@ -16,6 +16,7 @@ export type TeacherExam = {
     correctAnswer?: string
     points: number
     order: number
+    iconKey?: CreatedExam['questions'][number]['iconKey']
     sourceQuestionId?: string
     categoryName?: string
     topicName?: string

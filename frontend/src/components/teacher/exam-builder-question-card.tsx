@@ -16,6 +16,10 @@ import {
   OrderingEditor,
 } from "@/components/teacher/exam-builder-structured-question-editors";
 import type { NewQuestion } from "@/components/teacher/exam-builder-types";
+import {
+  getExamQuestionIconAlt,
+  getExamQuestionIconSrc,
+} from "@/lib/question-icons";
 
 export function ExamBuilderQuestionCard({
   index,
@@ -35,6 +39,13 @@ export function ExamBuilderQuestionCard({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#E6F2FF] bg-[#F7FBFF] dark:border-white/10 dark:bg-[rgba(255,255,255,0.04)]">
+              <img
+                src={getExamQuestionIconSrc(question.iconKey)}
+                alt={getExamQuestionIconAlt(question.iconKey)}
+                className="h-8 w-8 object-contain"
+              />
+            </div>
             <div>
               <div className="text-sm font-semibold">Асуулт {index + 1}</div>
               <div className="text-xs text-muted-foreground capitalize">{getQuestionTypeLabel(question.type)}</div>

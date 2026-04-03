@@ -74,7 +74,9 @@ export function useExamMonitoring(examId: string) {
           studentName: matchedStudent?.name || attempt.studentName,
           classId: matchedStudent?.classId || attempt.classId,
           status: attempt.status,
-          currentQuestion: attempt.status === "submitted" ? exam.questions.length : 0,
+          currentQuestion: attempt.status === "submitted"
+            ? exam.questions.length
+            : Math.max(attempt.currentQuestion ?? 0, 0),
           timeRemaining: attempt.status === "submitted" ? 0 : Math.max(0, Math.floor((examEndTime - Date.now()) / 1000)),
           lastActivity: attempt.updatedAt,
         } satisfies StudentAttempt;

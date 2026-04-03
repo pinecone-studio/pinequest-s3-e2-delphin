@@ -39,6 +39,7 @@ export function StudentExamMatchingQuestion(props: {
           meta={`${QUESTION_HEADER_META_LABELS.matching} · ${question.points} оноо`}
           title={question.question}
           answered={hasAnswer}
+          iconKey={question.iconKey}
         />
       </div>
 

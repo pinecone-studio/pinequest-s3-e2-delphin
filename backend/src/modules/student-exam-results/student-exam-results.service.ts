@@ -1,14 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { executeOrRethrowAsync } from '../../common/error-handling';
 import { DatabaseService } from '../../database/database.service';
+import { ExamsService } from '../exams/exams.service';
 import {
   mapStudentExamResultRecord,
   readStudentExamResultRecords,
   writeStudentExamResultRecord,
 } from './student-exam-results.store';
+import { StudentExamGradingService } from './student-exam-grading.service';
 import {
   createStudentExamResultStoreContext,
   type CreateStudentExamResultDto,
+  type GradeStudentExamResultDto,
   type StudentExamResult,
   type StudentExamResultStoreContext,
 } from './student-exam-results.types';
@@ -16,6 +19,7 @@ import {
 export type {
   CreateStudentExamResultDto,
   StudentExamAnswer,
+  GradeStudentExamResultDto,
   StudentExamResult,
 } from './student-exam-results.types';
 
@@ -23,7 +27,11 @@ export type {
 export class StudentExamResultsService {
   private readonly storeContext: StudentExamResultStoreContext;
 
-  constructor(private readonly databaseService: DatabaseService) {
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly examsService: ExamsService,
+    private readonly studentExamGradingService: StudentExamGradingService,
+  ) {
     this.storeContext = createStudentExamResultStoreContext(databaseService);
   }
 
@@ -85,5 +93,36 @@ export class StudentExamResultsService {
       await writeStudentExamResultRecord(this.storeContext, nextRecord);
       return mapStudentExamResultRecord(nextRecord);
     }, `Failed to save student exam result for ${payload.studentId}`);
+  }
+
+  async gradeAndUpsert(
+    payload: GradeStudentExamResultDto,
+  ): Promise<StudentExamResult> {
+    return executeOrRethrowAsync(async () => {
+      const exam = await this.examsService.findOne(payload.examId.trim());
+      const gradedAnswers = await this.studentExamGradingService.grade(
+        exam,
+        payload.answers,
+      );
+      const totalPoints = exam.questions.reduce(
+        (sum, question) => sum + question.points,
+        0,
+      );
+      const score = gradedAnswers.reduce(
+        (sum, answer) => sum + (answer.awardedPoints ?? 0),
+        0,
+      );
+
+      return this.upsert({
+        examId: payload.examId,
+        studentId: payload.studentId,
+        studentName: payload.studentName,
+        classId: payload.classId,
+        answers: gradedAnswers,
+        score,
+        totalPoints,
+        submittedAt: payload.submittedAt,
+      });
+    }, `Failed to grade student exam result for ${payload.studentId}`);
   }
 }

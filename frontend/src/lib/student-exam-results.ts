@@ -23,6 +23,15 @@ type SubmitStudentExamResultPayload = {
   submittedAt: string
 }
 
+type GradeStudentExamResultPayload = {
+  answers: Record<string, string>
+  classId: string
+  examId: string
+  studentId: string
+  studentName: string
+  submittedAt: string
+}
+
 export { getCachedStudentExamResults }
 
 export async function loadStudentExamResults(filters?: {
@@ -35,21 +44,12 @@ export async function loadStudentExamResults(filters?: {
     if (filters?.examId) searchParams.set('examId', filters.examId)
     if (filters?.studentId) searchParams.set('studentId', filters.studentId)
     if (filters?.classId) searchParams.set('classId', filters.classId)
-
     const query = searchParams.toString()
     const records = await requestBackendJson<StudentExamResultApiRecord[]>(
       `/student-exam-results${query ? `?${query}` : ''}`,
-      {
-        method: 'GET',
-        fallbackMessage:
-          'Оюутны шалгалтын дүнг backend-ээс уншиж чадсангүй. Cloudflare D1 одоогоор боломжгүй эсвэл миграци дутуу байж магадгүй.',
-      },
+      { method: 'GET', fallbackMessage: 'Шалгалтын дүнг backend-ээс уншиж чадсангүй.' },
     )
-
-    const mergedResults = mergeResults(
-      getCachedStudentExamResults(),
-      records.map(toExamResult),
-    )
+    const mergedResults = mergeResults(getCachedStudentExamResults(), records.map(toExamResult))
     writeStoredResults(mergedResults)
     return filterResults(mergedResults, filters)
   } catch {
@@ -67,15 +67,13 @@ export async function submitStudentExamResult(payload: SubmitStudentExamResultPa
     answers: payload.answers,
     submittedAt: payload.submittedAt,
   }
-
   writeStoredResults(mergeResults(readStoredResults(), [optimisticResult]))
 
   try {
     const record = await requestBackendJson<StudentExamResultApiRecord>('/student-exam-results', {
       method: 'POST',
       body: payload,
-      fallbackMessage:
-        'Шалгалтын дүнг backend дээр хадгалж чадсангүй. Cloudflare D1 одоогоор бичих боломжгүй эсвэл `student_exam_results` хүснэгт үүсээгүй байж магадгүй.',
+      fallbackMessage: 'Шалгалтын дүнг backend дээр хадгалж чадсангүй.',
     })
     const savedResult = toExamResult(record)
     writeStoredResults(mergeResults(readStoredResults(), [savedResult]))
@@ -83,4 +81,16 @@ export async function submitStudentExamResult(payload: SubmitStudentExamResultPa
   } catch {
     return optimisticResult
   }
+}
+
+export async function gradeStudentExamResult(payload: GradeStudentExamResultPayload) {
+  const record = await requestBackendJson<StudentExamResultApiRecord>('/student-exam-results/grade', {
+    method: 'POST',
+    body: payload,
+    timeoutMs: 45_000,
+    fallbackMessage: 'Шалгалтын AI үнэлгээтэй дүнг backend дээр хадгалж чадсангүй.',
+  })
+  const savedResult = toExamResult(record)
+  writeStoredResults(mergeResults(readStoredResults(), [savedResult]))
+  return savedResult
 }

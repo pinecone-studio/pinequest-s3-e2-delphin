@@ -9,6 +9,7 @@ import {
 import {
   createStudentExamAttemptStoreContext,
   type StudentExamAttempt,
+  type StudentExamAttemptRecord,
   type StudentExamAttemptStatus,
   type StudentExamAttemptStoreContext,
   type UpsertStudentExamAttemptDto,
@@ -75,6 +76,11 @@ export class StudentExamAttemptsService {
         studentName: payload.studentName.trim(),
         classId: payload.classId.trim(),
         status: payload.status,
+        answersJson: JSON.stringify(
+          payload.answers ?? readAttemptAnswers(existing) ?? {},
+        ),
+        currentQuestion:
+          payload.currentQuestion ?? existing?.currentQuestion ?? 0,
         startedAt: existing?.startedAt ?? payload.startedAt,
         submittedAt:
           payload.status === 'submitted'
@@ -86,5 +92,16 @@ export class StudentExamAttemptsService {
       await writeStudentExamAttemptRecord(this.storeContext, nextRecord);
       return mapStudentExamAttemptRecord(nextRecord);
     }, `Failed to save student exam attempt for ${payload.studentId}`);
+  }
+}
+
+function readAttemptAnswers(
+  attempt?: StudentExamAttemptRecord,
+): Record<string, string> | null {
+  if (!attempt?.answersJson) return null;
+  try {
+    return JSON.parse(attempt.answersJson) as Record<string, string>;
+  } catch {
+    return null;
   }
 }

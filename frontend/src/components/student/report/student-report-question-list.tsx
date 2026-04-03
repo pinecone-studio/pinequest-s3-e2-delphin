@@ -3,7 +3,6 @@
 import { StudentReportQuestionCard } from "@/components/student/report/student-report-question-card"
 import { StudentReportLocked } from "@/components/student/report/student-report-locked"
 import { studentReportPanelSurfaceClassName } from "@/components/student/report/student-report-panel-styles"
-import { cn } from "@/lib/utils"
 import type { Exam, ExamResult } from "@/lib/mock-data"
 
 type StudentReportQuestionListProps = {
@@ -15,7 +14,7 @@ type StudentReportQuestionListProps = {
 
 export function StudentReportQuestionList(props: StudentReportQuestionListProps) {
   return (
-    <section className={cn("px-5 py-6 md:px-7 md:py-7", studentReportPanelSurfaceClassName)}>
+    <section className={`px-5 py-6 md:px-7 md:py-7 ${studentReportPanelSurfaceClassName}`}>
       <div className="flex items-start justify-between gap-5">
         <div>
           <h2 className="text-[21px] font-bold tracking-[-0.03em] text-[#003366] dark:text-[#f4f8ff]">Хариултын задаргаа</h2>

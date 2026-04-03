@@ -49,6 +49,7 @@ export const examQuestions = sqliteTable('exam_questions', {
   prompt: text('prompt').notNull(),
   optionsJson: text('options_json'),
   correctAnswer: text('correct_answer'),
+  iconKey: text('icon_key'),
   points: integer('points').notNull(),
   displayOrder: integer('display_order').notNull(),
 });
@@ -104,6 +105,8 @@ export const studentExamAttempts = sqliteTable('student_exam_attempts', {
   studentName: text('student_name').notNull(),
   classId: text('class_id').notNull(),
   status: text('status').notNull(),
+  answersJson: text('answers_json'),
+  currentQuestion: integer('current_question'),
   startedAt: text('started_at').notNull(),
   submittedAt: text('submitted_at'),
   createdAt: text('created_at').notNull(),

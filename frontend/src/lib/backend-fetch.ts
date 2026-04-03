@@ -47,13 +47,17 @@ export async function requestBackendJson<T>(
     method?: 'GET' | 'POST' | 'PATCH' | 'DELETE'
     body?: unknown
     fallbackMessage: string
+    timeoutMs?: number
   },
 ): Promise<T> {
   let lastError: Error | null = null
 
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt += 1) {
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+    const timeout = setTimeout(
+      () => controller.abort(),
+      options.timeoutMs ?? REQUEST_TIMEOUT_MS,
+    )
 
     try {
       const response = await fetch(buildApiUrl(path), {

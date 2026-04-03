@@ -2,7 +2,7 @@
 
 import { CheckCircle2, CircleDashed, ClipboardCheck, XCircle } from "lucide-react"
 import type { Exam, ExamResult } from "@/lib/mock-data"
-import { getAnswerReviewState, isManualReviewQuestionType, questionTypeLabels } from "@/lib/student-report-view"
+import { getAnswerReviewState, questionTypeLabels } from "@/lib/student-report-view"
 
 type StudentReportQuestionsProps = {
   exam: Exam
@@ -58,7 +58,7 @@ export function StudentReportQuestions({ exam, result }: StudentReportQuestionsP
           const reviewState = getAnswerReviewState(question, answer)
           const status = getStatusPresentation(reviewState)
           const StatusIcon = status.icon
-          const isManualQuestion = isManualReviewQuestionType(question.type)
+          const isManualQuestion = reviewState === "pending" || reviewState === "graded"
           const awardedPoints = typeof answer?.awardedPoints === "number" ? answer.awardedPoints : null
 
           return (

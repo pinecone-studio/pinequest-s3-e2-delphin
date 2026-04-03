@@ -15,7 +15,7 @@ export async function loadAllExamRecords(context: ExamsStoreContext) {
         `SELECT id, title, duration_minutes as durationMinutes, report_release_mode as reportReleaseMode, status, created_at as createdAt, updated_at as updatedAt FROM exams`,
       ),
       context.databaseService.query<ExamQuestionRecord>(
-        `SELECT id, exam_id as examId, type, prompt, options_json as optionsJson, correct_answer as correctAnswer, points, display_order as displayOrder FROM exam_questions`,
+        `SELECT id, exam_id as examId, type, prompt, options_json as optionsJson, correct_answer as correctAnswer, icon_key as iconKey, points, display_order as displayOrder FROM exam_questions`,
       ),
       context.databaseService.query<ExamScheduleRecord>(
         `SELECT id, exam_id as examId, class_id as classId, scheduled_date as scheduledDate, scheduled_time as scheduledTime FROM exam_schedules`,
@@ -106,7 +106,7 @@ async function insertRelatedExamRecords(
 ) {
   for (const question of questionInserts) {
     await context.databaseService.execute(
-      `INSERT INTO exam_questions (id, exam_id, type, prompt, options_json, correct_answer, points, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO exam_questions (id, exam_id, type, prompt, options_json, correct_answer, icon_key, points, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         question.id,
         question.examId,
@@ -114,6 +114,7 @@ async function insertRelatedExamRecords(
         question.prompt,
         question.optionsJson,
         question.correctAnswer,
+        question.iconKey,
         question.points,
         question.displayOrder,
       ],

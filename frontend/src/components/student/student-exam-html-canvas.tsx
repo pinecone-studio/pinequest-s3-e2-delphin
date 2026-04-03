@@ -6,6 +6,7 @@ import { StudentExamProgressSidebar } from "@/components/student/student-exam-pr
 import { StudentExamQuestionList } from "@/components/student/student-exam-question-list";
 import { StudentExamTopSection } from "@/components/student/student-exam-top-section";
 import { getOrderedQuestions } from "@/components/student/student-exam-utils";
+import { getScheduleEnd } from "@/lib/student-exam-time";
 
 function formatTimer(totalSeconds: number) {
   const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
@@ -46,15 +47,24 @@ export function StudentExamHtmlCanvas(props: {
   const answeredQuestionNumbers = orderedQuestions
     .map((question, index) => (answers[question.id]?.trim() ? index + 1 : null))
     .filter((value): value is number => value !== null);
-  const [remainingSeconds, setRemainingSeconds] = useState(exam.duration * 60);
+  const [remainingSeconds, setRemainingSeconds] = useState(() =>
+    getRemainingSeconds(schedule.date, schedule.time, exam.duration, exam.availableIndefinitely),
+  );
 
   useEffect(() => {
+    const updateRemainingSeconds = () => {
+      setRemainingSeconds(
+        getRemainingSeconds(schedule.date, schedule.time, exam.duration, exam.availableIndefinitely),
+      );
+    };
+
+    updateRemainingSeconds();
     const intervalId = window.setInterval(() => {
-      setRemainingSeconds((current) => Math.max(current - 1, 0));
+      updateRemainingSeconds();
     }, 1000);
 
     return () => window.clearInterval(intervalId);
-  }, []);
+  }, [exam.availableIndefinitely, exam.duration, schedule.date, schedule.time]);
 
   return (
     <div className="min-h-screen px-10 pb-14 pt-6 text-[#293138] dark:text-[#edf4ff]">
@@ -83,5 +93,17 @@ export function StudentExamHtmlCanvas(props: {
         </div>
       </div>
     </div>
+  );
+}
+
+function getRemainingSeconds(
+  date: string,
+  time: string,
+  duration: number,
+  availableIndefinitely?: boolean,
+) {
+  return Math.max(
+    0,
+    Math.floor((getScheduleEnd(date, time, duration, availableIndefinitely).getTime() - Date.now()) / 1000),
   );
 }

@@ -18,6 +18,7 @@ export type ExamQuestionRecord = {
   prompt: string;
   optionsJson: string | null;
   correctAnswer: string | null;
+  iconKey: string | null;
   points: number;
   displayOrder: number;
 };

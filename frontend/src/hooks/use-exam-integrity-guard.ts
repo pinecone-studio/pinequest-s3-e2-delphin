@@ -4,11 +4,15 @@ import { useEffect, useRef } from "react";
 import { upsertStudentExamAttempt } from "@/lib/student-exam-attempts";
 
 export function useExamIntegrityGuard({
+  answers,
+  currentQuestion,
   examId,
   studentClass,
   studentId,
   studentName,
 }: {
+  answers?: Record<string, string>;
+  currentQuestion?: number;
   examId?: string;
   studentClass?: string;
   studentId?: string;
@@ -29,6 +33,8 @@ export function useExamIntegrityGuard({
         studentName,
         classId: studentClass,
         status: isLikelyMobileDevice() ? "app_switched" : "tab_switched",
+        answers,
+        currentQuestion,
         startedAt: new Date().toISOString(),
         submittedAt: null,
       }).catch((error) => {
@@ -40,7 +46,7 @@ export function useExamIntegrityGuard({
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () =>
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [examId, studentClass, studentId, studentName]);
+  }, [answers, currentQuestion, examId, studentClass, studentId, studentName]);
 }
 
 function isLikelyMobileDevice() {

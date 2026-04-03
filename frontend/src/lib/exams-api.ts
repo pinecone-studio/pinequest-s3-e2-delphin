@@ -2,6 +2,7 @@ import type { NewQuestion, ScheduleEntry } from '@/components/teacher/exam-build
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url'
 import { requestExam } from '@/lib/exams-api-request'
 import { classes } from '@/lib/mock-data'
+import type { ExamQuestionIconKey } from '@/lib/mock-data-types'
 
 export const ALL_CLASSES_OPTION = '__all_classes__'
 
@@ -19,6 +20,7 @@ type CreateExamPayload = {
     correctAnswer?: string
     points: number
     order: number
+    iconKey?: ExamQuestionIconKey
     sourceQuestionId?: string
     categoryName?: string
     topicName?: string
@@ -47,6 +49,7 @@ export type CreatedExam = {
     correctAnswer?: string
     points: number
     order: number
+    iconKey?: ExamQuestionIconKey
     sourceQuestionId?: string
     categoryName?: string
     topicName?: string
@@ -120,6 +123,7 @@ export function buildCreateExamPayload({
       correctAnswer: question.correctAnswer?.trim(),
       points: question.points,
       order: index + 1,
+      iconKey: question.iconKey,
       sourceQuestionId: question.sourceQuestionId,
       categoryName: question.categoryName?.trim(),
       topicName: question.topicName?.trim(),

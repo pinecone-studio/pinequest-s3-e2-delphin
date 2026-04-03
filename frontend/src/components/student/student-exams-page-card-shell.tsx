@@ -9,7 +9,7 @@ export const actionButtonClassName =
   "h-[38px] min-w-[124px] rounded-xl px-6 text-[12px] font-medium leading-[1.2]";
 
 export const darkPrimaryActionButtonClassName =
-  "dark:border-[#007FFF] dark:bg-[#007FFF] dark:text-[#E6F2FF] dark:shadow-none dark:hover:bg-[#007FFF]";
+  "dark:border-[rgba(224,225,226,0.28)] dark:bg-[#1864FB] dark:text-[#F9FAFB] dark:shadow-[0_1px_1px_rgba(201,201,201,0.10),0_2px_2px_rgba(201,201,201,0.09),0_5px_3px_rgba(201,201,201,0.05),0_9px_4px_rgba(201,201,201,0.01)] dark:hover:bg-[#1864FB]";
 
 export function ExamCardTop(props: {
   action: ReactNode;

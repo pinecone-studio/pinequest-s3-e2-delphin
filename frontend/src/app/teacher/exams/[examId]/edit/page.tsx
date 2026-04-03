@@ -52,6 +52,7 @@ export default function EditExamPage({
             options: question.options,
             correctAnswer: question.correctAnswer ?? "",
             points: question.points,
+            iconKey: question.iconKey,
           })),
         );
         setScheduleEntries(

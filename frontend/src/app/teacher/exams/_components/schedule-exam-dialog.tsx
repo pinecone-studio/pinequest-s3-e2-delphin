@@ -116,7 +116,7 @@ export function ScheduleExamDialog({
       await updateExam(exam.id, buildCreateExamPayload({
         duration: durationMinutes,
         examTitle: detailedExam.title,
-        questions: detailedExam.questions.map((question) => ({ id: question.id, type: question.type, question: question.question, options: question.options, correctAnswer: question.correctAnswer ?? "", points: question.points })),
+        questions: detailedExam.questions.map((question) => ({ id: question.id, type: question.type, question: question.question, options: question.options, correctAnswer: question.correctAnswer ?? "", points: question.points, iconKey: question.iconKey })),
         reportReleaseMode,
         scheduleEntries: pendingSchedules,
         status: "scheduled",

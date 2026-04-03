@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  getExamQuestionIconAlt,
+  getExamQuestionIconSrc,
+} from "@/lib/question-icons";
+
 function QuestionStatusIcon() {
   return (
     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -26,8 +31,9 @@ export function PickQuestionHeader(props: {
   index: number;
   meta: string;
   title: string;
+  iconKey?: string;
 }) {
-  const { answered, index, meta, title } = props;
+  const { answered, index, meta, title, iconKey } = props;
 
   return (
     <div>
@@ -47,9 +53,18 @@ export function PickQuestionHeader(props: {
         </div>
       </div>
 
-      <h2 className="mt-[18px] text-[20px] font-semibold leading-[28px] text-[#293138] dark:text-[#F3F8FF]">
-        {title}
-      </h2>
+      <div className="mt-[18px] flex items-start gap-4">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#E6F2FF] bg-[#F7FBFF] dark:border-white/10 dark:bg-[rgba(255,255,255,0.04)]">
+          <img
+            src={getExamQuestionIconSrc(iconKey)}
+            alt={getExamQuestionIconAlt(iconKey)}
+            className="h-9 w-9 object-contain"
+          />
+        </div>
+        <h2 className="min-w-0 flex-1 text-[20px] font-semibold leading-[28px] text-[#293138] dark:text-[#F3F8FF]">
+          {title}
+        </h2>
+      </div>
     </div>
   );
 }

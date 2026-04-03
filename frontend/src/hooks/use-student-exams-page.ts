@@ -11,6 +11,12 @@ import { exams as legacyExams, type Exam, type ExamResult } from "@/lib/mock-dat
 import { getCachedStudentExamResults, loadStudentExamResults } from "@/lib/student-exam-results"
 import { getScheduleEnd } from "@/lib/student-exam-time"
 import { getStudentExams } from "@/lib/student-exams"
+
+function getScheduleStartTime(exam: Exam, studentClass: string) {
+  const schedule = getStudentSchedule(exam, studentClass)
+  return schedule ? new Date(`${schedule.date}T${schedule.time}:00`).getTime() : Number.MAX_SAFE_INTEGER
+}
+
 export function useStudentExamsPage() {
   const { studentClass, studentId } = useStudentSession()
   const [searchQuery, setSearchQuery] = useState("")
@@ -39,29 +45,26 @@ export function useStudentExamsPage() {
     }
 
     void loadExams()
-    return () => {
-      isMounted = false
-    }
+    return () => { isMounted = false }
   }, [studentId])
-  const myExams = useMemo(
+  const myExams = useMemo(() => allExams.filter((exam) => exam.scheduledClasses.some((schedule) => schedule.classId === studentClass)), [allExams, studentClass])
+  const myResults = useMemo(() => allResults.filter((result) => result.studentId === studentId), [allResults, studentId])
+  const completedExamIds = useMemo(() => new Set(myResults.map((result) => result.examId)), [myResults])
+  const latestResultsByExamId = useMemo(
     () =>
-      allExams.filter((exam) =>
-        exam.scheduledClasses.some((schedule) => schedule.classId === studentClass),
+      new Map(
+        myResults
+          .slice()
+          .sort(
+            (left, right) =>
+              new Date(right.submittedAt).getTime() -
+              new Date(left.submittedAt).getTime(),
+          )
+          .map((result) => [result.examId, result] as const),
       ),
-    [allExams, studentClass],
-  )
-  const myResults = useMemo(
-    () => allResults.filter((result) => result.studentId === studentId),
-    [allResults, studentId],
-  )
-  const completedExamIds = useMemo(
-    () => new Set(myResults.map((result) => result.examId)),
     [myResults],
   )
-  const scheduledExams = useMemo(
-    () => myExams.filter((exam) => exam.status === "scheduled"),
-    [myExams],
-  )
+  const scheduledExams = useMemo(() => myExams.filter((exam) => exam.status === "scheduled"), [myExams])
 
   const activeScheduledExams = useMemo(
     () =>
@@ -96,8 +99,7 @@ export function useStudentExamsPage() {
   )
 
   const categoryOptions = useMemo(() => {
-    const nextCategories = new Set<string>()
-    myExams.forEach((exam) => nextCategories.add(getExamCategory(exam)))
+    const nextCategories = new Set<string>(); myExams.forEach((exam) => nextCategories.add(getExamCategory(exam)))
     return ["all", ...Array.from(nextCategories)]
   }, [myExams])
 
@@ -116,27 +118,20 @@ export function useStudentExamsPage() {
   )
 
   const filteredUpcomingExams = useMemo(
-    () => activeScheduledExams.filter(matchesFilters),
-    [activeScheduledExams, matchesFilters],
+    () => activeScheduledExams.filter(matchesFilters).sort((left, right) => getScheduleStartTime(left, studentClass) - getScheduleStartTime(right, studentClass)),
+    [activeScheduledExams, matchesFilters, studentClass],
   )
 
   const finishedItems = useMemo<FinishedExamItem[]>(
     () =>
       [
-        ...myResults
-          .map((result) => {
-            const exam = allExams.find((entry) => entry.id === result.examId)
-            return exam ? ({ kind: "result", exam, result } as const) : null
-          })
-          .filter(
-            (
-              entry,
-            ): entry is {
-              kind: "result"
-              exam: Exam
-              result: ExamResult
-            } => Boolean(entry),
-          ),
+        ...myExams
+          .filter((exam) => latestResultsByExamId.has(exam.id))
+          .map((exam) => ({
+            kind: "result" as const,
+            exam,
+            result: latestResultsByExamId.get(exam.id)!,
+          })),
         ...missedExams.map((exam) => ({ kind: "missed", exam } as const)),
       ]
         .filter((item) => matchesFilters(item.exam))
@@ -161,7 +156,7 @@ export function useStudentExamsPage() {
                 ).getTime()
           return rightTime - leftTime
         }),
-    [allExams, matchesFilters, missedExams, myResults, studentClass],
+    [latestResultsByExamId, matchesFilters, missedExams, myExams, studentClass],
   )
 
   return {

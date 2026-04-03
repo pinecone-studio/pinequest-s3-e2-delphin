@@ -10,6 +10,7 @@ export type GeneratedQuestion = {
   correctAnswer?: string;
   points: number;
   order: number;
+  iconKey?: NewQuestion["iconKey"];
 };
 
 function createDefaultOptions(type: QuestionType) {
@@ -48,5 +49,6 @@ export function toBuilderQuestion(question: GeneratedQuestion): NewQuestion {
     options: question.options,
     correctAnswer: question.correctAnswer,
     points: question.points,
+    iconKey: question.iconKey,
   };
 }

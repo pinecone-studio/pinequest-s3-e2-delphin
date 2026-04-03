@@ -47,7 +47,12 @@ export function ensureDefaultMathQuestionBank(store: LocalQuestionBankStore) {
 export function replaceLegacyDefaultQuestionBank(
   store: LocalQuestionBankStore,
 ) {
-  const currentSeedSignature = ['алгебр', 'функц ба график', 'геометр', 'магадлал ба статистик'];
+  const currentSeedSignature = [
+    'алгебр',
+    'функц ба график',
+    'геометр',
+    'магадлал ба статистик',
+  ];
 
   const legacyCategoryIds = new Set<string>();
 

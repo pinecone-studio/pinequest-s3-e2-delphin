@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { StudentShellFrame } from "@/components/student/student-shell-frame";
 import { useStudentExamNotifications } from "@/hooks/use-student-exam-notifications";
+import { findResumableExamPath } from "@/lib/student-exam-resume";
 import {
   notifyStudentSessionChange,
   useStudentSession,
@@ -30,6 +31,21 @@ export default function StudentLayout({
       router.push("/student/login");
     }
   }, [router, studentName]);
+
+  useEffect(() => {
+    if (!studentClass || !studentId) return;
+    if (pathname.startsWith("/student/reports/")) return;
+    if (pathname.startsWith("/student/exams/") && pathname.endsWith("/take")) return;
+
+    let isMounted = true;
+    void findResumableExamPath({ studentId, studentClass }).then((resumePath) => {
+      if (isMounted && resumePath && pathname !== resumePath) router.replace(resumePath);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [pathname, router, studentClass, studentId]);
 
   const handleLogout = () => {
     localStorage.removeItem("studentId");

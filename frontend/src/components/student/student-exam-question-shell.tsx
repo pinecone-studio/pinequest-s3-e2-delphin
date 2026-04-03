@@ -1,6 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
+import {
+  getExamQuestionIconAlt,
+  getExamQuestionIconSrc,
+} from "@/lib/question-icons";
 
 export function cardShadow() {
   return "0px 9px 4px rgba(201,201,201,0.01), 0px 5px 3px rgba(201,201,201,0.05), 0px 2px 2px rgba(201,201,201,0.09), 0px 1px 1px rgba(201,201,201,0.1)";
@@ -20,8 +24,9 @@ export function StudentExamCardHeader(props: {
   meta: string;
   title: string;
   answered: boolean;
+  iconKey?: string;
 }) {
-  const { index, meta, title, answered } = props;
+  const { index, meta, title, answered, iconKey } = props;
 
   return (
     <div>
@@ -41,9 +46,18 @@ export function StudentExamCardHeader(props: {
         </div>
       </div>
 
-      <h2 className="mt-5 text-[20px] font-semibold leading-[28px] text-[#293138] dark:text-[#F3F8FF]">
-        {title}
-      </h2>
+      <div className="mt-5 flex items-start gap-4">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#E6F2FF] bg-[#F7FBFF] dark:border-white/10 dark:bg-[rgba(255,255,255,0.04)]">
+          <img
+            src={getExamQuestionIconSrc(iconKey)}
+            alt={getExamQuestionIconAlt(iconKey)}
+            className="h-9 w-9 object-contain"
+          />
+        </div>
+        <h2 className="min-w-0 flex-1 text-[20px] font-semibold leading-[28px] text-[#293138] dark:text-[#F3F8FF]">
+          {title}
+        </h2>
+      </div>
     </div>
   );
 }
@@ -53,10 +67,11 @@ export function StudentExamCard(props: {
   meta: string;
   title: string;
   answered: boolean;
+  iconKey?: string;
   children: ReactNode;
   compact?: boolean;
 }) {
-  const { index, meta, title, answered, children } = props;
+  const { index, meta, title, answered, iconKey, children } = props;
 
   return (
     <section
@@ -64,7 +79,7 @@ export function StudentExamCard(props: {
       style={{ boxShadow: cardShadow() }}
     >
       <div className="px-7 pb-5 pt-6">
-        <StudentExamCardHeader index={index} meta={meta} title={title} answered={answered} />
+        <StudentExamCardHeader index={index} meta={meta} title={title} answered={answered} iconKey={iconKey} />
       </div>
       <div className="border-t border-[#EAF2FB] px-6 pb-6 pt-5 dark:border-white/10">{children}</div>
     </section>

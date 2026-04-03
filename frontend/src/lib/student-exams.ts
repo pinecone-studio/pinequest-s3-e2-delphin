@@ -16,6 +16,7 @@ function mapCreatedExamToStudentExam(exam: CreatedExam): LegacyExam {
       options: question.options,
       correctAnswer: question.correctAnswer,
       points: question.points,
+      iconKey: question.iconKey,
     })),
     duration: exam.durationMinutes,
     reportReleaseMode: exam.reportReleaseMode,

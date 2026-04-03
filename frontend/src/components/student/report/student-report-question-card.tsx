@@ -9,7 +9,6 @@ import {
 } from "@/components/student/report/student-report-question-card-parts";
 import {
   getAnswerReviewState,
-  isManualReviewQuestionType,
   questionTypeLabels,
 } from "@/lib/student-report-view";
 import { cn } from "@/lib/utils";
@@ -27,7 +26,7 @@ export function StudentReportQuestionCard(props: StudentReportQuestionCardProps)
   const reviewState = getAnswerReviewState(props.question, answer);
   const status = getStatusPresentation(reviewState);
   const StatusIcon = status.icon;
-  const isManualQuestion = isManualReviewQuestionType(props.question.type);
+  const isManualQuestion = reviewState === "pending" || reviewState === "graded";
   const awardedPoints =
     typeof answer?.awardedPoints === "number" ? answer.awardedPoints : null;
 
@@ -88,7 +87,7 @@ export function StudentReportQuestionCard(props: StudentReportQuestionCardProps)
       </div>
 
       <AiExplanationCard
-        explanation={buildAiExplanation({
+        explanation={answer?.explanation ?? buildAiExplanation({
           answerText: answer?.answer ?? "",
           awardedPoints,
           correctAnswer: props.question.correctAnswer ?? "",

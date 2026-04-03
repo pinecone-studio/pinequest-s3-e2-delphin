@@ -31,6 +31,7 @@ export function StudentExamChoiceQuestion(props: {
           meta={`${QUESTION_HEADER_META_LABELS[question.type]} · ${question.points} оноо`}
           title={question.question}
           answered={Boolean(value)}
+          iconKey={question.iconKey}
         />
       </div>
 

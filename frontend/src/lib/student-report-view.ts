@@ -31,6 +31,10 @@ export function getAnswerReviewState(
   const hasAnswer = Boolean(answer?.answer?.trim());
 
   if (!hasAnswer) return "unanswered" as const;
+  if (answer?.reviewStatus === "auto-correct") return "correct" as const;
+  if (answer?.reviewStatus === "auto-wrong") return "wrong" as const;
+  if (answer?.reviewStatus === "pending") return "pending" as const;
+  if (answer?.reviewStatus === "graded") return "graded" as const;
   if (isManualReviewQuestionType(question.type)) {
     return answer?.reviewStatus === "graded" ||
       typeof answer?.awardedPoints === "number" ||

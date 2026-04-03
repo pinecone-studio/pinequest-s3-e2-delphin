@@ -5,7 +5,8 @@ function trimTrailingSlashes(value: string) {
 }
 
 export function getBrowserApiBaseUrl() {
-  return '/api/backend'
+  const configuredApiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim()
+  return configuredApiBaseUrl ? trimTrailingSlashes(configuredApiBaseUrl) : '/api/backend'
 }
 
 export function getServerApiBaseUrl() {

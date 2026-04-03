@@ -7,6 +7,7 @@ export type StudentExamAnswer = {
   isCorrect: boolean | null;
   awardedPoints?: number | null;
   reviewStatus?: 'auto-correct' | 'auto-wrong' | 'pending' | 'graded';
+  explanation?: string;
 };
 
 export type StudentExamResult = {
@@ -28,6 +29,15 @@ export type CreateStudentExamResultDto = Omit<
   StudentExamResult,
   'id' | 'createdAt' | 'updatedAt' | 'status'
 > & { status?: 'submitted' };
+
+export type GradeStudentExamResultDto = {
+  examId: string;
+  studentId: string;
+  studentName: string;
+  classId: string;
+  answers: Record<string, string>;
+  submittedAt: string;
+};
 
 export type StudentExamResultFilters = {
   examId?: string;

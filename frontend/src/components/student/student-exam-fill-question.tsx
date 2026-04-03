@@ -5,6 +5,10 @@ import {
   cardShadow,
 } from "@/components/student/student-exam-question-shell";
 import { QUESTION_HEADER_META_LABELS } from "@/components/student/student-exam-utils";
+import {
+  getExamQuestionIconAlt,
+  getExamQuestionIconSrc,
+} from "@/lib/question-icons";
 
 function StatusIcon() {
   return (
@@ -55,14 +59,23 @@ export function StudentExamFillQuestion(props: {
         </div>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center gap-3 text-[20px] font-semibold leading-[28px] text-[#293138] dark:text-[#F3F8FF]">
-        <span>{before}</span>
-        <input
-          value={value}
-          onChange={(event) => onAnswerChange(question.id, event.target.value)}
-          className="h-[35px] w-[199px] rounded-[10px] border border-[#E6F2FF] bg-white px-4 text-[16px] font-medium leading-[20px] text-[#293138] outline-none focus:border-[#66B2FF] dark:border-white/10 dark:bg-[#05080C] dark:text-[#EDF4FF] dark:focus:border-[#60A5FA]"
-        />
-        {after ? <span>{after}</span> : null}
+      <div className="mt-5 flex items-start gap-4">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#E6F2FF] bg-[#F7FBFF] dark:border-white/10 dark:bg-[rgba(255,255,255,0.04)]">
+          <img
+            src={getExamQuestionIconSrc(question.iconKey)}
+            alt={getExamQuestionIconAlt(question.iconKey)}
+            className="h-9 w-9 object-contain"
+          />
+        </div>
+        <div className="flex flex-1 flex-wrap items-center gap-3 text-[20px] font-semibold leading-[28px] text-[#293138] dark:text-[#F3F8FF]">
+          <span>{before}</span>
+          <input
+            value={value}
+            onChange={(event) => onAnswerChange(question.id, event.target.value)}
+            className="h-[35px] w-[199px] rounded-[10px] border border-[#E6F2FF] bg-white px-4 text-[16px] font-medium leading-[20px] text-[#293138] outline-none focus:border-[#66B2FF] dark:border-white/10 dark:bg-[#05080C] dark:text-[#EDF4FF] dark:focus:border-[#60A5FA]"
+          />
+          {after ? <span>{after}</span> : null}
+        </div>
       </div>
     </section>
   );

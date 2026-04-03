@@ -9,7 +9,11 @@ import { getScheduleEnd } from "@/lib/student-exam-time"
 
 const weekdays = ["Да", "Мя", "Лх", "Пү", "Ба", "Бя", "Ня"]
 const timeSlots = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00"]
-const eventTone = ["bg-[#F04FC2]", "bg-[#58B4EA]", "bg-[#F9A825]", "bg-[#FF7A7A]"]
+const eventTone = [
+  { dot: "bg-[#1E88FF]", darkBadge: "dark:bg-[#1E88FF]" },
+  { dot: "bg-[#FF9800]", darkBadge: "dark:bg-[#FF9800]" },
+  { dot: "bg-[#F04FC2]", darkBadge: "dark:bg-[#F04FC2]" },
+]
 const navButtonClassName = "flex h-6 w-6 items-center justify-center rounded-full border-[0.5px] border-[#E6F2FF] bg-transparent dark:border-[rgba(224,225,226,0.72)] dark:bg-transparent"
 const gridCellClassName = "min-h-[64px] rounded-[10px] border border-[#E8EEF5] bg-white px-2 py-2 dark:border-[rgba(224,225,226,0.14)] dark:bg-[radial-gradient(62%_1.5px_at_50%_0%,rgba(167,182,214,0.22)_0%,rgba(167,182,214,0.09)_42%,rgba(167,182,214,0)_100%),radial-gradient(62%_1.5px_at_50%_100%,rgba(167,182,214,0.18)_0%,rgba(167,182,214,0.08)_42%,rgba(167,182,214,0)_100%),linear-gradient(180deg,#0d163f_0%,#0a1236_100%)] dark:shadow-[inset_0_0_8px_rgba(55,82,138,0.05)]"
 
@@ -59,7 +63,7 @@ export function StudentDashboardScheduleCard(props: { completedExamIds: Set<stri
             const end = getScheduleEnd(schedule.date, schedule.time, exam.duration, exam.availableIndefinitely)
             const endHours = `${end.getHours()}`.padStart(2, "0")
             const endMinutes = `${end.getMinutes()}`.padStart(2, "0")
-            return <div key={`${schedule.date}-${schedule.time}-${exam.id}`} className="space-y-3"><div className="flex items-center gap-3"><span className="shrink-0 text-[14px] font-normal leading-none text-[#2388FF]">{schedule.time} - {endHours}:{endMinutes}</span><div className="h-px flex-1 border-t border-dashed border-[#CFE5FF]" /></div><div className="rounded-[8px] border border-[#DCE8F3] bg-white px-[16px] py-[12px] shadow-[0_6px_20px_rgba(114,144,179,0.10)]"><div className="flex items-center gap-3"><span className={`h-[10px] w-[10px] shrink-0 rounded-full ${eventTone[index % eventTone.length]}`} /><span className="font-sans text-[14px] font-normal leading-none text-[#4A5565]">{exam.title}</span></div></div></div>
+            return <div key={`${schedule.date}-${schedule.time}-${exam.id}`} className="space-y-3"><div className="flex items-center gap-3"><span className="shrink-0 text-[14px] font-normal leading-none text-[#2388FF]">{schedule.time} - {endHours}:{endMinutes}</span><div className="h-px flex-1 border-t border-dashed border-[#CFE5FF]" /></div><div className="rounded-[8px] border border-[#DCE8F3] bg-white px-[16px] py-[12px] shadow-[0_6px_20px_rgba(114,144,179,0.10)]"><div className="flex items-center gap-3"><span className={`h-[10px] w-[10px] shrink-0 rounded-full ${eventTone[index % eventTone.length].dot}`} /><span className="font-sans text-[14px] font-normal leading-none text-[#4A5565]">{exam.title}</span></div></div></div>
           })}
         </div>
       </div>
@@ -79,7 +83,7 @@ export function StudentDashboardScheduleCard(props: { completedExamIds: Set<stri
         })}
         {timeSlots.map((time) => <div key={time} className="contents"><div className="font-sans flex min-h-[64px] items-start justify-center pt-5 text-center text-[14px] font-medium text-[#007FFF] dark:text-[#5cb7ff]">{time}</div>{weekDates.map((entry) => {
           const event = desktopCells.get(`${entry.key}-${time.slice(0, 2)}`)
-          return <div key={`${entry.key}-${time}`} className={gridCellClassName}>{event ? event.isCompleted ? <Link href={`/student/reports/${event.examId}`} className="inline-flex max-w-full items-center gap-[7px] rounded-full bg-[#E8F5E9] px-[10px] py-1 text-[11px] font-semibold leading-none text-[#00C853] line-through transition hover:brightness-[0.98] dark:bg-[#00C853] dark:text-[#E8F5E9]"><Check className="h-[12px] w-[12px] shrink-0" /><span className="truncate">{event.title}</span></Link> : event.isMissed ? <span className="inline-flex max-w-full cursor-not-allowed items-center gap-[7px] rounded-full bg-[#FEE2E2] px-[10px] py-1 text-[11px] font-semibold leading-none text-[#DC2626] line-through dark:bg-[#FF5A53] dark:text-[#FFF1EF]"><span className="h-[7px] w-[7px] shrink-0 rounded-full bg-current dark:bg-[#FFF1EF]" /><span className="truncate">{event.title}</span></span> : <Link href={`/student/exams/${event.examId}`} className="inline-flex max-w-full items-center gap-1.5 rounded-full bg-[#FFF3E0] px-[10px] py-1 text-[11px] font-semibold leading-none text-[#FF9500] transition hover:brightness-[0.98] dark:bg-[#FF9500] dark:text-[#FFF3E0]"><span className="h-[6px] w-[6px] shrink-0 rounded-full bg-current dark:bg-[#FFF3E0]" /><span className="truncate">{event.title}</span></Link> : null}</div>
+          return <div key={`${entry.key}-${time}`} className={gridCellClassName}>{event ? event.isCompleted ? <Link href={`/student/reports/${event.examId}`} className={`inline-flex max-w-full items-center gap-[7px] rounded-full bg-[#E8F5E9] px-[10px] py-1 text-[11px] font-semibold leading-none text-[#00C853] line-through transition hover:brightness-[0.98] dark:text-white ${event.tone.darkBadge}`}><Check className="h-[12px] w-[12px] shrink-0 dark:text-white" /><span className="truncate">{event.title}</span></Link> : event.isMissed ? <span className={`inline-flex max-w-full cursor-not-allowed items-center gap-[7px] rounded-full bg-[#FEE2E2] px-[10px] py-1 text-[11px] font-semibold leading-none text-[#DC2626] line-through dark:text-white ${event.tone.darkBadge}`}><span className="h-[7px] w-[7px] shrink-0 rounded-full bg-current dark:bg-white" /><span className="truncate">{event.title}</span></span> : <Link href={`/student/exams/${event.examId}`} className={`inline-flex max-w-full items-center gap-1.5 rounded-full bg-[#FFF3E0] px-[10px] py-1 text-[11px] font-semibold leading-none text-[#FF9500] transition hover:brightness-[0.98] dark:text-white ${event.tone.darkBadge}`}><span className="h-[6px] w-[6px] shrink-0 rounded-full bg-current dark:bg-white" /><span className="truncate">{event.title}</span></Link> : null}</div>
         })}</div>)}
       </div>
     </section>

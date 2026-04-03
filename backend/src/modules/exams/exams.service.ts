@@ -22,6 +22,10 @@ import type {
   UpdateExamDto,
   AIGenerateQuestionsDto,
 } from './exams.types';
+import {
+  normalizeExamQuestionIconKey,
+  safePickQuestionIconKey,
+} from './question-icons';
 
 type ExamRecord = {
   id: string;
@@ -40,6 +44,7 @@ type ExamQuestionRecord = {
   prompt: string;
   optionsJson: string | null;
   correctAnswer: string | null;
+  iconKey: string | null;
   points: number;
   displayOrder: number;
 };
@@ -115,7 +120,7 @@ export class ExamsService {
         const questionRecords =
           await this.databaseService.query<ExamQuestionRecord>(
             `SELECT id, exam_id as examId, type, prompt, options_json as optionsJson,
-           correct_answer as correctAnswer, points, display_order as displayOrder
+           correct_answer as correctAnswer, icon_key as iconKey, points, display_order as displayOrder
            FROM exam_questions
            WHERE exam_id = ?`,
             [id],
@@ -180,8 +185,8 @@ export class ExamsService {
         for (const question of questionInserts) {
           await this.databaseService.execute(
             `INSERT INTO exam_questions (
-              id, exam_id, type, prompt, options_json, correct_answer, points, display_order
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+              id, exam_id, type, prompt, options_json, correct_answer, icon_key, points, display_order
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
               question.id,
               question.examId,
@@ -189,6 +194,7 @@ export class ExamsService {
               question.prompt,
               question.optionsJson,
               question.correctAnswer,
+              question.iconKey,
               question.points,
               question.displayOrder,
             ],
@@ -241,6 +247,7 @@ export class ExamsService {
             correctAnswer: question.correctAnswer,
             points: question.points,
             order: question.order,
+            iconKey: question.iconKey,
           })),
         schedules:
           payload.schedules ??
@@ -288,8 +295,8 @@ export class ExamsService {
         for (const question of questionInserts) {
           await this.databaseService.execute(
             `INSERT INTO exam_questions (
-              id, exam_id, type, prompt, options_json, correct_answer, points, display_order
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+              id, exam_id, type, prompt, options_json, correct_answer, icon_key, points, display_order
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
               question.id,
               question.examId,
@@ -297,6 +304,7 @@ export class ExamsService {
               question.prompt,
               question.optionsJson,
               question.correctAnswer,
+              question.iconKey,
               question.points,
               question.displayOrder,
             ],
@@ -413,6 +421,12 @@ export class ExamsService {
               : type === 'true-false'
                 ? 'true'
                 : undefined,
+          iconKey: safePickQuestionIconKey({
+            categoryName: payload.category,
+            difficulty: payload.difficulty,
+            question: questionText,
+            type,
+          }),
           points,
           order: order++,
         };
@@ -500,7 +514,7 @@ export class ExamsService {
           ),
           this.databaseService.query<ExamQuestionRecord>(
             `SELECT id, exam_id as examId, type, prompt, options_json as optionsJson,
-           correct_answer as correctAnswer, points, display_order as displayOrder
+           correct_answer as correctAnswer, icon_key as iconKey, points, display_order as displayOrder
            FROM exam_questions`,
           ),
           this.databaseService.query<ExamScheduleRecord>(
@@ -697,6 +711,7 @@ export class ExamsService {
         ? JSON.stringify(question.options.map((option) => option.trim()))
         : null,
       correctAnswer: question.correctAnswer?.trim() || null,
+      iconKey: question.iconKey ?? null,
       points: question.points,
       displayOrder: question.order || index + 1,
     }));
@@ -721,6 +736,7 @@ export class ExamsService {
         ? (JSON.parse(question.optionsJson) as string[])
         : undefined,
       correctAnswer: question.correctAnswer ?? undefined,
+      iconKey: normalizeExamQuestionIconKey(question.iconKey),
       points: question.points,
       order: question.displayOrder,
     };

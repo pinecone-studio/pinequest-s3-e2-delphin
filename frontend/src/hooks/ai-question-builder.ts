@@ -2,6 +2,10 @@ import type {
   AIQuestionTypeCounts,
 } from "@/components/teacher/ai-question-generator-dialog-types";
 import type { NewQuestion, QuestionType } from "@/components/teacher/exam-builder-types";
+import {
+  DEFAULT_EXAM_QUESTION_ICON_KEY,
+  pickQuestionIconKey,
+} from "@/lib/question-icons";
 
 export const matchingSeparator = "|||";
 
@@ -11,12 +15,21 @@ function createDefaultOptions(type: QuestionType) {
   return undefined;
 }
 
+function getGeneratedPrompt(type: QuestionType, index: number) {
+  if (type === "multiple-choice") return `AI generated multiple choice question ${index + 1}`;
+  if (type === "true-false") return `AI generated true false question ${index + 1}`;
+  if (type === "matching") return `AI generated matching question ${index + 1}`;
+  if (type === "ordering") return `AI generated ordering question ${index + 1}`;
+  return `AI generated short answer question ${index + 1}`;
+}
+
 export function createQuestion(type: QuestionType, id: string): NewQuestion {
   return {
     id,
     type,
     question: "",
     points: 1,
+    iconKey: DEFAULT_EXAM_QUESTION_ICON_KEY,
     options: createDefaultOptions(type),
     correctAnswer:
       type === "true-false"
@@ -51,28 +64,58 @@ export function createAiQuestions(counts: AIQuestionTypeCounts) {
   const seed = Date.now();
   return expandQuestionTypes(counts).map((type, index) => {
     const question = createQuestion(type, `ai-${type}-${seed}-${index}`);
+    const prompt = getGeneratedPrompt(type, index);
+    const iconKey = pickQuestionIconKey({ question: prompt, type });
+
     if (type === "multiple-choice") {
-      return { ...question, question: `AI үүсгэсэн сонгох хариулттай асуулт ${index + 1}`, options: ["Сонголт A", "Сонголт B", "Сонголт C", "Сонголт D"], correctAnswer: "Сонголт A" };
+      return {
+        ...question,
+        question: prompt,
+        options: ["Option A", "Option B", "Option C", "Option D"],
+        correctAnswer: "Option A",
+        iconKey,
+      };
     }
+
     if (type === "true-false") {
-      return { ...question, question: `AI үүсгэсэн үнэн / худал асуулт ${index + 1}`, correctAnswer: "True" };
+      return {
+        ...question,
+        question: prompt,
+        correctAnswer: "True",
+        iconKey,
+      };
     }
+
     if (type === "matching") {
       return {
         ...question,
-        question: `AI үүсгэсэн харгалзуулах асуулт ${index + 1}`,
+        question: prompt,
         options: [
-          `Нэр томьёо 1${matchingSeparator}Тайлбар A`,
-          `Нэр томьёо 2${matchingSeparator}Тайлбар B`,
-          `Нэр томьёо 3${matchingSeparator}Тайлбар C`,
-          `Нэр томьёо 4${matchingSeparator}Тайлбар D`,
+          `Term 1${matchingSeparator}Definition A`,
+          `Term 2${matchingSeparator}Definition B`,
+          `Term 3${matchingSeparator}Definition C`,
+          `Term 4${matchingSeparator}Definition D`,
         ],
         correctAnswer: "1-A, 2-B, 3-C, 4-D",
+        iconKey,
       };
     }
+
     if (type === "ordering") {
-      return { ...question, question: `AI үүсгэсэн дараалуулах асуулт ${index + 1}`, options: ["Алхам 1", "Алхам 2", "Алхам 3", "Алхам 4"], correctAnswer: "1,2,3,4" };
+      return {
+        ...question,
+        question: prompt,
+        options: ["Step 1", "Step 2", "Step 3", "Step 4"],
+        correctAnswer: "1,2,3,4",
+        iconKey,
+      };
     }
-    return { ...question, question: `AI үүсгэсэн богино хариултын асуулт ${index + 1}`, correctAnswer: "Хүлээгдэж буй хариулт" };
+
+    return {
+      ...question,
+      question: prompt,
+      correctAnswer: "Expected answer",
+      iconKey,
+    };
   });
 }

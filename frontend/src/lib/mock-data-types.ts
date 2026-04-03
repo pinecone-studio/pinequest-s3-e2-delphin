@@ -1,3 +1,9 @@
+export type ExamQuestionIconKey =
+  | "general"
+  | "logic"
+  | "analysis"
+  | "creative"
+
 export interface Student {
   id: string
   name: string
@@ -42,6 +48,7 @@ export interface ExamQuestion {
   options?: string[]
   correctAnswer?: string
   points: number
+  iconKey?: ExamQuestionIconKey
   sourceQuestionId?: string
   categoryName?: string
   topicName?: string
@@ -76,6 +83,7 @@ export interface ExamResult {
     isCorrect: boolean | null
     awardedPoints?: number | null
     reviewStatus?: "auto-correct" | "auto-wrong" | "pending" | "graded"
+    explanation?: string
   }[]
   submittedAt: string
 }

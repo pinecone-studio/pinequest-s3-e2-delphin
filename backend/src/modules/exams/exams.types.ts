@@ -13,10 +13,17 @@ export const reportReleaseModes = [
   'after-all-classes-complete',
   'immediately',
 ] as const;
+export const examQuestionIconKeys = [
+  'general',
+  'logic',
+  'analysis',
+  'creative',
+] as const;
 
 export type ExamQuestionType = (typeof examQuestionTypes)[number];
 export type ExamStatus = (typeof examStatuses)[number];
 export type ReportReleaseMode = (typeof reportReleaseModes)[number];
+export type ExamQuestionIconKey = (typeof examQuestionIconKeys)[number];
 
 export type ExamQuestion = {
   id: string;
@@ -26,6 +33,7 @@ export type ExamQuestion = {
   correctAnswer?: string;
   points: number;
   order: number;
+  iconKey?: ExamQuestionIconKey;
 };
 
 export type ExamSchedule = {

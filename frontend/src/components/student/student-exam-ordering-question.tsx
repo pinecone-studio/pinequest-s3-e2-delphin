@@ -31,6 +31,7 @@ export function StudentExamOrderingQuestion(props: {
         meta={`${QUESTION_HEADER_META_LABELS[question.type]} · ${question.points} оноо`}
         title={question.question}
         answered={Boolean(selected.length)}
+        iconKey={question.iconKey}
       >
         <p className="text-[15px] leading-[24px] text-[#6F7982] dark:text-[#9CADC7]">
           Алхмуудыг зөв дарааллаар байрлуулж, мөр дээр дарж буцаан засах боломжтой.

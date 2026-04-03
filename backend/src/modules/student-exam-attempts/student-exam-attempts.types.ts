@@ -14,6 +14,8 @@ export type StudentExamAttempt = {
   studentName: string;
   classId: string;
   status: StudentExamAttemptStatus;
+  answers?: Record<string, string>;
+  currentQuestion?: number;
   startedAt: string;
   submittedAt?: string | null;
   createdAt: string;
@@ -39,6 +41,8 @@ export type StudentExamAttemptRecord = {
   studentName: string;
   classId: string;
   status: StudentExamAttemptStatus;
+  answersJson?: string | null;
+  currentQuestion?: number | null;
   startedAt: string;
   submittedAt?: string | null;
   createdAt: string;

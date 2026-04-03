@@ -9,6 +9,7 @@ import type {
   ExamRecord,
   ExamScheduleRecord,
 } from './exams.internal-types';
+import { normalizeExamQuestionIconKey } from './question-icons';
 import {
   getDerivedExamStatus,
   toExamStatus,
@@ -74,6 +75,7 @@ export function buildQuestionInserts(dto: CreateExamDto, examId: string) {
       ? JSON.stringify(question.options.map((option) => option.trim()))
       : null,
     correctAnswer: question.correctAnswer?.trim() || null,
+    iconKey: question.iconKey ?? null,
     points: question.points,
     displayOrder: question.order || index + 1,
   }));
@@ -98,6 +100,7 @@ function mapQuestionRecord(question: ExamQuestionRecord): ExamQuestion {
       ? (JSON.parse(question.optionsJson) as string[])
       : undefined,
     correctAnswer: question.correctAnswer ?? undefined,
+    iconKey: normalizeExamQuestionIconKey(question.iconKey),
     points: question.points,
     order: question.displayOrder,
   };

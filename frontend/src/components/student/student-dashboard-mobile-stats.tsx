@@ -9,9 +9,7 @@ export type StudentMobileStatCard = {
   value: string
 }
 
-export function StudentDashboardMobileStats(props: {
-  items: StudentMobileStatCard[]
-}) {
+export function StudentDashboardMobileStats(props: { items: StudentMobileStatCard[] }) {
   const { items } = props
 
   if (items.length === 0) return null
@@ -21,9 +19,9 @@ export function StudentDashboardMobileStats(props: {
       {items.map((item) => (
         <div
           key={item.label}
-          className={`flex min-h-[64px] shrink-0 items-center gap-2 rounded-[16px] border border-[#DCE8F3] bg-[#F3F9FF] px-[10px] py-[10px] shadow-[0_6px_20px_rgba(114,144,179,0.08)] dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(127deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] ${item.label === "Энэ 7 хоногт" ? "w-[138px]" : "w-[167px]"}`}
+          className={`flex min-h-[64px] shrink-0 items-center gap-2 rounded-[16px] border border-[#DCE8F3] bg-[#F3F9FF] px-[10px] py-[10px] shadow-[0_6px_20px_rgba(114,144,179,0.08)] dark:border-transparent dark:bg-transparent dark:shadow-none ${item.label === "Энэ 7 хоногт" ? "w-[138px]" : "w-[167px]"}`}
         >
-          <Image src={item.iconPath} alt="" width={24} height={24} className="h-6 w-6 shrink-0 object-contain" />
+          <Image src={item.iconPath} alt="" width={40} height={40} className="h-10 w-10 shrink-0 object-contain" />
           <div className="min-w-0 flex-1">
             <p className="line-clamp-2 text-[10px] leading-[1.15] text-[#7A8698] dark:text-[#9eacc3]">{item.label}</p>
             <div className="mt-1 flex flex-wrap items-end gap-x-1 gap-y-0.5">

@@ -1,4 +1,5 @@
 import type { ExamQuestion, ExamQuestionType } from './exams.types';
+import { safePickQuestionIconKey } from './question-icons';
 
 export function createMockQuestions(dto: {
   category: string;
@@ -9,23 +10,33 @@ export function createMockQuestions(dto: {
 }) {
   const questions: ExamQuestion[] = [];
   let order = 1;
+
   const createQuestion = (
     type: ExamQuestionType,
     index: number,
-  ): ExamQuestion => ({
-    id: crypto.randomUUID(),
-    type,
-    question: `AI-generated ${type} question #${index} (category: ${dto.category || 'General'})`,
-    options: type === 'multiple-choice' ? ['Ð', 'Ð‘', 'Ð’', 'Ð“'] : undefined,
-    correctAnswer:
-      type === 'multiple-choice'
-        ? 'Ð'
-        : type === 'true-false'
-          ? 'true'
-          : undefined,
-    points: type === 'true-false' ? 5 : 10,
-    order: order++,
-  });
+  ): ExamQuestion => {
+    const prompt = `AI-generated ${type} question #${index} (category: ${dto.category || 'General'})`;
+
+    return {
+      id: crypto.randomUUID(),
+      type,
+      question: prompt,
+      options: type === 'multiple-choice' ? ['A', 'B', 'C', 'D'] : undefined,
+      correctAnswer:
+        type === 'multiple-choice'
+          ? 'A'
+          : type === 'true-false'
+            ? 'true'
+            : undefined,
+      iconKey: safePickQuestionIconKey({
+        categoryName: dto.category,
+        question: prompt,
+        type,
+      }),
+      points: type === 'true-false' ? 5 : 10,
+      order: order++,
+    };
+  };
 
   for (let variant = 1; variant <= dto.variants; variant += 1) {
     for (let i = 0; i < dto.mcCount; i += 1)
@@ -44,7 +55,7 @@ export function getMockLiveAttempts() {
     {
       id: 'attempt-1',
       studentId: 'student-1',
-      studentName: 'Ð‘Ð°Ñ‚-Ð­Ñ€Ð´ÑÐ½Ñ',
+      studentName: 'Bat-Erdene',
       classId: '10A',
       status: 'in_progress',
       currentQuestion: 3,
@@ -55,7 +66,7 @@ export function getMockLiveAttempts() {
     {
       id: 'attempt-2',
       studentId: 'student-2',
-      studentName: 'Ð¡Ð°Ñ€Ð°Ð°',
+      studentName: 'Saraa',
       classId: '10A',
       status: 'tab_switched',
       currentQuestion: 5,
@@ -71,7 +82,7 @@ export function getMockLiveAttempts() {
     {
       id: 'attempt-3',
       studentId: 'student-3',
-      studentName: 'Ð”Ð¾Ñ€Ð¶',
+      studentName: 'Dorj',
       classId: '10B',
       status: 'submitted',
       currentQuestion: 10,

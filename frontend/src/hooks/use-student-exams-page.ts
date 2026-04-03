@@ -31,7 +31,7 @@ export function useStudentExamsPage() {
     const loadExams = async () => {
       try {
         const [nextExams, nextResults] = await Promise.all([
-          getStudentExams(),
+          getStudentExams(studentClass),
           loadStudentExamResults({ studentId }),
         ])
         if (!isMounted) return
@@ -46,7 +46,7 @@ export function useStudentExamsPage() {
 
     void loadExams()
     return () => { isMounted = false }
-  }, [studentId])
+  }, [studentClass, studentId])
   const myExams = useMemo(() => allExams.filter((exam) => exam.scheduledClasses.some((schedule) => schedule.classId === studentClass)), [allExams, studentClass])
   const myResults = useMemo(() => allResults.filter((result) => result.studentId === studentId), [allResults, studentId])
   const completedExamIds = useMemo(() => new Set(myResults.map((result) => result.examId)), [myResults])

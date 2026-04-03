@@ -15,7 +15,7 @@ export async function findResumableExamPath(props: {
   try {
     const [attempts, exams, results] = await Promise.all([
       loadStudentExamAttempts({ studentId }),
-      getStudentExams(),
+      getStudentExams(studentClass),
       loadStudentExamResults({ studentId }),
     ])
     const submittedExamIds = new Set(results.map((result) => result.examId))

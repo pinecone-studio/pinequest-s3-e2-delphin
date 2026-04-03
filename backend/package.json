@@ -10,6 +10,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate:local": "npx wrangler d1 migrations apply lms-apac --local",
     "db:migrate:remote": "npx wrangler d1 migrations apply lms-apac --remote",
+    "db:seed:demo-exams": "tsx ./scripts/seed-demo-exams.ts",
+    "db:cleanup:demo-exams": "tsx ./scripts/remove-bad-demo-exams.ts",
     "r2:create": "npx wrangler r2 bucket create pinequest-assets",
     "r2:list": "npx wrangler r2 bucket list",
     "db:studio": "drizzle-kit studio",

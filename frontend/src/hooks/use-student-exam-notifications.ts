@@ -70,7 +70,7 @@ export function useStudentExamNotifications(studentId: string, studentClass: str
 
     const snapshotKey = getSnapshotKey(studentId, studentClass)
     const unreadKey = getUnreadKey(studentId, studentClass)
-    const currentExams = getExamsForClass(await getStudentExams(), studentClass)
+    const currentExams = getExamsForClass(await getStudentExams(studentClass), studentClass)
     const currentIds = currentExams.map((exam) => exam.id)
     const previousIds = readIds(snapshotKey)
     const unreadIds = readIds(unreadKey).filter((id) => currentIds.includes(id))

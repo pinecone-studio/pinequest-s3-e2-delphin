@@ -51,7 +51,7 @@ export default function ExamDetailPage({ params }: { params: Promise<{ examId: s
 
     const loadExams = async () => {
       try {
-        const nextExams = await getStudentExams()
+        const nextExams = await getStudentExams(studentClass)
         if (!isMounted) return
         setAllExams(nextExams)
       } catch (loadError) {
@@ -67,7 +67,7 @@ export default function ExamDetailPage({ params }: { params: Promise<{ examId: s
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [studentClass])
 
   const exam = useMemo(() => allExams.find((entry) => entry.id === examId), [allExams, examId])
   const schedule = exam?.scheduledClasses.find((entry) => entry.classId === studentClass)

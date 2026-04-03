@@ -38,7 +38,7 @@ export default function StudentTakeExamPage({
     const loadPage = async () => {
       try {
         const [nextExams, nextResults] = await Promise.all([
-          getStudentExams(),
+          getStudentExams(studentClass),
           loadStudentExamResults({ examId, studentId }),
         ]);
         if (!isMounted) return;
@@ -59,7 +59,7 @@ export default function StudentTakeExamPage({
     return () => {
       isMounted = false;
     };
-  }, [examId, studentId]);
+  }, [examId, studentClass, studentId]);
 
   const exam = useMemo(
     () => allExams.find((entry) => entry.id === examId),

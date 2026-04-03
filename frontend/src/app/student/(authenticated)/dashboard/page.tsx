@@ -69,7 +69,7 @@ export default function StudentDashboard() {
         <div className="hidden gap-[10px] sm:grid sm:grid-cols-2 sm:gap-5 xl:grid-cols-3 xl:gap-8">
           {statCards.map((item) => (
             <div key={item.label} className="flex items-center gap-3">
-              <div className="flex h-[56px] w-[56px] items-center justify-center rounded-xl border border-[#D9E8F4] bg-[#F3F9FF] text-[#39424E] dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(127deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#edf4ff]">
+              <div className="flex h-[56px] w-[56px] items-center justify-center rounded-xl border border-[#D9E8F4] bg-[#F3F9FF] text-[#39424E] dark:border-[rgba(224,225,226,0.14)] dark:bg-[radial-gradient(62%_1.5px_at_50%_0%,rgba(167,182,214,0.22)_0%,rgba(167,182,214,0.09)_42%,rgba(167,182,214,0)_100%),radial-gradient(62%_1.5px_at_50%_100%,rgba(167,182,214,0.18)_0%,rgba(167,182,214,0.08)_42%,rgba(167,182,214,0)_100%),linear-gradient(180deg,#0d163f_0%,#0a1236_100%)] dark:shadow-[inset_0_0_8px_rgba(55,82,138,0.05)] dark:text-[#edf4ff]">
                 <Image src={item.iconPath} alt="" width={26} height={26} className="h-[26px] w-[26px] object-contain" />
               </div>
               <div>

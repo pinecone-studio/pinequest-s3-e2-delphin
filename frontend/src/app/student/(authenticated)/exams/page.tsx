@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { Search } from "lucide-react"
 import { FinishedExamCard, UpcomingExamCard } from "@/components/student/student-exams-page-cards"
 import { SegmentedTab } from "@/components/student/student-exams-page-controls"
@@ -16,7 +17,7 @@ import {
 import { useStudentExamsPage } from "@/hooks/use-student-exams-page"
 
 const sectionContainerClassName =
-  "mx-auto flex w-full max-w-[900px] flex-col items-start gap-5 rounded-2xl border border-[#E6F2FF] bg-white px-5 py-5 shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:border-[rgba(82,146,237,0.24)] dark:bg-[#161F4F] dark:[background-image:linear-gradient(126.97deg,rgba(6,11,38,0.74)_28.26%,rgba(26,31,55,0.5)_91.2%)] dark:backdrop-blur-[60px] dark:shadow-[inset_0_0_0_1px_rgba(82,146,237,0.06)]"
+  "mx-auto flex w-full max-w-[900px] flex-col items-start gap-[10px] rounded-2xl border border-[#E6F2FF] bg-white px-5 py-5 shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:border-[rgba(82,146,237,0.24)] dark:bg-[#161F4F] dark:[background-image:linear-gradient(126.97deg,rgba(6,11,38,0.74)_28.26%,rgba(26,31,55,0.5)_91.2%)] dark:backdrop-blur-[60px] dark:shadow-[inset_0_0_0_1px_rgba(82,146,237,0.06)] sm:gap-5"
 
 export default function StudentExamsPage() {
   const { resolvedTheme } = useTheme()
@@ -40,9 +41,16 @@ export default function StudentExamsPage() {
   const showFinished = activeTab === "all" || activeTab === "finished"
 
   return (
-    <div className="mx-auto w-full max-w-[1440px] px-6 pb-10 pt-5 xl:px-[155px]">
-      <div className="mx-auto flex w-full max-w-[1130px] flex-col gap-[30px]">
-        <div className="mx-auto w-full max-w-[900px] space-y-[7px]">
+    <div className="mx-auto w-full max-w-[390px] px-4 pb-10 pt-5 sm:max-w-[1440px] sm:px-6 xl:px-[155px]">
+      <div className="mx-auto flex w-full max-w-[1130px] flex-col gap-[10px] sm:gap-[30px]">
+        <div className="mx-auto w-full max-w-[358px] space-y-[7px] sm:max-w-[900px]">
+          <Link
+            href="/student/dashboard"
+            className="mb-[10px] inline-flex items-center gap-2 text-[14px] font-medium text-[#007FFF] dark:text-[#89C8FF]"
+          >
+            <span className="text-[18px] leading-none">←</span>
+            <span>Буцах</span>
+          </Link>
           <h1 className="text-[24px] font-semibold leading-[29px] text-[#293138] dark:text-[#EDF4FF]">
             Шалгалтууд
           </h1>
@@ -51,19 +59,19 @@ export default function StudentExamsPage() {
           </p>
         </div>
 
-        <div className="mx-auto flex w-full max-w-[900px] items-center gap-[10px]">
-          <div className="relative flex h-[48px] w-[301px] items-center">
+        <div className="mx-auto flex w-full max-w-[358px] flex-col items-start gap-[10px] sm:max-w-[900px] sm:flex-row sm:items-center">
+          <div className="relative flex h-[52px] w-[358px] max-w-full items-center sm:h-[48px] sm:w-[301px]">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#566069] dark:text-[#AAB7CB]" />
             <Input
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Шалгалт хайх..."
-              className="h-[48px] w-[301px] rounded-full border border-[#E6F2FF] bg-[#F5FAFF] px-4 py-3 pl-10 text-[14px] font-medium text-[#566069] placeholder:text-[#566069] dark:border-[#E6F2FF] dark:bg-[linear-gradient(156deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#D0D8E6] dark:placeholder:text-[#8FA0BB]"
+              className="h-[52px] w-[358px] max-w-full rounded-full border border-[#E6F2FF] bg-[#F5FAFF] px-4 py-3 pl-10 text-[14px] font-medium text-[#566069] placeholder:text-[#566069] dark:border-[#E6F2FF] dark:bg-[linear-gradient(156deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#D0D8E6] dark:placeholder:text-[#8FA0BB] sm:h-[48px] sm:w-[301px]"
             />
           </div>
 
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="h-[48px] w-[152px] overflow-visible rounded-full border border-[#E6F2FF] bg-[#66B2FF] px-4 text-[14px] font-medium text-[#F5FAFF] shadow-none dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(161deg,rgba(6,11,38,0.94)_59%,rgba(26,31,55,0)_100%)] [&_svg]:text-white [&_svg]:opacity-100">
+            <SelectTrigger className="hidden h-[48px] w-[152px] overflow-visible rounded-full border border-[#E6F2FF] bg-[#66B2FF] px-4 text-[14px] font-medium text-[#F5FAFF] shadow-none dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(161deg,rgba(6,11,38,0.94)_59%,rgba(26,31,55,0)_100%)] [&_svg]:text-white [&_svg]:opacity-100 sm:flex">
               <SelectValue
                 className="block overflow-visible whitespace-nowrap text-[12px] tracking-[-0.02em]"
                 placeholder="Бүх хичээл"
@@ -78,7 +86,7 @@ export default function StudentExamsPage() {
             </SelectContent>
           </Select>
 
-          <div className="flex h-[48px] w-[427px] items-center rounded-full border border-[#E6F2FF] bg-[#003366] p-2 shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_20px_44px_rgba(2,6,23,0.4)]">
+          <div className="flex h-[48px] w-[358px] max-w-full items-center rounded-full border border-[#E6F2FF] bg-[#003366] p-2 shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_20px_44px_rgba(2,6,23,0.4)] sm:w-[427px]">
             <SegmentedTab
               active={activeTab === "all"}
               count={allCount}
@@ -100,7 +108,7 @@ export default function StudentExamsPage() {
           </div>
         </div>
 
-        <div className="mx-auto w-full max-w-[1080px] space-y-[34px]">
+        <div className="mx-auto w-full max-w-[358px] space-y-[10px] sm:max-w-[1080px] sm:space-y-[34px]">
           {isLoading ? (
             <div className="flex min-h-[180px] items-center justify-center">
               <div role="status" aria-label="Loading" className="flex h-[72px] w-[72px] items-center justify-center">
@@ -117,7 +125,7 @@ export default function StudentExamsPage() {
 
           {showUpcoming && filteredUpcomingExams.length > 0 ? (
             <section className={sectionContainerClassName}>
-              <div className="flex items-center gap-4">
+              <div className="flex w-full items-center justify-between gap-4">
                 <h2 className="text-[17px] font-semibold leading-[21px] text-[#293138] dark:text-white">
                   Удахгүй болох шалгалтууд
                 </h2>
@@ -125,7 +133,7 @@ export default function StudentExamsPage() {
                   {filteredUpcomingExams.length}
                 </span>
               </div>
-              <div className="w-full space-y-4">
+              <div className="w-full space-y-[10px] sm:space-y-4">
                 {filteredUpcomingExams.map((exam) => (
                   <UpcomingExamCard
                     key={exam.id}
@@ -140,7 +148,7 @@ export default function StudentExamsPage() {
 
           {showFinished && finishedItems.length > 0 ? (
             <section className={sectionContainerClassName}>
-              <div className="flex items-center gap-4">
+              <div className="flex w-full items-center justify-between gap-4">
                 <h2 className="text-[17px] font-semibold leading-[21px] text-[#293138] dark:text-white">
                   Дууссан шалгалтууд
                 </h2>
@@ -148,7 +156,7 @@ export default function StudentExamsPage() {
                   {finishedItems.length}
                 </span>
               </div>
-              <div className="w-full space-y-4">
+              <div className="w-full space-y-[10px] sm:space-y-4">
                 {finishedItems.map((item) => (
                   <FinishedExamCard
                     key={

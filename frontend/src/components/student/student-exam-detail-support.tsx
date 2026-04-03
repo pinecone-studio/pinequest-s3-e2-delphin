@@ -32,13 +32,13 @@ export function DetailInfoItem({
   value: string
 }) {
   return (
-    <div className="flex min-h-[34px] items-center gap-4 md:w-[180px] xl:w-[184px]">
+    <div className="flex min-h-[32px] w-full items-center gap-4">
       <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center">
         <Image alt="" height={30} src={iconSrc} width={30} />
       </div>
-      <div className="space-y-[6px]">
+      <div className="min-w-0 space-y-1">
         <p className="text-[14px] leading-none text-[#72859A] dark:text-[#D7DFE7]">{label}</p>
-        <p className="text-[17px] font-semibold leading-none tracking-[-0.02em] text-[#1F2937] md:text-[18px] dark:text-[#F0F3F5]">
+        <p className="whitespace-nowrap text-[14px] font-medium leading-none tracking-[-0.02em] text-[#1F2937] md:text-[18px] dark:text-[#F0F3F5]">
           {value}
         </p>
       </div>

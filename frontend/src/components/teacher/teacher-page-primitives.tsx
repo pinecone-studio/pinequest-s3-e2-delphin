@@ -2,6 +2,7 @@
 
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export function TeacherPageShell({
   children,
@@ -10,35 +11,59 @@ export function TeacherPageShell({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <div className={cn("space-y-6 lg:space-y-7", className)}>{children}</div>;
+  return (
+    <div className={cn("space-y-6 lg:space-y-7", className)}>{children}</div>
+  );
 }
 
 export function TeacherPageHeader({
   actions,
+  className,
   description,
   eyebrow,
-  icon: Icon,
+  surface = "card",
   title,
 }: {
   actions?: React.ReactNode;
+  className?: string;
   description?: React.ReactNode;
   eyebrow?: React.ReactNode;
   icon?: LucideIcon;
+  surface?: "card" | "plain";
   title: React.ReactNode;
 }) {
+  const sectionClassName = cn(
+    surface === "plain"
+      ? "h-full w-full px-0 py-0"
+      : "relative overflow-hidden rounded-[30px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.92)_0%,rgba(247,250,255,0.88)_100%)] px-5 py-5 shadow-[0_18px_50px_rgba(168,196,235,0.18)] backdrop-blur sm:px-7 sm:py-6 dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(12,18,44,0.94)_0%,rgba(11,17,38,0.9)_100%)] dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)]",
+    className,
+  )
+
   return (
-    <section className="relative overflow-hidden rounded-[30px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.92)_0%,rgba(247,250,255,0.88)_100%)] px-5 py-5 shadow-[0_18px_50px_rgba(168,196,235,0.18)] backdrop-blur sm:px-7 sm:py-6 dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(12,18,44,0.94)_0%,rgba(11,17,38,0.9)_100%)] dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)]">
-      <div className="absolute inset-y-0 right-0 hidden w-[36%] bg-[radial-gradient(circle_at_top_right,rgba(147,197,253,0.24),transparent_58%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.14),transparent_58%)] lg:block" />
-      <div className="relative flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0 space-y-3">
-          <div className="flex items-start gap-3">
-            {Icon ? (
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[20px] bg-[linear-gradient(145deg,#fff7d6_0%,#ffe9a7_42%,#ffd8f5_100%)] text-[#7c5d00] shadow-[0_14px_28px_rgba(253,224,71,0.22)] dark:bg-[linear-gradient(145deg,rgba(245,158,11,0.28)_0%,rgba(232,121,249,0.24)_100%)] dark:text-[#fde68a]">
-                <Icon className="h-6 w-6" strokeWidth={1.9} />
-              </div>
-            ) : null}
-            <div className="min-w-0 space-y-2">
-              <h1 className="text-3xl font-semibold tracking-[-0.03em] text-[#384161] dark:text-white sm:text-[2.2rem]">
+    <section className={sectionClassName}>
+      {surface === "card" ? (
+        <div className="absolute inset-y-0 right-0 hidden w-[36%] bg-[radial-gradient(circle_at_top_right,rgba(147,197,253,0.24),transparent_58%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.14),transparent_58%)] lg:block" />
+      ) : null}
+      <div
+        className={cn(
+          "relative flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between",
+          surface === "plain" && "h-full items-center justify-between gap-4 lg:items-center",
+        )}
+      >
+        <div className="min-w-0">
+          <div className="flex items-center gap-3">
+            <div className="relative h-16 w-[67px] shrink-0">
+              <Image
+                src="/teacher-greeting-illustration.svg"
+                alt="Greeting illustration"
+                fill
+                sizes="67px"
+                className="object-contain"
+                priority
+              />
+            </div>
+            <div className={cn("min-w-0 pt-1", surface === "plain" ? "space-y-1" : "space-y-3")}>
+              <h1 className="text-[32px] font-medium leading-[1] tracking-[-0.02em] text-[#4c4c66] dark:text-[#f9fafb]">
                 {title}
               </h1>
               {description ? (
@@ -46,15 +71,17 @@ export function TeacherPageHeader({
                   {description}
                 </p>
               ) : null}
+              {eyebrow ? (
+                <div className="flex flex-wrap items-center gap-[10px] text-[14px] font-medium text-[#6f6c99] dark:text-[#c2c9d0]">
+                  {eyebrow}
+                </div>
+              ) : null}
             </div>
           </div>
-          {eyebrow ? (
-            <div className="flex flex-wrap items-center gap-2 text-sm text-[#707da0] dark:text-[#94a3c8]">
-              {eyebrow}
-            </div>
-          ) : null}
         </div>
-        {actions ? <div className="flex flex-wrap items-center gap-3">{actions}</div> : null}
+        {actions ? (
+          <div className="flex flex-wrap items-center gap-3">{actions}</div>
+        ) : null}
       </div>
     </section>
   );
@@ -88,7 +115,8 @@ export function TeacherPageStatCard({
   const toneClasses = {
     blue: "from-[#f8fbff] via-[#ffffff] to-[#eef5ff] dark:from-[#10193f] dark:via-[#111a43] dark:to-[#0c1333]",
     mint: "from-[#f7fffd] via-[#ffffff] to-[#ebfff9] dark:from-[#0f1b33] dark:via-[#0f2137] dark:to-[#0a192d]",
-    violet: "from-[#fdf8ff] via-[#ffffff] to-[#f4efff] dark:from-[#171337] dark:via-[#15153c] dark:to-[#10122f]",
+    violet:
+      "from-[#fdf8ff] via-[#ffffff] to-[#f4efff] dark:from-[#171337] dark:via-[#15153c] dark:to-[#10122f]",
   } as const;
 
   return (

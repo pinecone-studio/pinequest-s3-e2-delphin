@@ -12,7 +12,16 @@ export async function submitStudentExam(props: {
 }) {
   const { exam, answers, currentQuestion, studentId, studentName, studentClass } = props
   const submittedAt = new Date().toISOString()
-  await gradeStudentExamResult({ examId: exam.id, studentId, studentName, classId: studentClass, answers, submittedAt })
+  const answeredCount = Object.values(answers).filter((answer) => answer.trim().length > 0).length
+
+  await gradeStudentExamResult({
+    examId: exam.id,
+    studentId,
+    studentName,
+    classId: studentClass,
+    answers,
+    submittedAt,
+  })
 
   await upsertStudentExamAttempt({
     examId: exam.id,
@@ -22,6 +31,7 @@ export async function submitStudentExam(props: {
     status: "submitted",
     answers,
     currentQuestion,
+    answeredCount,
     startedAt: submittedAt,
     submittedAt,
   })

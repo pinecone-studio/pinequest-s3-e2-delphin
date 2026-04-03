@@ -7,6 +7,7 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type QuestionBankTopicCardProps = {
+  categoryName: string;
   isExpanded: boolean;
   isQuestionSelectable?: (questionType: string) => boolean;
   onToggleQuestion?: (questionId: string, checked: boolean) => void;
@@ -18,10 +19,33 @@ type QuestionBankTopicCardProps = {
 function getDifficultyLabel(difficulty: string) {
   if (difficulty === "easy") return "Хөнгөн";
   if (difficulty === "standard") return "Дунд";
-  return "Хэцүү";
+  return "Хүнд";
+}
+
+function getQuestionTypeLabel(type: string) {
+  if (type === "multiple-choice") return "Сонгох даалгавар";
+  if (type === "short-answer") return "Богино хариулт";
+  if (type === "true-false") return "Үнэн худал";
+  if (type === "matching") return "Харгалзуулах";
+  if (type === "ordering") return "Дараалуулах";
+  if (type === "fill") return "Нөхөх";
+  return type;
+}
+
+function getDifficultyBadgeClass(difficulty: string) {
+  if (difficulty === "easy") {
+    return "border-[#A4F4CF] bg-[#D0FAE5] text-[#006045]";
+  }
+
+  if (difficulty === "standard") {
+    return "border-[#FEE685] bg-[#FEF3C6] text-[#973C00]";
+  }
+
+  return "border-[#FFC9C9] bg-[#FFE2E2] text-[#9F0712]";
 }
 
 export function QuestionBankTopicCard({
+  categoryName,
   isExpanded,
   isQuestionSelectable,
   onToggleQuestion,
@@ -30,26 +54,39 @@ export function QuestionBankTopicCard({
   topic,
 }: QuestionBankTopicCardProps) {
   return (
-    <div className="rounded-[20px] border border-[#e3ebfd] bg-[linear-gradient(180deg,#f9fbff_0%,#ffffff_100%)]">
+    <div className="rounded-[24px] border border-[#e3ebfd] bg-[linear-gradient(180deg,#fdfefe_0%,#ffffff_100%)] shadow-[0_12px_30px_rgba(168,196,235,0.08)]">
       <button
         type="button"
         onClick={onToggleTopic}
-        className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left transition-colors hover:bg-[#f8fbff]"
+        className={cn(
+          "flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-[#f8fbff]",
+          isExpanded ? "rounded-t-[24px]" : "rounded-[24px]",
+        )}
       >
-        <div className="min-w-0">
-          <h3 className="truncate text-base font-semibold text-[#334265]">{topic.name}</h3>
-          <p className="mt-1 text-sm text-[#6f7898]">{topic.questions.length} асуулт</p>
+        <div className="min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
+          <span className="text-[16px] font-semibold text-[#4c4c66]">
+            Математик
+          </span>
+          <span className="truncate text-[16px] font-normal text-[#4c4c66]">
+            | бүлэг: {categoryName}
+          </span>
+          <span className="truncate text-[16px] font-normal text-[#4c4c66]">
+            {topic.name}
+          </span>
+          <span className="rounded-full bg-[#eef2f8] px-3 py-1 text-[14px] font-medium text-[#6f7898]">
+            {topic.questions.length} асуулт
+          </span>
         </div>
         <ChevronDown
           className={cn(
-            "h-4 w-4 shrink-0 text-[#7b8bb1] transition-transform",
-            isExpanded ? "rotate-180" : "",
+            "h-5 w-5 shrink-0 text-[#6f7898] transition-transform",
+            isExpanded ? "rotate-0" : "-rotate-90",
           )}
         />
       </button>
 
       {isExpanded ? (
-        <div className="space-y-3 border-t border-[#e8eefb] px-4 py-4">
+        <div className="space-y-3 border-t border-[#e8eefb] px-6 py-5">
           {topic.questions.map((question, index) => (
             <QuestionBankQuestionCard
               key={question.id}
@@ -93,15 +130,25 @@ function QuestionBankQuestionCard({
           />
         ) : null}
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2 text-sm text-[#7080a0]">
-            <span>Асуулт {index + 1}</span>
-            <Badge variant="outline" className="border-[#dce7ff] bg-[#f8fbff] text-[#526488]">
-              {question.type}
+          <div className="flex flex-wrap items-center gap-3 text-sm text-[#7080a0]">
+            <span className="text-[16px] font-normal text-[#6f7898]">
+              Асуулт {index + 1}
+            </span>
+            <Badge
+              variant="outline"
+              className="rounded-[12px] border-[#afc8ff] bg-[#afc8ff] px-3 py-1 text-[12px] font-medium text-white"
+            >
+              {getQuestionTypeLabel(question.type)}
             </Badge>
-            <Badge variant="secondary" className="bg-[#eef4ff] text-[#4e6290]">
+            <Badge
+              variant="outline"
+              className={cn(
+                "rounded-[12px] border px-3 py-1 text-[12px] font-medium",
+                getDifficultyBadgeClass(question.difficulty),
+              )}
+            >
               {getDifficultyLabel(question.difficulty)}
             </Badge>
-            <span>{question.points} оноо</span>
             {!isSelectable ? (
               <Badge
                 variant="outline"
@@ -111,7 +158,9 @@ function QuestionBankQuestionCard({
               </Badge>
             ) : null}
           </div>
-          <p className="mt-3 font-medium text-[#2f3d60]">{question.question}</p>
+          <p className="mt-4 text-[16px] font-semibold text-[#2f3d60]">
+            {question.question}
+          </p>
         </div>
       </div>
     </div>

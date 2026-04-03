@@ -107,6 +107,7 @@ export const studentExamAttempts = sqliteTable('student_exam_attempts', {
   status: text('status').notNull(),
   answersJson: text('answers_json'),
   currentQuestion: integer('current_question'),
+  answeredCount: integer('answered_count').notNull().default(0),
   startedAt: text('started_at').notNull(),
   submittedAt: text('submitted_at'),
   createdAt: text('created_at').notNull(),

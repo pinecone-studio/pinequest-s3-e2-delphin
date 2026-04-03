@@ -8,16 +8,17 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { mergeSourceFiles } from "@/lib/source-files";
 import { uploadFile, type UploadRecord } from "@/lib/uploads-api";
-import { Upload } from "lucide-react";
+import { Plus } from "lucide-react";
 
 const SOURCES_FOLDER = "sources";
 
 type Props = {
+  className?: string;
   files: UploadRecord[];
   setSourceFiles: React.Dispatch<React.SetStateAction<UploadRecord[]>>;
 };
 
-export function QuestionBankSourcePanel({ files, setSourceFiles }: Props) {
+export function QuestionBankSourcePanel({ className, files, setSourceFiles }: Props) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [newSourceName, setNewSourceName] = useState("");
@@ -112,19 +113,22 @@ export function QuestionBankSourcePanel({ files, setSourceFiles }: Props) {
 
   return (
     <>
-      <TeacherSurfaceCard className="space-y-5">
+      <TeacherSurfaceCard className={`space-y-5 ${className ?? ""}`}>
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold tracking-[-0.02em] text-[#303959] dark:text-white">
+            <h2 className="text-[24px] font-semibold tracking-[-0.02em] text-[#4c4c66] dark:text-white">
               Эх сурвалж
             </h2>
+            <p className="text-[16px] font-medium text-[#6f6c99] dark:text-[#aeb8d2]">
+              Эх сурвалжийн бүртгэлийн сан.
+            </p>
           </div>
           <Button
-            className="rounded-2xl bg-[#eaf2ff] text-[#2458d3] shadow-none hover:bg-[#dce8ff]"
+            className="mt-1 h-[32px] w-[102px] rounded-full bg-[#6f9cff] px-3 text-[14px] font-medium text-white shadow-none transition-colors hover:bg-[#5d8ef8] dark:bg-[#6f9cff] dark:text-white dark:hover:bg-[#5d8ef8]"
             onClick={handleDialogOpen}
           >
-            <Upload className="mr-2 h-4 w-4" />
-            Шинэ эх сурвалж нэмэх
+            <Plus className="mr-1 h-3.5 w-3.5" />
+            Бүртгэх
           </Button>
         </div>
 

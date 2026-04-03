@@ -9,6 +9,7 @@ import {
   StudentTakeExamSubmitted,
 } from "@/components/student/student-take-exam-states";
 import { Spinner } from "@/components/ui/spinner";
+import { useStudentLiveAttemptSync } from "@/app/student/(authenticated)/exams/[examId]/take/use-student-live-attempt-sync";
 import { useExamIntegrityGuard } from "@/hooks/use-exam-integrity-guard";
 import { useStudentExamDraft } from "@/hooks/use-student-exam-draft";
 import { useStudentSession } from "@/hooks/use-student-session";
@@ -60,11 +61,22 @@ export default function StudentTakeExamPage({
     };
   }, [examId, studentId]);
 
-  const exam = useMemo(() => allExams.find((entry) => entry.id === examId), [allExams, examId]);
-  const schedule = exam?.scheduledClasses.find((entry) => entry.classId === studentClass);
-  const isOpenNow = schedule && exam
-    ? isScheduleOpenNow(schedule.date, schedule.time, exam.duration, exam.availableIndefinitely)
-    : false;
+  const exam = useMemo(
+    () => allExams.find((entry) => entry.id === examId),
+    [allExams, examId],
+  );
+  const schedule = exam?.scheduledClasses.find(
+    (entry) => entry.classId === studentClass,
+  );
+  const isOpenNow =
+    schedule && exam
+      ? isScheduleOpenNow(
+          schedule.date,
+          schedule.time,
+          exam.duration,
+          exam.availableIndefinitely,
+        )
+      : false;
   const { answers, currentQuestion, isDraftReady, setAnswer } = useStudentExamDraft({
     exam,
     studentId,
@@ -72,6 +84,20 @@ export default function StudentTakeExamPage({
     studentClass,
     isOpenNow,
     alreadySubmitted,
+  });
+  const answeredCount = Object.values(answers).filter(
+    (value) => value.trim().length > 0,
+  ).length;
+
+  useStudentLiveAttemptSync({
+    answeredCount,
+    alreadySubmitted,
+    exam,
+    hasSchedule: Boolean(schedule),
+    isOpenNow,
+    studentClass,
+    studentId,
+    studentName: resolvedStudentName,
   });
 
   useExamIntegrityGuard({
@@ -109,7 +135,6 @@ export default function StudentTakeExamPage({
     return <StudentTakeExamClosed onBack={() => router.push(`/student/exams/${examId}`)} />;
   }
 
-  const answeredCount = Object.values(answers).filter((value) => value.trim().length > 0).length;
   const totalQuestions = exam.questions.length;
   const completionPercent = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
 

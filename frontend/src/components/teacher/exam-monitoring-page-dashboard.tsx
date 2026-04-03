@@ -26,7 +26,31 @@ export function ExamMonitoringPageDashboard({
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center gap-3">
+            {backHref ? (
+              <Button
+                asChild
+                variant="ghost"
+                className="h-auto w-fit rounded-full px-0 py-0 text-[15px] font-medium text-[#53627e] hover:bg-transparent hover:text-[#263551]"
+              >
+                <Link href={backHref}>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Шалгалтууд руу буцах
+                </Link>
+              </Button>
+            ) : null}
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#93a0b8]">
+              Шалгалтын хяналт
+            </p>
+            <h1 className="text-[2rem] font-semibold tracking-[-0.04em] text-[#31415f]">
+              {exam.title}
+            </h1>
+          </div>
+        </div>
         <div className="flex flex-wrap items-center gap-3">
           {backHref ? (
             <Button
@@ -58,12 +82,11 @@ export function ExamMonitoringPageDashboard({
       <MainDashboardGrid
         left={
           <AnalyticsCard
-            chartData={viewModel.chartData}
-            highlightRange={viewModel.highlightRange}
-            metadataItems={viewModel.rosterMetadata.slice(0, 2)}
+            examQuestionCount={exam.questions.length}
+            metadataItems={viewModel.rosterMetadata}
             summaryStats={viewModel.summaryStats}
+            students={viewModel.students}
             title="Шалгалтын үйл явц"
-            series={viewModel.chartSeries}
           />
         }
         right={

@@ -1,8 +1,7 @@
 "use client";
 
 import { FileText } from "lucide-react";
-import { formatFileSize } from "@/components/teacher/question-bank-source-shared";
-import { getReadableUploadName } from "@/lib/source-files";
+import { getSourceDisplayMeta } from "@/lib/source-file-display";
 import type { UploadRecord } from "@/lib/uploads-api";
 
 type Props = {
@@ -22,33 +21,52 @@ function EmptyState() {
 }
 
 function SourceFileCard({ file }: { file: UploadRecord }) {
+  const meta = getSourceDisplayMeta(file);
+
   return (
-    <div className="rounded-[24px] border border-[#dde7ff] bg-[linear-gradient(180deg,#f9fbff_0%,#ffffff_100%)] px-4 py-4">
-      <div className="flex items-start gap-3">
-        <div className="rounded-2xl bg-[#eef4ff] p-2 text-[#5b91fc]">
-          <FileText className="h-4 w-4" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-medium text-[#344264]">
-            {getReadableUploadName(file.originalName)}
-          </p>
-          <p className="mt-1 text-sm text-[#6f7898]">
-            {formatFileSize(file.size)} •{" "}
-            {new Date(file.uploadedAt).toLocaleDateString()}
-          </p>
-        </div>
+    <div className="grid grid-cols-[minmax(124px,0.85fr)_minmax(150px,1fr)] gap-x-5 gap-y-1 px-7 py-5">
+      <div className="min-w-0">
+        <p className="truncate text-[16px] font-medium leading-6 text-[#4c4c66]">
+          {meta.leftPrimary}
+        </p>
+        <p className="mt-1 truncate text-[16px] font-normal leading-6 text-[#7a80a3]">
+          {meta.leftSecondary}
+        </p>
       </div>
+      <div className="min-w-0">
+        <p className="truncate text-[16px] font-medium leading-6 text-[#4c4c66]">
+          {meta.rightPrimary}
+        </p>
+        <p className="mt-1 truncate text-[16px] font-normal leading-6 text-[#7a80a3]">
+          {meta.rightSecondary}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function SourceFileRows({ files }: Props) {
+  return (
+    <div className="overflow-hidden rounded-[24px] border border-[#dde7ff] bg-[linear-gradient(180deg,#fdfefe_0%,#ffffff_100%)] shadow-[0_12px_30px_rgba(168,196,235,0.08)]">
+      {files.map((file, index) => (
+        <div key={file.id} className="min-w-0">
+          <SourceFileCard file={file} />
+          {index < files.length - 1 ? (
+            <div className="mx-7 h-px bg-[#e8eefb]" />
+          ) : null}
+        </div>
+      ))}
     </div>
   );
 }
 
 export function QuestionBankSourceFileList({ files }: Props) {
   return (
-    <div className="space-y-3">
+    <div>
       {files.length === 0 ? (
         <EmptyState />
       ) : (
-        files.map((file) => <SourceFileCard key={file.id} file={file} />)
+        <SourceFileRows files={files} />
       )}
     </div>
   );

@@ -68,15 +68,17 @@ export function useExamMonitoring(examId: string) {
         const classData = getClassById(attempt.classId);
         const matchedStudent = classData?.students.find((student) => student.id === attempt.studentId);
         const examEndTime = schedule ? new Date(`${schedule.date}T${schedule.time}:00`).getTime() + exam.durationMinutes * 60 * 1000 : 0;
+        const answeredCount = attempt.answeredCount ?? Object.values(attempt.answers ?? {}).filter((answer) => answer.trim().length > 0).length;
         return {
           id: attempt.id,
           studentId: attempt.studentId,
           studentName: matchedStudent?.name || attempt.studentName,
           classId: matchedStudent?.classId || attempt.classId,
           status: attempt.status,
-          currentQuestion: attempt.status === "submitted"
-            ? exam.questions.length
-            : Math.max(attempt.currentQuestion ?? 0, 0),
+          currentQuestion:
+            attempt.status === "submitted"
+              ? exam.questions.length
+              : Math.max(attempt.currentQuestion ?? answeredCount, 0),
           timeRemaining: attempt.status === "submitted" ? 0 : Math.max(0, Math.floor((examEndTime - Date.now()) / 1000)),
           lastActivity: attempt.updatedAt,
         } satisfies StudentAttempt;

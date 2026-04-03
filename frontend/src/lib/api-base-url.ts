@@ -5,8 +5,9 @@ function trimTrailingSlashes(value: string) {
 }
 
 export function getBrowserApiBaseUrl() {
-  const configuredApiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim()
-  return configuredApiBaseUrl ? trimTrailingSlashes(configuredApiBaseUrl) : '/api/backend'
+  // Keep browser requests on the Next.js origin so client-side and server-side
+  // fetches use the same backend target through the proxy route.
+  return '/api/backend'
 }
 
 export function getServerApiBaseUrl() {

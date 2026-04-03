@@ -6,8 +6,6 @@ type Props = {
   grade: string;
   isUploading: boolean;
   newSourceName: string;
-  onCancel: () => void;
-  onDemo: () => void;
   onUpload: () => void;
   selectedSourceFile: File | null;
   subject: string;
@@ -17,9 +15,11 @@ type Props = {
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-3 text-sm">
-      <span className="font-semibold text-[#5a5f80]">{label}</span>
-      <span className="text-right font-medium">{value}</span>
+    <div className="flex items-start justify-between gap-3 text-[14px] leading-5">
+      <span className="shrink-0 font-semibold text-[#5a5f80]">{label}</span>
+      <span className="max-w-[188px] text-right font-medium text-[#353b4e]">
+        {value}
+      </span>
     </div>
   );
 }
@@ -28,8 +28,6 @@ export function QuestionBankSourceUploadSummary({
   grade,
   isUploading,
   newSourceName,
-  onCancel,
-  onDemo,
   onUpload,
   selectedSourceFile,
   subject,
@@ -37,50 +35,30 @@ export function QuestionBankSourceUploadSummary({
   unit,
 }: Props) {
   return (
-    <div className="flex w-full flex-col rounded-[22px] border border-[#dbe6ff] bg-white/90 p-4 shadow-[0_18px_42px_rgba(177,196,235,0.18)] backdrop-blur">
-      <div className="border-b border-[#dbe6ff] pb-4">
-        <h3 className="text-xl font-semibold tracking-[-0.02em] text-[#353b4e]">
+    <div className="flex h-[290px] w-[320px] flex-col rounded-[22px] border border-[#dbe6ff] bg-white px-[18px] py-4 shadow-[0_20px_48px_rgba(177,196,235,0.18)]">
+      <div className="border-b border-[#dbe6ff] pb-2">
+        <h3 className="text-[16px] font-semibold tracking-[-0.02em] text-[#353b4e]">
           Мэдээлэл
         </h3>
       </div>
 
-      <div className="space-y-3 py-4 text-[#4b4f72]">
+      <div className="flex flex-1 flex-col justify-evenly py-2 text-[#4b4f72]">
         <SummaryRow label="Нэр:" value={newSourceName.trim() || "Оруулаагүй"} />
         <SummaryRow label="Хичээл:" value={subject || "Оруулаагүй"} />
         <SummaryRow label="Анги:" value={grade || "Оруулаагүй"} />
-        <SummaryRow label="Бүлэг:" value={unit || "Оруулаагүй"} />
-        <SummaryRow label="Сэдэв:" value={topic || "Оруулаагүй"} />
-        <SummaryRow
-          label="PDF:"
-          value={selectedSourceFile ? selectedSourceFile.name : "Сонгогдоогүй"}
-        />
+        <SummaryRow label="I бүлэг:" value={unit || "Оруулаагүй"} />
+        <SummaryRow label="1.1 сэдэв:" value={topic || "Оруулаагүй"} />
       </div>
 
-      <div className="mt-auto border-t border-[#dbe6ff] pt-4">
-        <div className="flex flex-col gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onDemo}
-            className="h-11 rounded-[18px] border-[#d8e2f6] text-sm font-medium text-[#5c6787] hover:bg-[#f6f9ff]"
-          >
-            Demo
-          </Button>
+      <div className="mt-auto border-t border-[#dbe6ff] pt-2">
+        <div className="flex justify-center">
           <Button
             type="button"
             onClick={onUpload}
             disabled={!selectedSourceFile || !newSourceName.trim() || isUploading}
-            className="h-11 rounded-[18px] bg-[#1864FB] text-sm font-medium text-white shadow-[0_14px_28px_rgba(24,100,251,0.24)] hover:bg-[#0f57e7] disabled:bg-[#9fbcfb]"
+            className="h-[36px] w-[253px] rounded-[18px] bg-[#315df3] text-[14px] font-medium text-white shadow-[0_14px_28px_rgba(24,100,251,0.24)] hover:bg-[#254fe4] disabled:bg-[#9fbcfb]"
           >
             {isUploading ? "Бүртгэж байна..." : "Эх сурвалжийг бүртгэх"}
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={onCancel}
-            className="h-10 rounded-[16px] text-sm text-[#66708f] hover:bg-[#f3f7ff] hover:text-[#425173]"
-          >
-            Болих
           </Button>
         </div>
       </div>

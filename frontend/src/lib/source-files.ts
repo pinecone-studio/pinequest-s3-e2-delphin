@@ -1,19 +1,10 @@
 import type { UploadRecord } from "@/lib/uploads-api";
+import { repairMojibakeText } from "@/lib/repair-mojibake";
 
 const demoPdfUrl = "/question-bank-demo-source.pdf";
 
 export function getReadableUploadName(value: string) {
-  if (!/[\u00C3\u00D0\u00D1]/.test(value)) {
-    return value;
-  }
-
-  try {
-    const bytes = Uint8Array.from(value, (char) => char.charCodeAt(0));
-    const decoded = new TextDecoder("utf-8").decode(bytes);
-    return decoded.includes("ï¿½") ? value : decoded;
-  } catch {
-    return value;
-  }
+  return repairMojibakeText(value);
 }
 
 export const mockMathSourceFiles: UploadRecord[] = [

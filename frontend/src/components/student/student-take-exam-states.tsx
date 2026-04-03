@@ -20,7 +20,9 @@ export function StudentTakeExamSubmitted(props: {
   const { onBack, onViewReport } = props;
   return (
     <div className="mx-auto max-w-2xl space-y-4">
-      <h1 className="text-2xl font-bold">Энэ шалгалтыг аль хэдийн илгээсэн байна</h1>
+      <h1 className="text-2xl font-bold">
+        Энэ шалгалтыг аль хэдийн илгээсэн байна
+      </h1>
       <p className="text-muted-foreground">
         Таны хариулт хадгалагдсан. Тайлангийн хуудаснаас дүнгээ үзнэ үү.
       </p>
@@ -37,7 +39,9 @@ export function StudentTakeExamSubmitted(props: {
 export function StudentTakeExamClosed({ onBack }: { onBack: () => void }) {
   return (
     <div className="mx-auto max-w-2xl space-y-4">
-      <h1 className="text-2xl font-bold">Шалгалт одоогоор нээлттэй биш байна</h1>
+      <h1 className="text-2xl font-bold">
+        Шалгалт одоогоор нээлттэй биш байна
+      </h1>
       <p className="text-muted-foreground">
         Энэ шалгалтыг зөвхөн товлосон эхлэх хугацаанд өгөх боломжтой.
       </p>

@@ -27,6 +27,53 @@ function wait(delayMs: number) {
   return new Promise((resolve) => setTimeout(resolve, delayMs));
 }
 
+async function readD1ErrorMessage(response: Response): Promise<string> {
+  try {
+    const payload = (await response.json()) as {
+      errors?: Array<{ message?: string }>;
+      messages?: Array<{ message?: string }>;
+      result?: Array<{ errors?: Array<{ message?: string }> }>;
+    };
+
+    const topLevelMessage =
+      payload.errors
+        ?.map((entry) => entry.message)
+        .filter(Boolean)
+        .join(' ') ||
+      payload.messages
+        ?.map((entry) => entry.message)
+        .filter(Boolean)
+        .join(' ');
+
+    if (topLevelMessage) {
+      return topLevelMessage;
+    }
+
+    const statementMessage = payload.result
+      ?.flatMap((statement) => statement.errors ?? [])
+      .map((entry) => entry.message)
+      .filter(Boolean)
+      .join(' ');
+
+    if (statementMessage) {
+      return statementMessage;
+    }
+  } catch {
+    // Ignore non-JSON responses.
+  }
+
+  try {
+    const text = await response.text();
+    if (text.trim()) {
+      return text.trim();
+    }
+  } catch {
+    // Ignore unreadable bodies.
+  }
+
+  return '';
+}
+
 @Injectable()
 export class DatabaseService {
   private getConfig() {
@@ -136,7 +183,10 @@ export class DatabaseService {
         );
 
         if (!response.ok) {
-          const transientMessage = `Cloudflare D1 request failed with status ${response.status}`;
+          const detail = await readD1ErrorMessage(response);
+          const transientMessage = detail
+            ? `Cloudflare D1 request failed with status ${response.status}: ${detail}`
+            : `Cloudflare D1 request failed with status ${response.status}`;
           lastError = new ServiceUnavailableException(transientMessage);
 
           if (

@@ -77,11 +77,10 @@ export function useExamCreation({
           status: status === "draft" ? "draft" : "scheduled",
         })
 
-        if (mode === "edit" && examId) {
-          await updateExam(examId, payload)
-        } else {
-          await createExam(payload)
-        }
+        const savedExam =
+          mode === "edit" && examId
+            ? await updateExam(examId, payload)
+            : await createExam(payload)
 
         toast({
           title:
@@ -112,7 +111,13 @@ export function useExamCreation({
 
         await new Promise((resolve) => setTimeout(resolve, 150))
         onSuccess?.()
-        router.push("/teacher/exams")
+
+        const nextPath =
+          status === "draft"
+            ? "/teacher/exams"
+            : `/teacher/exams?tab=launch&examId=${savedExam.id}`
+
+        router.push(nextPath)
       } catch (error) {
         const message =
           error instanceof Error

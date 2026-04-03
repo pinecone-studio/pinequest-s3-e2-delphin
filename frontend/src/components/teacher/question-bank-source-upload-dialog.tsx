@@ -73,17 +73,13 @@ export function QuestionBankSourceUploadDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto rounded-[28px] border border-[#dbe6ff] bg-[linear-gradient(180deg,#ffffff_0%,#f9fbff_100%)] p-0 shadow-[0_24px_60px_rgba(99,131,196,0.18)] sm:max-w-4xl">
-        <div className="grid gap-6 p-4 sm:p-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(260px,0.85fr)] lg:p-6">
-          <div className="space-y-5">
-            <div className="space-y-2">
-              <DialogTitle className="text-2xl font-semibold tracking-[-0.02em] text-[#4b4f72] sm:text-[2rem]">
+      <DialogContent className="h-[400px] w-[764px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-[34px] border border-[#dbe6ff] bg-white p-0 shadow-[0_28px_72px_rgba(99,131,196,0.22)] sm:max-w-[764px]">
+        <div className="grid h-full gap-4 overflow-hidden p-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="min-h-0 space-y-1 overflow-y-auto">
+            <div className="space-y-1">
+              <DialogTitle className="text-[24px] font-semibold tracking-[-0.03em] text-[#4b4f72]">
                 Эх сурвалж бүртгэх
               </DialogTitle>
-              <p className="max-w-2xl text-sm leading-5 text-[#7b81a2]">
-                Эх сурвалжийн мэдээллээ оруулаад PDF файлаар нь асуултын сандаа
-                бүртгэнэ.
-              </p>
             </div>
             <QuestionBankSourceUploadForm
               availableTopics={availableTopics}
@@ -103,19 +99,24 @@ export function QuestionBankSourceUploadDialog({
             />
           </div>
 
-          <div className="flex">
+          <div className="relative flex min-h-0 pt-8">
             <QuestionBankSourceUploadSummary
               grade={grade}
               isUploading={isUploading}
               newSourceName={newSourceName}
-              onCancel={() => handleOpenChange(false)}
-              onDemo={() => void handleDemo()}
               onUpload={onUpload}
               selectedSourceFile={selectedSourceFile}
               subject={subject}
               topic={topic}
               unit={unit}
             />
+            <button
+              type="button"
+              onClick={() => void handleDemo()}
+              className="absolute bottom-0 right-1 text-[12px] text-[#8b92ac] transition hover:text-[#4f5f87]"
+            >
+              Demo
+            </button>
           </div>
         </div>
       </DialogContent>

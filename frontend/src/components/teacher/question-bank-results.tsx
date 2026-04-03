@@ -1,13 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { QuestionBankTopicCard } from "@/components/teacher/question-bank-topic-card";
 import type { QuestionBankCategory } from "@/lib/question-bank-api";
 import { FileQuestion, Loader2 } from "lucide-react";
 
 type QuestionBankResultsProps = {
   categories: QuestionBankCategory[];
+  embedded?: boolean;
   isLoading: boolean;
   selectedQuestionIds?: string[];
   onToggleQuestion?: (questionId: string, checked: boolean) => void;
@@ -16,6 +16,7 @@ type QuestionBankResultsProps = {
 
 export function QuestionBankResults({
   categories,
+  embedded = false,
   isLoading,
   selectedQuestionIds = [],
   onToggleQuestion,
@@ -42,7 +43,7 @@ export function QuestionBankResults({
 
   if (isLoading) {
     return (
-      <div className="rounded-[28px] border border-white/70 bg-white/86 px-6 py-12 shadow-[0_20px_60px_rgba(177,198,232,0.14)]">
+      <div className={`${embedded ? "rounded-[24px] border border-[#e7eefc] bg-white px-6 py-12" : "rounded-[28px] border border-white/70 bg-white/86 px-6 py-12 shadow-[0_20px_60px_rgba(177,198,232,0.14)]"}`}>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" />
           Асуултын санг ачаалж байна...
@@ -53,7 +54,7 @@ export function QuestionBankResults({
 
   if (categories.length === 0) {
     return (
-      <div className="rounded-[28px] border border-dashed border-[#d7e3ff] bg-white/88 px-6 py-12 text-center text-muted-foreground shadow-[0_20px_60px_rgba(177,198,232,0.12)]">
+      <div className={`${embedded ? "rounded-[24px] border border-dashed border-[#d7e3ff] bg-white px-6 py-12 text-center" : "rounded-[28px] border border-dashed border-[#d7e3ff] bg-white/88 px-6 py-12 text-center text-muted-foreground shadow-[0_20px_60px_rgba(177,198,232,0.12)]"} text-muted-foreground`}>
         <FileQuestion className="mx-auto mb-4 h-12 w-12 opacity-50" />
         <p>Асуулт олдсонгүй</p>
         <p className="text-sm">
@@ -64,49 +65,26 @@ export function QuestionBankResults({
   }
 
   return (
-    <div className="space-y-4">
+    <div className={`space-y-4 ${embedded ? "rounded-[24px] border border-[#e7eefc] bg-white p-4" : ""}`}>
       {categories.map((category) => (
-        <section
-          key={category.id}
-          className="overflow-hidden rounded-[24px] border border-white/75 bg-[linear-gradient(180deg,rgba(255,255,255,0.94)_0%,rgba(247,250,255,0.92)_100%)] shadow-[0_16px_42px_rgba(177,198,232,0.12)]"
-        >
-          <div className="border-b border-[#e8eefb] px-4 py-4 sm:px-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="text-xl font-semibold tracking-[-0.02em] text-[#303959]">
-                  {category.name}
-                </h2>
-                <p className="mt-1 text-sm text-[#6f7898]">
-                  {category.topics.length} сэдэв
-                </p>
-              </div>
-              <Badge
-                variant="outline"
-                className="rounded-full border-[#dce7ff] bg-[#f8fbff] px-3 py-1 text-[#4b5d86]"
-              >
-                {category.topics.reduce((sum, topic) => sum + topic.questions.length, 0)} асуулт
-              </Badge>
-            </div>
-          </div>
+        <div key={category.id} className="space-y-4">
+          {category.topics.map((topic) => {
+            const isExpanded = visibleExpandedTopicIds.includes(topic.id);
 
-          <div className="space-y-3 px-4 py-4 sm:px-5">
-            {category.topics.map((topic) => {
-              const isExpanded = visibleExpandedTopicIds.includes(topic.id);
-
-              return (
-                <QuestionBankTopicCard
-                  key={topic.id}
-                  isExpanded={isExpanded}
-                  isQuestionSelectable={isQuestionSelectable}
-                  onToggleQuestion={onToggleQuestion}
-                  onToggleTopic={() => toggleTopic(topic.id)}
-                  selectedQuestionIds={selectedQuestionIds}
-                  topic={topic}
-                />
-              );
-            })}
-          </div>
-        </section>
+            return (
+              <QuestionBankTopicCard
+                key={topic.id}
+                categoryName={category.name}
+                isExpanded={isExpanded}
+                isQuestionSelectable={isQuestionSelectable}
+                onToggleQuestion={onToggleQuestion}
+                onToggleTopic={() => toggleTopic(topic.id)}
+                selectedQuestionIds={selectedQuestionIds}
+                topic={topic}
+              />
+            );
+          })}
+        </div>
       ))}
     </div>
   );

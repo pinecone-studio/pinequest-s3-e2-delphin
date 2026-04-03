@@ -69,6 +69,7 @@ export class StudentExamAttemptsService {
           studentId: payload.studentId.trim(),
         })
       )[0];
+      const answers = payload.answers ?? readAttemptAnswers(existing) ?? {};
       const nextRecord = {
         id: `${payload.examId.trim()}::${payload.studentId.trim()}`,
         examId: payload.examId.trim(),
@@ -76,11 +77,10 @@ export class StudentExamAttemptsService {
         studentName: payload.studentName.trim(),
         classId: payload.classId.trim(),
         status: payload.status,
-        answersJson: JSON.stringify(
-          payload.answers ?? readAttemptAnswers(existing) ?? {},
-        ),
+        answersJson: JSON.stringify(answers),
         currentQuestion:
           payload.currentQuestion ?? existing?.currentQuestion ?? 0,
+        answeredCount: payload.answeredCount ?? countAnsweredQuestions(answers),
         startedAt: existing?.startedAt ?? payload.startedAt,
         submittedAt:
           payload.status === 'submitted'
@@ -104,4 +104,9 @@ function readAttemptAnswers(
   } catch {
     return null;
   }
+}
+
+function countAnsweredQuestions(answers: Record<string, string>) {
+  return Object.values(answers).filter((answer) => answer.trim().length > 0)
+    .length;
 }

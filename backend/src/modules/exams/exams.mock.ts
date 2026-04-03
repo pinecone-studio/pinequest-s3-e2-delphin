@@ -55,7 +55,7 @@ export function getMockLiveAttempts() {
     {
       id: 'attempt-1',
       studentId: 'student-1',
-      studentName: 'Bat-Erdene',
+      studentName: 'Бат-Эрдэнэ',
       classId: '10A',
       status: 'in_progress',
       currentQuestion: 3,
@@ -66,7 +66,7 @@ export function getMockLiveAttempts() {
     {
       id: 'attempt-2',
       studentId: 'student-2',
-      studentName: 'Saraa',
+      studentName: 'Сараа',
       classId: '10A',
       status: 'tab_switched',
       currentQuestion: 5,
@@ -82,7 +82,7 @@ export function getMockLiveAttempts() {
     {
       id: 'attempt-3',
       studentId: 'student-3',
-      studentName: 'Dorj',
+      studentName: 'Дорж',
       classId: '10B',
       status: 'submitted',
       currentQuestion: 10,

@@ -48,7 +48,7 @@ export function TeacherDashboardSidePanels(props: { selectedClassId: string }) {
   }
 
   return (
-    <div className="flex min-w-0 w-full flex-col gap-5">
+    <div className="flex h-full min-w-0 w-full flex-col gap-5">
       <section className="rounded-[16px] border border-[#ededed] bg-[linear-gradient(238deg,rgba(255,255,255,0.45)_4.4%,rgba(255,255,255,0.65)_61.8%,rgba(255,255,255,0.54)_119.9%)] p-5 shadow-[50px_38px_102px_rgba(120,118,148,0.14)] dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(112deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)]">
         <h2 className="text-[20px] font-bold leading-none text-[#4c4c66] dark:text-[#e6f2ff]">Дүнгийн мэдээлэл</h2>
         <p className="mt-[6px] text-[16px] leading-none text-[#6f6c99] dark:text-[#c2c9d0]">Сурагчдын дундаж үнэлгээ.</p>

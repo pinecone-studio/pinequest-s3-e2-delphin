@@ -17,7 +17,7 @@ const gridCellClassName =
 export function TeacherDashboardScheduleSection(props: { calendarTitle: string; onNextWeek: () => void; onPreviousWeek: () => void; selectedClassId: string; todayDate: string; weekDates: WeekDate[] }) {
   const { calendarTitle, onNextWeek, onPreviousWeek, selectedClassId, todayDate, weekDates } = props
   return (
-    <section className="min-w-0 rounded-[20px] border border-[#DCE8F3] bg-white p-5 shadow-[0_6px_24px_rgba(114,144,179,0.10)] dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)] sm:h-[659px] sm:w-full sm:overflow-y-auto sm:p-[18px] xl:max-w-[900px]">
+    <section className="min-w-0 self-stretch rounded-[20px] border border-[#DCE8F3] bg-white p-5 shadow-[0_6px_24px_rgba(114,144,179,0.10)] dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)] sm:h-full sm:w-full sm:p-[18px] xl:max-w-[900px]">
       <div className="relative hidden items-center justify-center sm:flex">
         <div className="flex items-center justify-center gap-16">
           <button type="button" onClick={onPreviousWeek} className={navButtonClassName} aria-label="Өмнөх долоо хоног">

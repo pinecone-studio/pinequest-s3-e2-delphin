@@ -19,14 +19,26 @@ export function StudentDashboardMobileStats(props: { items: StudentMobileStatCar
       {items.map((item) => (
         <div
           key={item.label}
-          className={`flex min-h-[64px] shrink-0 items-center gap-2 rounded-[16px] border border-[#DCE8F3] bg-[#F3F9FF] px-[10px] py-[10px] shadow-[0_6px_20px_rgba(114,144,179,0.08)] dark:border-transparent dark:bg-transparent dark:shadow-none ${item.label === "Энэ 7 хоногт" ? "w-[138px]" : "w-[167px]"}`}
+          className={`flex h-[64px] shrink-0 items-center gap-2 rounded-[16px] border border-[rgba(132,157,204,0.24)] bg-[linear-gradient(180deg,#0E173F_0%,#0B1235_100%)] px-[10px] py-[10px] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_22px_rgba(5,12,38,0.18)] dark:border-[rgba(132,157,204,0.24)] dark:bg-[linear-gradient(180deg,#0E173F_0%,#0B1235_100%)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_22px_rgba(5,12,38,0.18)] ${item.label === "Энэ 7 хоногт" ? "w-[138px]" : "w-[167px]"}`}
         >
-          <Image src={item.iconPath} alt="" width={40} height={40} className="h-10 w-10 shrink-0 object-contain" />
+          <Image
+            src={item.iconPath}
+            alt=""
+            width={40}
+            height={40}
+            className="h-10 w-10 shrink-0 object-contain opacity-90 brightness-[1.05]"
+          />
           <div className="min-w-0 flex-1">
-            <p className="line-clamp-2 text-[10px] leading-[1.15] text-[#7A8698] dark:text-[#9eacc3]">{item.label}</p>
+            <p className="line-clamp-2 text-[10px] leading-[1.15] text-[rgba(255,255,255,0.58)]">
+              {item.label}
+            </p>
             <div className="mt-1 flex flex-wrap items-end gap-x-1 gap-y-0.5">
-              <p className="text-[15px] font-semibold leading-none tracking-[-0.02em] text-[#39424E] dark:text-[#edf4ff]">{item.value}</p>
-              <p className="text-[10px] font-medium leading-none text-[#4A9DFF]">{item.detail}</p>
+              <p className="text-[15px] font-semibold leading-none tracking-[-0.02em] text-[#F7FAFF]">
+                {item.value}
+              </p>
+              <p className="text-[10px] font-medium leading-none text-[#4AA8FF]">
+                {item.detail}
+              </p>
             </div>
           </div>
         </div>

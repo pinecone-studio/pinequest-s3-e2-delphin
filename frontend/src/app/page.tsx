@@ -32,7 +32,7 @@ export default function LandingPage() {
         <div className="w-full max-w-2xl">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-foreground md:text-4xl">
-              Дэльфин LMS
+              EDULPHIN LMS
             </h1>
             <p className="mt-2 text-muted-foreground">
               Сургалтын удирдлагын систем - Шалгалтын модуль

@@ -21,25 +21,42 @@ export function ExamCardTop(props: {
   const { action, badge, icon, subtitle, title } = props;
 
   return (
-    <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-3">
-        <div className="flex items-start justify-between gap-3 sm:contents">
-          <div className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-2xl sm:h-[60px] sm:w-[60px]">
+    <>
+      <div className="flex w-full flex-col gap-4 sm:hidden">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-2xl">
             {icon}
           </div>
-          <div className="shrink-0 sm:hidden">{badge}</div>
+          <div className="shrink-0">{badge}</div>
         </div>
-        <div className="min-w-0 flex-1 space-y-1.5">
-          <div className="flex items-start justify-between gap-3 sm:flex-wrap sm:gap-5">
-            <h3 className="text-[16px] font-semibold leading-[1.2] text-[#141A1F] dark:text-[#F5FAFF] sm:text-[18px] sm:leading-[22px]">
-              {title}
-            </h3>
-            <div className="hidden sm:block">{badge}</div>
-          </div>
+        <div className="min-w-0 space-y-4">
+          <h3 className="text-[16px] font-semibold leading-[1.2] text-[#141A1F] dark:text-[#F5FAFF]">
+            {title}
+          </h3>
           {subtitle}
         </div>
+        <div className="w-full shrink-0">{action}</div>
       </div>
-      <div className="w-full shrink-0 sm:w-auto">{action}</div>
-    </div>
+
+      <div className="hidden w-full sm:flex sm:flex-row sm:items-center sm:gap-4">
+        <div className="flex min-w-0 flex-1 sm:flex-row sm:items-center sm:gap-4">
+          <div className="flex items-start gap-3 sm:contents">
+            <div className="flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-2xl">
+              {icon}
+            </div>
+          </div>
+          <div className="min-w-0 flex-1 space-y-2">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <h3 className="text-[18px] font-semibold leading-[22px] text-[#141A1F] dark:text-[#F5FAFF]">
+                {title}
+              </h3>
+              <div className="shrink-0">{badge}</div>
+            </div>
+            {subtitle}
+          </div>
+        </div>
+        <div className="w-full shrink-0 sm:ml-auto sm:flex sm:w-[176px] sm:flex-none sm:justify-end sm:self-center">{action}</div>
+      </div>
+    </>
   );
 }

@@ -50,14 +50,14 @@ export default function StudentExamsPage() {
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Шалгалт хайх..."
-              className="h-[52px] w-[358px] max-w-full rounded-full border border-[#E6F2FF] bg-[#F5FAFF] px-4 py-3 pl-10 text-[14px] font-medium text-[#566069] placeholder:text-[#566069] dark:border-[#E6F2FF] dark:bg-[linear-gradient(156deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#D0D8E6] dark:placeholder:text-[#8FA0BB] sm:h-[48px] sm:w-[301px]"
+              className="h-[52px] w-[358px] max-w-full rounded-full border border-[#E8EEF5] bg-[#F5FAFF] px-4 py-3 pl-10 text-[14px] font-medium text-[#566069] placeholder:text-[#566069] dark:border-[rgba(224,225,226,0.14)] dark:bg-[linear-gradient(156deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#D0D8E6] dark:placeholder:text-[#8FA0BB] sm:h-[48px] sm:w-[301px]"
             />
           </div>
 
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="hidden h-[48px] w-[152px] overflow-visible rounded-full border border-[#E6F2FF] bg-[#66B2FF] px-4 text-[14px] font-medium text-[#F5FAFF] shadow-none dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(161deg,rgba(6,11,38,0.94)_59%,rgba(26,31,55,0)_100%)] [&_svg]:text-white [&_svg]:opacity-100 sm:flex">
+            <SelectTrigger className="hidden overflow-visible rounded-full border border-[#E8EEF5] bg-[#66B2FF] px-4 py-0 text-[14px] font-medium text-[#F5FAFF] shadow-none dark:border-[rgba(224,225,226,0.14)] dark:bg-[linear-gradient(161deg,rgba(6,11,38,0.94)_59%,rgba(26,31,55,0)_100%)] [&_svg]:text-white [&_svg]:opacity-100 sm:flex sm:h-[48px] sm:min-h-[48px] sm:max-h-[48px] sm:w-[calc(100%-748px)]">
               <SelectValue
-                className="block overflow-visible whitespace-nowrap text-[12px] tracking-[-0.02em]"
+                className="flex h-full items-center overflow-visible whitespace-nowrap text-[14px] leading-none tracking-[-0.02em]"
                 placeholder="Бүх хичээл"
               />
             </SelectTrigger>
@@ -70,7 +70,7 @@ export default function StudentExamsPage() {
             </SelectContent>
           </Select>
 
-          <div className="flex h-[48px] w-[358px] max-w-full items-center rounded-full border border-[#E6F2FF] bg-[#003366] p-2 shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_20px_44px_rgba(2,6,23,0.4)] sm:w-[427px]">
+          <div className="flex h-[48px] w-[358px] max-w-full items-center rounded-full border border-[#E8EEF5] bg-[#003366] p-2 shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:border-[rgba(224,225,226,0.14)] student-dark-surface dark:shadow-[0_20px_44px_rgba(2,6,23,0.4)] sm:w-[427px]">
             <SegmentedTab
               active={activeTab === "all"}
               count={allCount}
@@ -109,7 +109,7 @@ export default function StudentExamsPage() {
 
           {showUpcoming && filteredUpcomingExams.length > 0 ? (
             <section className={sectionContainerClassName}>
-              <div className="flex w-full items-center justify-between gap-4">
+              <div className="flex w-full items-center gap-[20px]">
                 <h2 className="text-[17px] font-semibold leading-[21px] text-[#293138] dark:text-white">
                   Удахгүй болох шалгалтууд
                 </h2>
@@ -132,7 +132,7 @@ export default function StudentExamsPage() {
 
           {showFinished && finishedItems.length > 0 ? (
             <section className={sectionContainerClassName}>
-              <div className="flex w-full items-center justify-between gap-4">
+              <div className="flex w-full items-center gap-[20px]">
                 <h2 className="text-[17px] font-semibold leading-[21px] text-[#293138] dark:text-white">
                   Дууссан шалгалтууд
                 </h2>

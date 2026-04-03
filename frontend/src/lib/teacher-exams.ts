@@ -1,7 +1,7 @@
-import { exams as legacyExams } from '@/lib/mock-data'
 import { fetchBackendJson } from '@/lib/backend-fetch'
 import type { CreatedExam } from '@/lib/exams-api'
-import type { Exam as LegacyExam } from '@/lib/mock-data'
+import type { Exam as LegacyExam } from '@/lib/mock-data-types'
+import { teacherLegacyMockExams } from '@/lib/teacher-legacy-mock-exams'
 
 export type TeacherExam = {
   id: string
@@ -108,5 +108,5 @@ export async function getTeacherExams(): Promise<TeacherExam[]> {
 }
 
 export function getLegacyTeacherExams(): TeacherExam[] {
-  return legacyExams.map(mapLegacyExamToTeacherExam)
+  return teacherLegacyMockExams.map(mapLegacyExamToTeacherExam)
 }

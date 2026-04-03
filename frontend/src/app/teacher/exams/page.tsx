@@ -8,7 +8,6 @@ import {
   MonitorHeaderUtilities,
 } from "@/app/teacher/exams/_components/monitoring-tab";
 import {
-  isExamLaunchReady,
   isExamLiveNow,
 } from "@/app/teacher/exams/exams-page-utils";
 import {
@@ -24,6 +23,11 @@ import {
 } from "@/lib/teacher-exams";
 
 type ExamTabValue = "prepare" | "launch" | "monitor" | "history";
+const launchMockTitles = [
+  "Явцийн шалгалт",
+  "Геометр сорил",
+  "Энгийн бутархайн сорил",
+] as const;
 
 export default function ExamsPage() {
   const searchParams = useSearchParams();
@@ -58,7 +62,24 @@ export default function ExamsPage() {
   }, [backendExams]);
 
   const liveExams = exams.filter((exam) => isExamLiveNow(exam));
-  const launchQueueExams = exams.filter((exam) => isExamLaunchReady(exam));
+  const launchQueueExams = React.useMemo(() => {
+    const unscheduledDrafts = exams.filter(
+      (exam) => exam.status === "draft" && exam.scheduledClasses.length === 0,
+    );
+    const fallbackDrafts = getLegacyTeacherExams().map((exam) => ({
+      ...exam,
+      scheduledClasses: [],
+      status: "draft" as const,
+    }));
+    const source = unscheduledDrafts.length > 0 ? unscheduledDrafts : fallbackDrafts;
+
+    return source.slice(0, launchMockTitles.length).map((exam, index) => ({
+      ...exam,
+      scheduledClasses: [],
+      status: "draft" as const,
+      title: launchMockTitles[index] ?? exam.title,
+    }));
+  }, [exams]);
   const completedExams = exams.filter((exam) => exam.status === "completed");
 
   const requestedTab = searchParams.get("tab");

@@ -1,6 +1,6 @@
 import type { ExamResult } from "@/lib/mock-data-types";
-import { exams as analyticsExams } from "@/lib/mock-exams";
 import { students } from "@/lib/mock-students";
+import { teacherLegacyMockExams } from "@/lib/teacher-legacy-mock-exams";
 import { mapLegacyExamToTeacherExam, type TeacherExam } from "@/lib/teacher-exams";
 import {
   buildAnswerText,
@@ -11,6 +11,8 @@ import {
   getQuestionVariance,
   getStudentProfile,
 } from "@/lib/teacher-class-analytics-mock-helpers";
+
+const analyticsExams = teacherLegacyMockExams;
 
 const analyticsStudents = students.filter((student) =>
   analyticsExams.some((exam) =>

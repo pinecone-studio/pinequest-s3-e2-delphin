@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Clock3 } from "lucide-react";
 import { ExamMonitoringPageDashboard } from "@/components/teacher/exam-monitoring-page-dashboard";
 import { TeacherSurfaceCard } from "@/components/teacher/teacher-page-primitives";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
 import { useExamMonitoring } from "@/hooks/use-exam-monitoring";
 import type { TeacherExam } from "@/lib/teacher-exams";
@@ -62,15 +63,39 @@ export function MonitorHeaderUtilities({ examId }: { examId: string }) {
         </div>
       </div>
 
-      <div className="flex h-[92px] items-center gap-3 rounded-[24px] border border-[#edf2fb] bg-white/88 px-3 py-3 shadow-[0_16px_36px_rgba(193,210,234,0.18)]">
-        <div className="overflow-hidden rounded-[18px] border border-[#e3eaf5] bg-[#fbfdff] p-2">
-          <Image src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(examUrl)}`} alt={`${exam.title} QR code`} width={68} height={68} className="h-[68px] w-[68px]" unoptimized />
-        </div>
-        <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-[0.14em] text-[#8a97b5]">Нэвтрэх QR</p>
-          <p className="mt-1 max-w-[132px] text-sm leading-5 text-[#6f7898]">Сурагчид шууд нэвтрэх код</p>
-        </div>
-      </div>
+      <Dialog>
+        <DialogTrigger asChild>
+          <button
+            type="button"
+            className="flex h-[92px] items-center gap-3 rounded-[24px] border border-[#edf2fb] bg-white/88 px-3 py-3 text-left shadow-[0_16px_36px_rgba(193,210,234,0.18)] transition hover:scale-[1.01]"
+          >
+            <div className="overflow-hidden rounded-[18px] border border-[#e3eaf5] bg-[#fbfdff] p-2">
+              <Image src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(examUrl)}`} alt={`${exam.title} QR code`} width={68} height={68} className="h-[68px] w-[68px]" unoptimized />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-[#8a97b5]">Нэвтрэх QR</p>
+              <p className="mt-1 max-w-[132px] text-sm leading-5 text-[#6f7898]">Дарж томруулаад скан хийлгэнэ</p>
+            </div>
+          </button>
+        </DialogTrigger>
+        <DialogContent className="max-w-[560px] rounded-[28px] p-6 sm:p-8">
+          <DialogTitle className="text-center text-lg text-[#303959]">
+            {exam.title} нэвтрэх QR
+          </DialogTitle>
+          <div className="mt-3 flex justify-center">
+            <div className="rounded-[24px] border border-[#e3eaf5] bg-white p-4 shadow-[0_18px_36px_rgba(125,163,214,0.18)] sm:p-6">
+              <Image
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=560x560&data=${encodeURIComponent(examUrl)}`}
+                alt={`${exam.title} QR code large`}
+                width={420}
+                height={420}
+                className="h-auto w-[300px] sm:w-[420px]"
+                unoptimized
+              />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

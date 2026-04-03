@@ -64,12 +64,14 @@ export function LaunchTab({
               title={`Товлогдоогүй шалгалт (${unscheduledExams.length})`}
               onSelect={setSelectedExam}
             />
-            <LaunchExamSection
-              emptyMessage="Одоогоор товлогдсон шалгалт алга."
-              exams={scheduledExams}
-              title={`Товлогдсон шалгалт (${scheduledExams.length})`}
-              onSelect={setSelectedExam}
-            />
+            {scheduledExams.length > 0 ? (
+              <LaunchExamSection
+                emptyMessage="Одоогоор товлогдсон шалгалт алга."
+                exams={scheduledExams}
+                title={`Товлогдсон шалгалт (${scheduledExams.length})`}
+                onSelect={setSelectedExam}
+              />
+            ) : null}
           </div>
         )}
       </TeacherSurfaceCard>
@@ -133,7 +135,9 @@ function LaunchExamSection({
                   {getLaunchStatusLabel(exam)}
                 </div>
                 <div className="flex justify-start md:justify-end">
-                  <Button onClick={() => onSelect(exam)}>Товлох</Button>
+                  {exam.scheduledClasses.length === 0 ? (
+                    <Button onClick={() => onSelect(exam)}>Товлох</Button>
+                  ) : null}
                 </div>
               </div>
             </article>

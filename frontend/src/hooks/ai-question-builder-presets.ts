@@ -103,6 +103,13 @@ export function buildAiQuestion(type: QuestionType, seed: number, index: number)
         correctAnswer: "Expected answer",
         iconKey,
       };
+    case "fill":
+      return {
+        ...question,
+        question: prompt,
+        correctAnswer: "Expected answer",
+        iconKey,
+      };
   }
 }
 
@@ -111,5 +118,6 @@ function getGeneratedPrompt(type: QuestionType, index: number) {
   if (type === "true-false") return `AI generated true false question ${index + 1}`;
   if (type === "matching") return `AI generated matching question ${index + 1}`;
   if (type === "ordering") return `AI generated ordering question ${index + 1}`;
+  if (type === "fill") return `AI generated fill in the blank question ${index + 1}`;
   return `AI generated short answer question ${index + 1}`;
 }

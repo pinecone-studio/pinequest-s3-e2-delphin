@@ -24,11 +24,9 @@ export function QuestionBankFiltersCard({
   embedded = false,
   onSearchQueryChange,
   onSelectedCategoryFilterChange,
-  onSelectedDifficultyChange,
   questionBank,
   searchQuery,
   selectedCategoryFilter,
-  selectedDifficulty = "all",
 }: QuestionBankFiltersCardProps) {
   const [categoryInputValue, setCategoryInputValue] = useState("");
   const [isCategoryFocused, setIsCategoryFocused] = useState(false);

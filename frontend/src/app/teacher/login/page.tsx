@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ThemeToggleButton } from "@/components/theme-toggle-button";
+import { useTheme } from "@/components/theme-provider";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,20 +22,25 @@ import { teachers } from "@/lib/mock-data";
 
 export default function TeacherLoginPage() {
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
   const demoTeacher = teachers[0];
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = (event: React.FormEvent) => {
     event.preventDefault();
     setError("");
+    setIsSubmitting(true);
 
     const teacher = teachers.find(
       (entry) => entry.email === email && entry.password === password,
     );
 
     if (!teacher) {
+      setIsSubmitting(false);
       setError("Имэйл эсвэл нууц үг буруу байна");
       return;
     }
@@ -115,20 +122,37 @@ export default function TeacherLoginPage() {
                   />
                 </div>
 
-                <Button
-                  type="submit"
-                  className="w-full border-0 bg-[#3a89ff] font-semibold hover:bg-[#2f76df]"
-                >
-                  Нэвтрэх
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                  onClick={handleDemoFill}
-                >
-                  Дэмо хэрэглэгч
-                </Button>
+                {isSubmitting ? (
+                  <div className="flex w-full items-center justify-center py-2">
+                    <Image
+                      src={isDark ? "/edulphin-mark-dark.svg" : "/edulphin-mark.svg"}
+                      alt="Loading"
+                      width={48}
+                      height={48}
+                      priority
+                      className={`h-12 w-12 animate-spin object-contain drop-shadow-[0_0_10px_rgba(64,156,255,0.45)] ${isDark ? "brightness-150 saturate-150 contrast-125" : "brightness-150 saturate-200 contrast-125"}`}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full border-0 bg-[#3a89ff] font-semibold hover:bg-[#2f76df]"
+                    >
+                      Нэвтрэх
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={isSubmitting}
+                      className="w-full"
+                      onClick={handleDemoFill}
+                    >
+                      Дэмо хэрэглэгч
+                    </Button>
+                  </>
+                )}
               </form>
             </CardContent>
           </Card>

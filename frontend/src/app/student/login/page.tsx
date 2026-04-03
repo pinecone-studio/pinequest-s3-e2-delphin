@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
+import { useTheme } from "@/components/theme-provider";
 import {
   Card,
   CardContent,
@@ -22,12 +24,15 @@ import { findResumableExamPath } from "@/lib/student-exam-resume";
 
 export default function StudentLoginPage() {
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
   const demoStudent =
     students.find((student) => student.email === "nandin@school.com") ??
     students[0];
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const studentId = localStorage.getItem("studentId");
@@ -42,32 +47,36 @@ export default function StudentLoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsSubmitting(true);
 
     const student = students.find(
       (s) => s.email === email && s.password === password,
     );
 
-    if (student) {
-      // Store student info in localStorage for demo purposes
-      localStorage.setItem("studentId", student.id);
-      localStorage.setItem("studentName", student.name);
-      localStorage.setItem("studentClass", student.classId);
-      notifyStudentSessionChange();
-      const redirectQuery =
-        typeof window !== "undefined"
-          ? new URLSearchParams(window.location.search).get("redirect")
-          : null;
-      const redirectTo =
-        redirectQuery && redirectQuery.startsWith("/student/")
-          ? redirectQuery
-          : (await findResumableExamPath({
-              studentId: student.id,
-              studentClass: student.classId,
-            })) ?? "/student/dashboard";
-      router.replace(redirectTo);
-    } else {
+    if (!student) {
+      setIsSubmitting(false);
       setError("Имэйл эсвэл нууц үг буруу байна");
+      return;
     }
+
+    localStorage.setItem("studentId", student.id);
+    localStorage.setItem("studentName", student.name);
+    localStorage.setItem("studentClass", student.classId);
+    notifyStudentSessionChange();
+
+    const redirectQuery =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("redirect")
+        : null;
+    const redirectTo =
+      redirectQuery && redirectQuery.startsWith("/student/")
+        ? redirectQuery
+        : (await findResumableExamPath({
+            studentId: student.id,
+            studentClass: student.classId,
+          })) ?? "/student/dashboard";
+
+    router.replace(redirectTo);
   };
 
   const handleDemoFill = () => {
@@ -95,7 +104,7 @@ export default function StudentLoginPage() {
 
       <div className="relative flex min-h-[calc(100vh-2rem)] items-center justify-center">
         <div className="content-surface w-full max-w-md rounded-[2rem] p-4 md:p-5">
-          <div className="text-center mb-6">
+          <div className="mb-6 text-center">
             <Link href="/" className="muted-text text-sm hover:underline">
               &larr; Нүүр хуудас руу буцах
             </Link>
@@ -149,16 +158,32 @@ export default function StudentLoginPage() {
                     />
                   </div>
 
-                  <Button
-                    type="submit"
-                    className="ocean-cta w-full border-0 font-semibold"
-                  >
-                    Нэвтрэх
-                  </Button>
-                  <StudentLoginDemoButtons
-                    onDemoFill={handleDemoFill}
-                    onJudgeDemoFill={handleJudgeDemoFill}
-                  />
+                  {isSubmitting ? (
+                    <div className="flex w-full items-center justify-center py-2">
+                      <Image
+                      src={isDark ? "/edulphin-mark-dark.svg" : "/edulphin-mark.svg"}
+                      alt="Loading"
+                      width={48}
+                      height={48}
+                      priority
+                      className={`h-12 w-12 animate-spin object-contain drop-shadow-[0_0_10px_rgba(64,156,255,0.45)] ${isDark ? "brightness-150 saturate-150 contrast-125" : "brightness-150 saturate-200 contrast-125"}`}
+                    />
+                  </div>
+                  ) : (
+                    <>
+                      <Button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="ocean-cta w-full border-0 font-semibold"
+                      >
+                        Нэвтрэх
+                      </Button>
+                      <StudentLoginDemoButtons
+                        onDemoFill={handleDemoFill}
+                        onJudgeDemoFill={handleJudgeDemoFill}
+                      />
+                    </>
+                  )}
                 </form>
               </CardContent>
             </Card>

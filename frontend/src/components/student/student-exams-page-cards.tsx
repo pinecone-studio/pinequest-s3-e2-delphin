@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { AlertCircle, Check, Clock3 } from "lucide-react";
+import { AppLoadingLink } from "@/components/app/app-route-loading-provider";
 import { Button } from "@/components/ui/button";
 import type { Exam } from "@/lib/mock-data";
 import { isStudentExamReportAvailable } from "@/lib/student-exams";
@@ -49,7 +49,7 @@ export function UpcomingExamCard(props: {
         }
         badge={<span className="inline-flex h-[22px] items-center gap-1.5 rounded-full bg-[#FFF3E0] px-[9px] py-1 text-[12px] font-semibold leading-[1.2] text-[#FF9500] dark:bg-[#FF9500] dark:text-[#FFF3E0]"><span className="h-[6px] w-[6px] rounded-full bg-current dark:bg-[#FFF3E0]" />Удахгүй</span>}
         subtitle={<div className="flex flex-wrap items-center gap-3 text-[14px] font-medium leading-[17px] text-[#566069] dark:text-[#E1E6EB]"><span className="inline-flex items-center gap-1"><Clock3 className="h-[14px] w-[14px]" />{exam.duration} мин</span><span>{formatScheduleLabel(schedule?.date, schedule?.time)}</span><span>|</span><span>{exam.questions.length} асуулт</span></div>}
-        action={isUnavailable ? <Button variant="outline" disabled className={`${actionButtonClassName} border-[#D0D7DE] bg-[#E1E6EB] text-[#8C98A5] opacity-100 dark:border-[rgba(224,225,226,0.14)] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0.06)_100%)] dark:text-[#6F7982]`}>Дэлгэрэнгүй</Button> : <Link href={href}><Button variant="outline" className={`${actionButtonClassName} border-[#E6F2FF] bg-[#E6F2FF] text-[#007FFF] shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] hover:bg-[#DDECFF] ${darkPrimaryActionButtonClassName}`}>Дэлгэрэнгүй</Button></Link>}
+        action={isUnavailable ? <Button variant="outline" disabled className={`${actionButtonClassName} border-[#D0D7DE] bg-[#E1E6EB] text-[#8C98A5] opacity-100 dark:border-[rgba(224,225,226,0.14)] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0.06)_100%)] dark:text-[#6F7982]`}>Дэлгэрэнгүй</Button> : <AppLoadingLink href={href}><Button variant="outline" className={`${actionButtonClassName} border-[#E6F2FF] bg-[#E6F2FF] text-[#007FFF] shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] hover:bg-[#DDECFF] ${darkPrimaryActionButtonClassName}`}>Дэлгэрэнгүй</Button></AppLoadingLink>}
       />
     </article>
   );
@@ -79,7 +79,7 @@ export function FinishedExamCard(props: {
   const percentage = Math.round((item.result.score / item.result.totalPoints) * 100);
   const isReportAvailable = isStudentExamReportAvailable(item.exam);
   const reportAction = (
-    <Link href={`/student/reports/${item.result.examId}`}>
+    <AppLoadingLink href={`/student/reports/${item.result.examId}`}>
       <Button
         variant="outline"
         className={`${actionButtonClassName} border border-[#E6F2FF] bg-[#E6F2FF] text-[#007FFF] shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] hover:bg-[#ddecff] ${darkPrimaryActionButtonClassName}`}
@@ -87,7 +87,7 @@ export function FinishedExamCard(props: {
         <span className="sm:hidden">Тайлан түгжээтэй</span>
         <span className="hidden sm:inline">{isReportAvailable ? "Дэлгэрэнгүй" : "Тайлан түгжээтэй"}</span>
       </Button>
-    </Link>
+    </AppLoadingLink>
   );
 
   return (

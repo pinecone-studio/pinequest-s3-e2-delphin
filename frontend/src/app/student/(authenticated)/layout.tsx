@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { AppRouteLoadingProvider, useAppRouteLoading } from "@/components/app/app-route-loading-provider";
 import { StudentShellFrame } from "@/components/student/student-shell-frame";
 import { useStudentExamNotifications } from "@/hooks/use-student-exam-notifications";
 import { findResumableExamPath } from "@/lib/student-exam-resume";
@@ -15,8 +16,21 @@ export default function StudentLayout({
 }: {
   children: React.ReactNode;
 }) {
+  return (
+    <AppRouteLoadingProvider>
+      <StudentLayoutContent>{children}</StudentLayoutContent>
+    </AppRouteLoadingProvider>
+  );
+}
+
+function StudentLayoutContent({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   const pathname = usePathname();
+  const { startLoading } = useAppRouteLoading();
   const { studentClass, studentId, studentName } = useStudentSession();
   const [refreshKey, setRefreshKey] = useState(0);
   const {
@@ -52,6 +66,7 @@ export default function StudentLayout({
     localStorage.removeItem("studentName");
     localStorage.removeItem("studentClass");
     notifyStudentSessionChange();
+    startLoading();
     router.push("/");
   };
 
@@ -68,6 +83,7 @@ export default function StudentLayout({
       onLogout={handleLogout}
       onSelectNotification={(examId) => {
         markNotificationAsRead(examId);
+        startLoading();
         router.push(`/student/exams/${examId}`);
       }}
       onRefresh={() => setRefreshKey((current) => current + 1)}

@@ -74,7 +74,7 @@ export function StudentDashboardProfileCard({
         />
 
         <div className="flex items-start justify-between gap-3 sm:gap-4">
-          <div className="flex min-w-0 items-center gap-3 sm:items-end sm:gap-4">
+          <div className="flex min-w-0 items-start gap-3 sm:gap-4">
             <button
               type="button"
               onClick={() => imageInputRef.current?.click()}
@@ -100,9 +100,9 @@ export function StudentDashboardProfileCard({
               <p className="mt-1 truncate font-sans text-[12px] font-normal italic leading-[16px] text-[#667284] dark:text-[#aab7cb] sm:text-[14px] sm:leading-[17px]">
                 &quot;{profile.bio}&quot;
               </p>
-              {isUploadingImage ? (
-                <p className="mt-1 text-[12px] font-medium text-[#4A9DFF]">Зураг R2 рүү хадгалж байна...</p>
-              ) : null}
+              <p className="mt-1 h-[16px] text-[12px] font-medium text-[#4A9DFF]" aria-live="polite">
+                {isUploadingImage ? "Зураг R2 рүү хадгалж байна..." : "\u00A0"}
+              </p>
             </div>
           </div>
 
@@ -170,3 +170,4 @@ export function StudentDashboardProfileCard({
     </Dialog>
   )
 }
+

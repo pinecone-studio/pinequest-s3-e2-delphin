@@ -29,7 +29,9 @@ async function proxyRequest(
   if (contentType) headers.set('content-type', contentType)
   if (authorization) headers.set('authorization', authorization)
   const requestBody =
-    request.method === 'GET' || request.method === 'HEAD' ? undefined : await request.text()
+    request.method === 'GET' || request.method === 'HEAD'
+      ? undefined
+      : Buffer.from(await request.arrayBuffer())
 
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt += 1) {
     const controller = new AbortController()

@@ -1,14 +1,10 @@
 import type { Exam, ExamResult } from "@/lib/mock-data"
 import { getLocalDateString } from "@/lib/student-exam-time"
 
-export const FIGMA_ICON_PHYSICS =
-  "https://www.figma.com/api/mcp/asset/4ff94fbd-ead0-4ad6-a08e-0ff33b094601"
-export const FIGMA_ICON_SOCIAL =
-  "https://www.figma.com/api/mcp/asset/7da72c0e-2c2b-4589-9e7a-c5b667159b2d"
-export const FIGMA_ICON_MATH =
-  "https://www.figma.com/api/mcp/asset/343ac7d5-4933-4203-afc0-cca382acf71f"
-export const FIGMA_ICON_CHEMISTRY =
-  "https://www.figma.com/api/mcp/asset/a64413ea-0461-4a8b-a509-ff709c4865e9"
+export const EXAM_ICON_GENERAL = "/question-icon-general.svg"
+export const EXAM_ICON_SOCIAL = "/question-icon-creative.svg"
+export const EXAM_ICON_MATH = "/question-icon-logic.svg"
+export const EXAM_ICON_CHEMISTRY = "/question-icon-analysis.svg"
 
 export type FinishedExamItem =
   | { kind: "result"; exam: Exam; result: ExamResult }
@@ -31,10 +27,10 @@ export function getExamCategory(exam: Exam) {
 export function getExamIcon(title: string) {
   const lowerTitle = title.toLowerCase()
 
-  if (lowerTitle.includes("хими")) return FIGMA_ICON_CHEMISTRY
-  if (lowerTitle.includes("нийгмийн")) return FIGMA_ICON_SOCIAL
-  if (lowerTitle.includes("математик")) return FIGMA_ICON_MATH
-  return FIGMA_ICON_PHYSICS
+  if (lowerTitle.includes("хими")) return EXAM_ICON_CHEMISTRY
+  if (lowerTitle.includes("нийгмийн")) return EXAM_ICON_SOCIAL
+  if (lowerTitle.includes("математик")) return EXAM_ICON_MATH
+  return EXAM_ICON_GENERAL
 }
 
 export function formatScheduleLabel(date?: string, time?: string) {

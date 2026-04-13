@@ -10,29 +10,17 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useStudentExamsPage } from "@/hooks/use-student-exams-page"
 
-const sectionContainerClassName =
-  "mx-auto flex w-full max-w-[900px] flex-col items-start gap-[10px] rounded-2xl border border-[#E6F2FF] bg-white px-5 py-5 shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:border-[rgba(82,146,237,0.24)] dark:bg-[#161F4F] dark:[background-image:linear-gradient(126.97deg,rgba(6,11,38,0.74)_28.26%,rgba(26,31,55,0.5)_91.2%)] dark:backdrop-blur-[60px] dark:shadow-[inset_0_0_0_1px_rgba(82,146,237,0.06)] sm:gap-5"
+const sectionContainerClassName = "mx-auto flex w-full max-w-[900px] flex-col items-start gap-[10px] rounded-2xl border border-[#E6F2FF] bg-white px-5 py-5 shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:border-[rgba(82,146,237,0.24)] dark:bg-[#161F4F] dark:[background-image:linear-gradient(126.97deg,rgba(6,11,38,0.74)_28.26%,rgba(26,31,55,0.5)_91.2%)] dark:backdrop-blur-[60px] dark:shadow-[inset_0_0_0_1px_rgba(82,146,237,0.06)] sm:gap-5"
+const emptyStateClassName = `${sectionContainerClassName} px-6 py-10 text-center`
 
 export default function StudentExamsPage() {
   const { resolvedTheme } = useTheme()
-  const {
-    activeTab,
-    categoryOptions,
-    filteredUpcomingExams,
-    finishedItems,
-    isLoading,
-    searchQuery,
-    selectedCategory,
-    setActiveTab,
-    setSearchQuery,
-    setSelectedCategory,
-    studentClass,
-  } = useStudentExamsPage()
+  const { activeTab, categoryOptions, filteredUpcomingExams, finishedItems, isLoading, searchQuery, selectedCategory, setActiveTab, setSearchQuery, setSelectedCategory, studentClass } = useStudentExamsPage()
   const isDark = resolvedTheme === "dark"
-
   const allCount = filteredUpcomingExams.length + finishedItems.length
-  const showUpcoming = activeTab === "all" || activeTab === "upcoming"
-  const showFinished = activeTab === "all" || activeTab === "finished"
+  const showUpcoming = activeTab !== "finished"
+  const showFinished = activeTab !== "upcoming"
+  const showTabEmpty = !isLoading && ((activeTab === "upcoming" && filteredUpcomingExams.length === 0) || (activeTab === "finished" && finishedItems.length === 0))
 
   return (
     <div className="mx-auto w-full max-w-[390px] px-4 pb-10 pt-5 sm:max-w-[1440px] sm:px-6 xl:px-[155px]">
@@ -46,123 +34,48 @@ export default function StudentExamsPage() {
         <div className="mx-auto flex w-full max-w-[358px] flex-col items-start gap-[10px] sm:max-w-[900px] sm:flex-row sm:items-center">
           <div className="relative flex h-[52px] w-[358px] max-w-full items-center sm:h-[48px] sm:w-[301px]">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#566069] dark:text-[#AAB7CB]" />
-            <Input
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Шалгалт хайх..."
-              className="h-[52px] w-[358px] max-w-full rounded-full border border-[#E8EEF5] bg-[#F5FAFF] px-4 py-3 pl-10 text-[14px] font-medium text-[#566069] placeholder:text-[#566069] dark:border-[rgba(224,225,226,0.14)] dark:bg-[linear-gradient(156deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#D0D8E6] dark:placeholder:text-[#8FA0BB] sm:h-[48px] sm:w-[301px]"
-            />
+            <Input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Шалгалт хайх..." className="h-[52px] w-[358px] max-w-full rounded-full border border-[#E8EEF5] bg-[#F5FAFF] px-4 py-3 pl-10 text-[14px] font-medium text-[#566069] placeholder:text-[#566069] dark:border-[rgba(224,225,226,0.14)] dark:bg-[linear-gradient(156deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#D0D8E6] dark:placeholder:text-[#8FA0BB] sm:h-[48px] sm:w-[301px]" />
           </div>
 
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="hidden overflow-visible rounded-full border border-[#E8EEF5] bg-[#66B2FF] px-4 py-0 text-[14px] font-medium text-[#F5FAFF] shadow-none dark:border-[rgba(224,225,226,0.14)] dark:bg-[linear-gradient(161deg,rgba(6,11,38,0.94)_59%,rgba(26,31,55,0)_100%)] [&_svg]:text-white [&_svg]:opacity-100 sm:flex sm:h-[48px] sm:min-h-[48px] sm:max-h-[48px] sm:w-[calc(100%-748px)]">
-              <SelectValue
-                className="flex h-full items-center overflow-visible whitespace-nowrap text-[14px] leading-none tracking-[-0.02em]"
-                placeholder="Бүх хичээл"
-              />
+              <SelectValue className="flex h-full items-center overflow-visible whitespace-nowrap text-[14px] leading-none tracking-[-0.02em]" placeholder="Бүх хичээл" />
             </SelectTrigger>
-            <SelectContent>
-              {categoryOptions.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category === "all" ? "Бүх хичээл" : category}
-                </SelectItem>
-              ))}
-            </SelectContent>
+            <SelectContent>{categoryOptions.map((category) => <SelectItem key={category} value={category}>{category === "all" ? "Бүх хичээл" : category}</SelectItem>)}</SelectContent>
           </Select>
 
           <div className="flex h-[48px] w-[358px] max-w-full items-center rounded-full border border-[#E8EEF5] bg-[#003366] p-2 shadow-[0px_9px_4px_rgba(201,201,201,0.01),0px_5px_3px_rgba(201,201,201,0.05),0px_2px_2px_rgba(201,201,201,0.09),0px_1px_1px_rgba(201,201,201,0.10)] dark:border-[rgba(224,225,226,0.14)] student-dark-surface dark:shadow-[0_20px_44px_rgba(2,6,23,0.4)] sm:w-[427px]">
-            <SegmentedTab
-              active={activeTab === "all"}
-              count={allCount}
-              label="Бүгд"
-              onClick={() => setActiveTab("all")}
-            />
-            <SegmentedTab
-              active={activeTab === "upcoming"}
-              count={filteredUpcomingExams.length}
-              label="Удахгүй"
-              onClick={() => setActiveTab("upcoming")}
-            />
-            <SegmentedTab
-              active={activeTab === "finished"}
-              count={finishedItems.length}
-              label="Дууссан"
-              onClick={() => setActiveTab("finished")}
-            />
+            <SegmentedTab active={activeTab === "all"} count={allCount} label="Бүгд" onClick={() => setActiveTab("all")} />
+            <SegmentedTab active={activeTab === "upcoming"} count={filteredUpcomingExams.length} label="Удахгүй" onClick={() => setActiveTab("upcoming")} />
+            <SegmentedTab active={activeTab === "finished"} count={finishedItems.length} label="Дууссан" onClick={() => setActiveTab("finished")} />
           </div>
         </div>
 
         <div className="mx-auto w-full max-w-[358px] space-y-[10px] sm:max-w-[1080px] sm:space-y-[34px]">
-          {isLoading ? (
-            <div className="flex min-h-[180px] items-center justify-center">
-              <div role="status" aria-label="Loading" className="flex h-[72px] w-[72px] items-center justify-center">
-                <Image
-                  src={isDark ? "/edulphin-mark-dark.svg" : "/edulphin-mark.svg"}
-                  alt=""
-                  width={48}
-                  height={48}
-                  className="h-12 w-12 animate-pulse object-contain"
-                />
-              </div>
-            </div>
-          ) : null}
+          {isLoading ? <div className="flex min-h-[180px] items-center justify-center"><div role="status" aria-label="Loading" className="flex h-[72px] w-[72px] items-center justify-center"><Image src={isDark ? "/edulphin-mark-dark.svg" : "/edulphin-mark.svg"} alt="" width={48} height={48} className="h-12 w-12 animate-pulse object-contain" /></div></div> : null}
 
           {showUpcoming && filteredUpcomingExams.length > 0 ? (
             <section className={sectionContainerClassName}>
-              <div className="flex w-full items-center gap-[20px]">
-                <h2 className="text-[17px] font-semibold leading-[21px] text-[#293138] dark:text-white">
-                  Удахгүй болох шалгалтууд
-                </h2>
-                <span className="flex h-[28px] min-w-[28px] items-center justify-center rounded-full bg-[#FFF3E0] px-[10px] text-[13px] font-semibold leading-none text-[#FF9500] dark:bg-[#FF9500] dark:text-[#FFF3E0]">
-                  {filteredUpcomingExams.length}
-                </span>
-              </div>
-              <div className="w-full space-y-[10px] sm:space-y-4">
-                {filteredUpcomingExams.map((exam) => (
-                  <UpcomingExamCard
-                    key={exam.id}
-                    exam={exam}
-                    href={`/student/exams/${exam.id}`}
-                    studentClass={studentClass}
-                  />
-                ))}
-              </div>
+              <div className="flex w-full items-center gap-[20px]"><h2 className="text-[17px] font-semibold leading-[21px] text-[#293138] dark:text-white">Удахгүй болох шалгалтууд</h2><span className="flex h-[28px] min-w-[28px] items-center justify-center rounded-full bg-[#FFF3E0] px-[10px] text-[13px] font-semibold leading-none text-[#FF9500] dark:bg-[#FF9500] dark:text-[#FFF3E0]">{filteredUpcomingExams.length}</span></div>
+              <div className="w-full space-y-[10px] sm:space-y-4">{filteredUpcomingExams.map((exam) => <UpcomingExamCard key={exam.id} exam={exam} href={`/student/exams/${exam.id}`} studentClass={studentClass} />)}</div>
             </section>
           ) : null}
 
           {showFinished && finishedItems.length > 0 ? (
             <section className={sectionContainerClassName}>
-              <div className="flex w-full items-center gap-[20px]">
-                <h2 className="text-[17px] font-semibold leading-[21px] text-[#293138] dark:text-white">
-                  Дууссан шалгалтууд
-                </h2>
-                <span className="flex h-[28px] min-w-[28px] items-center justify-center rounded-full bg-[#E8F5E9] px-[10px] text-[13px] font-semibold leading-none text-[#00C853] dark:bg-[#00C853] dark:text-[#E8F5E9]">
-                  {finishedItems.length}
-                </span>
-              </div>
-              <div className="w-full space-y-[10px] sm:space-y-4">
-                {finishedItems.map((item) => (
-                  <FinishedExamCard
-                    key={
-                      item.kind === "result"
-                        ? `${item.result.examId}-${item.result.studentId}`
-                        : `missed-${item.exam.id}`
-                    }
-                    item={item}
-                    studentClass={studentClass}
-                  />
-                ))}
-              </div>
+              <div className="flex w-full items-center gap-[20px]"><h2 className="text-[17px] font-semibold leading-[21px] text-[#293138] dark:text-white">Дууссан шалгалтууд</h2><span className="flex h-[28px] min-w-[28px] items-center justify-center rounded-full bg-[#E8F5E9] px-[10px] text-[13px] font-semibold leading-none text-[#00C853] dark:bg-[#00C853] dark:text-[#E8F5E9]">{finishedItems.length}</span></div>
+              <div className="w-full space-y-[10px] sm:space-y-4">{finishedItems.map((item) => <FinishedExamCard key={item.kind === "result" ? `${item.result.examId}-${item.result.studentId}` : `missed-${item.exam.id}`} item={item} studentClass={studentClass} />)}</div>
             </section>
           ) : null}
 
-          {!isLoading &&
-          filteredUpcomingExams.length === 0 &&
-          finishedItems.length === 0 ? (
-            <div className="rounded-2xl border border-[#E6F2FF] bg-[#F9FAFB] px-6 py-10 text-center text-[#566069] dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(112deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#AAB7CB]">
-              Хайлтын нөхцөлд тохирох шалгалт олдсонгүй.
+          {showTabEmpty ? (
+            <div className={emptyStateClassName}>
+              <p className="text-[16px] font-semibold text-[#293138] dark:text-[#EDF4FF]">{activeTab === "upcoming" ? "Удахгүй шалгалт алга" : "Дууссан шалгалт алга"}</p>
+              <p className="mt-2 text-[14px] text-[#566069] dark:text-[#AAB7CB]">{activeTab === "upcoming" ? "Одоогоор товлогдсон шалгалт байхгүй байна." : "Энд таны өгсөн шалгалтууд дараа нь харагдана."}</p>
             </div>
           ) : null}
+
+          {!isLoading && filteredUpcomingExams.length === 0 && finishedItems.length === 0 ? <div className="rounded-2xl border border-[#E6F2FF] bg-[#F9FAFB] px-6 py-10 text-center text-[#566069] dark:border-[rgba(224,225,226,0.08)] dark:bg-[linear-gradient(112deg,rgba(6,11,38,0.74)_28%,rgba(26,31,55,0.5)_91%)] dark:text-[#AAB7CB]">Хайлтын нөхцөлд тохирох шалгалт олдсонгүй.</div> : null}
         </div>
       </div>
     </div>

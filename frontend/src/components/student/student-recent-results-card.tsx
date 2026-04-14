@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Exam, ExamResult } from '@/lib/mock-data'
 import { isStudentExamReportAvailable } from '@/lib/student-exams'
+import { getNormalizedStudentExamResult } from '@/lib/student-report-view'
 
 export function StudentRecentResultsCard({
   exams,
@@ -28,7 +29,8 @@ export function StudentRecentResultsCard({
         <div className="space-y-3">
           {results.map((result) => {
             const exam = exams.find((entry) => entry.id === result.examId)
-            const percentage = Math.round((result.score / result.totalPoints) * 100)
+            const normalizedResult = exam ? getNormalizedStudentExamResult(exam, result) : null
+            const percentage = normalizedResult?.percentage ?? 0
             const badgeVariant =
               percentage >= 70 ? 'default' : percentage >= 50 ? 'secondary' : 'destructive'
             const isReportAvailable = exam ? isStudentExamReportAvailable(exam) : false
@@ -44,7 +46,7 @@ export function StudentRecentResultsCard({
                 <div className="text-right">
                   <Badge variant={badgeVariant}>{percentage}%</Badge>
                   <div className="secondary-text text-sm">
-                    {result.score}/{result.totalPoints}
+                    {normalizedResult?.score ?? result.score}/{normalizedResult?.totalPoints ?? result.totalPoints}
                   </div>
                   <div className="mt-2">
                     <Link href={`/student/reports/${result.examId}`}>

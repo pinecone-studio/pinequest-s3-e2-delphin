@@ -6,8 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { StudentReportShell } from "@/components/student/report/student-report-shell"
 import { useStudentSession } from "@/hooks/use-student-session"
-import { exams as legacyExams, type Exam } from "@/lib/mock-data"
-import { getCachedStudentExamResults, loadStudentExamResults } from "@/lib/student-exam-results"
+import type { Exam } from "@/lib/mock-data"
+import {
+  getCachedStudentExamResults,
+  getLatestStudentExamResult,
+  loadStudentExamResults,
+} from "@/lib/student-exam-results"
 import {
   getExamLetterGrade,
   getReportMetrics,
@@ -26,7 +30,7 @@ export default function StudentExamReportPage({
 }) {
   const { examId } = use(params)
   const { studentClass, studentId, studentName } = useStudentSession()
-  const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
+  const [allExams, setAllExams] = useState<Exam[]>([])
   const [allResults, setAllResults] = useState(() => getCachedStudentExamResults())
   const [isLoading, setIsLoading] = useState(true)
 
@@ -65,7 +69,10 @@ export default function StudentExamReportPage({
   }, [studentClass, studentId])
 
   const exam = useMemo(() => allExams.find((entry) => entry.id === examId), [allExams, examId])
-  const result = allResults.find((entry) => entry.examId === examId && entry.studentId === studentId)
+  const result = useMemo(
+    () => getLatestStudentExamResult(allResults, examId, studentId),
+    [allResults, examId, studentId],
+  )
 
   if (isLoading) {
     return (
@@ -128,6 +135,7 @@ export default function StudentExamReportPage({
       questionCount={metrics.totalQuestions}
       releaseMessage={releaseMessage}
       result={result}
+      score={metrics.score}
       scoreLabel={`${metrics.score}/${metrics.totalPoints} • ${getExamLetterGrade(metrics.percentage)}`}
       scheduleLabel={schedule ? `${schedule.date} ${schedule.time}` : "Тов гараагүй"}
       studentClass={studentClass}

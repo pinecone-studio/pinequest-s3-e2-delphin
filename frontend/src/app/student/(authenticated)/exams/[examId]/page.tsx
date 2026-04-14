@@ -7,7 +7,7 @@ import { StudentExamDetailContent } from "@/components/student/student-exam-deta
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { useStudentSession } from "@/hooks/use-student-session"
-import { exams as legacyExams, type Exam } from "@/lib/mock-data"
+import type { Exam } from "@/lib/mock-data"
 import {
   formatCountdownParts,
   getLocalDateString,
@@ -43,7 +43,7 @@ export default function ExamDetailPage({ params }: { params: Promise<{ examId: s
   const { studentClass } = useStudentSession()
   const [countdown, setCountdown] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
+  const [allExams, setAllExams] = useState<Exam[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {

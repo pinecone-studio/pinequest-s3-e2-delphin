@@ -6,18 +6,22 @@ import { StudentDashboardProfileCard } from "@/components/student/student-dashbo
 import { StudentDashboardScheduleCard } from "@/components/student/student-dashboard-schedule-card"
 import { StudentExamsOverviewPanel } from "@/components/student/student-exams-overview-panel"
 import { useStudentSession } from "@/hooks/use-student-session"
-import { exams as legacyExams, type Exam, type ExamResult } from "@/lib/mock-data"
-import { getCachedStudentExamResults, loadStudentExamResults } from "@/lib/student-exam-results"
+import type { Exam, ExamResult } from "@/lib/mock-data"
+import {
+  getCachedStudentExamResults,
+  getLatestStudentExamResults,
+  loadStudentExamResults,
+} from "@/lib/student-exam-results"
 import { getLocalDateString, getScheduleEnd } from "@/lib/student-exam-time"
 import { getStudentExams } from "@/lib/student-exams"
-import { getExamLetterGrade } from "@/lib/student-report-view"
+import { getExamLetterGrade, getNormalizedStudentExamResult } from "@/lib/student-report-view"
 import { useTheme } from "@/components/theme-provider"
 
 export default function StudentDashboard() {
   const { studentClass, studentId, studentName } = useStudentSession()
   const { resolvedTheme } = useTheme()
   const isDark = resolvedTheme === "dark"
-  const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
+  const [allExams, setAllExams] = useState<Exam[]>([])
   const [allResults, setAllResults] = useState<ExamResult[]>(() => getCachedStudentExamResults())
 
   useEffect(() => {
@@ -40,13 +44,25 @@ export default function StudentDashboard() {
 
   const myExams = useMemo(() => allExams.filter((exam) => exam.scheduledClasses.some((schedule) => schedule.classId === studentClass)), [allExams, studentClass])
   const myExamIds = useMemo(() => new Set(myExams.map((exam) => exam.id)), [myExams])
-  const studentResults = useMemo(() => allResults.filter((result) => result.studentId === studentId && myExamIds.has(result.examId)), [allResults, myExamIds, studentId])
+  const studentResults = useMemo(
+    () =>
+      getLatestStudentExamResults(
+        allResults.filter((result) => result.studentId === studentId && myExamIds.has(result.examId)),
+      ),
+    [allResults, myExamIds, studentId],
+  )
   const completedExamIds = useMemo(() => new Set(studentResults.map((result) => result.examId)), [studentResults])
   const statCards = useMemo(() => {
-    const averagePercentage = studentResults.length ? Math.round(studentResults.reduce((sum, result) => sum + (result.score / Math.max(result.totalPoints, 1)) * 100, 0) / studentResults.length) : 0
+    const normalizedResults = studentResults
+      .map((result) => {
+        const exam = allExams.find((entry) => entry.id === result.examId)
+        return exam ? getNormalizedStudentExamResult(exam, result) : null
+      })
+      .filter((result): result is ReturnType<typeof getNormalizedStudentExamResult> => Boolean(result))
+    const averagePercentage = normalizedResults.length ? Math.round(normalizedResults.reduce((sum, result) => sum + result.percentage, 0) / normalizedResults.length) : 0
     const latestResult = [...studentResults].sort((left, right) => new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime())[0]
     const latestExam = latestResult ? allExams.find((exam) => exam.id === latestResult.examId) : null
-    const latestPercentage = latestResult ? Math.round((latestResult.score / Math.max(latestResult.totalPoints, 1)) * 100) : 0
+    const latestPercentage = latestResult && latestExam ? getNormalizedStudentExamResult(latestExam, latestResult).percentage : 0
     const startOfToday = new Date()
     startOfToday.setHours(0, 0, 0, 0)
     const endOfWindow = new Date(startOfToday)

@@ -1,4 +1,4 @@
-import { examResults, type ExamResult } from '@/lib/mock-data'
+import type { ExamResult } from '@/lib/mock-data'
 
 const STUDENT_EXAM_RESULTS_STORAGE_KEY = 'studentExamResults'
 
@@ -17,34 +17,15 @@ export type StudentExamResultApiRecord = {
   updatedAt: string
 }
 
-function mergeExamResultAnswers(
-  baseAnswers: ExamResult['answers'],
-  nextAnswers: ExamResult['answers'],
-) {
-  const merged = new Map(baseAnswers.map((answer) => [answer.questionId, answer]))
-  nextAnswers.forEach((answer) => {
-    const current = merged.get(answer.questionId)
-    merged.set(answer.questionId, current ? { ...current, ...answer } : answer)
-  })
-  return Array.from(merged.values())
-}
-
-function sumAwardedPoints(answers: ExamResult['answers']) {
-  return answers.reduce((sum, answer) => sum + (typeof answer.awardedPoints === 'number' ? answer.awardedPoints : 0), 0)
-}
-
 function mergeExamResult(baseResult: ExamResult, nextResult: ExamResult): ExamResult {
-  const answers = mergeExamResultAnswers(baseResult.answers, nextResult.answers)
+  const preferNextResult =
+    new Date(nextResult.submittedAt).getTime() >= new Date(baseResult.submittedAt).getTime()
+  const latestResult = preferNextResult ? nextResult : baseResult
+  const fallbackResult = preferNextResult ? baseResult : nextResult
+
   return {
-    examId: nextResult.examId,
-    studentId: nextResult.studentId,
-    classId: nextResult.classId ?? baseResult.classId,
-    score: Math.max(baseResult.score, nextResult.score, sumAwardedPoints(answers)),
-    totalPoints: Math.max(baseResult.totalPoints, nextResult.totalPoints),
-    answers,
-    submittedAt: new Date(nextResult.submittedAt) > new Date(baseResult.submittedAt)
-      ? nextResult.submittedAt
-      : baseResult.submittedAt,
+    ...latestResult,
+    classId: latestResult.classId ?? fallbackResult.classId,
   }
 }
 
@@ -91,7 +72,7 @@ export function toExamResult(record: StudentExamResultApiRecord): ExamResult {
 }
 
 export function getCachedStudentExamResults() {
-  return mergeResults(examResults, readStoredResults())
+  return readStoredResults()
 }
 
 export function filterResults(results: ExamResult[], filters?: { examId?: string; studentId?: string; classId?: string }) {

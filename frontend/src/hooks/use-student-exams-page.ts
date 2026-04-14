@@ -7,8 +7,12 @@ import {
   getStudentSchedule,
 } from "@/components/student/student-exams-page-utils"
 import { useStudentSession } from "@/hooks/use-student-session"
-import { exams as legacyExams, type Exam, type ExamResult } from "@/lib/mock-data"
-import { getCachedStudentExamResults, loadStudentExamResults } from "@/lib/student-exam-results"
+import type { Exam, ExamResult } from "@/lib/mock-data"
+import {
+  getCachedStudentExamResults,
+  getLatestStudentExamResults,
+  loadStudentExamResults,
+} from "@/lib/student-exam-results"
 import { getScheduleEnd } from "@/lib/student-exam-time"
 import { getStudentExams } from "@/lib/student-exams"
 
@@ -22,7 +26,7 @@ export function useStudentExamsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [activeTab, setActiveTab] = useState<"all" | "upcoming" | "finished">("all")
-  const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
+  const [allExams, setAllExams] = useState<Exam[]>([])
   const [allResults, setAllResults] = useState<ExamResult[]>(() => getCachedStudentExamResults())
   const [isLoading, setIsLoading] = useState(true)
   useEffect(() => {
@@ -49,20 +53,33 @@ export function useStudentExamsPage() {
   }, [studentClass, studentId])
   const myExams = useMemo(() => allExams.filter((exam) => exam.scheduledClasses.some((schedule) => schedule.classId === studentClass)), [allExams, studentClass])
   const myExamIds = useMemo(() => new Set(myExams.map((exam) => exam.id)), [myExams])
-  const myResults = useMemo(() => allResults.filter((result) => result.studentId === studentId && myExamIds.has(result.examId)), [allResults, myExamIds, studentId])
+  const myResults = useMemo(
+    () =>
+      getLatestStudentExamResults(
+        allResults.filter((result) => result.studentId === studentId && myExamIds.has(result.examId)),
+      ),
+    [allResults, myExamIds, studentId],
+  )
   const completedExamIds = useMemo(() => new Set(myResults.map((result) => result.examId)), [myResults])
   const latestResultsByExamId = useMemo(
-    () =>
-      new Map(
-        myResults
-          .slice()
-          .sort(
-            (left, right) =>
-              new Date(right.submittedAt).getTime() -
-              new Date(left.submittedAt).getTime(),
-          )
-          .map((result) => [result.examId, result] as const),
-      ),
+    () => {
+      const resultMap = new Map<string, ExamResult>()
+
+      myResults
+        .slice()
+        .sort(
+          (left, right) =>
+            new Date(right.submittedAt).getTime() -
+            new Date(left.submittedAt).getTime(),
+        )
+        .forEach((result) => {
+          if (!resultMap.has(result.examId)) {
+            resultMap.set(result.examId, result)
+          }
+        })
+
+      return resultMap
+    },
     [myResults],
   )
   const availableExams = useMemo(() => myExams.filter((exam) => exam.status !== "draft"), [myExams])

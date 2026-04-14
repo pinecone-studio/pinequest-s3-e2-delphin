@@ -32,6 +32,7 @@ function StudentLayoutContent({
   const pathname = usePathname();
   const { startLoading } = useAppRouteLoading();
   const { studentClass, studentId, studentName } = useStudentSession();
+  const [hasHydrated, setHasHydrated] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const {
     hasNotifications,
@@ -41,10 +42,14 @@ function StudentLayoutContent({
   } = useStudentExamNotifications(studentId, studentClass);
 
   useEffect(() => {
-    if (!studentName) {
+    setHasHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (hasHydrated && !studentName) {
       router.push("/student/login");
     }
-  }, [router, studentName]);
+  }, [hasHydrated, router, studentName]);
 
   useEffect(() => {
     if (!studentClass || !studentId) return;
@@ -70,7 +75,7 @@ function StudentLayoutContent({
     router.push("/");
   };
 
-  if (!studentName) {
+  if (!hasHydrated || !studentName) {
     return null;
   }
 

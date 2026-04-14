@@ -13,7 +13,7 @@ import { useStudentLiveAttemptSync } from "@/app/student/(authenticated)/exams/[
 import { useExamIntegrityGuard } from "@/hooks/use-exam-integrity-guard";
 import { useStudentExamDraft } from "@/hooks/use-student-exam-draft";
 import { useStudentSession } from "@/hooks/use-student-session";
-import { exams as legacyExams, type Exam } from "@/lib/mock-data";
+import type { Exam } from "@/lib/mock-data";
 import { loadStudentExamResults } from "@/lib/student-exam-results";
 import { isScheduleOpenNow } from "@/lib/student-exam-time";
 import { getStudentExams } from "@/lib/student-exams";
@@ -28,7 +28,7 @@ export default function StudentTakeExamPage({
   const router = useRouter();
   const { studentClass, studentId, studentName } = useStudentSession();
   const resolvedStudentName = studentName || "Сурагч";
-  const [allExams, setAllExams] = useState<Exam[]>(legacyExams);
+  const [allExams, setAllExams] = useState<Exam[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);

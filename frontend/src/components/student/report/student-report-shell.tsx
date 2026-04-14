@@ -5,6 +5,7 @@ import Link from "next/link"
 import { MoveLeft } from "lucide-react"
 import { StudentReportQuestionList } from "@/components/student/report/student-report-question-list"
 import { StudentReportSummaryPanel } from "@/components/student/report/student-report-summary-panel"
+import { getExamIcon } from "@/components/student/student-exams-page-utils"
 import { useTheme } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 import type { Exam, ExamResult } from "@/lib/mock-data"
@@ -21,6 +22,7 @@ type StudentReportShellProps = {
   questionCount: number
   releaseMessage: string
   result: ExamResult
+  score: number
   scoreLabel: string
   scheduleLabel: string
   studentClass: string
@@ -68,7 +70,7 @@ export function StudentReportShell(props: StudentReportShellProps) {
                         : "bg-[#f3ebff] shadow-[0_4px_10px_rgba(159,107,255,0.12)]",
                     )}
                   >
-                    <Image src="/report-header-icon.svg" alt="" width={40} height={40} className="h-10 w-10 rounded-[10px]" />
+                    <Image src={getExamIcon(props.exam.title)} alt="" width={40} height={40} unoptimized className="h-10 w-10 rounded-[10px] object-contain" />
                   </div>
                   <div className="min-w-0">
                     <h1 className={cn("text-[29px] font-bold leading-tight tracking-[-0.03em] md:text-[31px]", isDark ? "text-[#edf4ff]" : "text-[#2b3f57]")}>
@@ -88,7 +90,7 @@ export function StudentReportShell(props: StudentReportShellProps) {
               missedPoints={props.missedPoints}
               percentage={props.percentage}
               scheduleLabel={props.scheduleLabel}
-              score={props.earnedPoints}
+              score={props.score}
               totalPoints={props.totalPoints}
               unansweredPoints={props.unansweredPoints}
             />

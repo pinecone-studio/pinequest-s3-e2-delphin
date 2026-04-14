@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { useStudentSession } from "@/hooks/use-student-session";
-import { exams as legacyExams, type Exam } from "@/lib/mock-data";
+import type { Exam } from "@/lib/mock-data";
 import { getStudentExams } from "@/lib/student-exams";
 import { isScheduleOpenNow } from "@/lib/student-exam-time";
 
@@ -24,7 +24,7 @@ export default function StudentExamJoinPage({
   const { examId } = use(params);
   const router = useRouter();
   const { studentClass } = useStudentSession();
-  const [allExams, setAllExams] = useState<Exam[]>(legacyExams);
+  const [allExams, setAllExams] = useState<Exam[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

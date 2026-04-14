@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { Clock3, Heart } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import { AppLoadingLink } from "@/components/app/app-route-loading-provider"
@@ -9,8 +10,9 @@ import { useTheme } from "@/components/theme-provider"
 import { getDashboardAnnouncements, subscribeDashboardAnnouncements } from "@/lib/dashboard-announcements"
 import type { Exam, ExamResult } from "@/lib/mock-data"
 import { classHomeroomTeachers } from "@/lib/mock-students"
+import { getLatestStudentExamResults } from "@/lib/student-exam-results"
 import { getScheduleEnd } from "@/lib/student-exam-time"
-import { getExamLetterGrade } from "@/lib/student-report-view"
+import { getExamLetterGrade, getNormalizedStudentExamResult } from "@/lib/student-report-view"
 
 const tabs = [{ id: "info", label: "Мэдээлэл" }, { id: "exam", label: "Шалгалт" }, { id: "result", label: "Дүн" }] as const
 const fallbackNotices = [
@@ -44,10 +46,12 @@ export function StudentExamsOverviewPanel({ exams, results, studentClass, today 
     .filter(({ isUnavailable }) => !isUnavailable)
     .sort((a, b) => new Date(`${a.schedule?.date ?? "9999-12-31"}T${a.schedule?.time ?? "23:59"}:00`).getTime() - new Date(`${b.schedule?.date ?? "9999-12-31"}T${b.schedule?.time ?? "23:59"}:00`).getTime()), [exams, studentClass, today])
 
-  const resultCards = useMemo(() => results
+  const resultCards = useMemo(() => getLatestStudentExamResults(results)
     .map((result) => {
       const exam = exams.find((item) => item.id === result.examId)
-      return exam ? { examId: exam.id, grade: getExamLetterGrade(Math.round((result.score / Math.max(result.totalPoints, 1)) * 100)), score: result.score, subject: exam.title, totalPoints: result.totalPoints, submittedAt: result.submittedAt } : null
+      if (!exam) return null
+      const normalizedResult = getNormalizedStudentExamResult(exam, result)
+      return { examId: exam.id, grade: getExamLetterGrade(normalizedResult.percentage), score: normalizedResult.score, subject: exam.title, totalPoints: normalizedResult.totalPoints, submittedAt: result.submittedAt }
     })
     .filter((item): item is { examId: string; grade: string; score: number; subject: string; totalPoints: number; submittedAt: string } => Boolean(item))
     .sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime())
@@ -76,7 +80,7 @@ export function StudentExamsOverviewPanel({ exams, results, studentClass, today 
   const emptyStateClass = isDark ? "mt-5 rounded-[22px] border border-[rgba(82,146,237,0.24)] bg-[#161F4F] px-5 py-6 text-center dark:[background-image:linear-gradient(126.97deg,rgba(6,11,38,0.74)_28.26%,rgba(26,31,55,0.5)_91.2%)]" : "mt-5 rounded-[22px] border border-[#D9E9FA] bg-[#F8FBFF] px-5 py-6 text-center"
 
   return (
-    <aside className="h-auto w-full overflow-y-auto rounded-[20px] border border-[#E6F2FF] bg-white px-[18px] py-[16px] shadow-[0_12px_38px_rgba(120,141,171,0.14)] dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)] xl:h-[781px] xl:w-[440px]">
+    <aside className="dashboard-scrollbar h-auto w-full overflow-y-auto rounded-[20px] border border-[#E6F2FF] bg-white px-[18px] py-[16px] shadow-[0_12px_38px_rgba(120,141,171,0.14)] dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)] xl:h-[781px] xl:w-[440px]">
       <div className="flex items-center gap-2 text-[#243445] dark:text-[#edf4ff]"><h2 className="text-[22px] font-semibold leading-none">Шинэ содон</h2><span className="text-[24px]">🎉</span></div>
       <div className={tabsWrap}><div className="grid grid-cols-3 gap-[4px]">{tabs.map((tab) => <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)} className={`h-[36px] cursor-pointer rounded-full border text-[14px] font-semibold transition ${activeTab === tab.id ? activeTabClass : inactiveTabClass}`}>{tab.label}</button>)}</div></div>
 
@@ -84,7 +88,7 @@ export function StudentExamsOverviewPanel({ exams, results, studentClass, today 
 
       {activeTab === "exam" && <div className="mt-6"><p className="text-[14px] font-semibold text-[#202b36] dark:text-[#9eacc3]">Удахгүй болох шалгалтууд</p>{examCards.length === 0 ? <div className={emptyStateClass}><p className="text-[16px] font-semibold text-[#243445] dark:text-[#edf4ff]">Удахгүй шалгалт алга</p><p className="mt-2 text-[13px] leading-[1.5] text-[#6f7f92] dark:text-[#b5c3da]">Одоогоор товлогдсон шалгалт байхгүй байна. Шинэ шалгалт нэмэгдвэл энд харагдана.</p></div> : <div className="mt-5 space-y-5">{examCards.map(({ exam, isToday, isUnavailable, schedule }) => <article key={exam.id} className="rounded-[22px] border border-[#D9E9FA] bg-white px-4 py-[18px] shadow-[0_10px_28px_rgba(160,182,210,0.12)] dark:border-[rgba(82,146,237,0.24)] dark:bg-[#161F4F] dark:[background-image:linear-gradient(126.97deg,rgba(6,11,38,0.74)_28.26%,rgba(26,31,55,0.5)_91.2%)] dark:shadow-[inset_0_0_0_1px_rgba(82,146,237,0.06)]"><div className="flex items-start justify-between gap-3"><h3 className={`text-[16px] font-bold ${isUnavailable ? "text-[#8794a3] dark:text-[#7d8aa1]" : "text-[#243445] dark:text-[#edf4ff]"}`}>{exam.title}</h3>{isToday && !isUnavailable ? <span className="rounded-full bg-[#dff5e5] px-2.5 py-1 text-[12px] font-medium text-[#188b43] dark:bg-[#00C853] dark:text-[#E8F5E9]">Бэлэн</span> : null}</div><div className={`mt-3 flex items-center gap-3 text-[13px] ${isUnavailable ? "text-[#a4adb5] dark:text-[#74829a]" : "text-[#6f7f92] dark:text-[#c7d2e5]"}`}><Clock3 className="h-[14px] w-[14px]" /><span>{exam.duration} мин</span><span>{schedule ? fmtExamDate(schedule.date, schedule.time, today) : "Тов гараагүй"}</span></div>{isUnavailable ? <div className="mt-4 flex h-[44px] items-center justify-center rounded-[12px] border border-[rgba(224,225,226,0.14)] bg-[rgba(255,255,255,0.08)] text-[14px] font-medium text-[#6F7982] backdrop-blur-[60px]">Дэлгэрэнгүй</div> : <AppLoadingLink href={`/student/exams/${exam.id}`} className={isToday ? readyActionClass : "mt-4 flex h-[44px] w-full items-center justify-center rounded-[12px] border border-[rgba(224,225,226,0.14)] bg-[rgba(255,255,255,0.08)] text-[14px] font-medium text-[#6F7982] backdrop-blur-[60px] transition hover:bg-[rgba(255,255,255,0.12)]"}>Дэлгэрэнгүй</AppLoadingLink>}</article>)}</div>}</div>}
 
-      {activeTab === "result" && <div className="mt-6"><p className="text-[14px] font-semibold text-[#202b36] dark:text-[#9eacc3]">Сүүлийн дүнгүүд</p><div className="mt-5 space-y-4">{resultCards.map((result) => <AppLoadingLink key={result.examId} href={`/student/reports/${result.examId}`} className="flex cursor-pointer items-center justify-between rounded-[20px] border border-[#E6F2FF] bg-white px-4 py-4 shadow-[0_8px_26px_rgba(160,182,210,0.10)] transition hover:bg-[#f7fbff] dark:border-[rgba(72,94,149,0.24)] dark:bg-[linear-gradient(180deg,#0d163f_0%,#0a1236_100%)] dark:hover:bg-[linear-gradient(180deg,#122053_0%,#0d163f_100%)]"><div className="flex min-w-0 items-center gap-3"><Image src={getExamIcon(result.subject)} alt="" width={24} height={24} unoptimized className="h-6 w-6 shrink-0 object-contain" /><div className="min-w-0"><p className="truncate text-[15px] font-semibold text-[#243445] dark:text-[#edf4ff]">{result.subject}</p><p className="mt-1 text-[13px] text-[#76879c] dark:text-[#b5c3da]">{result.score}/{result.totalPoints} оноо</p></div></div><span className={`inline-flex h-[28px] min-w-[28px] items-center justify-center rounded-full px-[10px] text-[12px] font-semibold leading-none ${resultTone(result.score, result.totalPoints)}`}>{result.grade}</span></AppLoadingLink>)}</div></div>}
+      {activeTab === "result" && <div className="mt-6"><p className="text-[14px] font-semibold text-[#202b36] dark:text-[#9eacc3]">Сүүлийн дүнгүүд</p><div className="mt-5 space-y-4">{resultCards.map((result) => <Link key={result.examId} href={`/student/reports/${result.examId}`} className="flex cursor-pointer items-center justify-between rounded-[20px] border border-[#E6F2FF] bg-white px-4 py-4 shadow-[0_8px_26px_rgba(160,182,210,0.10)] transition hover:bg-[#f7fbff] dark:border-[rgba(72,94,149,0.24)] dark:bg-[linear-gradient(180deg,#0d163f_0%,#0a1236_100%)] dark:hover:bg-[linear-gradient(180deg,#122053_0%,#0d163f_100%)]"><div className="flex min-w-0 items-center gap-3"><Image src={getExamIcon(result.subject)} alt="" width={24} height={24} unoptimized className="h-6 w-6 shrink-0 object-contain" /><div className="min-w-0"><p className="truncate text-[15px] font-semibold text-[#243445] dark:text-[#edf4ff]">{result.subject}</p><p className="mt-1 text-[13px] text-[#76879c] dark:text-[#b5c3da]">{result.score}/{result.totalPoints} оноо</p></div></div><span className={`inline-flex h-[28px] min-w-[28px] items-center justify-center rounded-full px-[10px] text-[12px] font-semibold leading-none ${resultTone(result.score, result.totalPoints)}`}>{result.grade}</span></Link>)}</div></div>}
     </aside>
   )
 }

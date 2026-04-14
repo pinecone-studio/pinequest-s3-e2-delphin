@@ -2,12 +2,16 @@
 
 import { use, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import { StudentReportLoadingState } from "@/components/student/report/student-report-loading-state"
 import { Button } from "@/components/ui/button"
-import { Spinner } from "@/components/ui/spinner"
 import { StudentReportShell } from "@/components/student/report/student-report-shell"
 import { useStudentSession } from "@/hooks/use-student-session"
-import { exams as legacyExams, type Exam } from "@/lib/mock-data"
-import { getCachedStudentExamResults, loadStudentExamResults } from "@/lib/student-exam-results"
+import type { Exam } from "@/lib/mock-data"
+import {
+  getCachedStudentExamResults,
+  getLatestStudentExamResult,
+  loadStudentExamResults,
+} from "@/lib/student-exam-results"
 import {
   getExamLetterGrade,
   getReportMetrics,
@@ -26,7 +30,7 @@ export default function StudentExamReportPage({
 }) {
   const { examId } = use(params)
   const { studentClass, studentId, studentName } = useStudentSession()
-  const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
+  const [allExams, setAllExams] = useState<Exam[]>([])
   const [allResults, setAllResults] = useState(() => getCachedStudentExamResults())
   const [isLoading, setIsLoading] = useState(true)
 
@@ -65,41 +69,24 @@ export default function StudentExamReportPage({
   }, [studentClass, studentId])
 
   const exam = useMemo(() => allExams.find((entry) => entry.id === examId), [allExams, examId])
-  const result = allResults.find((entry) => entry.examId === examId && entry.studentId === studentId)
+  const result = useMemo(
+    () => getLatestStudentExamResult(allResults, examId, studentId),
+    [allResults, examId, studentId],
+  )
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-transparent px-4 py-4 md:px-4 md:py-4">
-        <div className="mx-auto max-w-[1380px] dark:max-w-[1692px]">
-          <section className="relative overflow-hidden rounded-[34px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.64)_0%,rgba(244,250,255,0.54)_100%)] px-5 py-6 shadow-[0_16px_34px_rgba(181,205,229,0.16)] backdrop-blur-[12px] dark:border-[rgba(148,176,255,0.12)] dark:bg-[linear-gradient(180deg,rgba(11,19,48,0.86)_0%,rgba(8,14,35,0.76)_100%)] dark:shadow-[inset_0_1px_0_rgba(138,165,255,0.08)] dark:backdrop-blur-[14px] md:px-7 md:py-7">
-            <div className="relative mx-auto flex min-h-[420px] max-w-[358px] flex-col items-center justify-center text-center dark:max-w-[1088px] sm:max-w-[980px]">
-              <div className="rounded-full bg-sky-100 p-4 text-sky-700 dark:bg-[#17305f] dark:text-[#8bc8ff]">
-                <Spinner className="size-6" />
-              </div>
-              <div className="mt-4 space-y-2">
-                <h1 className="text-[20px] font-bold text-slate-900 sm:text-2xl dark:text-[#f4f8ff]">
-                  Тайланг бэлдэж байна
-                </h1>
-                <p className="max-w-[260px] text-sm leading-6 text-slate-600 sm:max-w-md dark:text-[#a9b7ca]">
-                  Таны илгээсэн хариултыг шалгаж, тайлангийн хуудсанд шилжүүлж байна. Түр хүлээнэ үү.
-                </p>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-    )
+    return <StudentReportLoadingState />
   }
 
   if (!exam || !result) {
     return (
       <div className="py-12 text-center">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-[#f4f8ff]">Тайлан олдсонгүй</h1>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-[#f4f8ff]">Ð¢Ð°Ð¹Ð»Ð°Ð½ Ð¾Ð»Ð´ÑÐ¾Ð½Ð³Ò¯Ð¹</h1>
         <p className="mt-2 text-sm text-muted-foreground dark:text-[#a9b7ca]">
-          Шалгалтын дүн хараахан бэлэн болоогүй эсвэл мэдээлэл татахад саатал гарсан байж магадгүй.
+          Ð¨Ð°Ð»Ð³Ð°Ð»Ñ‚Ñ‹Ð½ Ð´Ò¯Ð½ Ñ…Ð°Ñ€Ð°Ð°Ñ…Ð°Ð½ Ð±ÑÐ»ÑÐ½ Ð±Ð¾Ð»Ð¾Ð¾Ð³Ò¯Ð¹ ÑÑÐ²ÑÐ» Ð¼ÑÐ´ÑÑÐ»ÑÐ» Ñ‚Ð°Ñ‚Ð°Ñ…Ð°Ð´ ÑÐ°Ð°Ñ‚Ð°Ð» Ð³Ð°Ñ€ÑÐ°Ð½ Ð±Ð°Ð¹Ð¶ Ð¼Ð°Ð³Ð°Ð´Ð³Ò¯Ð¹.
         </p>
         <Link href="/student/exams">
-          <Button className="mt-4">Шалгалтууд руу буцах</Button>
+          <Button className="mt-4">Ð¨Ð°Ð»Ð³Ð°Ð»Ñ‚ÑƒÑƒÐ´ Ñ€ÑƒÑƒ Ð±ÑƒÑ†Ð°Ñ…</Button>
         </Link>
       </div>
     )
@@ -110,10 +97,10 @@ export default function StudentExamReportPage({
   const isAvailable = isStudentExamReportAvailable(exam)
   const releaseDate = getStudentExamReportReleaseDate(exam)
   const releaseMessage = isAvailable
-    ? "Мэдээлэл баталгаажсан тул та одоо бүрэн тайлан, хариултын задаргаагаа харах боломжтой."
+    ? "ÐœÑÐ´ÑÑÐ»ÑÐ» Ð±Ð°Ñ‚Ð°Ð»Ð³Ð°Ð°Ð¶ÑÐ°Ð½ Ñ‚ÑƒÐ» Ñ‚Ð° Ð¾Ð´Ð¾Ð¾ Ð±Ò¯Ñ€ÑÐ½ Ñ‚Ð°Ð¹Ð»Ð°Ð½, Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ñ‚Ñ‹Ð½ Ð·Ð°Ð´Ð°Ñ€Ð³Ð°Ð°Ð³Ð°Ð° Ñ…Ð°Ñ€Ð°Ñ… Ð±Ð¾Ð»Ð¾Ð¼Ð¶Ñ‚Ð¾Ð¹."
     : releaseDate
-      ? `Багш бүх ангийг дууссаны дараа тайланг нээнэ. Төлөвлөсөн огноо: ${releaseDate.toLocaleString("mn-MN")}.`
-      : "Нээх нөхцөл биелмэгц энэ тайлан автоматаар харагдана."
+      ? `Ð‘Ð°Ð³Ñˆ Ð±Ò¯Ñ… Ð°Ð½Ð³Ð¸Ð¹Ð³ Ð´ÑƒÑƒÑÑÐ°Ð½Ñ‹ Ð´Ð°Ñ€Ð°Ð° Ñ‚Ð°Ð¹Ð»Ð°Ð½Ð³ Ð½ÑÑÐ½Ñ. Ð¢Ó©Ð»Ó©Ð²Ð»Ó©ÑÓ©Ð½ Ð¾Ð³Ð½Ð¾Ð¾: ${releaseDate.toLocaleString("mn-MN")}.`
+      : "ÐÑÑÑ… Ð½Ó©Ñ…Ñ†Ó©Ð» Ð±Ð¸ÐµÐ»Ð¼ÑÐ³Ñ† ÑÐ½Ñ Ñ‚Ð°Ð¹Ð»Ð°Ð½ Ð°Ð²Ñ‚Ð¾Ð¼Ð°Ñ‚Ð°Ð°Ñ€ Ñ…Ð°Ñ€Ð°Ð³Ð´Ð°Ð½Ð°."
 
   return (
     <StudentReportShell
@@ -128,10 +115,11 @@ export default function StudentExamReportPage({
       questionCount={metrics.totalQuestions}
       releaseMessage={releaseMessage}
       result={result}
-      scoreLabel={`${metrics.score}/${metrics.totalPoints} • ${getExamLetterGrade(metrics.percentage)}`}
-      scheduleLabel={schedule ? `${schedule.date} ${schedule.time}` : "Тов гараагүй"}
+      score={metrics.score}
+      scoreLabel={`${metrics.score}/${metrics.totalPoints} â€¢ ${getExamLetterGrade(metrics.percentage)}`}
+      scheduleLabel={schedule ? `${schedule.date} ${schedule.time}` : "Ð¢Ð¾Ð² Ð³Ð°Ñ€Ð°Ð°Ð³Ò¯Ð¹"}
       studentClass={studentClass}
-      studentName={studentName || "Сурагч"}
+      studentName={studentName || "Ð¡ÑƒÑ€Ð°Ð³Ñ‡"}
       submittedLabel={new Date(result.submittedAt).toLocaleString("mn-MN")}
       totalPoints={metrics.totalPoints}
       unansweredCount={metrics.unansweredCount}

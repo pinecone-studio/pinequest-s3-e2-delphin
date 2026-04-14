@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import type { Exam, ExamResult } from '@/lib/mock-data'
 import { getScheduleEnd } from '@/lib/student-exam-time'
 import { isStudentExamReportAvailable } from '@/lib/student-exams'
+import { getNormalizedStudentExamResult } from '@/lib/student-report-view'
 
 export function StudentCompletedExamsSection({
   exams,
@@ -60,7 +61,8 @@ export function StudentCompletedExamsSection({
         <div className="space-y-3">
           {sortedResults.map((result) => {
             const exam = exams.find((entry) => entry.id === result.examId)
-            const percentage = Math.round((result.score / result.totalPoints) * 100)
+            const normalizedResult = exam ? getNormalizedStudentExamResult(exam, result) : null
+            const percentage = normalizedResult?.percentage ?? 0
             const variant =
               percentage >= 70 ? 'default' : percentage >= 50 ? 'secondary' : 'destructive'
             const isReportAvailable = exam ? isStudentExamReportAvailable(exam) : false
@@ -83,7 +85,7 @@ export function StudentCompletedExamsSection({
                     <div className="text-right">
                       <Badge variant={variant}>{percentage}%</Badge>
                       <div className="mt-1 text-sm text-muted-foreground">
-                        {result.score}/{result.totalPoints} оноо
+                        {normalizedResult?.score ?? result.score}/{normalizedResult?.totalPoints ?? result.totalPoints} оноо
                       </div>
                       <div className="mt-3">
                         <Link href={`/student/reports/${result.examId}`}>

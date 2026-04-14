@@ -6,23 +6,27 @@ import {
   getExamCategory,
   getStudentSchedule,
 } from "@/components/student/student-exams-page-utils"
+import {
+  getFinishedItemSortTime,
+  getLatestResultsByExamId,
+  getScheduleStartTime,
+} from "@/hooks/use-student-exams-page-helpers"
 import { useStudentSession } from "@/hooks/use-student-session"
-import { exams as legacyExams, type Exam, type ExamResult } from "@/lib/mock-data"
-import { getCachedStudentExamResults, loadStudentExamResults } from "@/lib/student-exam-results"
+import type { Exam, ExamResult } from "@/lib/mock-data"
+import {
+  getCachedStudentExamResults,
+  getLatestStudentExamResults,
+  loadStudentExamResults,
+} from "@/lib/student-exam-results"
 import { getScheduleEnd } from "@/lib/student-exam-time"
 import { getStudentExams } from "@/lib/student-exams"
-
-function getScheduleStartTime(exam: Exam, studentClass: string) {
-  const schedule = getStudentSchedule(exam, studentClass)
-  return schedule ? new Date(`${schedule.date}T${schedule.time}:00`).getTime() : Number.MAX_SAFE_INTEGER
-}
 
 export function useStudentExamsPage() {
   const { studentClass, studentId } = useStudentSession()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [activeTab, setActiveTab] = useState<"all" | "upcoming" | "finished">("all")
-  const [allExams, setAllExams] = useState<Exam[]>(legacyExams)
+  const [allExams, setAllExams] = useState<Exam[]>([])
   const [allResults, setAllResults] = useState<ExamResult[]>(() => getCachedStudentExamResults())
   const [isLoading, setIsLoading] = useState(true)
   useEffect(() => {
@@ -49,22 +53,15 @@ export function useStudentExamsPage() {
   }, [studentClass, studentId])
   const myExams = useMemo(() => allExams.filter((exam) => exam.scheduledClasses.some((schedule) => schedule.classId === studentClass)), [allExams, studentClass])
   const myExamIds = useMemo(() => new Set(myExams.map((exam) => exam.id)), [myExams])
-  const myResults = useMemo(() => allResults.filter((result) => result.studentId === studentId && myExamIds.has(result.examId)), [allResults, myExamIds, studentId])
-  const completedExamIds = useMemo(() => new Set(myResults.map((result) => result.examId)), [myResults])
-  const latestResultsByExamId = useMemo(
+  const myResults = useMemo(
     () =>
-      new Map(
-        myResults
-          .slice()
-          .sort(
-            (left, right) =>
-              new Date(right.submittedAt).getTime() -
-              new Date(left.submittedAt).getTime(),
-          )
-          .map((result) => [result.examId, result] as const),
+      getLatestStudentExamResults(
+        allResults.filter((result) => result.studentId === studentId && myExamIds.has(result.examId)),
       ),
-    [myResults],
+    [allResults, myExamIds, studentId],
   )
+  const completedExamIds = useMemo(() => new Set(myResults.map((result) => result.examId)), [myResults])
+  const latestResultsByExamId = useMemo(() => getLatestResultsByExamId(myResults), [myResults])
   const availableExams = useMemo(() => myExams.filter((exam) => exam.status !== "draft"), [myExams])
 
   const activeScheduledExams = useMemo(
@@ -136,27 +133,11 @@ export function useStudentExamsPage() {
         ...missedExams.map((exam) => ({ kind: "missed", exam } as const)),
       ]
         .filter((item) => matchesFilters(item.exam))
-        .sort((left, right) => {
-          const leftTime =
-            left.kind === "result"
-              ? new Date(left.result.submittedAt).getTime()
-              : getScheduleEnd(
-                  getStudentSchedule(left.exam, studentClass)?.date || "",
-                  getStudentSchedule(left.exam, studentClass)?.time || "00:00",
-                  left.exam.duration,
-                  left.exam.availableIndefinitely,
-                ).getTime()
-          const rightTime =
-            right.kind === "result"
-              ? new Date(right.result.submittedAt).getTime()
-              : getScheduleEnd(
-                  getStudentSchedule(right.exam, studentClass)?.date || "",
-                  getStudentSchedule(right.exam, studentClass)?.time || "00:00",
-                  right.exam.duration,
-                  right.exam.availableIndefinitely,
-                ).getTime()
-          return rightTime - leftTime
-        }),
+        .sort(
+          (left, right) =>
+            getFinishedItemSortTime(right, studentClass) -
+            getFinishedItemSortTime(left, studentClass),
+        ),
     [latestResultsByExamId, matchesFilters, missedExams, myExams, studentClass],
   )
 

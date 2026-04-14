@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { useState } from "react"
 import { AppLoadingLink } from "@/components/app/app-route-loading-provider"
 import { cardClassName } from "@/components/student/student-exams-page-card-shell"
@@ -81,7 +82,7 @@ export function StudentDashboardScheduleCard(props: { completedExamIds: Set<stri
   }))
 
   return (
-    <section className="font-sans mx-auto h-auto w-[358px] max-w-full rounded-[20px] border border-[#DCE8F3] bg-white p-5 shadow-[0_6px_24px_rgba(114,144,179,0.10)] dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)] sm:h-[659px] sm:w-full sm:overflow-y-auto sm:p-[18px] xl:max-w-[900px]">
+    <section className="font-sans mx-auto h-auto w-[358px] max-w-full rounded-[20px] border border-[#DCE8F3] bg-white p-5 shadow-[0_6px_24px_rgba(114,144,179,0.10)] dark:border-[rgba(224,225,226,0.08)] student-dark-surface dark:shadow-[0_24px_64px_rgba(2,6,23,0.38)] sm:h-[659px] sm:w-full sm:overflow-y-auto sm:p-[18px] xl:max-w-[900px] dashboard-scrollbar">
       <div className="sm:hidden">
         <h2 className="text-[16px] font-medium leading-none text-[#3E4957] dark:text-[#edf4ff]">{monthDate.getFullYear()} оны {monthDate.getMonth() + 1}-р сар</h2>
         <div className="mt-6 grid grid-cols-7 gap-1 text-center">
@@ -105,7 +106,7 @@ export function StudentDashboardScheduleCard(props: { completedExamIds: Set<stri
           <button type="button" onClick={() => setAnchorDate((current) => shiftDate(current, 7))} className={navButtonClassName}><Image src="/chev-right.svg" alt="" width={6} height={11} className="h-[11px] w-[6px] object-contain dark:brightness-[3]" /></button>
         </div>
       </div>
-      <div className="mt-4 hidden overflow-x-auto sm:block">
+      <div className="dashboard-scrollbar mt-4 hidden overflow-x-auto sm:block">
         <div className="grid min-w-[864px] grid-cols-[92px_repeat(7,minmax(96px,1fr))] gap-2">
         <div />
         {weekDates.map((entry, index) => {
@@ -114,7 +115,7 @@ export function StudentDashboardScheduleCard(props: { completedExamIds: Set<stri
         })}
         {timeSlots.map((time) => <div key={time} className="contents"><div className="font-sans flex min-h-[64px] items-start justify-center pt-5 text-center text-[14px] font-medium text-[#007FFF] dark:text-[#5cb7ff]">{time}</div>{weekDates.map((entry) => {
           const event = desktopCells.get(`${entry.key}-${time.slice(0, 2)}`)
-          return <div key={`${entry.key}-${time}`} className={gridCellClassName}>{event ? event.isCompleted ? <AppLoadingLink href={`/student/reports/${event.examId}`} className={`inline-flex max-w-full items-center gap-[7px] rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none line-through transition hover:brightness-[0.98] ${calendarBadgeStyles.completed.badge}`}><span className={`h-[7px] w-[7px] shrink-0 rounded-full ${calendarBadgeStyles.completed.dot}`} /><span className="truncate">{event.title}</span></AppLoadingLink> : event.isMissed ? <span title={event.title} className={`inline-flex max-w-full cursor-not-allowed items-center gap-[7px] rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none line-through ${calendarBadgeStyles.missed.badge}`}><span className={`h-[7px] w-[7px] shrink-0 rounded-full ${calendarBadgeStyles.missed.dot}`} /><span className="truncate">Хоцорсон</span></span> : <AppLoadingLink href={`/student/exams/${event.examId}`} className={`inline-flex max-w-full items-center gap-1.5 rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none transition hover:brightness-[0.98] ${calendarBadgeStyles.upcoming.badge}`}><span className={`h-[6px] w-[6px] shrink-0 rounded-full ${calendarBadgeStyles.upcoming.dot}`} /><span className="truncate">{event.title}</span></AppLoadingLink> : null}</div>
+          return <div key={`${entry.key}-${time}`} className={gridCellClassName}>{event ? event.isCompleted ? <Link href={`/student/reports/${event.examId}`} className={`inline-flex max-w-full items-center gap-[7px] rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none line-through transition hover:brightness-[0.98] ${calendarBadgeStyles.completed.badge}`}><span className={`h-[7px] w-[7px] shrink-0 rounded-full ${calendarBadgeStyles.completed.dot}`} /><span className="truncate">{event.title}</span></Link> : event.isMissed ? <span title={event.title} className={`inline-flex max-w-full cursor-not-allowed items-center gap-[7px] rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none line-through ${calendarBadgeStyles.missed.badge}`}><span className={`h-[7px] w-[7px] shrink-0 rounded-full ${calendarBadgeStyles.missed.dot}`} /><span className="truncate">Хоцорсон</span></span> : <AppLoadingLink href={`/student/exams/${event.examId}`} className={`inline-flex max-w-full items-center gap-1.5 rounded-full px-[10px] py-1 text-[11px] font-semibold leading-none transition hover:brightness-[0.98] ${calendarBadgeStyles.upcoming.badge}`}><span className={`h-[6px] w-[6px] shrink-0 rounded-full ${calendarBadgeStyles.upcoming.dot}`} /><span className="truncate">{event.title}</span></AppLoadingLink> : null}</div>
         })}</div>)}
         </div>
       </div>

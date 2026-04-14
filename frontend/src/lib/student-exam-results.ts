@@ -25,6 +25,83 @@ type SubmitStudentExamResultPayload = {
 
 export { getCachedStudentExamResults }
 
+function buildResultKey(result: Pick<ExamResult, 'examId' | 'studentId'>) {
+  return `${result.examId}::${result.studentId}`
+}
+
+function matchesFilters(
+  result: Pick<ExamResult, 'examId' | 'studentId' | 'classId'>,
+  filters?: {
+    examId?: string
+    studentId?: string
+    classId?: string
+  },
+) {
+  if (filters?.examId && result.examId !== filters.examId) return false
+  if (filters?.studentId && result.studentId !== filters.studentId) return false
+  if (filters?.classId && result.classId !== filters.classId) return false
+  return true
+}
+
+export function getLatestStudentExamResults(results: ExamResult[]) {
+  const resultMap = new Map<string, ExamResult>()
+
+  results
+    .slice()
+    .sort(
+      (left, right) =>
+        new Date(right.submittedAt).getTime() -
+        new Date(left.submittedAt).getTime(),
+    )
+    .forEach((result) => {
+      const key = buildResultKey(result)
+      if (!resultMap.has(key)) {
+        resultMap.set(key, result)
+      }
+    })
+
+  return Array.from(resultMap.values())
+}
+
+export function getLatestStudentExamResult(
+  results: ExamResult[],
+  examId: string,
+  studentId: string,
+) {
+  return getLatestStudentExamResults(results).find(
+    (result) => result.examId === examId && result.studentId === studentId,
+  )
+}
+
+function mergeWithAuthoritativeResults(
+  cachedResults: ExamResult[],
+  authoritativeResults: ExamResult[],
+) {
+  const authoritativeKeys = new Set(
+    authoritativeResults.map((result) => buildResultKey(result)),
+  )
+
+  return mergeResults(
+    cachedResults.filter((result) => !authoritativeKeys.has(buildResultKey(result))),
+    authoritativeResults,
+  )
+}
+
+function replaceResultsInScope(
+  cachedResults: ExamResult[],
+  authoritativeResults: ExamResult[],
+  filters?: {
+    examId?: string
+    studentId?: string
+    classId?: string
+  },
+) {
+  return mergeResults(
+    cachedResults.filter((result) => !matchesFilters(result, filters)),
+    authoritativeResults,
+  )
+}
+
 export async function loadStudentExamResults(filters?: {
   examId?: string
   studentId?: string
@@ -40,9 +117,13 @@ export async function loadStudentExamResults(filters?: {
       `/student-exam-results${query ? `?${query}` : ''}`,
       { method: 'GET', fallbackMessage: 'Шалгалтын дүнг backend-ээс уншиж чадсангүй.' },
     )
-    const mergedResults = mergeResults(getCachedStudentExamResults(), records.map(toExamResult))
-    writeStoredResults(mergedResults)
-    return filterResults(mergedResults, filters)
+    const fetchedResults = records.map(toExamResult)
+    const nextStoredResults =
+      filters && (filters.examId || filters.studentId || filters.classId)
+        ? replaceResultsInScope(getCachedStudentExamResults(), fetchedResults, filters)
+        : mergeWithAuthoritativeResults(getCachedStudentExamResults(), fetchedResults)
+    writeStoredResults(nextStoredResults)
+    return filterResults(nextStoredResults, filters)
   } catch {
     return filterResults(getCachedStudentExamResults(), filters)
   }
@@ -67,7 +148,7 @@ export async function submitStudentExamResult(payload: SubmitStudentExamResultPa
       fallbackMessage: 'Шалгалтын дүнг backend дээр хадгалж чадсангүй.',
     })
     const savedResult = toExamResult(record)
-    writeStoredResults(mergeResults(readStoredResults(), [savedResult]))
+    writeStoredResults(mergeWithAuthoritativeResults(readStoredResults(), [savedResult]))
     return savedResult
   } catch {
     return optimisticResult

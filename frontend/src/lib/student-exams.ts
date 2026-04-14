@@ -47,13 +47,19 @@ export async function getStudentExams(studentClass?: string): Promise<LegacyExam
     '/exams',
     'Шалгалтын мэдээллийг backend-ээс уншиж чадсангүй. Cloudflare D1 эсвэл backend үйлчилгээ одоогоор асуудалтай байж магадгүй.',
   )
-  const mergedExams = [...legacyExams, ...backendExams.map(mapCreatedExamToStudentExam)].filter(
-    (exam) => isAllowedExamTitle(exam.title),
-  )
+  const mergedExams = [...legacyExams, ...backendExams.map(mapCreatedExamToStudentExam)]
+    .filter((exam) => isAllowedExamTitle(exam.title))
+    .reduce<LegacyExam[]>((collection, exam) => {
+      const existingIndex = collection.findIndex((entry) => entry.id === exam.id)
+      if (existingIndex >= 0) {
+        collection[existingIndex] = exam
+      } else {
+        collection.push(exam)
+      }
+      return collection
+    }, [])
 
-  return mergedExams.filter(
-    (exam, index, collection) => collection.findIndex((entry) => entry.id === exam.id) === index,
-  )
+  return mergedExams
 }
 
 function getScheduleEndTime(date: string, time: string, duration: number) {

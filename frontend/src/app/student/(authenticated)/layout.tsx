@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AppRouteLoadingProvider, useAppRouteLoading } from "@/components/app/app-route-loading-provider";
 import { StudentShellFrame } from "@/components/student/student-shell-frame";
+import { useHasHydrated } from "@/hooks/use-has-hydrated";
 import { useStudentExamNotifications } from "@/hooks/use-student-exam-notifications";
 import { findResumableExamPath } from "@/lib/student-exam-resume";
 import {
@@ -32,7 +33,7 @@ function StudentLayoutContent({
   const pathname = usePathname();
   const { startLoading } = useAppRouteLoading();
   const { studentClass, studentId, studentName } = useStudentSession();
-  const [hasHydrated, setHasHydrated] = useState(false);
+  const hasHydrated = useHasHydrated();
   const [refreshKey, setRefreshKey] = useState(0);
   const {
     hasNotifications,
@@ -40,10 +41,6 @@ function StudentLayoutContent({
     notificationItems,
     notificationCount,
   } = useStudentExamNotifications(studentId, studentClass);
-
-  useEffect(() => {
-    setHasHydrated(true);
-  }, []);
 
   useEffect(() => {
     if (hasHydrated && !studentName) {

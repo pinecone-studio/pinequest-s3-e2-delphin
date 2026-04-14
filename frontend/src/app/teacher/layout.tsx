@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AppRouteLoadingProvider } from "@/components/app/app-route-loading-provider";
 import { TeacherHeader } from "@/components/teacher/teacher-layout-shell";
+import { useHasHydrated } from "@/hooks/use-has-hydrated";
 import { useTeacherSession } from "@/hooks/use-teacher-session";
 
 export default function TeacherLayout({
@@ -14,12 +15,8 @@ export default function TeacherLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { teacherName } = useTeacherSession();
-  const [hasHydrated, setHasHydrated] = useState(false);
+  const hasHydrated = useHasHydrated();
   const isLoginPage = pathname === "/teacher/login";
-
-  useEffect(() => {
-    setHasHydrated(true);
-  }, []);
 
   useEffect(() => {
     if (hasHydrated && !teacherName && !isLoginPage) {

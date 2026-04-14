@@ -13,10 +13,11 @@ export function StudentReportLoadingState() {
             </div>
             <div className="mt-4 space-y-2">
               <h1 className="text-[20px] font-bold text-slate-900 sm:text-2xl dark:text-[#f4f8ff]">
-                Ð¢Ð°Ð¹Ð»Ð°Ð½Ð³ Ð±ÑÐ»Ð´ÑÐ¶ Ð±Ð°Ð¹Ð½Ð°
+                Тайланг бэлдэж байна
               </h1>
               <p className="max-w-[260px] text-sm leading-6 text-slate-600 sm:max-w-md dark:text-[#a9b7ca]">
-                Ð¢Ð°Ð½Ñ‹ Ð¸Ð»Ð³ÑÑÑÑÐ½ Ñ…Ð°Ñ€Ð¸ÑƒÐ»Ñ‚Ñ‹Ð³ ÑˆÐ°Ð»Ð³Ð°Ð¶, Ñ‚Ð°Ð¹Ð»Ð°Ð½Ð³Ð¸Ð¹Ð½ Ñ…ÑƒÑƒÐ´ÑÐ°Ð½Ð´ ÑˆÐ¸Ð»Ð¶Ò¯Ò¯Ð»Ð¶ Ð±Ð°Ð¹Ð½Ð°. Ð¢Ò¯Ñ€ Ñ…Ò¯Ð»ÑÑÐ½Ñ Ò¯Ò¯.
+                Таны илгээсэн хариултыг шалгаж, тайлангийн хуудасанд шилжүүлж
+                байна. Түр хүлээнэ үү.
               </p>
             </div>
           </div>
